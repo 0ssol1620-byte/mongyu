@@ -36,4 +36,4 @@
 
 이전 스냅샷은 Windows에서 직접 Node 테스트 49/14/38은 통과했지만, Python 웹 빌드의 기본 텍스트 출력이 CRLF로 변환되어 원본 SHA-256 검증이 실패했습니다. 빌드의 UTF-8 읽기를 명시하고 HTML을 UTF-8 바이트로 출력하도록 수정했습니다. `.gitattributes`는 체크아웃 시 텍스트 LF와 WebP binary를 강제합니다. Android 빌드의 해시 파일 읽기와 검증 결과 쓰기도 인코딩을 명시했습니다. 게임 소스·이미지·템플릿·Android runtime은 변경하지 않았습니다.
 
-수정 후 Linux 전체 선별 runner와 LF/CRLF 입력 회귀 검사 통과. 실제 Windows 수정본 재검증은 대기 중이며 통과를 주장하지 않습니다. 파일 해시 검증기는 원본 바이트를 그대로 해시하므로 변조나 잘못 변환된 체크아웃을 정규화해 숨기지 않습니다.
+수정 후 Linux 전체 선별 runner와 LF/CRLF 입력 회귀 검사 통과. 실제 Windows에서도 수정본 커밋 `d2d5d591917663d112ade8c3eabffb1e09ca4e89`의 53파일 및 manifest payload 52개 해시가 일치했고, `scripts/verify-snapshot.py`와 `scripts/test.py`가 exit 0으로 완료되었습니다. UTF-8/LF·CRLF 회귀와 웹 49/49, 인라인 재실행 14/14, Android 계약 38/38이 통과했으며 실행 전후 파일 변경이 없었습니다. Python 3.12.13, Node.js 22.14.0, utf8_mode=0, 기본 인코딩 cp949 환경이며 PYTHONUTF8/PYTHONIOENCODING/NODE_OPTIONS는 설정되지 않았고 시스템 설정을 변경하지 않았습니다. 두 HTML은 기존 R31 해시를 유지했습니다. 이 결과는 Windows 빌드·Node 검사이며 브라우저나 Android 기기 실행 증거가 아닙니다. 파일 해시 검증기는 원본 바이트를 그대로 해시하므로 변조나 잘못 변환된 체크아웃을 정규화해 숨기지 않습니다.

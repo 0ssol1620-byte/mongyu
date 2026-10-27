@@ -13,8 +13,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3946,
-      "sha256": "e28efcbc501f81b35e981e0976ebe71c034acef6a1c0680d37bf323cb93138f8"
+      "bytes": 4136,
+      "sha256": "d4cbba931b5a9129e89bc186e1e33e557bdc109a02855ecd52e60a744cc0257f"
     },
     {
       "path": "android/app/src/main/AndroidManifest.xml",
@@ -93,8 +93,8 @@
     },
     {
       "path": "docs/VALIDATION.md",
-      "bytes": 3986,
-      "sha256": "0f898049a3bb9f1273d448fb15be102b9c68384cb9f5ea29eb8d06a52331793f"
+      "bytes": 4643,
+      "sha256": "8c15a6a5a34cc27c4016d91fb8dc9ea5f33dd3822bca1969560cdef8cbfcf635"
     },
     {
       "path": "evidence/android-build-verification.json",
@@ -108,8 +108,8 @@
     },
     {
       "path": "evidence/portable-checks.json",
-      "bytes": 1162,
-      "sha256": "46432d88696b7ffa1844d8604487f591c2f4ff825a58220d22e73866e7077834"
+      "bytes": 1986,
+      "sha256": "d60a5919c62b4c12d74bcbacaaacabf49de1e05d858a8f9f0778b219e7083869"
     },
     {
       "path": "evidence/portable-tests.log",
