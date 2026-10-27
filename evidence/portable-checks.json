@@ -1,0 +1,29 @@
+{
+  "release": "R31",
+  "command": "python3 scripts/test.py",
+  "status": "pass",
+  "python": "3.12.14",
+  "node": "24.22.1",
+  "webTests": {
+    "tests": 49,
+    "pass": 49,
+    "fail": 0,
+    "skipped": 0
+  },
+  "r31InlineReexecution": {
+    "tests": 14,
+    "pass": 14,
+    "fail": 0,
+    "skipped": 0,
+    "overlap": "Repeats the 14 R31 web cases against actual HTML"
+  },
+  "androidContractTests": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "skipped": 0
+  },
+  "webRebuildSha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
+  "fullHistoricalAggregateRerun": false,
+  "deviceOrBrowserRuntimeTested": false
+}

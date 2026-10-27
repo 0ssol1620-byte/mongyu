@@ -1,0 +1,255 @@
+{
+  "scope": "All publication files except this manifest itself",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 331,
+      "sha256": "8f780cd59ed3483b4309273a3bcde2bf5ca9eac5142eb6e695291514725fea38"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3504,
+      "sha256": "31e2f94e19284dcec0fd1c9a55486a4bd96d658512363060216326885b36a39f"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "bytes": 1048,
+      "sha256": "811498b2f4b24c9d248e492ecf9fa2004881dc58de4c3a19d94878347a808480"
+    },
+    {
+      "path": "android/app/src/main/assets/index.html",
+      "bytes": 1056113,
+      "sha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968"
+    },
+    {
+      "path": "android/app/src/main/java/org/quadrift/hddevelopment/BuildConfig.java",
+      "bytes": 197,
+      "sha256": "5a622128fe1d2156afd9a91604d66c20ca8d75a8d86c2dd29a1881e2e103246b"
+    },
+    {
+      "path": "android/app/src/main/java/org/quadrift/hddevelopment/MainActivity.java",
+      "bytes": 6167,
+      "sha256": "cad9ee2509ef0604da9412a7e23284bda57b17e2ced069e9b23169cc8ff562db"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_launcher.xml",
+      "bytes": 1479,
+      "sha256": "e4466947829ecfc3797ed52e504203e76ae28961925e49ca0f162443afc78476"
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "bytes": 480,
+      "sha256": "b7ffed48c00fe76e8f543e4925e9a87604baee122d737000cd336ad2f7cde6b7"
+    },
+    {
+      "path": "android/build-unsigned.py",
+      "bytes": 3152,
+      "sha256": "fb31078c87182aeac3415ed3208b8b5dcaad8c0e4427a1ac6caf42567eb53098"
+    },
+    {
+      "path": "android/expected-asset.sha256",
+      "bytes": 65,
+      "sha256": "7376d69746e33bb0e3b8cb7dc52ffe4b9fb78fba9d4ce195a11005a32e4f9fc1"
+    },
+    {
+      "path": "android/tests/day-night-ending.test.cjs",
+      "bytes": 3361,
+      "sha256": "d5a89339b97020576a239b84ce55803b4732d2edf2d9c6278c7e7d0152c8b9bd"
+    },
+    {
+      "path": "android/tests/host.cjs",
+      "bytes": 7698,
+      "sha256": "f0ad7fbbf78239eb7cd18ab35cb2c60eb8a886db7f83d33465fef07d04ee8bc8"
+    },
+    {
+      "path": "android/tests/native-lifecycle.test.cjs",
+      "bytes": 3216,
+      "sha256": "cdaf9024aaf70221f6a7bacf35a27f574ede73c1dda100bd5c415b761d86a5da"
+    },
+    {
+      "path": "android/tests/wrapper-r31.test.cjs",
+      "bytes": 12622,
+      "sha256": "5f027ece6e9d1b29fc7c452f363360c6938025cefbeac780b6a3152a059c2460"
+    },
+    {
+      "path": "android/verify-apk.py",
+      "bytes": 6203,
+      "sha256": "c2a667fe4e3d541cf2fddfa11beb25da9b4fd8c8b142ed4123f4167f6d4dac8e"
+    },
+    {
+      "path": "docs/ART_DIRECTION.md",
+      "bytes": 1905,
+      "sha256": "b8a05de8541a942a31c40586059cbf491ffc3b36ff41bc783be1820872ae28b3"
+    },
+    {
+      "path": "docs/R31_BEHAVIOR.md",
+      "bytes": 1162,
+      "sha256": "54dd3bbcff48e3e0a2e28ff810f369c9947a6ff3a57597ddedcfd6e2d978d59d"
+    },
+    {
+      "path": "docs/VALIDATION.md",
+      "bytes": 2866,
+      "sha256": "873ca86f96926d906eaa367724bff6e03e54d87b2a72a681ea0d47d7e29bf7aa"
+    },
+    {
+      "path": "evidence/android-build-verification.json",
+      "bytes": 1889,
+      "sha256": "923bc0e41c2d5e26b8d3e01cfbc3015bb6c84b09f9ab7f2cb075b278dc437cde"
+    },
+    {
+      "path": "evidence/historical-summary.json",
+      "bytes": 1063,
+      "sha256": "6ed3c84d80a893c9e8d786bc0642d024ed520e4fda9c5c65ebf7a04f7135de1d"
+    },
+    {
+      "path": "evidence/portable-checks.json",
+      "bytes": 648,
+      "sha256": "fcea85fad18a2bf9d78c1ee19897f0fe02f6741501e6f8c919aef4ea417202a0"
+    },
+    {
+      "path": "evidence/portable-tests.log",
+      "bytes": 8713,
+      "sha256": "215749e546f992de4659e2e12ed4c3d2e42826deadeca91f50345a85e11f7893"
+    },
+    {
+      "path": "evidence/privacy-review.json",
+      "bytes": 567,
+      "sha256": "2dd540266ea11af7144d127974f4f6af278e9ee6be9053210f59972729231d10"
+    },
+    {
+      "path": "evidence/runtime-sha256.json",
+      "bytes": 2652,
+      "sha256": "53e97db11d094b804a3ca9ab7eda84cfd99d79f626b13c393ac05535b582b037"
+    },
+    {
+      "path": "scripts/test.py",
+      "bytes": 745,
+      "sha256": "c80981242c3a5504c979503ae35550ba44965ec85c113e3382c44b13e9aefae9"
+    },
+    {
+      "path": "scripts/verify-snapshot.py",
+      "bytes": 649,
+      "sha256": "e6a02516eae461728f4cec6cf3c7bf74f79e2c98a5c661938c5cd7255fe16f41"
+    },
+    {
+      "path": "web/MONGYU_R31.html",
+      "bytes": 1056113,
+      "sha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968"
+    },
+    {
+      "path": "web/assets/r10/eclipse.webp",
+      "bytes": 172698,
+      "sha256": "cc3d7a8986527ac1cc9169daf7ce87f072b2b65f2b547024e43bfd1c4eaa9dbf"
+    },
+    {
+      "path": "web/assets/r10/manifest.json",
+      "bytes": 1710,
+      "sha256": "f30017d22f8bb551421634d90103cd9f06b592fd044cca6047b2ee632893cb4c"
+    },
+    {
+      "path": "web/assets/r10/mirror.webp",
+      "bytes": 196698,
+      "sha256": "40e24e01b683c14b8aa7ce779550437e5f119d65ea47b1a2fc749ab45e17cac5"
+    },
+    {
+      "path": "web/assets/r10/tidal.webp",
+      "bytes": 175956,
+      "sha256": "02161a08c67cfa03e3e2f847b3fd4fe1ac33296466a3d11a74f6eb512a00b087"
+    },
+    {
+      "path": "web/build.py",
+      "bytes": 1620,
+      "sha256": "4e5752d9515e3047337f91670d20ae3acfe606bf18b7d5f9fc5900638b4885ca"
+    },
+    {
+      "path": "web/index.template.html",
+      "bytes": 23470,
+      "sha256": "9bd495c0e861757d1a2c75930ceadb20abaa2493005c976821b2afedccee3cc1"
+    },
+    {
+      "path": "web/src/app.js",
+      "bytes": 69303,
+      "sha256": "efad9c6150dcbd277e19cb95f85889c418704318ce778ec3bc0790881ad81879"
+    },
+    {
+      "path": "web/src/assets.js",
+      "bytes": 1166,
+      "sha256": "d8f05d148cc04f13510e30610b4fbe7302ff49cfc726363e965659cd5e0715b0"
+    },
+    {
+      "path": "web/src/companion-bridge.js",
+      "bytes": 11158,
+      "sha256": "5bc69abe163599956c475baea5c13afaf1b5032c7e6fafadde0544deddd43b78"
+    },
+    {
+      "path": "web/src/content.js",
+      "bytes": 32534,
+      "sha256": "9f12f54a5513cff0a372ca05eae5177cb23929deffab2369dff1a5055e617cb0"
+    },
+    {
+      "path": "web/src/day-night.js",
+      "bytes": 10386,
+      "sha256": "aa9a423b155ce85435a8d08cbd15014a5c7341ad8ffca542df028fd14be426db"
+    },
+    {
+      "path": "web/src/engine.js",
+      "bytes": 46263,
+      "sha256": "c7ef6601488e788297ccbb6352f7783e7518135323e487c9e88d91519a3bf044"
+    },
+    {
+      "path": "web/src/journey-audio.js",
+      "bytes": 1144,
+      "sha256": "752215a4f09d60ddb4ccbdd98a916c7dce6f7712f54497418aa6bfb220a60322"
+    },
+    {
+      "path": "web/src/origin-records.js",
+      "bytes": 10724,
+      "sha256": "16624140ddf337132e5e98f1c9e8b4cd6e81a898b6697d41435826164568278d"
+    },
+    {
+      "path": "web/src/progression.js",
+      "bytes": 8843,
+      "sha256": "3d8e2aa557a2892f71b9cf30e52fb209a67eaf5209ac5a458eda871ba6b5008c"
+    },
+    {
+      "path": "web/src/render.js",
+      "bytes": 92067,
+      "sha256": "c8da9a1e399b3ead9049a848d2a94e20b1750ce02422378613a162202cfd8034"
+    },
+    {
+      "path": "web/src/square-reply.js",
+      "bytes": 10999,
+      "sha256": "ecc728336c6447e17b5ca406d5c3d27d0a7e1f4cbaebcb95df16dbb276168620"
+    },
+    {
+      "path": "web/src/tilt.js",
+      "bytes": 10561,
+      "sha256": "530f1e13a6ee506e3811e490c5bb3d1aba97e192dbb67f5305bcc2f96fa9aad9"
+    },
+    {
+      "path": "web/tests/engine.test.cjs",
+      "bytes": 3978,
+      "sha256": "0f39321a4e067f607bdc0a87ae13539e7236c70a3f03693f34c9f9a0668a3484"
+    },
+    {
+      "path": "web/tests/host.cjs",
+      "bytes": 7982,
+      "sha256": "0fcc2abcc58680ee9ec6c9288ae51d9c099a21a34f4c4c18b5ac1f767d9380a0"
+    },
+    {
+      "path": "web/tests/r29-day-night.test.cjs",
+      "bytes": 3561,
+      "sha256": "1c929310c7371f0d4668dfaca61def77997d2258c6960669817e83a58cd83fee"
+    },
+    {
+      "path": "web/tests/r31-day-night-ending.test.cjs",
+      "bytes": 3387,
+      "sha256": "6e96f8c443181f3a04780a67d726dc6cc3cae6816dca65947f05d8e8b9302171"
+    },
+    {
+      "path": "web/tests/tilt.test.cjs",
+      "bytes": 6356,
+      "sha256": "48dc464543d6a42c4f5342cb96741b24cd7850c5d0c54071baf025e8681e7196"
+    }
+  ]
+}

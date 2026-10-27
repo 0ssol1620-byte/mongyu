@@ -1,0 +1,17 @@
+{
+  "scope": "Two existing-toolchain unsigned builds, not installation/runtime evidence",
+  "build1Sha256": "d2f39b5d1c5aa4b5a7ca2a2b01a63334e10bb927fe1d0fbab17c6142460adc18",
+  "build2Sha256": "d2f39b5d1c5aa4b5a7ca2a2b01a63334e10bb927fe1d0fbab17c6142460adc18",
+  "byteIdentical": true,
+  "assetSha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
+  "wrapperBasis": "Auditable existing R12; no R16 source parity claim",
+  "versionCodeBasis": "7 reserves prior historical code 6; actual existing R12 manifest code 5; no higher available source found",
+  "priorWebEvidenceSha256": "ed20a2c86c7629604df310dc870c361e4d3d9608a29afc63f3625a2b293c8b60",
+  "status": "Historical evidence; not rerun as part of clean snapshot preparation",
+  "priorWebSummary": {
+    "sourceStable": true,
+    "scope": "R31 complete retained aggregate, explicit current version migrations and strict exact reviewed-source delta contracts; no skipped suites. Canvas/VM, not browser/device validation",
+    "uniqueTapTests": 749,
+    "customAssertionCases": 66
+  }
+}

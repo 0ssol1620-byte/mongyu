@@ -1,0 +1,19 @@
+# Local toolchains, dependencies and secrets
+node_modules/
+.env
+.env.*
+*.jks
+*.keystore
+*.pem
+*.key
+local.properties
+.DS_Store
+__pycache__/
+# Android generated artifacts only; reviewed single-file web artifact is retained
+android/build/
+android/outputs/
+android/logs/
+android/R31_UNSIGNED_APK_VERIFICATION.json
+*.apk
+*.dex
+*.class
