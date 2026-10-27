@@ -28,7 +28,7 @@ sha = lambda data: hashlib.sha256(data).hexdigest()
 def run(name, *command, allow_failure=False):
     result = subprocess.run([str(x) for x in command], text=True, capture_output=True)
     output = result.stdout + result.stderr
-    (logs / f'{prefix}-{name}.txt').write_text(output)
+    (logs / f'{prefix}-{name}.txt').write_bytes(output.encode('utf-8'))
     if not allow_failure:
         assert result.returncode == 0, (name, output)
     return result.returncode, output
@@ -115,5 +115,5 @@ result = {
                     'Static source/DEX assertions do not replace touch, sound, IME, or save testing on a device']
 }
 report = ROOT / f'R31_{prefix.upper()}_APK_VERIFICATION.json'
-report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+report.write_bytes((json.dumps(result, ensure_ascii=False, indent=2) + '\n').encode('utf-8'))
 print(json.dumps(result, ensure_ascii=False, indent=2))

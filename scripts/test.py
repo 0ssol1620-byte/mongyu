@@ -10,6 +10,7 @@ def run(args, **kwargs):
     print('+', ' '.join(args), flush=True)
     subprocess.run(args, cwd=ROOT, check=True, **kwargs)
 
+run([sys.executable, 'scripts/test-build-portability.py'])
 run([sys.executable, 'web/build.py'])
 run([sys.executable, 'scripts/verify-snapshot.py'])
 run(['node', '--test', *sorted(str(p.relative_to(ROOT)) for p in (ROOT/'web/tests').glob('*.test.cjs'))])

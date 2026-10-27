@@ -28,7 +28,7 @@ def run(*args):
 
 assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
 assert (MAIN / 'assets/index.html').read_bytes() == SOURCE.read_bytes()
-assert (ROOT / 'expected-asset.sha256').read_text().strip() == EXPECTED
+assert (ROOT / 'expected-asset.sha256').read_text(encoding='utf-8').strip() == EXPECTED
 if BUILD.exists():
     shutil.rmtree(BUILD)
 for name in ['classes', 'dex', 'generated']:

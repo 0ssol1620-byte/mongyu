@@ -2,14 +2,19 @@
   "scope": "All publication files except this manifest itself",
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 106,
+      "sha256": "2f3e084b1d5450cb1c7ba0cd666f19f239f25611e7b46a69c64d9d136f82a300"
+    },
+    {
       "path": ".gitignore",
       "bytes": 331,
       "sha256": "8f780cd59ed3483b4309273a3bcde2bf5ca9eac5142eb6e695291514725fea38"
     },
     {
       "path": "README.md",
-      "bytes": 3504,
-      "sha256": "31e2f94e19284dcec0fd1c9a55486a4bd96d658512363060216326885b36a39f"
+      "bytes": 3946,
+      "sha256": "e28efcbc501f81b35e981e0976ebe71c034acef6a1c0680d37bf323cb93138f8"
     },
     {
       "path": "android/app/src/main/AndroidManifest.xml",
@@ -43,8 +48,8 @@
     },
     {
       "path": "android/build-unsigned.py",
-      "bytes": 3152,
-      "sha256": "fb31078c87182aeac3415ed3208b8b5dcaad8c0e4427a1ac6caf42567eb53098"
+      "bytes": 3168,
+      "sha256": "697ce6b929a0181cc46515774b03f65c50e2dee8bf42ebe043b1743d7d066818"
     },
     {
       "path": "android/expected-asset.sha256",
@@ -73,8 +78,8 @@
     },
     {
       "path": "android/verify-apk.py",
-      "bytes": 6203,
-      "sha256": "c2a667fe4e3d541cf2fddfa11beb25da9b4fd8c8b142ed4123f4167f6d4dac8e"
+      "bytes": 6239,
+      "sha256": "01f9290482d1e5f50eaf7995fdbeab9499a238d0111d0e14ec29cec8fbf30e1d"
     },
     {
       "path": "docs/ART_DIRECTION.md",
@@ -88,8 +93,8 @@
     },
     {
       "path": "docs/VALIDATION.md",
-      "bytes": 2866,
-      "sha256": "873ca86f96926d906eaa367724bff6e03e54d87b2a72a681ea0d47d7e29bf7aa"
+      "bytes": 3986,
+      "sha256": "0f898049a3bb9f1273d448fb15be102b9c68384cb9f5ea29eb8d06a52331793f"
     },
     {
       "path": "evidence/android-build-verification.json",
@@ -103,18 +108,18 @@
     },
     {
       "path": "evidence/portable-checks.json",
-      "bytes": 648,
-      "sha256": "fcea85fad18a2bf9d78c1ee19897f0fe02f6741501e6f8c919aef4ea417202a0"
+      "bytes": 1162,
+      "sha256": "46432d88696b7ffa1844d8604487f591c2f4ff825a58220d22e73866e7077834"
     },
     {
       "path": "evidence/portable-tests.log",
-      "bytes": 8713,
-      "sha256": "215749e546f992de4659e2e12ed4c3d2e42826deadeca91f50345a85e11f7893"
+      "bytes": 9079,
+      "sha256": "32ede0cec2f996d0315a776fae6ac432701cc776e1aa19b5458d4e613fc0c8bb"
     },
     {
       "path": "evidence/privacy-review.json",
-      "bytes": 567,
-      "sha256": "2dd540266ea11af7144d127974f4f6af278e9ee6be9053210f59972729231d10"
+      "bytes": 594,
+      "sha256": "1d54f00a0ad82a33426f4b1700ba2ebc0ba1860bb7aa1208bfcf63843011957d"
     },
     {
       "path": "evidence/runtime-sha256.json",
@@ -122,14 +127,19 @@
       "sha256": "53e97db11d094b804a3ca9ab7eda84cfd99d79f626b13c393ac05535b582b037"
     },
     {
+      "path": "scripts/test-build-portability.py",
+      "bytes": 1846,
+      "sha256": "5bfcf729d8e018fa8278972f2b733758544841c500a4aab4eda2134fea5eb7c4"
+    },
+    {
       "path": "scripts/test.py",
-      "bytes": 745,
-      "sha256": "c80981242c3a5504c979503ae35550ba44965ec85c113e3382c44b13e9aefae9"
+      "bytes": 804,
+      "sha256": "b1307ed8d2c0f47e8381bf370158acddf5968684dbce4d108cac9bec5b4556c1"
     },
     {
       "path": "scripts/verify-snapshot.py",
-      "bytes": 649,
-      "sha256": "e6a02516eae461728f4cec6cf3c7bf74f79e2c98a5c661938c5cd7255fe16f41"
+      "bytes": 665,
+      "sha256": "7a0a89c5e613a7312fe73e00bd18d581db8d7ed96c8f9a180049d5269ede805a"
     },
     {
       "path": "web/MONGYU_R31.html",
@@ -158,8 +168,8 @@
     },
     {
       "path": "web/build.py",
-      "bytes": 1620,
-      "sha256": "4e5752d9515e3047337f91670d20ae3acfe606bf18b7d5f9fc5900638b4885ca"
+      "bytes": 1699,
+      "sha256": "731ed96e9bb7c6f48b0a83c7d1a6eca9cbb53b245843829c8aa8b103e76aea67"
     },
     {
       "path": "web/index.template.html",

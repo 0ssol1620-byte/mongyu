@@ -5,7 +5,7 @@ import hashlib
 import json
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = json.loads((ROOT/'evidence/runtime-sha256.json').read_text())
+spec = json.loads((ROOT/'evidence/runtime-sha256.json').read_text(encoding='utf-8'))
 for relative, expected in spec['sha256'].items():
     actual = hashlib.sha256((ROOT/relative).read_bytes()).hexdigest()
     if actual != expected:

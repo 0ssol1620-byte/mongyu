@@ -25,5 +25,21 @@
   },
   "webRebuildSha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
   "fullHistoricalAggregateRerun": false,
-  "deviceOrBrowserRuntimeTested": false
+  "deviceOrBrowserRuntimeTested": false,
+  "platform": "Linux",
+  "buildPortabilityRegression": {
+    "status": "pass",
+    "inputLineEndings": [
+      "LF",
+      "CRLF"
+    ],
+    "explicitUtf8ReadsEnforced": true,
+    "binaryOutputEnforced": true,
+    "expectedHtmlSha256Unchanged": true
+  },
+  "windowsRevalidation": {
+    "status": "pending",
+    "priorSnapshot": "Direct Node tests passed 49/14/38, but default Python text output produced CRLF and failed exact HTML hash verification",
+    "fixedSnapshot": "Not yet verified on actual Windows"
+  }
 }

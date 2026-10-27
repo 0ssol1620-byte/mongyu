@@ -12,7 +12,9 @@ python3 scripts/verify-snapshot.py
 python3 scripts/test.py
 ```
 
-Python 3 및 Node.js 18 이상이 필요합니다. 이번 검증 환경은 Python 3.12.14 / Node.js 24.22.1입니다. `build.py`는 로컬 이미지 해시를 검사하고 소스와 템플릿을 단일 HTML로 묶습니다. 게임 내부의 과거 버전 표기 `r12.0.0`은 그대로이며 R31의 식별 기준은 [파일 해시](evidence/runtime-sha256.json)입니다.
+Python 3 및 Node.js 18 이상이 필요합니다. Git 체크아웃은 `.gitattributes`에 따라 텍스트 LF를 유지합니다. 웹 빌드는 UTF-8 입력과 바이트 출력으로 플랫폼별 줄바꿈 변환을 방지합니다. 이번 검증 환경은 Python 3.12.14 / Node.js 24.22.1입니다. `build.py`는 로컬 이미지 해시를 검사하고 소스와 템플릿을 단일 HTML로 묶습니다. 게임 내부의 과거 버전 표기 `r12.0.0`은 그대로이며 R31의 식별 기준은 [파일 해시](evidence/runtime-sha256.json)입니다.
+
+Windows의 이전 빌드에서 CRLF 출력으로 해시 검증이 실패한 문제를 수정했습니다. 현재 수정본은 Linux와 LF/CRLF 입력 회귀 검사에서 통과했으며, **실제 Windows 수정 후 재검증은 아직 대기 중**입니다.
 
 ## Android 소스
 
