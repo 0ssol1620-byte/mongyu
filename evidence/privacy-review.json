@@ -1,0 +1,8 @@
+{
+  "scope": "Allowlisted source/assets/tests/build/docs/evidence snapshot, including portability fix; not a guarantee that regex can detect every secret",
+  "result": "No detected credential/private workspace URL/private transfer helper or unrelated corporate identifier",
+  "textFilesScanned": 50,
+  "binaryFiles": "Only three manifest-verified WebP backgrounds; no APK, SDK, signing material, history archives or customer data intentionally included",
+  "networkReferences": "Android XML schema and appassets.androidplatform.net local WebView origin only",
+  "remoteWritePerformed": false
+}

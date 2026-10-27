@@ -1,0 +1,136 @@
++ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/test-build-portability.py
+1056113 a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968
+1056113 a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968
+PASS: explicit UTF-8 input, binary LF output, LF/CRLF fixtures and Git attributes
++ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 web/build.py
+1056113 a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968
++ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/verify-snapshot.py
+PASS: reviewed runtime hashes and exact web/Android HTML parity
++ node --test web/tests/engine.test.cjs web/tests/r29-day-night.test.cjs web/tests/r31-day-night-ending.test.cjs web/tests/tilt.test.cjs
+✔ first start enters safe approach and waits without automatic jump (3.295965ms)
+✔ real jump success, landing, corner, confirmation then campaign (0.769907ms)
+✔ missed tutorial jump immediately restores same safe checkpoint (0.468839ms)
+✔ skip is explicit and replay restores learning state (0.247106ms)
+✔ each tutorial saved step reconstructs a safe state (0.295626ms)
+✔ pause freezes tutorial and campaign, resume explicit (1.341583ms)
+✔ no-input campaign fails, retry starts clean and preserves best (9.839348ms)
+✔ all24 hazards can be cleared with deterministic input policy (14.371802ms)
+✔ sprite height clearing visible hazard has no phantom collision (0.786753ms)
+✔ repeat jump denied and invalid dt bounded (0.474275ms)
+✔ rail continuity and start angle (0.781607ms)
+✔ R29 physical route and exit contact at 30 Hz (23.277534ms)
+✔ R29 physical route and exit contact at 60 Hz (9.629627ms)
+✔ R29 physical route and exit contact at 120 Hz (6.248337ms)
+✔ R29 same phase action differs by position, not input sequence unlock (10.128933ms)
+✔ R29 raised empty lift blocks and reverses without reset (8.068416ms)
+✔ R29 lowered rider cannot cross height gap, can raise again (0.285187ms)
+✔ R29 physical day gate stops body, night passage requires walk (3.020154ms)
+✔ R29 phase alone never completes, no timer or pressure (3.090771ms)
+✔ R29 suspension freezes motion and rejects input until explicit resume (0.529488ms)
+✔ R29 invalid delta and repeated walk cannot move or refresh destination (0.333778ms)
+✔ R29 moving lift carries rider on every fixed step and reverses in place (4.847945ms)
+✔ R29 phase cannot close gate through actual human body (0.288872ms)
+✔ R31 no completion from invitation (99.188225ms)
+✔ R31 no completion from accept (39.045954ms)
+✔ R31 no completion from raised (43.194557ms)
+✔ R31 no completion from ledge (62.259562ms)
+✔ R31 no completion from open-gate (79.774992ms)
+✔ R31 refuses invalid exit evidence state-only (39.712591ms)
+✔ R31 refuses invalid exit evidence wrong-height (53.394968ms)
+✔ R31 refuses invalid exit evidence wrong-support (53.414729ms)
+✔ R31 refuses invalid exit evidence closed-gate (50.859673ms)
+✔ R31 refuses invalid exit evidence beyond-ledge (38.179265ms)
+✔ R31 actual exit persists in same live finale, never save/result/progression (333.210962ms)
+✔ R31 home clears actual exit fact and stale RAF cannot restore it (71.348832ms)
+✔ R31 new-run clears actual exit fact and stale RAF cannot restore it (40.309757ms)
+✔ R31 collection clears actual exit fact and stale RAF cannot restore it (53.741439ms)
+✔ no automatic sensor permission; controls and 30s result independent of sensor (5.673757ms)
+✔ permission denial, unavailable, insecure never blocks fallback (0.649805ms)
+✔ explicit enable, neutral deadzone, smoothing clamp, malformed events, cleanup (0.847578ms)
+✔ screen mapping has correct signed axis in all four cardinal orientations (0.245295ms)
+✔ orientation change recenters and waits for a fresh event (0.335716ms)
+✔ no events and stale events both safely stop sensor (0.537832ms)
+✔ late permission cannot resurrect listener after exit/pause/restart (3.056766ms)
+✔ permission exceptions fall back; calibration and exit have no persistence APIs (0.823817ms)
+✔ permission prompt freezes time and simulation until resolved; late grant cannot unpause (0.55184ms)
+✔ optional UI preparation waits for input and sensor watchdog still runs (0.529804ms)
+✔ obstacle starts continuously with two seconds of safe learning (0.300569ms)
+✔ 100 unchanged UI frames never rewrite live status, timer or button state (13.103646ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1318.510146
++ node --test web/tests/r31-day-night-ending.test.cjs
+✔ R31 no completion from invitation (90.395914ms)
+✔ R31 no completion from accept (141.556496ms)
+✔ R31 no completion from raised (122.660026ms)
+✔ R31 no completion from ledge (171.799766ms)
+✔ R31 no completion from open-gate (87.601922ms)
+✔ R31 refuses invalid exit evidence state-only (86.672767ms)
+✔ R31 refuses invalid exit evidence wrong-height (80.423633ms)
+✔ R31 refuses invalid exit evidence wrong-support (96.206677ms)
+✔ R31 refuses invalid exit evidence closed-gate (299.51503ms)
+✔ R31 refuses invalid exit evidence beyond-ledge (348.73785ms)
+✔ R31 actual exit persists in same live finale, never save/result/progression (1006.049743ms)
+✔ R31 home clears actual exit fact and stale RAF cannot restore it (610.221618ms)
+✔ R31 new-run clears actual exit fact and stale RAF cannot restore it (276.621013ms)
+✔ R31 collection clears actual exit fact and stale RAF cannot restore it (721.316678ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4813.998596
++ node --test android/tests/day-night-ending.test.cjs android/tests/native-lifecycle.test.cjs android/tests/wrapper-r31.test.cjs
+✔ R31 no completion from invitation (345.853927ms)
+✔ R31 no completion from accept (73.466642ms)
+✔ R31 no completion from raised (52.036664ms)
+✔ R31 no completion from ledge (70.343045ms)
+✔ R31 no completion from open-gate (90.075625ms)
+✔ R31 refuses invalid exit evidence state-only (54.975464ms)
+✔ R31 refuses invalid exit evidence wrong-height (85.948857ms)
+✔ R31 refuses invalid exit evidence wrong-support (62.078571ms)
+✔ R31 refuses invalid exit evidence closed-gate (191.968618ms)
+✔ R31 refuses invalid exit evidence beyond-ledge (323.202807ms)
+✔ R31 actual exit persists in same live finale, never save/result/progression (303.52451ms)
+✔ R31 home clears actual exit fact and stale RAF cannot restore it (156.822903ms)
+✔ R31 new-run clears actual exit fact and stale RAF cannot restore it (154.782543ms)
+✔ R31 collection clears actual exit fact and stale RAF cannot restore it (66.015689ms)
+✔ native pause freezes squareReply without main-run/save mutation (496.397073ms)
+✔ native back freezes squareReply without main-run/save mutation (129.000311ms)
+✔ native pause freezes companionBridge without main-run/save mutation (326.304258ms)
+✔ native back freezes companionBridge without main-run/save mutation (241.328714ms)
+✔ native pause freezes dayNight without main-run/save mutation (70.995137ms)
+✔ native back freezes dayNight without main-run/save mutation (296.431431ms)
+✔ R30 held Space canceled by native pause; first fresh key resumes once (189.104345ms)
+✔ R30 held Space canceled by native back; first fresh key resumes once (92.707178ms)
+✔ R30 held Enter canceled by native pause; first fresh key resumes once (86.27073ms)
+✔ R30 held Enter canceled by native back; first fresh key resumes once (57.040733ms)
+✔ R31 native pause/back preserves truthful outcome false (66.077545ms)
+✔ R31 native pause/back preserves truthful outcome true (125.733367ms)
+✔ staged asset exactly equals delivered R31 and expected digest (6.508115ms)
+✔ new package is isolated debug preview, not an R6 upgrade; Activity remains explicit (0.358037ms)
+✔ permission-free packaged source forbids backup, external intents, native bridges and network/file/content access (0.372805ms)
+✔ API-gated system back and native IME-safe viewport are present with no auto game resume (0.669746ms)
+✔ actual native JS expressions are harmless before app initialization (15.053239ms)
+✔ exact HTML boots all inline modules; native back pauses gameplay, returns home, then yields (578.813321ms)
+✔ native repeated pause freezes simulation/audio; visibility/focus never resumes it (240.774271ms)
+✔ settings, memories and tilt each consume native back without exiting the app (817.817369ms)
+✔ tilt starts permission-free; explicit grant attaches sensor then native pause removes listeners and held input (297.557873ms)
+✔ denied, insecure or absent motion API safely leaves buttons usable (450.134114ms)
+✔ permission granted after native suspend cannot reactivate motion or time (183.345908ms)
+✔ same-origin storage persists across a fresh HTML boot; back/pause do not erase it (455.540654ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3353.620386

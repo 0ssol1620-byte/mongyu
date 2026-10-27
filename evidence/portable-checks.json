@@ -1,0 +1,68 @@
+{
+  "release": "R31",
+  "command": "python3 scripts/test.py",
+  "status": "pass",
+  "python": "3.12.14",
+  "node": "24.22.1",
+  "webTests": {
+    "tests": 49,
+    "pass": 49,
+    "fail": 0,
+    "skipped": 0
+  },
+  "r31InlineReexecution": {
+    "tests": 14,
+    "pass": 14,
+    "fail": 0,
+    "skipped": 0,
+    "overlap": "Repeats the 14 R31 web cases against actual HTML"
+  },
+  "androidContractTests": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "skipped": 0
+  },
+  "webRebuildSha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
+  "fullHistoricalAggregateRerun": false,
+  "deviceOrBrowserRuntimeTested": false,
+  "platform": "Linux",
+  "buildPortabilityRegression": {
+    "status": "pass",
+    "inputLineEndings": [
+      "LF",
+      "CRLF"
+    ],
+    "explicitUtf8ReadsEnforced": true,
+    "binaryOutputEnforced": true,
+    "expectedHtmlSha256Unchanged": true
+  },
+  "windowsRevalidation": {
+    "status": "pass",
+    "testedCommit": "d2d5d591917663d112ade8c3eabffb1e09ca4e89",
+    "priorSnapshot": "Direct Node tests passed 49/14/38, but default Python text output produced CRLF and failed exact HTML hash verification",
+    "scope": "Actual Windows build and Node VM checks; not browser or Android device runtime",
+    "python": "3.12.13",
+    "node": "22.14.0",
+    "utf8Mode": 0,
+    "defaultEncoding": "cp949",
+    "environmentVariablesUnset": [
+      "PYTHONUTF8",
+      "PYTHONIOENCODING",
+      "NODE_OPTIONS"
+    ],
+    "systemSettingsChanged": false,
+    "fileCount": 53,
+    "manifestPayloadHashesMatched": 52,
+    "commands": {
+      "python scripts/verify-snapshot.py": 0,
+      "python scripts/test.py": 0
+    },
+    "buildPortabilityRegression": "pass: explicit UTF-8 and LF/CRLF fixtures",
+    "webTestsPassed": 49,
+    "r31InlineReexecutionPassed": 14,
+    "androidContractTestsPassed": 38,
+    "filesChangedAfterTests": false,
+    "webAndAndroidHtmlSha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968"
+  }
+}

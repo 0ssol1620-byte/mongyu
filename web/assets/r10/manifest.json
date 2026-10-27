@@ -1,0 +1,38 @@
+{
+  "tidal": {
+    "source": "tidal-original.png",
+    "sourceSha256": "c5717dac5952fd5494fb8b2e1cbd312ddb3159b98f1bbc4a1881ae09711ca8aa",
+    "file": "tidal.webp",
+    "sha256": "02161a08c67cfa03e3e2f847b3fd4fe1ac33296466a3d11a74f6eb512a00b087",
+    "mime": "image/webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 175956,
+    "provenance": "Original AI-generated environment for MONGYU R10. Not extracted from any reference game. Original inspected visually before integration.",
+    "usage": "Atmosphere only; all collision geometry is engine-owned."
+  },
+  "mirror": {
+    "source": "mirror-original.png",
+    "sourceSha256": "35d27df5f81ffd56cecb63746002fd79b9dd1a564be3e5c5852267aa8b4950b2",
+    "file": "mirror.webp",
+    "sha256": "40e24e01b683c14b8aa7ce779550437e5f119d65ea47b1a2fc749ab45e17cac5",
+    "mime": "image/webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 196698,
+    "provenance": "Original AI-generated environment for MONGYU R10. Not extracted from any reference game. Original inspected visually before integration.",
+    "usage": "Atmosphere only; all collision geometry is engine-owned."
+  },
+  "eclipse": {
+    "source": "eclipse-original.png",
+    "sourceSha256": "384ec245f529ec0bc26355d7d28a086874adbfcdd02d0d23c1157fd74b3b7111",
+    "file": "eclipse.webp",
+    "sha256": "cc3d7a8986527ac1cc9169daf7ce87f072b2b65f2b547024e43bfd1c4eaa9dbf",
+    "mime": "image/webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 172698,
+    "provenance": "Original AI-generated environment for MONGYU R10. Not extracted from any reference game. Original inspected visually before integration.",
+    "usage": "Atmosphere only; all collision geometry is engine-owned."
+  }
+}

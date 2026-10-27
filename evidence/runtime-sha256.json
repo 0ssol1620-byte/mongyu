@@ -1,0 +1,30 @@
+{
+  "release": "R31",
+  "purpose": "Immutable reviewed runtime identity, not signatures or device certification",
+  "sha256": {
+    "android/app/src/main/AndroidManifest.xml": "811498b2f4b24c9d248e492ecf9fa2004881dc58de4c3a19d94878347a808480",
+    "android/app/src/main/assets/index.html": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
+    "android/app/src/main/java/org/quadrift/hddevelopment/BuildConfig.java": "5a622128fe1d2156afd9a91604d66c20ca8d75a8d86c2dd29a1881e2e103246b",
+    "android/app/src/main/java/org/quadrift/hddevelopment/MainActivity.java": "cad9ee2509ef0604da9412a7e23284bda57b17e2ced069e9b23169cc8ff562db",
+    "android/app/src/main/res/drawable/ic_launcher.xml": "e4466947829ecfc3797ed52e504203e76ae28961925e49ca0f162443afc78476",
+    "android/app/src/main/res/values/styles.xml": "b7ffed48c00fe76e8f543e4925e9a87604baee122d737000cd336ad2f7cde6b7",
+    "web/MONGYU_R31.html": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968",
+    "web/assets/r10/eclipse.webp": "cc3d7a8986527ac1cc9169daf7ce87f072b2b65f2b547024e43bfd1c4eaa9dbf",
+    "web/assets/r10/manifest.json": "f30017d22f8bb551421634d90103cd9f06b592fd044cca6047b2ee632893cb4c",
+    "web/assets/r10/mirror.webp": "40e24e01b683c14b8aa7ce779550437e5f119d65ea47b1a2fc749ab45e17cac5",
+    "web/assets/r10/tidal.webp": "02161a08c67cfa03e3e2f847b3fd4fe1ac33296466a3d11a74f6eb512a00b087",
+    "web/index.template.html": "9bd495c0e861757d1a2c75930ceadb20abaa2493005c976821b2afedccee3cc1",
+    "web/src/app.js": "efad9c6150dcbd277e19cb95f85889c418704318ce778ec3bc0790881ad81879",
+    "web/src/assets.js": "d8f05d148cc04f13510e30610b4fbe7302ff49cfc726363e965659cd5e0715b0",
+    "web/src/companion-bridge.js": "5bc69abe163599956c475baea5c13afaf1b5032c7e6fafadde0544deddd43b78",
+    "web/src/content.js": "9f12f54a5513cff0a372ca05eae5177cb23929deffab2369dff1a5055e617cb0",
+    "web/src/day-night.js": "aa9a423b155ce85435a8d08cbd15014a5c7341ad8ffca542df028fd14be426db",
+    "web/src/engine.js": "c7ef6601488e788297ccbb6352f7783e7518135323e487c9e88d91519a3bf044",
+    "web/src/journey-audio.js": "752215a4f09d60ddb4ccbdd98a916c7dce6f7712f54497418aa6bfb220a60322",
+    "web/src/origin-records.js": "16624140ddf337132e5e98f1c9e8b4cd6e81a898b6697d41435826164568278d",
+    "web/src/progression.js": "3d8e2aa557a2892f71b9cf30e52fb209a67eaf5209ac5a458eda871ba6b5008c",
+    "web/src/render.js": "c8da9a1e399b3ead9049a848d2a94e20b1750ce02422378613a162202cfd8034",
+    "web/src/square-reply.js": "ecc728336c6447e17b5ca406d5c3d27d0a7e1f4cbaebcb95df16dbb276168620",
+    "web/src/tilt.js": "530f1e13a6ee506e3811e490c5bb3d1aba97e192dbb67f5305bcc2f96fa9aad9"
+  }
+}
