@@ -1,0 +1,42 @@
+/* R76: native music-role entry semantics using two licensed substitutes.
+ * No original recordings, notes or melodies. Media/gates remain owned by app.js.
+ */
+(function(root){'use strict';
+const Policy=root.MongyuRestorationAudioPolicy||(typeof require==='function'?require('./restoration-audio-policy.js'):null);
+function sceneRole(scene){
+ if(!scene)return null;
+ if(scene.nativeState===150)return 'story1';
+ if(scene.nativeState===151&&Number.isInteger(scene.nativeRow)&&scene.nativeRow>=0&&scene.nativeRow<=4)return scene.nativeRow===4?'story3':'story2';
+ if([152,153,154].includes(scene.nativeState)||scene.sceneKind==='intro')return 'skin';
+ // Telephone/interlude cues keep their existing exclusive authored SFX path.
+ return null;
+}
+function createController({rng=Math.random}={}){
+ let current=null,serial=0,lastRun=null,lastAttempt=null,lastMap=null,stageIndex=null,selection=null;
+ function update({enabled=false,title=false,dialog=null,entry=null,run=null,otherRun=false}={}){
+  if(!enabled||otherRun)return null;
+  let role=null,owner=null,scope=null,map=null,attempt=null;
+  if(dialog==='restorationCollection'){role='skin';scope='board';owner=entry?.kind==='board'?entry.owner:'board';}
+  else if(dialog==='restorationScene'){role=sceneRole(entry);scope='scene';owner=entry?.owner;}
+  else if(dialog)return null;
+  else if(run){
+   if(!['play','transition'].includes(run.state)||run.deathAnimation||Number.isFinite(run.hearts)&&run.hearts<=0)return null;
+   if(run!==lastRun||run.attempt!==lastAttempt||run.mapChanges!==lastMap){
+    selection=Policy.rejectPrevious(10,stageIndex,rng);stageIndex=selection.index;
+    lastRun=run;lastAttempt=run.attempt;lastMap=run.mapChanges;
+   }
+   role=run.boss?'boss':Policy.STAGES[stageIndex];scope='gameplay';owner=run;map=run.mapChanges;attempt=run.attempt;
+  }else if(title){role='title';scope='title';owner='title';}
+  if(!role)return null;
+  if(!current||current.owner!==owner||current.role!==role||current.scope!==scope||current.map!==map||current.attempt!==attempt){
+   // Authored substitute policy: native map roles can share one long recording.
+   // Let the transport retain its clock only for a map change within this attempt.
+   const mapOnly=current&&current.scope==='gameplay'&&scope==='gameplay'&&current.owner===owner&&current.attempt===attempt&&current.map!==map&&current.role!=='boss'&&role!=='boss';
+   current={key:++serial,role,scope,owner,map,attempt,stageIndex:scope==='gameplay'?stageIndex:null,preserveTrackOnEntry:!!mapOnly};
+  }
+  return {key:current.key,musicContext:{musicRole:role},role,scope,stageIndex:current.stageIndex,preserveTrackOnEntry:current.preserveTrackOnEntry};
+ }
+ return {update,inspect:()=>current?{key:current.key,role:current.role,scope:current.scope,stageIndex:current.stageIndex,selection:selection?{...selection}:null}:null};
+}
+const api=Object.freeze({sceneRole,createController});root.MongyuRestorationAudioLifecycle=api;if(typeof module!=='undefined')module.exports=api;
+})(globalThis);

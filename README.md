@@ -1,48 +1,43 @@
-# 몽유 · MONGYU R31
+# 몽유 · MONGYU R80
 
-사각 세계를 달리는 오프라인 게임 프로토타입의 정리된 개발 스냅샷입니다. 게임 코드는 기존 R31 그대로이며, 저장소용 경로·빌드 출력명·선별 테스트 및 문서만 정리했습니다.
+네 벽을 달리며 100개의 기억을 모으는 오프라인 게임 개발 빌드입니다. R79 최신 로컬 실행본의 엔진을 바탕으로 모바일 화면, 캐릭터, 카메라, 옷장, 오디오 및 프레임 지연 처리를 개선했습니다.
 
-## 웹 실행과 빌드
+**출시 상태: 플레이 가능한 개발 빌드. 원작 놈3의 완전 동일 복원이나 스토어 출시 인증을 의미하지 않습니다.** 상용 결제·광고·서버 권한 검증은 활성화하지 않았습니다. Codex Cloud 작업 기록은 인증 부재로 확인하지 못했고, GitHub R31 브랜치와 사용자 PC의 R79를 비교했습니다.
 
-`web/MONGYU_R31.html`을 브라우저에서 열면 됩니다. 이미지가 포함된 단일 HTML이며 서버나 npm 패키지는 필요 없습니다.
+## 실행
+
+Python 3.10 이상과 Node.js 18 이상이 필요합니다. 배포 HTML 실행에는 네트워크나 npm 패키지가 필요 없습니다. GitHub 소스 체크아웃은 음원을 포함하지 않으므로 첫 준비에 네트워크와 NumPy/FFmpeg가 필요합니다. 음원이 포함된 소스 ZIP에서는 다운로드/재합성이 생략됩니다.
 
 ```sh
+python3 tools/fetch_music.py
 python3 web/build.py
-python3 scripts/verify-snapshot.py
 python3 scripts/test.py
 ```
 
-Python 3 및 Node.js 18 이상이 필요합니다. Git 체크아웃은 `.gitattributes`에 따라 텍스트 LF를 유지합니다. 웹 빌드는 UTF-8 입력과 바이트 출력으로 플랫폼별 줄바꿈 변환을 방지합니다. 이번 검증 환경은 Python 3.12.14 / Node.js 24.22.1입니다. `build.py`는 로컬 이미지 해시를 검사하고 소스와 템플릿을 단일 HTML로 묶습니다. 게임 내부의 과거 버전 표기 `r12.0.0`은 그대로이며 R31의 식별 기준은 [파일 해시](evidence/runtime-sha256.json)입니다.
+생성된 `web/MONGYU_R80.html`을 브라우저에서 엽니다. 소스 43개, 이미지, 음원 3곡이 하나의 HTML에 들어갑니다. 원래 제공된 R79 테스트 APK에서 추출한 스크립트가 복원 기준이며, 엔진 6개 파일은 `web/tests/r80-native-integrity.json`으로 바이트 동일성을 확인합니다.
 
-Windows의 이전 빌드에서 CRLF 출력으로 해시 검증이 실패한 문제를 수정했습니다. 수정본 커밋 `d2d5d591917663d112ade8c3eabffb1e09ca4e89`은 **실제 Windows에서도 재검증 통과**했습니다: Python 3.12.13 / Node.js 22.14.0, 기본 cp949·UTF-8 모드 꺼짐에서 해시 검사와 전체 선별 runner가 통과했습니다. 이는 빌드·Node 검사이며 브라우저·Android 기기 검증은 아닙니다.
+## R80 변경
 
-## Android 소스
+- 일식·별궤도 타이틀, 둥근 조작 버튼, 간결한 꿈 지도와 이야기·결과 화면.
+- 12종 의상: 2종 기본 제공, 나머지는 기억 1~100개에 따라 해금. 실제 캐릭터에 적용하고 별도 저장합니다.
+- 연속적인 팔다리·스카프 연출. 판정과 난수 사용은 변경하지 않습니다.
+- 긴 일반 구간은 캐릭터를 따라가는 카메라로 전환. 마스크 지형·보스는 전체 경기장을 유지합니다.
+- 화면 갱신이 250ms 늦어질 때마다 강제 메뉴가 뜨던 동작 수정. 한 번에 최대 100ms만 처리하며 백그라운드·명시적 일시정지는 유지합니다.
+- 64초 자체 제작 앰비언트 테마 `Night Corners`와 기존 라이선스 음원 2곡. 메뉴/이야기는 전용 테마를 사용합니다.
+- `release-policy.js`에 선택형 상품 노출과 보상 광고 조건을 구현했습니다. 실제 결제·광고 SDK는 연결하지 않았으며 유료 권한을 로컬 저장으로 지급하지 않습니다.
 
-`android/`는 기존 R12 Java WebView 래퍼에 **동일한 R31 HTML**을 포함합니다. `versionCode=7`, `versionName=0.31.0-preview-debug`입니다. Java 코드를 바꾼 버전이나 R16 소스 복원본이 아닙니다.
+## 음원
 
-이미 설치된 OpenJDK 21, Android SDK platform 36 / build-tools 36.0.0과 Python 3가 필요합니다. SDK·JDK·Gradle·서명키는 포함하거나 자동 다운로드하지 않습니다.
+`web/assets/music/MUSIC-CREDITS.txt`와 `CC-BY-4.0.txt`를 확인하세요. 기존 두 음원의 라이선스와 자체 테마의 권리는 별개입니다. 자체 테마를 재생성하려면 NumPy 및 FFmpeg가 설치된 환경에서 `python3 tools/compose_night_score.py`를 실행합니다. 일반 빌드는 이미 포함된 MP3를 사용합니다.
 
-```sh
-export ANDROID_SDK_ROOT=/path/to/your/android-sdk
-python3 android/build-unsigned.py
-python3 android/verify-apk.py
-```
+## 검증 범위
 
-생성물은 **서명되지 않은 검증용 APK이며 설치할 수 없습니다.** `verify-apk.py`는 서명하지 않고 `apksigner verify`의 예상된 unsigned 실패, ZIP/정렬, manifest/DEX와 내장 HTML을 검사합니다. APK·중간 빌드·로그는 Git 대상에서 제외됩니다. 서명·설치·배포 작업은 이 저장소의 범위가 아닙니다.
+배포 HTML 자체를 실행하는 VM 검사에 옷장·저장 실패·서사 해금·네이티브 달리기·지연 프레임·백그라운드 복귀·음원 역할 검사를 포함했습니다. 별도의 브라우저에서 390×844 화면도 검토했습니다. 자동 검사가 실제 Android 성능이나 100개 기억 전부의 사람 입력 완주를 대신하지 않습니다.
 
-## 테스트와 검증 범위
+`web/tests/r78-mask-presentation.test.cjs`의 외부 감사 어댑터 검사는 해당 별도 도구가 이 저장소에 없어 명시적으로 생략합니다. 게임 본체의 소스/배포본 마스크 검사는 수행합니다.
 
-- 웹 선별 테스트 **49/49**, 같은 R31 결말 테스트의 실제 인라인 HTML 재실행 **14/14**, Android 소스/HTML VM 계약 **38/38** 통과.
-- 인라인 재실행 14개는 웹 49개 중 R31 사례를 다른 입력으로 다시 실행한 것이며 별개의 기능 14개를 뜻하지 않습니다.
-- 과거 전체 회귀 **749 TAP 테스트 + 66 custom cases**는 이 저장소에서 새로 재실행한 결과가 아닙니다. 전체 역사·기준본·Canvas 감사 아카이브는 의도적으로 포함하지 않았습니다. [증거와 한계](docs/VALIDATION.md)를 확인하세요.
-- 실제 브라우저/Android WebView·터치·IME·센서·오디오·스크린리더·기기 저장 유지·업데이트 서명 연속성은 검증하지 않았습니다. Node VM 통과가 기기 동작이나 재미의 증명이 아닙니다.
+## Android와 출시
 
-## 구성
+기존 `android/` 및 과거 evidence/docs는 R31/R79 기록으로 취급하세요. R80 Android 입력 파일 준비는 `python3 scripts/prepare-android-r80.py`를 사용합니다. 스토어용 AAB, 프로덕션 서명, 실기기 통과를 이 웹 빌드로 주장하지 않습니다.
 
-- `web/src`, `web/assets`, `web/index.template.html`: 원본 R31 게임 코드·필수 이미지·템플릿
-- `web/tests`, `android/tests`: 필요한 모든 로컬 의존성을 포함하는 선별 자동 검사
-- `android/app`: Android 래퍼와 정확한 웹 자산
-- `docs`: [아트 방향](docs/ART_DIRECTION.md), [R31 동작](docs/R31_BEHAVIOR.md), [검증 설명](docs/VALIDATION.md)
-- `evidence`: 원본과 현재 검증을 구분한 요약 및 파일 해시
-
-배포 설정이나 GitHub Actions 워크플로는 없습니다. 원작 게임 바이너리·고객 자료·비밀키·SDK·개인 전송 도구·과거 QA 그림 묶음은 포함하지 않았습니다. 오픈소스 라이선스 또는 상업 사용 권한을 새로 부여하는 스냅샷이 아닙니다.
+사업·출시·과금 상세 판단과 남은 검증은 [R80_RELEASE_REVIEW_KO.md](docs/R80_RELEASE_REVIEW_KO.md)에 있습니다.

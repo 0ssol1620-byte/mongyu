@@ -17,3 +17,8 @@ android/R31_UNSIGNED_APK_VERIFICATION.json
 *.apk
 *.dex
 *.class
+# Rebuildable game distributions
+web/MONGYU_R*.html
+web/build-manifest.json
+
+android/app/src/main/assets/index.html

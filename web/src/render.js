@@ -12,6 +12,66 @@ const cellPalettes=[
  {bg:'#92C9B9',deep:'#408D8F',light:'#EAF2CE',accent:'#DFB2D9',ink:'#243B49',danger:'#B03C68',actorInk:'#243B49'}
 ];
 function cellPalette(chapter=0){return cellPalettes[((chapter|0)%4+4)%4]}
+// R33: three continuous, code-native dream spaces. The score clock is engine time.
+const dreamPalettes=[
+ {bg:'#07313b',deep:'#16887e',light:'#ecf4d2',accent:'#f3ce76',ink:'#071b26',danger:'#f07e84',actorInk:'#071b26'},
+ {bg:'#29183f',deep:'#8050a0',light:'#f4e9cf',accent:'#ffbf6d',ink:'#131526',danger:'#f07e84',actorInk:'#131526'},
+ {bg:'#0d1731',deep:'#344e85',light:'#e1ede7',accent:'#b8b5ff',ink:'#0a1222',danger:'#f07e84',actorInk:'#0a1222'}
+];
+function arcadeDreamWorld(c,{time=0,act=0,reduced=false,dreamIntensity='balanced'}={}){
+ const stage=Math.max(0,Math.min(2,act|0)),p=dreamPalettes[stage],t=reduced?0:Math.max(0,Number.isFinite(Number(time))?Number(time):0),gain=reduced?0:dreamIntensity==='calm'?.45:dreamIntensity==='intense'?1: .72;
+ const score=root.MongyuDreamScore?.timeline?.(t,stage),beat=Number.isFinite(score?.beat)?score.beat:t*2;
+ const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)},contraction=stage===2&&!reduced?smooth((t-50)/2):0,resolution=stage===2&&!reduced?smooth((t-52)/2):0;
+ // A smooth beat breath changes geometry slightly; it never flashes the canvas.
+ const breath=gain*(.5-.5*Math.cos(beat*Math.PI*2)),cx=180,cy=237,detail=!reduced&&dreamIntensity==='intense';
+ const poly=(pts,fill,stroke=null,width=1)=>{c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke()}};
+ c.save();c.beginPath();c.rect(16,80,328,328);c.clip();c.fillStyle=p.bg;c.fillRect(16,80,328,328);
+ c.save();if(contraction){c.translate(cx,cy);c.scale(1-.18*contraction,1-.18*contraction);c.translate(-cx,-cy)}
+ if(stage===0){
+  // Folded ribbons: their two edges bend together into a liquid architectural nave.
+  let outer=null;
+  for(let k=15;k>=0;k--){const z=(k+1)/16,s=(20+z*245)*(1+breath*.009),tilt=Math.sin(t*.19+k*.22)*gain*.22,pts=[];
+   for(let j=0;j<64;j++){const a=j/64*Math.PI*2,r=s*(1+.12*Math.cos(a*4+t*.25*gain+k*.12)),fold=Math.sin(a*3+t*.27*gain+k*.2)*s*.13;pts.push([cx+Math.cos(a+tilt)*r,cy+Math.sin(a)*r*.72+fold])}
+   poly(pts,k%3===0?p.deep:k%3===1?p.bg:'#36a58e',k%4===0?p.accent:'#69c4a6',k%4===0?1.4:.55);
+   // Broad folded walls carry a lit face, an occluded return and a gold lip.
+   // These are connected ribbon surfaces, never independent particles.
+   if(outer&&k%2===0)for(let j=0;j<64;j+=8){const n=(j+8)%64,lit=j<24||j>48;poly([outer[j],outer[n],pts[n],pts[j]],lit?(k%4?'#23796f':'#47b799'):'#0b4850',null);if(lit){c.beginPath();c.moveTo(...pts[j]);c.lineTo(...pts[n]);c.strokeStyle=j<16?p.accent:'#8cdbc0';c.lineWidth=1.3;c.stroke()}}
+   if(detail&&outer&&k%3===0)for(let j=4;j<64;j+=8){const n=(j+3)%64;poly([outer[j],outer[n],pts[n],pts[j]],j%16===4?'#a8dcb4':'#125764',p.accent,.4)}
+   outer=pts;
+  }
+  // A luminous seam traverses each continuous fold, giving a legible depth axis.
+  for(let side of [-1,1]){c.beginPath();for(let j=0;j<60;j++){const y=88+j*5.4,x=cx+side*(30+Math.pow((y-cy)/17,2)*.6)+Math.sin(y*.018+t*.25)*gain*12;j?c.lineTo(x,y):c.moveTo(x,y)}c.strokeStyle=p.accent;c.lineWidth=.8;c.stroke()}
+ }else if(stage===1){
+  // Nested impossible portals share their corners; long bridges reveal the twist.
+  let previous=null;
+  for(let k=13;k>=0;k--){const s=17+k*16+breath*1.4,angle=.22+Math.sin(t*.15*gain+k*.17)*.27+k*.052,pts=[];
+   for(let j=0;j<6;j++){const a=j*Math.PI/3+angle,warp=1+.16*Math.sin(j*2+k*.3+t*.16*gain);pts.push([cx+Math.cos(a)*s*warp,cy+Math.sin(a)*s*.85])}
+   poly(pts,k%2?p.bg:p.deep,p.accent,k%3===0?1.5:.55);
+   if(previous)for(let j=0;j<6;j++){const next=(j+1)%6,face=[pts[j],previous[j],previous[next],pts[next]],colors=['#d2917b','#704795','#352c60','#b26a9c','#5c3b80','#d8a477'];poly(face,colors[(j+k)%6],j%2?'#c6a2b4':'#a687c9',.6);
+    const a=pts[j],b=previous[j],n=pts[next],inset=[a[0]+(n[0]-a[0])*.18,a[1]+(n[1]-a[1])*.18];poly([a,b,[b[0]+(inset[0]-a[0])*.55,b[1]+(inset[1]-a[1])*.55],inset],j%2?'#21172e':'#f1bf82');
+    if(detail&&k%2===0){const mid=[(a[0]+b[0])/2,(a[1]+b[1])/2];poly([a,mid,[(mid[0]+n[0])/2,(mid[1]+n[1])/2],n],j%2?'#45366e':'#bd75ad',p.accent,.45)}
+   }
+   previous=pts;
+  }
+  poly([[180,205],[205,221],[205,251],[180,268],[155,251],[155,221]],'#eed2a0',p.light,1);
+  poly([[180,205],[180,237],[205,251],[205,221]],'#b68481');
+  poly([[155,221],[180,237],[180,268],[155,251]],'#725b89');
+ }else{
+  // Inward eclipse: broad offset rings bend into an occulted central aperture.
+  for(let k=18;k>=1;k--){const s=8+k*12.5,drift=gain*Math.sin(t*.13+k*.16),x=cx+drift*k*.9,y=cy+Math.cos(t*.11*gain+k*.21)*k*.35;
+   c.beginPath();c.ellipse(x,y,s,s*(.67+.08*Math.sin(k*.21+t*.1*gain)),k*.023+gain*Math.sin(t*.13)*.15,0,Math.PI*2);c.fillStyle=k%2?p.bg:p.deep;c.fill();c.strokeStyle=k%5===0?p.accent:'#6889ad';c.lineWidth=k%5===0?1.5:.6;c.stroke();
+   // Radial vault voussoirs converge on the eclipse, with alternating deep returns.
+   if(k%3===0)for(let j=0;j<10;j++){const a=j*Math.PI/5+k*.025+t*.035*gain,b=a+.26,r=s-9,point=(r,a)=>[x+Math.cos(a)*r,y+Math.sin(a)*r*.71];poly([point(s,a),point(s,b),point(r,b+.03),point(r,a+.03)],j%3===0?'#94a8cc':j%3===1?'#4a6296':'#24305b',j%3===0?p.accent:null,.5)}
+   if(detail&&k%2===0){c.beginPath();c.ellipse(x,y,s-3,(s-3)*.71,k*.023,Math.PI*.88,Math.PI*1.65);c.strokeStyle='#78adcb';c.lineWidth=1.2;c.stroke()}
+  }
+  c.fillStyle=p.light;c.beginPath();c.arc(cx,cy,31+breath*.7,0,Math.PI*2);c.fill();c.fillStyle=p.ink;c.beginPath();c.arc(cx+9,cy-5,32,0,Math.PI*2);c.fill();
+  for(let side of [-1,1]){c.beginPath();c.moveTo(cx+side*10,cy+35);c.bezierCurveTo(cx+side*45,290,cx+side*116,315,cx+side*148,400);c.strokeStyle=p.accent;c.lineWidth=.7;c.stroke()}
+ }
+ c.restore();
+ // Beat 100 folds the vault inward; the last four beats resolve to one quiet aperture.
+ if(resolution){c.save();c.globalAlpha=resolution;c.fillStyle=p.bg;c.fillRect(16,80,328,328);c.strokeStyle=p.accent;c.lineWidth=2;c.beginPath();c.ellipse(cx,cy,72,51,0,0,Math.PI*2);c.stroke();c.fillStyle=p.light;c.beginPath();c.arc(cx,cy,22,0,Math.PI*2);c.fill();c.fillStyle=p.ink;c.beginPath();c.arc(cx+7,cy-4,23,0,Math.PI*2);c.fill();c.restore()}
+ c.restore();return {stage,palette:p,clock:t,intensity:gain,contraction,resolution};
+}
 function squareWorld(c,{x=16,y=80,w=328,h=328,time=0,reduced=false,variant=0,chapter=0,morph=0,layout=null}={}){
  const p=cellPalette(chapter),t=reduced?0:time,form=(variant|0)%4,N=layout===null?29:25+2*(Math.floor(layout/10)%4),half=(N-1)/2,step=Math.min(w,h)/N;
  c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.fillStyle=p.bg;c.fillRect(x,y,w,h);
@@ -48,20 +108,29 @@ function squareBoss(c,g,p,geo){const b=geo.boss;if(!b||g.boss?.hp===0)return;con
  for(const q of geo.projectiles||[]){const s=q.width??q.w??8;c.fillStyle=q.owner==='boss'?p.danger:p.accent;c.fillRect(q.x-s/2,q.y-s/2,s,s)}
 }
 function drawOrigin(c,g,opt={}){
- const reduced=!!opt.reduced,geo=g.geometry(),o=geo.origin||g.originStatus?.()||{},chapter=Math.max(0,(o.chapter||1)-1),p=cellPalette(chapter),t=g.state==='pause'?g.time:Number.isFinite(opt.time)?opt.time:g.time;
+ const reduced=!!opt.reduced,geo=g.geometry(),o=geo.origin||g.originStatus?.()||{},chapter=Math.max(0,(o.chapter||1)-1),p=g.mode==='arcade'?dreamPalettes[Math.max(0,Math.min(2,(g.arcadeStatus().act||1)-1))]:cellPalette(chapter),t=g.state==='pause'?g.time:Number.isFinite(opt.time)?opt.time:g.time;
  c.save();c.clearRect(0,0,360,480);c.fillStyle=p.ink;c.fillRect(0,0,360,480);
- c.save();c.beginPath();c.rect(16,80,328,328);c.clip();squareWorld(c,{time:t,reduced,chapter,variant:o.morphCount||0,morph:Number(o.transition)||0});
+ c.save();c.beginPath();c.rect(16,80,328,328);c.clip();if(g.mode==='arcade')arcadeDreamWorld(c,{time:g.time,act:(g.arcadeStatus().act||1)-1,reduced,dreamIntensity:opt.dreamIntensity});else squareWorld(c,{time:t,reduced,chapter,variant:o.morphCount||0,morph:Number(o.transition)||0});
  // Engine samples are the sole source of the visible travel corridor.
- for(const path of geo.paths||[]){if(!path.points?.length)continue;for(const [i,q]of path.points.entries()){c.fillStyle=i%4<2?p.light:p.ink;c.fillRect(q.x-2,q.y-2,4,4)}}c.strokeStyle=p.ink;c.lineWidth=1;c.strokeRect(16.5,80.5,327,327);
+ if(g.mode==='arcade')for(const path of geo.paths||[]){if(!path.points?.length)continue;for(const [width,color] of [[38,p.ink],[2,p.light]]){c.beginPath();for(const [i,q]of path.points.entries())i?c.lineTo(q.x,q.y):c.moveTo(q.x,q.y);c.strokeStyle=color;c.lineWidth=width;c.lineJoin='round';c.lineCap='round';c.stroke()}}
+ if(g.mode!=='arcade')for(const path of geo.paths||[]){if(!path.points?.length)continue;for(const [i,q]of path.points.entries()){c.fillStyle=i%4<2?p.light:p.ink;c.fillRect(q.x-2,q.y-2,4,4)}}c.strokeStyle=p.ink;c.lineWidth=1;c.strokeRect(16.5,80.5,327,327);
  const copy=dialogueCue(g);if(copy)characterBubble(c,g,copy,reduced);
  for(const h of g.hazards||[]){const q=g.hazardPose(h);if(!q||q.visible===false||h.done)continue;const w=q.width??h.width??18,ht=q.height??h.clearance??18;if(q.polygon?.length){c.save();pathPoints(c,q.polygon,true);c.fillStyle=p.ink;c.fill();c.clip();c.save();c.translate(q.x,q.y);c.rotate(q.angle||0);if(q.type!=='ceiling')for(let y=-(q.floor||0)-ht;y<-(q.floor||0);y+=4)for(let x=-w/2;x<w/2;x+=4){c.fillStyle=(Math.floor(x/4)+Math.floor(y/4))%3?p.danger:p.light;c.fillRect(x+.3,y+.3,3.4,3.4)}c.restore();if(q.type==='ceiling'){pathPoints(c,q.polygon,true);c.strokeStyle=p.light;c.lineWidth=2;c.stroke()}c.restore();continue}c.save();c.translate(q.x,q.y);c.rotate(q.angle||0);if((q.type||h.type)==='gap'){c.fillStyle=p.ink;c.fillRect(-w/2,-1,w,17)}else{const beam=(q.type||h.type)==='beam',top=beam?-(27+(q.ceiling??h.ceiling??10))-13:-ht,H=beam?13:ht;c.fillStyle=p.danger;c.fillRect(-w/2,top,w,H);c.fillStyle=p.light;const size=Math.max(2,Math.min(4,w/4));for(let x=-w/2+3;x<w/2-2;x+=size+3)c.fillRect(x,top+3,size,size)}c.restore()}
- drawOriginContact(c,g,p);resultWorld(c,g,p,opt);renderActors(c,g,p,reduced);c.restore();
+ drawOriginContact(c,g,p);if(g.mode!=='arcade')resultWorld(c,g,p,opt);renderActors(c,g,p,reduced);c.restore();
  text(c,'몽유',20,30,20,p.light,'left',750);text(c,String(o.chapter||1).padStart(2,'0')+' / 04',340,30,12,p.light,'right',600);
  text(c,o.chapterName||['색의 물결','꽃의 안쪽','갈라진 방','다시 흐르는 길'][chapter],20,56,12,p.accent,'left',600);
  // A compact square life row, never a diagnostic footer or a centre instruction.
  const lives=Math.max(0,g.hearts??3);for(let i=0;i<3;i++){c.fillStyle=i<lives?p.accent:p.deep;c.fillRect(20+i*13,435,7,7)}
  c.fillStyle=p.deep;c.fillRect(20,463,320,2);c.fillStyle=p.accent;c.fillRect(20,463,320*Math.min(1,o.progress||0),2);
- resultPanel(c,g,p,opt);c.restore();
+ if(g.mode==='arcade'){drawArcadeHUD(c,g,p)}else resultPanel(c,g,p,opt);c.restore();
+}
+function drawArcadeHUD(c,g,p){const v=g.arcadeStatus(),number=x=>String(Math.max(0,Math.floor(Number(x)||0)));c.fillStyle=p.ink;c.fillRect(0,0,360,80);c.fillRect(0,415,360,65);
+ text(c,'54초 도전',20,23,18,p.light,'left',750);text(c,(v.act||1)+'/3막 · '+(v.actName||''),340,23,11,p.accent,'right',650);
+ text(c,'보호 '+number(v.bankedScore),20,53,15,p.light,'left',700);text(c,'도전 +'+number(v.pendingScore),340,53,18,p.accent,'right',750);text(c,v.nextCue||'다음 선택을 기다립니다',180,73,11,p.light,'center',500);
+ const lives=Math.max(0,g.hearts||0),limit=g.level?.heartLimit||(v.risk==='brave'?1:3);for(let i=0;i<limit;i++){c.fillStyle=i<lives?p.accent:p.deep;c.fillRect(20+i*13,425,7,7)}
+ text(c,'×'+number(v.multiplier)+'  ·  '+number(v.combo)+' 연속',340,430,13,p.accent,'right',700);
+ text(c,g.arcadeFeedback||('정확 '+number(v.perfect)+'회 · '+Math.max(0,54-g.time).toFixed(1)+'초 남음'),20,451,12,g.arcadeFeedback?p.accent:p.light,'left',650);
+ c.fillStyle=p.deep;c.fillRect(20,470,320,3);c.fillStyle=p.accent;c.fillRect(20,470,320*Math.min(1,Math.max(0,v.progress||0)),3);
 }
 
 const themes=[{name:'ACID BLUE',bg:'#72dce7',deep:'#1499d8',light:'#b9f5e7',accent:'#e9fb42',ink:'#092f43',danger:'#f23262'}, {name:'PINK STATIC',bg:'#f9b5e3',deep:'#e953a3',light:'#ffd4a7',accent:'#f7ff56',ink:'#511144',danger:'#573ada'}, {name:'YELLOW ROOM',bg:'#f9ec5c',deep:'#e9b72d',light:'#fff9a7',accent:'#f05b84',ink:'#3e3215',danger:'#b62d6b'},
@@ -79,7 +148,7 @@ function line(c,points,color,width=2){c.strokeStyle=color;c.lineWidth=width;c.li
 // returning foot lifts clear of the ground. Two legs alternate half a cycle.
 function runningLeg(phase,reduced=false,bob=0){const t=((phase%(Math.PI*2))+Math.PI*2)%(Math.PI*2),stance=reduced||t<Math.PI,x=reduced?(t<Math.PI?5:-5):stance?10-20*t/Math.PI:-10+20*(t-Math.PI)/Math.PI,y=reduced?0:stance?0:-8*Math.sin(t-Math.PI),contact=stance?bob:0;return {knee:[x*.45+1,-9+y*.35+contact*.35],ankle:[x,y+contact],toe:[x+3,y+contact],stance}}
 function actorFacing(g,q={}){if(Number.isFinite(q.facing))return q.facing<0?-1:1;return g.gameMode==='dodge-arena'&&g.arena?.move>0&&g.arena.toX<g.arena.fromX?-1:1}
-function human(c,x,y,{angle=0,phase=0,jump=0,color='#081c29',reduced=false,scale=1,kick=false,facing=1,airProgress=.5,idle=false,time=0,throwProgress=null,evade=0,balance=null,settleProgress=null}={}){const classic=artStyle!=='painted-experiment';if(classic)color='#111713';c.save();c.translate(x,y);c.rotate(angle);c.translate(0,-jump);c.scale(scale*(facing<0?-1:1),scale);const a=reduced?.55:Math.sin(phase),b=reduced?.6:Math.cos(phase),air=jump>1,bob=air?0:Math.abs(b)*.8;c.translate(0,-bob);const breath=idle&&!reduced?Math.sin(time*2.2)*.35:0,hip=[-1,classic?-18.5:-16],shoulder=[2,-29+breath],dark=color==='#110E24'||color==='#081c29';
+function human(c,x,y,{angle=0,phase=0,jump=0,color='#081c29',reduced=false,scale=1,kick=false,facing=1,airProgress=.5,idle=false,time=0,throwProgress=null,evade=0,balance=null,settleProgress=null,skinColor=null}={}){const classic=artStyle!=='painted-experiment';if(classic)color=skinColor||'#111713';c.save();c.translate(x,y);c.rotate(angle);c.translate(0,-jump);c.scale(scale*(facing<0?-1:1),scale);const a=reduced?.55:Math.sin(phase),b=reduced?.6:Math.cos(phase),air=jump>1,bob=air?0:Math.abs(b)*.8;c.translate(0,-bob);const breath=idle&&!reduced?Math.sin(time*2.2)*.35:0,hip=[-1,classic?-18.5:-16],shoulder=[2,-29+breath],dark=color==='#110E24'||color==='#081c29';
  // Tiny, hand-shaped silhouette: articulated joints are softened, not rubber hoses.
  // The head centre, contact plane and gait phase remain the published anchors.
  let silhouetteEdge=false;
@@ -375,8 +444,9 @@ function title(c,time,reduced,best){const p=cellPalette(0),t=reduced?0:time;
  c.strokeStyle=p.light;c.lineWidth=32;railPath(c);c.stroke();c.strokeStyle=p.deep;c.lineWidth=1.5;railPath(c);c.stroke();
  const d=reduced?120:(120+t*28)%root.QuadRiftHD.LENGTH,q=root.QuadRiftHD.rail(d);
  human(c,q.x,q.y,{angle:root.QuadRiftHD.angleAt(d,reduced),phase:t*5,scale:GAMEPLAY_SCALE,color:p.ink,reduced});
- c.restore();text(c,'몽유',20,31,22,p.light,'left',750);text(c,'네 변을 따라',20,55,12,p.accent,'left',500);
- text(c,'화면을 눌러 꿈속으로',180,438,14,p.light,'center',650);}
+ c.restore();text(c,'몽유',20,31,22,p.light,'left',750);text(c,'54초 도전 · R33 실험',20,55,12,p.accent,'left',600);
+ c.fillStyle=p.ink;c.fillRect(26,195,308,96);text(c,'멈출까, 한 막 더?',180,218,23,p.light,'center',750);text(c,'바닥은 점프 · 천장은 그대로',180,247,13,p.accent,'center',650);text(c,'18초마다 점수 확정 또는 배율 도전',180,272,11,p.light,'center',500);
+ text(c,'아래 54초 도전으로 시작',180,438,14,p.light,'center',650);}
 const collectionBounds=Array.from({length:10},(_,i)=>({x:i%2?184:20,y:98+Math.floor(i/2)*56,w:156,h:50,slot:i+1}));
 function shorten(value,n=24){const a=Array.from(String(value||''));return a.length>n?a.slice(0,n-1).join('')+'…':a.join('')}
 function chapterIndex(g){return g.level?Math.max(0,Math.min(9,(g.level.chapter||1)-1)):Math.max(0,Math.min(9,g.stage||0))}
@@ -593,7 +663,7 @@ function liveBoss(c,g,p,geo){if(artStyle!=='painted-experiment'){squareBoss(c,g,
  for(const q of geo.projectiles||[]){const w=q.width??q.w??8,h=q.height??q.h??8;c.save();c.translate(q.x,q.y);c.fillStyle=q.owner==='boss'?p.danger:p.accent;c.beginPath();c.moveTo(-w/2,0);c.quadraticCurveTo(-w/3,-h/2,w/3,-h/2);c.lineTo(w/2,0);c.quadraticCurveTo(w/3,h/2,-w/3,h/2);c.closePath();c.fill();c.strokeStyle=p.ink;c.lineWidth=1;c.stroke();line(c,[[-w*.2,-h*.2],[w*.2,-h*.2]],p.light,.8);c.restore()}
 }
 
-function renderActors(c,g,p,reduced){const all=typeof g.actorPoses==='function'?g.actorPoses(reduced):[actorPose(g,reduced)];for(const [index,raw]of all.entries()){const q={height:0,angle:0,phase:g.distance*.14,scale:GAMEPLAY_SCALE,...raw},contact=Math.max(0,1-q.height/100);c.save();c.translate(q.x,q.y);c.rotate(q.angle);c.fillStyle='rgba(7,19,31,'+(.1+contact*.18)+')';c.beginPath();if(artStyle==='painted-experiment')c.ellipse(0,1,3+contact*4,1+contact*.5,0,0,Math.PI*2);else c.rect(-3-contact*4,0,6+contact*8,2);c.fill();c.restore();human(c,q.x,q.y,{angle:q.angle,phase:q.phase,jump:q.height,color:p.actorInk||p.ink,reduced,scale:q.scale,kick:g.gameMode==='kick-arena'&&g.arena?.kick>0,facing:actorFacing(g,q),airProgress:1-(g.jump||0)/(g.gameMode==='kick-arena'?1.28:root.QuadRiftHD.JUMP_SECONDS),idle:!!g.arena&&!(g.arena.move>0)||!!g.waiting,time:g.time||0,settleProgress:g.resultSettle??null,throwProgress:g.gameMode==='throw-arena'&&g.arena.cooldown>0?1-g.arena.cooldown/g.modeParams.cooldown:null,evade:g.gameMode==='dodge-arena'&&g.arena.move>0?1-g.arena.move/.16:0});
+function renderActors(c,g,p,reduced){const all=typeof g.actorPoses==='function'?g.actorPoses(reduced):[actorPose(g,reduced)];for(const [index,raw]of all.entries()){const q={height:0,angle:0,phase:g.distance*.14,scale:GAMEPLAY_SCALE,...raw},contact=Math.max(0,1-q.height/100);c.save();c.translate(q.x,q.y);c.rotate(q.angle);c.fillStyle='rgba(7,19,31,'+(.1+contact*.18)+')';c.beginPath();if(artStyle==='painted-experiment')c.ellipse(0,1,3+contact*4,1+contact*.5,0,0,Math.PI*2);else c.rect(-3-contact*4,0,6+contact*8,2);c.fill();c.restore();if(g.mode==='r34')human(c,q.x,q.y,{angle:q.angle,phase:q.phase,jump:q.height,skinColor:'#fffef3',reduced,scale:q.scale*1.13,facing:actorFacing(g,q),airProgress:1-(g.jump||0)/root.QuadRiftHD.JUMP_SECONDS});human(c,q.x,q.y,{angle:q.angle,phase:q.phase,jump:q.height,color:p.actorInk||p.ink,skinColor:g.mode==='r34'?g.r34Status()?.skinColor:null,reduced,scale:q.scale,kick:g.gameMode==='kick-arena'&&g.arena?.kick>0,facing:actorFacing(g,q),airProgress:1-(g.jump||0)/(g.gameMode==='kick-arena'?1.28:root.QuadRiftHD.JUMP_SECONDS),idle:!!g.arena&&!(g.arena.move>0)||!!g.waiting,time:g.time||0,settleProgress:g.resultSettle??null,throwProgress:g.gameMode==='throw-arena'&&g.arena.cooldown>0?1-g.arena.cooldown/g.modeParams.cooldown:null,evade:g.gameMode==='dodge-arena'&&g.arena.move>0?1-g.arena.move/.16:0});
  // Brief physical feedback follows actual hit state, never a looping aura.
  // Marks stay within actor bounds; reduced motion receives no added effect.
  if(!reduced&&g.hitFlash>0){c.save();c.translate(q.x,q.y);c.rotate(q.angle);c.translate(0,-q.height);c.scale(q.scale,q.scale);const alpha=Math.min(1,g.hitFlash*4);c.globalAlpha=alpha;line(c,[[-12,-29],[-9,-26]],p.danger,1.3);line(c,[[11,-34],[14,-37]],p.danger,1.3);c.restore()}}
@@ -655,7 +725,11 @@ function drawFamilies(c,g,opt={}){const reduced=!!opt.reduced,p=familyPalette(g)
 
 function tutorialCopy(g){return {approach:['가까이 가 볼까?','장애물 앞에서 멈출게.'],jump:[g.recoveries?'괜찮아, 다시!':'지금, 화면을 톡!','점프해서 넘어가자.'],corner:['잘 넘었어!','착지 후에도 달려가.'],confirm:['다음 꿈은 다른 규칙!','말풍선으로 알려 줄게.']}[g.tutorialStep]}
 function drawTutorial(c,g,opt={}){const p=familyPalette(g),reduced=!!opt.reduced,geo=g.geometry();c.save();c.clearRect(0,0,360,480);c.fillStyle='#07151f';c.fillRect(0,0,360,480);c.save();c.beginPath();c.rect(16,80,328,328);c.clip();floorScene(c,g,p,geo,reduced);if(g.state==='play')characterBubble(c,g,tutorialCopy(g),reduced);for(const h of g.hazards)liveHazard(c,h,g,p,geo);renderActors(c,g,p,reduced);c.restore();text(c,'첫 걸음 · 안전 연습',20,28,16,'#fffef3','left',750);text(c,'실수해도 같은 지점에서 다시',20,55,12,p.accent,'left',650);text(c,g.tutorialStep==='confirm'?'한 번 더 눌러 첫 꿈으로':'화면·Space·Enter로 점프',180,438,14,'#f7f5d9','center',700);text(c,'다른 꿈의 조작은 인물의 말풍선에서',180,463,12,'#bad4dc','center');if(g.state==='pause')resultPanel(c,g,p,opt);c.restore()}
-function draw(c,g,opt={}){if(!opt.collection&&g.gameMode==='origin-four-edge'&&g.state!=='title'){drawOrigin(c,g,opt);return}if(!opt.collection&&g.gameMode==='tutorial-floor'&&g.state!=='title'){drawTutorial(c,g,opt);return}if(!opt.collection&&g.state!=='title'&&g.mode!=='tutorial'&&MODE_LABELS[g.gameMode]&&typeof g.geometry==='function'){drawFamilies(c,g,opt);return}if(opt.collection){collection(c,{...opt.collection,time:opt.time,reduced:opt.reduced});return}const reduced=!!opt.reduced;c.save();c.clearRect(0,0,360,480);if(g.state==='title'){title(c,opt.time||0,reduced,g.best);c.restore();return}c.fillStyle='#07151f';c.fillRect(0,0,360,480);const stage=chapterIndex(g),p=themes[stage];backdrop(c,stage,g.time,reduced,g.distance,g.level?.slot||0);bossArt(c,g,p,reduced);
+// R35 pure full-viewport architectural renderer, legacy API retained for callers.
+function immersiveArt(){return root.MongyuImmersiveArt||(typeof require==='function'?require('./immersive-art.js'):null)}
+function drawR34(c,g,opt={},geo=g.geometry()){return immersiveArt().draw(c,g,opt,geo)}
+
+function drawLegacy(c,g,opt={}){if(!opt.collection&&g.state!=='title'&&typeof g.geometry==='function'){const r34geo=g.geometry();if(['r34-route','r34-boss'].includes(r34geo.kind)){drawR34(c,g,opt,r34geo);return}}if(!opt.collection&&g.gameMode==='origin-four-edge'&&g.state!=='title'){drawOrigin(c,g,opt);return}if(!opt.collection&&g.gameMode==='tutorial-floor'&&g.state!=='title'){drawTutorial(c,g,opt);return}if(!opt.collection&&g.state!=='title'&&g.mode!=='tutorial'&&MODE_LABELS[g.gameMode]&&typeof g.geometry==='function'){drawFamilies(c,g,opt);return}if(opt.collection){collection(c,{...opt.collection,time:opt.time,reduced:opt.reduced});return}const reduced=!!opt.reduced;c.save();c.clearRect(0,0,360,480);if(g.state==='title'){title(c,opt.time||0,reduced,g.best);c.restore();return}c.fillStyle='#07151f';c.fillRect(0,0,360,480);const stage=chapterIndex(g),p=themes[stage];backdrop(c,stage,g.time,reduced,g.distance,g.level?.slot||0);bossArt(c,g,p,reduced);
  // Dialogue is behind actors: a tail can never erase a hazard or a running limb.
  if(g.mode==='tutorial'&&g.state==='play'){const copy={approach:['가까이 가 볼까?','장애물 앞에서 멈출게.'],jump:[g.recoveries?'괜찮아, 다시!':'지금, 화면을 톡!','점프해서 넘어가자.'],corner:['모서리다!','방향은 저절로 바뀌어.'],confirm:['어느 방향이든, 톡.','한 번 더 누르면 출발!']}[g.tutorialStep];characterBubble(c,g,copy,reduced);}
  const dialogue=dialogueCue(g);if(dialogue)characterBubble(c,g,dialogue,reduced);
@@ -681,5 +755,8 @@ function draw(c,g,opt={}){if(!opt.collection&&g.gameMode==='origin-four-edge'&&g
  resultWorld(c,g,p,opt);resultPanel(c,g,p,opt);
 
  c.restore()}
-root.QuadRiftArt={resultActor,KICK_SETTLE_SECONDS,resultScene,resultWorld,resultPanel,ORIGIN_HIT_SECONDS,activeOriginHit,originContactCopy,drawOriginContact,setArtStyle,cellPalette,squareWorld,squareBoss,drawOrigin,draw,familyPalette,foldedSpace,drawTutorial,tutorialCopy,drawFamilies,MODE_LABELS,MODE_HINTS,speechLayouts,floorScene,waveScene,roomScene,arenaScene,liveHazard,liveBoss,renderActors,human,runningLeg,actorFacing,gapBounds,drawGap,backdrop,themes,GAMEPLAY_SCALE,actorPose,headAnchor,actorBounds,speechObstacles,bubbleLayout,characterBubble,gameplayCue,dialogueCue,DIALOGUE_SECONDS,DIALOGUE_GAP,bossHUD,title,cornerResponse,railPath,collection,collectionBounds,chapterPattern,skinComposition,hazardArt,bossArt,ceilingRibbon,beamArt};if(typeof module!=='undefined')module.exports=root.QuadRiftArt;
+function squareArt(){return root.MongyuSquareArt||(typeof require==='function'?require('./square-art.js'):null)}
+function draw(c,g,opt={}){if(!opt.collection&&g.state==='title')return opt.squareMode?squareArt().title(c,opt):immersiveArt().title(c,opt);const geo=!opt.collection&&g.state!=='title'&&typeof g.geometry==='function'?g.geometry():null;if(geo&&(geo.faces||geo.track?.points)&&geo.room&&geo.player)return squareArt().draw(c,g,opt,geo);if(geo&&['r34-route','r34-boss'].includes(geo.kind))return drawR34(c,g,opt,geo);const cam=immersiveArt().camera(opt.viewport);c.save();c.fillStyle='#0a2530';c.fillRect(0,0,cam.width,cam.height);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);drawLegacy(c,g,opt);c.restore()}
+
+root.QuadRiftArt={drawR34,arcadeDreamWorld,dreamPalettes,resultActor,KICK_SETTLE_SECONDS,resultScene,resultWorld,resultPanel,ORIGIN_HIT_SECONDS,activeOriginHit,originContactCopy,drawOriginContact,setArtStyle,cellPalette,squareWorld,squareBoss,drawOrigin,draw,familyPalette,foldedSpace,drawTutorial,tutorialCopy,drawFamilies,MODE_LABELS,MODE_HINTS,speechLayouts,floorScene,waveScene,roomScene,arenaScene,liveHazard,liveBoss,renderActors,human,runningLeg,actorFacing,gapBounds,drawGap,backdrop,themes,GAMEPLAY_SCALE,actorPose,headAnchor,actorBounds,speechObstacles,bubbleLayout,characterBubble,gameplayCue,dialogueCue,DIALOGUE_SECONDS,DIALOGUE_GAP,bossHUD,title,cornerResponse,railPath,collection,collectionBounds,chapterPattern,skinComposition,hazardArt,bossArt,ceilingRibbon,beamArt};if(typeof module!=='undefined')module.exports=root.QuadRiftArt;
 })(globalThis);

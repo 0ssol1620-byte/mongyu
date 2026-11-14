@@ -1,14 +1,8 @@
-#!/usr/bin/env python3
-"""Verify reviewed runtime hashes and exact web/Android asset parity."""
 from pathlib import Path
-import hashlib
-import json
-
-ROOT = Path(__file__).resolve().parents[1]
-spec = json.loads((ROOT/'evidence/runtime-sha256.json').read_text(encoding='utf-8'))
-for relative, expected in spec['sha256'].items():
-    actual = hashlib.sha256((ROOT/relative).read_bytes()).hexdigest()
-    if actual != expected:
-        raise SystemExit('HASH MISMATCH: ' + relative)
-assert (ROOT/'web/MONGYU_R31.html').read_bytes() == (ROOT/'android/app/src/main/assets/index.html').read_bytes()
-print('PASS: reviewed runtime hashes and exact web/Android HTML parity')
+import hashlib,json,re
+root=Path(__file__).resolve().parents[1];web=root/'web';data=(web/'MONGYU_R80.html').read_bytes();html=data.decode('utf-8');manifest=json.loads((web/'build-manifest.json').read_text());assert hashlib.sha256(data).hexdigest()==manifest['sha256'];scripts=re.findall(r'<script>([\s\S]*?)</script>',html)
+for name in json.loads((web/'sources.json').read_text()):
+ source=(web/'src'/name).read_text(encoding='utf-8');assert scripts.count(source)==1,name
+assert "connect-src 'none'" in html
+assert '/*MOBILE_CSS*/' not in html and '<!--SCRIPTS-->' not in html
+print('R80 exact artifact: all source modules, pinned assets and offline policy verified')
