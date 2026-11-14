@@ -1,0 +1,8 @@
+{
+  "native-kernels.js": "163305007f3ab8f4e784c23c9efd06cd00d2eafd6e986d41ac88a2c714081a33",
+  "native-restoration-run.js": "f00f99915626ff20ca33660a9a16eb04368c4496294fd79a3f4a6a80b7fb7f4b",
+  "restoration-catalog.js": "d8211bbfb2d4e7d61917cd72e4938d3880939f64f186cb22ddfcf95a67a30b92",
+  "restoration-stage-policy.js": "f4e9c31c9963dba3e08ef08bdee59ce28275fa4f7ac77098f36858dee8115e86",
+  "restoration-world.js": "fcf458838da3f5152971be53b1afd4373edcd68c1355cbb50f16ec5fc3b67a2b",
+  "engine.js": "d72ff142bab26910105ab3aff95d9c72ba0491acbf579f04eab23652a493b110"
+}

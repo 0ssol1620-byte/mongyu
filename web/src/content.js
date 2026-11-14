@@ -208,5 +208,68 @@ const originRoute={id:'origin-inspired-v1',title:'네 변의 여정',provenance:
 };
 // Reuses independently authored projectile mechanics, never numeric campaign rewards.
 const originFinale={...levels[9],id:'origin-finale-v1',name:'사각의 문지기',description:'독립 설계한 사각 셀 결말 · 투척으로 문지기 격파',provenance:'independent-reconstruction-not-original-port',route:'origin-finale',objectives:[{type:'finish',target:1,text:'사각 문지기 격파'},{type:'bossDamage',target:4,text:'실제 투사체 명중 4회'}]};
-const content=freeze({schema:6,contentVersion:6,provenance:'original-independent-design-not-exact-restoration',modeNames,levels,chapters,riddles,originRoute,originFinale,getLevel,getLegacyLevel,checkAnswer});root.QuadRiftContent=content;if(typeof module!=='undefined')module.exports=content;
+// R34 original journey: explicit situations, independent of the R6 slot generator.
+// Event times are authored active seconds; none are sampled from a route grammar.
+const r34Cards=[
+ ['금이 간 우체국','끊긴 선을 잇기','벽과 틈 앞에서 한 번 점프한다.','빈 바닥에 닿거나 벽을 건드리면 실패한다.','간격을 읽어 도약을 이어 간다.',
+  [['찢어진 봉투','첫 벽 뒤의 빈 바닥을 구분한다.','B@2 X@4.2 B@6.5'],['세 장의 우표','가까운 벽 둘 사이에는 착지할 시간이 있다.','B@2 B@3.15 X@5.8'],['반송된 다리','긴 휴식 뒤 연달아 두 틈을 건넌다.','X@2 B@5 X@6.3']],
+  '우편 종지기','chain','첫 편지는 주소를 잃었다. 끊어진 길에 발자국으로 주소를 쓴다.','종 세 번이 서로의 꼬리를 물자 바닥에 검은 발자국이 이어졌다.','그림자 우표'],
+ ['뒤집힌 온실','천장과 바닥의 교대','벽은 뛰고 낮은 유리 아래는 걸어간다.','천장 아래 도약하면 유리에 닿는다.','위험의 높이를 읽어 누르지 않을 순간을 고른다.',
+  [['물방울 선반','벽 다음 낮은 선반에서는 날개를 접는다.','B@2 G@3.5 B@5.5'],['서로 다른 창','천장 아래를 걷고 두 벽 중 하나 이상을 깨끗하게 넘습니다.','L@2.5 B@4.3 G@6 B@7.6'],['위아래 잎맥','높이가 바뀌는 두 쌍의 문을 읽는다.','G@2 B@3.5 G@5 H@6.5']],
+  '반사 유리새','mirror','천장에 심긴 꽃들이 아래를 향해 자란다. 진짜 신호는 빛이 돌아올 때 온다.','가짜 반짝임을 보내고 돌아온 빛만 받아 내자 방 안에서 같은 소리가 두 번 들렸다.','유리 메아리'],
+ ['두 개의 항구','한 도약의 두 몸','붙은 두 벽은 한 점프로 넘고 다음 묶음 전에는 착지한다.','두 번째 벽에 너무 낮게 닿으면 실패한다.','쌍의 가운데에 점프 최고점을 놓는다.',
+  [['묶인 배 두 척','두 벽의 중심 사이에 최고점을 놓는다.','D@2 D@4.5 B@7'],['등대 사이','한 쌍을 넘은 뒤 유리 아래에서 쉰다.','D@2 G@3.8 D@5.7'],['외로운 부표','한 벽과 두 벽을 같은 도약으로 착각하지 않는다.','B@2 D@3.6 X@6']],
+  '쌍닻 잠수부','twins','항구의 두 시계가 다른 시간을 가리킨다. 두 닻을 같은 물결에 맞춰야 배가 뜬다.','왼 닻을 비우고 오른 닻을 튕기자 두 바늘이 한 원 안에서 다시 만났다.','항구 시계'],
+ ['높은 옥상 정원','최고점의 열쇠','작은 아치는 점프 최고점에서 통과한다.','보라 아치에 낮게 닿으면 실패한다.','일반 벽과 높은 아치의 도약 시점을 구별한다.',
+  [['열리지 않은 꽃','낮은 벽 뒤 작은 아치의 중심을 겨냥한다.','B@2 P@4.4 B@6.7'],['달의 화분','두 아치 사이에서 확실히 착지한다.','P@2.2 P@3.8 G@6'],['흔들리는 사다리','높은 벽과 아치 뒤의 틈까지 읽는다.','H@2 P@4 X@6.1']],
+  '달꽃 정원사','apex','옥상 꽃은 발이 가장 높이 오른 순간에만 핀다. 정원사는 꽃잎 뒤에 숨었다.','가장 높이 오른 발끝에서 꽃이 열렸다. 꽃 안의 빛은 멀리 둥근 밤을 닮았다.','달꽃 표본'],
+ ['발소리 보관소','침묵의 구간','줄무늬 구간에서는 입력을 쉬고 끝난 뒤 점프한다.','침묵 표식 안에서 누르면 경보가 울린다.','비어 있는 구간에도 행동하지 않는 규칙이 있다.',
+  [['속삭임 서랍','말풍선과 천장 아래에서는 걷고, 두 벽에서 다시 도전합니다.','S@2 B@4.3 G@6 B@7.6'],['빈 악보','두 침묵을 지키고, 침묵 뒤의 벽을 한 번씩 넘습니다.','S@2 B@3.7 S@5.4 B@7'],['소리를 접는 문','긴 천장과 침묵을 지난 뒤 두 벽에서 리듬을 되찾습니다.','L@2 S@4 B@6.2 B@7.7']],
+  '무음 기록관','silence','사람들이 남긴 발소리가 서랍에 잠들어 있다. 문은 조용한 손을 기다린다.','아무것도 누르지 않은 시간이 문을 열었다. 한마디가 없는 방의 이름이 떠올랐다.','무음 책갈피'],
+ ['시계 없는 역','거리와 속도의 분리','변속 표식 뒤에는 새 속도로 도약 거리를 읽는다.','이전 속도의 거리만 외우면 벽에 닿는다.','변속 예고 후 안정된 속도에서 점프한다.',
+  [['급행 출발','첫 벽 뒤 빨라진 이동을 읽는다.','B@2 V150@3 H@4.5 B@6.2'],['완행 복귀','느린 구간의 긴 기다림을 견딘다.','V90@1 B@2.5 G@4.3 P@6.4'],['환승 바람','한 노선에서 빠름과 느림을 모두 만난다.','B@2 V150@3 D@4.4 V90@5.7 X@7.3']],
+  '환승 태엽장','gear','출발 안내판에는 숫자가 없다. 객차가 흔드는 박자만이 다음 열차를 알려 준다.','빠름과 느림의 박자를 맞추자 열차 문 사이로 보이지 않는 공기가 흘렀다.','바람 승차권'],
+ ['한 번의 탑','도약의 예산','정해진 횟수만큼 뛰고 쌍벽은 한 도약으로 묶는다.','빈 점프도 예산을 쓴다. 예산을 넘기면 즉시 실패한다.','필요한 도약을 먼저 세고 남은 수를 지킨다.',
+  [['두 칸의 동전','두 쌍벽을 점프 두 번으로 넘는다.','D@2 G@3.7 D@5.5'],['세 칸의 장부','각 도약 사이에 쉬어 갈 곳이 있다.','B@2 L@3.6 P@5.7 X@7.4'],['다시 읽는 여백','천장과 침묵은 걷고, 짝벽과 마지막 벽에 두 번의 점프를 나눕니다.','G@2 S@4 D@6.3 B@7.9']],
+  '한칸 회계사','budget','탑의 엘리베이터에는 단추 하나가 빠졌다. 남은 한 번을 쓰는 순간이 층수를 정한다.','단 한 번의 입력을 알맞은 틈에 쓰자 손바닥에 작은 문 여는 도구가 남았다.','한칸 열쇠'],
+ ['접힌 지도실','본 것과 기억한 것','미리 보인 순서를 기억해 가려진 위험 앞에서 행동한다.','가림막 안에서도 충돌 판정은 그대로다.','표식 목록과 다음 위험까지의 시간을 함께 읽는다.',
+  [['사라지는 범례','벽·천장·아치 순서를 기억한다.','B@2 G@4 P@6'],['뒤쪽의 지도','틈 다음에는 걷고 마지막 쌍벽을 넘는다.','X@2 L@4 D@6.4'],['지워진 갈림길','아치 뒤 벽과 천장의 순서를 바꾸지 않는다.','P@2.3 B@4.1 G@6 X@7.7']],
+  '접힘 지도사','memory','지도는 펼친 순간 사라진다. 본 표식을 마음속에 남겨야 다음 방을 다시 그릴 수 있다.','사라진 표식을 그대로 되돌려 놓자 어제의 방이 마음속에서 펼쳐졌다.','접힌 기억'],
+ ['작은 맥박실','잠긴 칸의 호흡','찍힌 칸을 확인한 뒤 예고가 모이면 옆 칸으로 피한다.','일반 모드는 하트 세 개다. 도전 모드에서는 첫 충돌부터 다시 시작한다.','다음 공격이 다시 겨누는 칸을 읽고 매번 피한다.',
+  [['느린 청진기','충분히 떨어진 세 위험을 읽는다.','B@2 G@4 H@6.4'],['유리 심실','틈 다음 천장에서 충동을 멈춘다.','X@2 G@4.2 P@6.7'],['마지막 숨','긴 침묵을 지키고 마지막 벽을 넘는다.','S@2 D@4.5 B@7']],
+  '맥박 잠수종','pulse','방에는 생명의 박자가 하나만 남았다. 잠수종은 움직인 칸을 기억하고 다시 내려온다.','두 번의 조준을 모두 피하자 가슴속에서 스스로 뛰는 박자가 남았다.','맥박 유리병'],
+ ['눈뜨는 직조실','함께 익힌 규칙','쌍벽·최고점·침묵·가려진 표식을 하나의 길에서 읽는다.','규칙이 바뀌는 표식을 놓치면 앞서 외운 입력만으로는 통과할 수 없다.','색 대신 형태와 문장으로 다음 행동을 고른다.',
+  [['세 겹의 실','쌍벽 뒤 침묵과 최고점이 이어진다.','D@2 S@4 P@6.2'],['바람의 매듭','변속 뒤 틈과 긴 천장을 건넌다.','V150@1 X@2.5 L@4.5 V90@5.7 H@7.3'],['돌아오는 주소','처음의 벽에서 시작해 모든 높이를 다시 만난다.','B@2 G@3.5 P@5.4 D@7.5']],
+  '새벽 직조자','weave','처음 쓴 주소가 열 장의 길을 지나 되돌아왔다. 마지막 문은 배운 행동들을 서로 잇는다.','돌아온 빛과 높은 발끝과 사라진 표식을 엮었다. 잠든 밤에 펼쳐진 이 길에 이름을 쓴다.','눈뜬 실타래']
+];
+const r34PhaseData={
+ chain:[['첫 종','두 파동을 점프로 넘긴 뒤 착지하며 눌러 종을 멈춘다.','jump@1.8 jump@3.0 tap@4.4'],['겹친 종','세 파동 뒤의 짧은 빈 박자에 반격한다.','jump@1.6 jump@2.65 jump@3.7 tap@4.8'],['마지막 종','긴 쉼 뒤의 두 파동을 넘고 되돌아온 종을 친다.','jump@2.1 jump@3.5 tap@4.8']],
+ mirror:[['되돌아온 빛','흐린 빛은 보내고 돌아오는 밝은 빛에 한 번 누른다.','rest@1.8 tap@3.3'],['두 거짓 창','두 가짜 반짝임은 무시하고 세 번째 빛만 반사한다.','rest@1.6 rest@2.5 tap@3.8'],['늦은 반사','마지막 긴 가짜 빛이 꺼진 뒤 돌아오는 빛을 받는다.','rest@2.2 tap@4.6']],
+ twins:[['왼 닻 비우기','첫 신호에 칸을 옮기고 두 번째에 닻을 되던진다.','move@2 tap@3.4'],['묶인 닻','같은 조준을 두 번 피한 뒤 열린 닻을 되던진다.','move@1.7 move@2.8 tap@4.3'],['엇갈린 닻','되던지기 전에 오른쪽 끝에서 한 칸 더 피한다.','move@1.6 move@2.7 move@3.8 tap@5']],
+ apex:[['낮은 꽃','첫 빛에 뛰고 최고점에서 다시 눌러 꽃을 연다.','launch@2 apex@2.34'],['늦게 핀 꽃','가짜 꽃은 무시한 뒤 진짜 꽃의 꼭대기에서 반격한다.','rest@1.5 launch@3 apex@3.34'],['새벽 꽃','충분히 기다린 뒤 마지막 꽃의 최고점에 닿는다.','launch@4 apex@4.34']],
+ silence:[['빈 서랍','줄무늬 동안 손을 쉬고 열린 서랍을 한 번 닫는다.','quiet@2 tap@3.4'],['긴 문장','더 긴 침묵을 지킨 뒤 마지막 구두점을 찍는다.','quiet@2.8 tap@4.2'],['아무 말 없는 밤','세 줄무늬를 모두 보낸 다음 문을 닫는다.','quiet@3.7 tap@5']],
+ gear:[['급행 박자','짧은 간격 두 번, 긴 간격 한 번의 박자를 맞춘다.','tap@1.8 tap@2.7 tap@4.5'],['완행 박자','긴 간격 두 번 뒤 가까운 마지막 박자를 친다.','tap@1.5 tap@3.5 tap@4.4'],['환승 박자','가속하는 네 박자에 차례로 누른다.','tap@1.6 tap@3 tap@4 tap@4.8']],
+ budget:[['한 칸 저울','세 창 중 가운데 밝은 창에 단 한 번 누른다.','rest@1.7 tap@3.1 rest@4.5'],['움직이는 한 칸','늦게 열리는 창까지 기다려 한 번만 누른다.','rest@2 rest@3.1 tap@4.6'],['남은 한 칸','첫 창에 한 번 누르고 뒤의 유혹은 모두 보낸다.','tap@1.8 rest@3 rest@4.4']],
+ memory:[['두 표식','미리 본 누름·쉼 순서를 같은 박자로 되돌린다.','tap@2.6 rest@3.6'],['거꾸로 접힘','쉼·누름·누름 순서를 기억한다.','rest@2.5 tap@3.5 tap@4.5'],['네 갈래 지도','누름·쉼·쉼·누름을 가려진 뒤 재현한다.','tap@2.3 rest@3.2 rest@4.1 tap@5']],
+ pulse:[['첫 조준','조준한 칸이 잠긴 뒤 옆 칸으로 피해 벽 충돌을 유도한다.','dodge@2.5'],['다시 겨누기','첫 회피 뒤 새 칸을 겨누는 두 번째 조준도 피한다.','dodge@2 dodge@3.5'],['마지막 잠수','세 번의 조준 잠금을 기다려 각각 한 칸씩 옮긴다.','dodge@1.7 dodge@3 dodge@4.5']],
+ weave:[['빛의 실','가짜 빛을 보내고 진짜 빛을 되돌린다.','rest@1.8 tap@3.5'],['높이의 실','달꽃처럼 떠오른 뒤 최고점에서 실을 건다.','launch@2.6 apex@2.94'],['기억의 실','누름·쉼·누름·누름의 마지막 무늬를 완성한다.','tap@2.1 rest@3 tap@3.9 tap@4.8']]
+};
+function r34Situation(row,index,chapter){
+ const [name,briefing,notation]=row;let speed=120,last=0,d=0,budget=0;
+ const events=notation.split(' ').map((token,i)=>{const [symbol,at]=token.split('@'),time=Number(at);d+=(time-last)*speed;last=time;if(symbol[0]==='V'){speed=Number(symbol.slice(1));return {id:'c'+chapter+'s'+index+'e'+i,type:'speed',time,d,speed,cue:'속도 '+speed+' · 다음 위험까지 거리 다시 읽기'}}
+ const type={B:'barrier',X:'gap',G:'beam',L:'beam',D:'pair',H:'high',P:'precision',S:'silence'}[symbol];if(!['beam','silence'].includes(type))budget++;return {id:'c'+chapter+'s'+index+'e'+i,type,time,d,width:symbol==='L'?84:symbol==='S'?96:symbol==='P'?14:18,clearance:type==='precision'?42:type==='high'?30:17,ceiling:10,launchAt:['beam','silence'].includes(type)?null:time-(type==='pair'?.25:.34)};});
+ const active=events.filter(e=>!['speed','beam','silence'].includes(e.type)).length,ground=events.filter(e=>['beam','silence'].includes(e.type)).length;
+ const echo=chapter===1&&index===0?{at:last+1.55,window:.15,apexDelay:.34,apexWindow:.10,anticipation:.9,missCost:1,extraDuration:1.8,extraDistance:speed*1.8}:null,tail=.8;
+ return {mastery:{target:Math.ceil(active/2),total:active,groundTotal:ground},echo,id:'r34-'+chapter+'-'+(index+1),name,briefing,rule:chapter===7?'도약 예산 '+budget+'회':r34Cards[chapter-1][1],events,length:d+speed*tail,duration:last+tail,jumpBudget:chapter===7?budget:null,heartLimit:chapter===9?1:3,hidden:chapter===8};
+}
+const r34Chapters=r34Cards.map((row,i)=>{
+ const id=i+1,[name,title,action,failure,mastery,situations,bossName,mechanic,intro,clue,collectibleName]=row;
+ const phases=r34PhaseData[mechanic].map(([phaseName,cue,notation],p)=>{const steps=notation.split(' ').map((s,index)=>{const [kind,t]=s.split('@');return {kind,at:Number(t),index,tolerance:kind==='apex'?.085:kind==='launch'?.12:.22}});return {name:phaseName,cue,counter:cue,failure:mechanic==='budget'?'한 번을 넘겨 누르거나 밝은 창을 놓치면 실패':'금지된 입력 또는 반격 창을 놓치면 하트 하나를 잃고 같은 단계를 반복',steps,duration:Math.max(3.2,steps[steps.length-1].at+.65),preview:mechanic==='memory'||mechanic==='weave'&&p===2?steps.map(s=>s.kind==='rest'?'쉼':'누름').join(' · '):null}});
+ return {id,name,rule:{title,action,failure,mastery},situations:situations.map((s,n)=>r34Situation(s,n,id)),boss:{id:'r34-boss-'+id,name:bossName,mechanic,phases,heartLimit:id===9?1:3},story:{intro,clue,ending:id===10?'편지가 처음의 창가에 도착했다. 발자국은 사라져도, 길을 읽었던 방법은 남아 있다.':''},riddle:{prompt:riddles[i].prompt,hints:riddles[i].hints.slice(),wrong:'아직 맞지 않습니다. 획득한 단서에서 '+['발밑의 검은 모양','돌아오는 소리','두 바늘','밤하늘의 둥근 빛','소리가 없는 상태','움직이는 공기','문을 여는 도구','마음에 남은 장면','가슴속 박자','잠든 밤의 이야기'][i]+'을 다시 읽어 보세요.'},collectible:{id:'r34-keepsake-'+id,name:collectibleName,description:mastery+'의 기록'}};
+});
+const r34Prompts=['빛을 등지고 서면 발밑에서 태어납니다. 몸을 따라 길어지고 짧아지는 검은 모양은?','빈 방에 소리를 보내면 같은 소리가 돌아옵니다. 돌아온 소리의 이름은?','두 바늘이 한 원 안에서 돌며 시간을 알려 주는 물건은?','스스로 빛나지 않으며 지구 곁을 도는 밤하늘의 천체는?','아무도 말하지 않고 소리도 나지 않는 조용한 상태는?','보이지 않지만 열차 문 사이를 흐르고 나뭇잎을 흔드는 공기의 움직임은?','자물쇠에 넣고 돌려 잠긴 문을 여는 도구는?','사라진 표식을 마음속에 남겨 다시 떠올리는 능력은?','가슴 안에서 뛰며 온몸으로 피를 보내는 기관은?','잠든 밤에 머릿속에서 펼쳐지는 이야기는?'];
+for(let i=0;i<r34Chapters.length;i++){r34Chapters[i].riddle.prompt=r34Prompts[i];r34Chapters[i].collectible.skinColor=palettes[i].accent;if(i!==8)r34Chapters[i].rule.failure+=' 충돌은 하트 하나를 잃으며 하트가 남으면 끝까지 진행할 수 있다. 도약 예산 초과는 즉시 재도전이다.'}
+const r34={version:1,provenance:'independent-authored-not-NOM3-restoration',chapters:r34Chapters};
+
+const content=freeze({r34,schema:6,contentVersion:6,provenance:'original-independent-design-not-exact-restoration',modeNames,levels,chapters,riddles,originRoute,originFinale,getLevel,getLegacyLevel,checkAnswer});root.QuadRiftContent=content;if(typeof module!=='undefined')module.exports=content;
 })(globalThis);
