@@ -1,0 +1,11 @@
+{
+  "scope": "Android wrapper Java compilation only; not APK/resource signing or device validation",
+  "sdk": 36,
+  "jdk": 24,
+  "javaTarget": 17,
+  "success": true,
+  "warnings": [
+    "legacy API fallback is deprecated on current SDK",
+    "javac -source/-target used with Android classpath"
+  ]
+}

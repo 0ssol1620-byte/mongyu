@@ -1,4 +1,4 @@
-# 몽유 · MONGYU R80
+# 몽유 · MONGYU R81
 
 네 벽을 달리며 100개의 기억을 모으는 오프라인 게임 개발 빌드입니다. R79 최신 로컬 실행본의 엔진을 바탕으로 모바일 화면, 캐릭터, 카메라, 옷장, 오디오 및 프레임 지연 처리를 개선했습니다.
 
@@ -14,7 +14,7 @@ python3 web/build.py
 python3 scripts/test.py
 ```
 
-생성된 `web/MONGYU_R80.html`을 브라우저에서 엽니다. 소스 43개, 이미지, 음원 3곡이 하나의 HTML에 들어갑니다. 원래 제공된 R79 테스트 APK에서 추출한 스크립트가 복원 기준이며, 엔진 6개 파일은 `web/tests/r80-native-integrity.json`으로 바이트 동일성을 확인합니다.
+생성된 `web/MONGYU_R81.html`을 브라우저에서 엽니다. 소스 43개, 이미지, 음원 3곡이 하나의 HTML에 들어갑니다. 원래 제공된 R79 테스트 APK에서 추출한 스크립트가 복원 기준이며, 엔진 6개 파일은 `web/tests/r80-native-integrity.json`으로 바이트 동일성을 확인합니다.
 
 ## R80 변경
 
@@ -40,4 +40,10 @@ python3 scripts/test.py
 
 기존 `android/` 및 과거 evidence/docs는 R31/R79 기록으로 취급하세요. R80 Android 입력 파일 준비는 `python3 scripts/prepare-android-r80.py`를 사용합니다. 스토어용 AAB, 프로덕션 서명, 실기기 통과를 이 웹 빌드로 주장하지 않습니다.
 
-사업·출시·과금 상세 판단과 남은 검증은 [R80_RELEASE_REVIEW_KO.md](docs/R80_RELEASE_REVIEW_KO.md)에 있습니다.
+사업·출시·과금 상세 판단과 남은 검증은 [R80_RELEASE_REVIEW_KO.md](docs/R81_RELEASE_REVIEW_KO.md)에 있습니다.
+
+## R81 전체화면 수정
+
+게임 영역은 노치 밖까지 채우고 HUD만 안전영역을 적용합니다. Android 시스템 바는 몰입 모드로 숨기며 가장자리 스와이프로 다시 표시됩니다. 모바일 웹은 지원되는 브라우저의 사용자 시작 제스처에서 전체화면을 요청합니다. 거절되거나 미지원이면 계속 플레이합니다. 첫 탭 뒤 하단 안내가 사라지며 플레이 중 별도의 점프 버튼은 없습니다. SDK 36/JDK 24 컴파일 검증은 통과했으며 실기기 검증은 별도입니다.
+
+`node tools/audit_slots.cjs`로 100개 구간의 분류와 74개 물리 스테이지의 12단계 초기화/입력 검사를 다시 만들 수 있습니다. 이것은 전체 완주 검사가 아닙니다.

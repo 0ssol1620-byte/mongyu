@@ -7,6 +7,9 @@ import android.graphics.Insets;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.View;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -26,6 +29,7 @@ import java.util.Map;
 public final class MainActivity extends Activity {
     private static final String GAME_URL = "https://appassets.androidplatform.net/index.html";
     private WebView web;
+    private int safeLeft, safeTop, safeRight, safeBottom;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override public void onCreate(Bundle state) {
@@ -36,17 +40,20 @@ public final class MainActivity extends Activity {
         web.setBackgroundColor(Color.rgb(10, 12, 18));
         root.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(root);
-        // Consume system/cutout/IME insets at the native boundary; HTML receives a safe viewport.
+        // Paint the game edge to edge; only HUD controls receive safe insets.
         if (Build.VERSION.SDK_INT >= 30) getWindow().setDecorFitsSystemWindows(false);
         root.setOnApplyWindowInsetsListener((v, insets) -> {
             if (Build.VERSION.SDK_INT >= 30) {
-                Insets safe = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
-                v.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+                Insets safe = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                safeLeft = safe.left; safeTop = safe.top; safeRight = safe.right; safeBottom = safe.bottom;
+                v.setPadding(0, 0, 0, insets.getInsets(WindowInsets.Type.ime()).bottom);
+                publishSafeInsets();
                 return WindowInsets.CONSUMED;
             }
             return insets; // API 26–29 decor fits system windows by default.
         });
         root.requestApplyInsets();
+        enterImmersive();
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true); // Trusted packaged game only.
@@ -63,6 +70,9 @@ public final class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptCookie(false);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                if (GAME_URL.equals(url)) publishSafeInsets();
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return !GAME_URL.equals(request.getUrl().toString());
             }
@@ -83,6 +93,41 @@ public final class MainActivity extends Activity {
                 OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::gameBack);
         }
         web.loadUrl(GAME_URL);
+    }
+
+    private void publishSafeInsets() {
+        if (web == null) return;
+        float density = getResources().getDisplayMetrics().density;
+        String[] sides = {"left", "top", "right", "bottom"};
+        int[] values = {safeLeft, safeTop, safeRight, safeBottom};
+        StringBuilder script = new StringBuilder("(() => {const s=document.documentElement.style;");
+        for (int i=0;i<4;i++) script.append("s.setProperty('--native-safe-").append(sides[i])
+            .append("','").append((int)Math.ceil(values[i]/density)).append("px');");
+        script.append("})()");
+        web.evaluateJavascript(script.toString(), null);
+    }
+    @SuppressWarnings("deprecation")
+    private void enterImmersive() {
+        if (Build.VERSION.SDK_INT >= 28) {
+            WindowManager.LayoutParams params = getWindow().getAttributes();
+            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            getWindow().setAttributes(params);
+        }
+        if (Build.VERSION.SDK_INT >= 30) {
+            getWindow().setDecorFitsSystemWindows(false);
+            WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                controller.hide(WindowInsets.Type.systemBars());
+            }
+        } else getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN |
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+    }
+    @Override public void onWindowFocusChanged(boolean focused) {
+        super.onWindowFocusChanged(focused);
+        if (focused) enterImmersive();
     }
 
     private static Map<String, String> contentHeaders() {

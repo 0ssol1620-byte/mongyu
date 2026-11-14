@@ -73,6 +73,20 @@ function title(c,opt={}){const w=opt.viewport.width,h=opt.viewport.height,wide=w
  c.save();c.translate(-r*.06,r*.85);const scale=Math.min(1.2,r/105);c.scale(scale,scale);sprite(c,{x:0,y:0,tangent:{x:1,y:0},bodyHeight:64},{poseTime:t},!!opt.reduced);c.restore();
  c.restore();return {kind:'r80-title',width:w,height:h};
 }
+let immersiveAttempted=false;
+function requestImmersive(event,doc=root.document){
+ if(immersiveAttempted||event?.isTrusted!==true||doc?.fullscreenElement||!root.matchMedia?.('(pointer: coarse)').matches||typeof doc?.documentElement?.requestFullscreen!=='function')return false;
+ immersiveAttempted=true;
+ try{Promise.resolve(doc.documentElement.requestFullscreen({navigationUI:'hide'})).catch(()=>{});return true}catch(_){return false}
+}
+function hud(v){return Math.max(0,Math.floor(v.score||0))+'  '+('●'.repeat(Math.max(0,Math.min(5,v.hearts||0))))}
+function hint(v,run){
+ if(v.native?.awaitingBossConfirmation)return '탭하여 다음으로';
+ if(v.cue?.text&&v.cue.phase==='confirm')return v.cue.text;
+ if(v.feedback?.kind==='hit')return '';
+ if((v.time||0)<6&&(run.inputCount||run.jumps||0)===0)return v.boss?'타이밍에 맞춰 탭':'탭하여 점프';
+ return '';
+}
 function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="'+item.accent+'18"/><path d="M38 47L29 65M40 47L51 64M39 33L24 45M42 33L54 44" stroke="'+item.body+'" stroke-width="5" stroke-linecap="round"/><path d="M40 32V48" stroke="'+item.body+'" stroke-width="9" stroke-linecap="round"/><circle cx="40" cy="22" r="10" fill="'+item.body+'"/><ellipse cx="44" cy="23" rx="6" ry="4.5" fill="#182335"/><path d="M38 33L25 32L15 27" stroke="'+item.accent+'" stroke-width="4" fill="none" stroke-linecap="round"/></svg>'}
 function narrative(c,x,y,h,pose,t,reduced){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t},reduced)}
 function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=host.progress;try{selected=decode(host.storage.getItem(KEY))}catch(_){saved=false}
@@ -84,5 +98,5 @@ function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=h
  $('shopOpen').textContent='옷장';$('shopOpen').onclick=e=>{host.open(e);render();$('wardrobeClose').focus({preventScroll:true})};
  render();return {render,view:()=>({selected:look().id,saved,collected:count(progress())})};
 }
-const api={looks,available,decode,count,look,clock,sprite,narrative,title,exterior,chamber,camera,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
+const api={looks,available,decode,count,look,clock,sprite,narrative,title,exterior,chamber,camera,requestImmersive,hud,hint,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

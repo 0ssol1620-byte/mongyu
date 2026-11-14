@@ -5,6 +5,7 @@
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowBackground">#0A0C12</item>
         <item name="android:colorAccent">#B9F6D0</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
 </resources>
