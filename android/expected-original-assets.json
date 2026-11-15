@@ -9,8 +9,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 4324,
-      "sha256": "4e9c7a0afd8f1dbb80b751d1636d7cf40235f79d6b3d6b9b249ec1d99467a87e"
+      "bytes": 5061,
+      "sha256": "ff834230ddf7f947d9e8307681c337a5c8f3936498572d178d16dd5713f19ecd"
     },
     {
       "path": "licenses/Apache-2.0.txt",
@@ -34,8 +34,8 @@
     },
     {
       "path": "main.mjs",
-      "bytes": 9066,
-      "sha256": "b55b75b3b0fed409c0fbd25928664d7c467c66481c6948bccf6447b0fd5d33f5"
+      "bytes": 9437,
+      "sha256": "c2596e4c5a06756615cc10c11e85c33aad949fe8bb49df2b6e92ad75d11e255f"
     },
     {
       "path": "runtime.mjs",
@@ -49,8 +49,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 5068,
-      "sha256": "51b2db09b1b8f4e45ece769df2ec06497ee44bcadad02067b6402d24e034a69e"
+      "bytes": 6442,
+      "sha256": "df29f882f0741eeaf671ac661cb0c757df6f6dec1d9885a8001e43aee75d95ae"
     },
     {
       "path": "vendor/wie_web.js",
