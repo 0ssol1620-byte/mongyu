@@ -39,7 +39,7 @@ async function crashRenderer(){try{await send('Page.crash')}catch(_){}await dela
  const raster=await evaluate('(()=>{const c=document.getElementById("game"),p=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let colored=0;for(let y=1;y<33;y++)for(let x=1;x<33;x++){const i=(Math.floor(y*c.height/33)*c.width+Math.floor(x*c.width/33))*4;if(p[i]+p[i+1]+p[i+2]>36)colored++}return{width:c.width,height:c.height,colored,samples:1024}})()');report.checks.push({name:'native game canvas contains rendered content',raster});assert.ok(raster.colored>32,'game canvas is blank');await screenshot('native-play-ready');
  for(let i=0;i<4;i++){await tap('game');await delay(250)}await screenshot('play');
  await tap('pause');assert.equal(await state(),'pause');let time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');
- adb('shell','input','keyevent','4');await waitFor(async()=>await state()==='pause','Android back pause');time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);report.checks.push({name:'native back cancels input and freezes simulation',passed:true});
+ assert.equal(await state(),'play','run remains active before native back');adb('shell','input','keyevent','4');await waitFor(async()=>await state()==='pause','Android back pause');time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);report.checks.push({name:'native back cancels input and freezes simulation',passed:true});
  adb('shell','input','keyevent','3');adb('shell','am','start','-W','-n',activity);await delay(400);assert.equal(await state(),'pause');report.checks.push({name:'foreground return requires explicit resume',passed:true});
  await evaluate('QUAD_RIFT_APP.home()');await tap('shopOpen');await tap('look-ink');await tap('wardrobeClose');
  const collected=await evaluate('QUAD_RIFT_APP.restoration.view().status.collected');assert.ok(collected>=1);await evaluate('MongyuStorage.create(localStorage).setItem("mongyu.device.qa","r87-update-canary")');
@@ -49,7 +49,10 @@ async function crashRenderer(){try{await send('Page.crash')}catch(_){}await dela
  await crashRenderer();await waitFor(()=>{adb('shell','uiautomator','dump','/sdcard/mongyu-recovery.xml');return adb('shell','cat','/sdcard/mongyu-recovery.xml').includes('다시 열기')},'bounded native recovery panel');assert.equal(adb('shell','pidof',pkg),pid);fs.writeFileSync(path.join(out,'recovery.png'),execFileSync('adb',['exec-out','screencap','-p']));report.checks.push({name:'repeated renderer failure waits for player retry',passed:true});
  const xml=adb('shell','cat','/sdcard/mongyu-recovery.xml'),bounds=xml.match(/text="다시 열기"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);assert.ok(bounds);adb('shell','input','tap',String((+bounds[1]+ +bounds[3])/2),String((+bounds[2]+ +bounds[4])/2));await connect();assert.equal(await evaluate('MongyuStorage.create(localStorage).getItem("mongyu.device.qa")'),'r87-update-canary');report.checks.push({name:'player retry restores game with saved data',passed:true});
  await screenshot('after-recovery');assert.deepEqual(report.errors,[]);
- }catch(e){report.failure=e.stack;process.exitCode=1;}finally{
+ }catch(e){report.failure=e.stack;process.exitCode=1;
+  try{report.failureState=await evaluate('({app:QUAD_RIFT_APP.getState(),run:QUAD_RIFT_APP.activeRun()?.state})')}catch(_){}
+  try{report.focus=adb('shell','dumpsys','window','windows').split('\n').filter(line=>/mCurrentFocus|mFocusedApp/.test(line));fs.writeFileSync(path.join(out,'failure-android.png'),execFileSync('adb',['exec-out','screencap','-p']))}catch(_){}
+ }finally{
   try{fs.writeFileSync(path.join(out,'logcat.txt'),adb('logcat','-d'))}catch(_){}
   if(ws)ws.close();report.passed=!report.failure;fs.writeFileSync(path.join(out,'android-report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
  }})().catch(e=>{console.error(e);process.exitCode=1});
