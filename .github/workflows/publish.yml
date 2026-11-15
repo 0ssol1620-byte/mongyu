@@ -1,0 +1,25 @@
+name: Publish verified R89 preview
+on:
+  push:
+    branches: [codex/r89-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact signed payload and source archive
+        run: sha256sum -c MONGYU_R89_SHA256SUMS.txt
+      - name: Publish Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r89-preview
+          --prerelease
+          --target bcad4ec89fe737a0b5f252e7e08408dd0a3d36f0
+          --title '몽유 R89 · 인물·맵 음악·연출 개선'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R89_ANDROID.apk MONGYU_R89_source.zip MONGYU_R89_SHA256SUMS.txt
