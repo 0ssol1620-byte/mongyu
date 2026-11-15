@@ -7,9 +7,9 @@ key=Path(os.environ['RUNNER_TEMP'])/'mongyu-device-qa.jks'
 subprocess.run(['keytool','-genkeypair','-keystore',str(key),'-alias','qa','-storepass','android','-keypass','android','-keyalg','RSA','-validity','2','-dname','CN=Disposable Device QA'],check=True)
 manifest=root/'android/app/src/main/AndroidManifest.xml';original=manifest.read_text()
 try:
- for version,name in [(89,'baseline'),(90,'updated')]:
-  manifest.write_text(original.replace('versionCode="90"',f'versionCode="{version}"'))
+ for version,name in [(90,'baseline'),(91,'updated')]:
+  manifest.write_text(original.replace('versionCode="91"',f'versionCode="{version}"'))
   subprocess.run(['python3','android/build-unsigned.py'],cwd=root,check=True)
-  unsigned=root/'android/outputs/MONGYU_R90_TEST_DEBUG_UNSIGNED.apk'
+  unsigned=root/'android/outputs/MONGYU_R91_TEST_DEBUG_UNSIGNED.apk'
   subprocess.run([str(bt/'apksigner'),'sign','--ks',str(key),'--ks-key-alias','qa','--ks-pass','pass:android','--out',str(out/(name+'.apk')),str(unsigned)],check=True)
 finally:manifest.write_text(original)

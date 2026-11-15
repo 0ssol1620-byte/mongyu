@@ -1,0 +1,98 @@
+{
+  "scope": "Real UI opening and normal action/time progression to an earned native result; collection reveal, locked slot and reload checks. No position, health, score, receipts or save injection.",
+  "run": {
+    "state": "clear",
+    "updates": 415,
+    "inputs": 60,
+    "palette": 1,
+    "result": {
+      "runVersion": 77,
+      "nativeRuntime": true,
+      "schema": "r77-native-run-v1",
+      "mode": "restoration",
+      "slotId": "r38-002",
+      "ruleId": "r38-002:tutorial",
+      "state": "clear",
+      "completed": true,
+      "practice": false,
+      "freePlay": false,
+      "attempt": 1,
+      "score": 246,
+      "time": 31.124999999999794,
+      "initialLives": 3,
+      "livesRemaining": 3,
+      "hits": 0,
+      "jumps": 24,
+      "kicks": 2,
+      "mapChanges": 0,
+      "characterId": "walker",
+      "termination": "native-ui",
+      "reason": "조건을 채웠습니다. 다음 화면에서 기억을 확인하세요.",
+      "nativeProof": {
+        "schema": "r77-native-run-v1",
+        "source": "KTF-candidate-aeadd87840c7",
+        "nativeUiState": 155,
+        "earned": true,
+        "pendingReveal": true,
+        "frontierAdvanced": false,
+        "condition": {
+          "slot": 1,
+          "category": 0,
+          "stageClass": 0,
+          "conditionIndex": 0,
+          "conditionType": 25,
+          "conditionTarget": 1,
+          "ordinal": 0,
+          "bossId": null,
+          "tutorial": true,
+          "modeQ": 0,
+          "source": "KTF-candidate-aeadd87840c7",
+          "supported": true,
+          "reason": null
+        },
+        "initialPending": 0,
+        "frontier": 2,
+        "priorCredit": 0,
+        "finalCredit": 0,
+        "recordScore": 0,
+        "pending": 1,
+        "integerUpdates": 415,
+        "finalScore": 246,
+        "finalLives": 3,
+        "terminalTrace": [
+          {
+            "phase": "persist-progress",
+            "raw": "0x4a166"
+          },
+          {
+            "phase": "request-ui",
+            "state": 155,
+            "raw": "0x4a17a"
+          }
+        ],
+        "persist": [
+          {
+            "kind": "persist-progress",
+            "schema": "nom3-semantic-progress-v1",
+            "snapshot": {
+              "frontier": 2,
+              "pending": 1,
+              "credit": 0,
+              "record": {
+                "index": 0,
+                "score": 0
+              }
+            },
+            "raw": "0x4a166"
+          }
+        ],
+        "bootstrap": "authored fixture bootstrap; recovered fresh-attempt scalars, native collection category/index and stage setup; not full native boot",
+        "scheduling": "authored-browser-clock-using-nominal-native-H",
+        "fullOriginalEquivalence": false
+      }
+    },
+    "collected": 1
+  },
+  "skin": "1",
+  "errors": []
+}

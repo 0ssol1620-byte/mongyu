@@ -1,0 +1,23 @@
+{
+  "release": "R91",
+  "total": 181,
+  "passed": 180,
+  "failed": 0,
+  "skipped": 1,
+  "run": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43704283702",
+  "runtimeSourceCommit": "4c5077871326f0c883cc88b6f5a7e1eb385be7fd",
+  "note": "Full web suite passed on this exact web hash. Android UI harness was subsequently fixed to scroll controls before actual touches; the later run revalidates the identical web payload hash. The first run did not pass Android QA.",
+  "currentAndroidWrapper": {
+    "file": "android/tests/r82-wrapper.test.cjs",
+    "tests": 5,
+    "passed": 5,
+    "failed": 0
+  },
+  "historicalAndroidGlob": {
+    "command": "node --test android/tests/*.test.cjs",
+    "tests": 43,
+    "passed": 6,
+    "failed": 37,
+    "scope": "Contains historical R31 tests expecting a staged R31 package, plus older VM fixtures missing structuredClone. These do not pass against staged R91. The current r82-wrapper file passed all five in the same invocation. This is not reported as an all-Android-test pass."
+  }
+}

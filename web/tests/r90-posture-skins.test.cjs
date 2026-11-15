@@ -3,7 +3,7 @@ const M=require('../src/mobile-presentation.js'),Palette=require('../src/native-
 const knee=([a,k,b])=>Math.acos(Math.max(-1,Math.min(1,((a[0]-k[0])*(b[0]-k[0])+(a[1]-k[1])*(b[1]-k[1]))/121)))*180/Math.PI;
 test('standing and loaded mid-stance extend the knee instead of keeping a deep permanent crouch',()=>{
  for(const leg of M.gait(0,{pose:'stand'}).legs)assert.ok(knee(leg)>150);
- for(const u of [.2,.25,.3]){const pose=M.gait(0,{strideDistance:u*110/3});assert.ok(knee(pose.legs[0])>150,'loaded knee at '+u);assert.ok(pose.hip[1]<-21.5)}
+ for(const u of [.2,.25,.3]){const pose=M.gait(0,{strideDistance:u*42});assert.ok(knee(pose.legs[0])>140&&knee(pose.legs[0])<165,'loaded knee stays extended and soft at '+u);assert.ok(pose.hip[1]<-21.5)}
  for(let i=0;i<120;i++){const pose=M.gait(0,{strideDistance:i/120*110/3});for(const [a,k,b]of pose.legs){assert.ok(Math.abs(Math.hypot(a[0]-k[0],a[1]-k[1])-11)<1e-8);assert.ok(Math.abs(Math.hypot(b[0]-k[0],b[1]-k[1])-11)<1e-8)}}
 });
 test('native body and tile units retain their ratio with the original-sized short-axis framing',()=>{

@@ -1,6 +1,6 @@
 {
-  "scope": "All R90 source publication files except this manifest itself. Generated Android assets are prepared from the included web HTML.",
-  "runtimeVerifiedCommit": "6db586506fb419af493f38fd64fe603082dd4d86",
+  "scope": "All R91 source publication files except this manifest itself. Generated Android assets are prepared from the included web HTML.",
+  "runtimeVerifiedCommit": "c8c2533ade16060a2de41c75d8d0f920d885ce79",
   "files": [
     {
       "path": ".gitattributes",
@@ -9,8 +9,8 @@
     },
     {
       "path": ".github/workflows/android-device.yml",
-      "bytes": 2978,
-      "sha256": "93e3d5302bdb6eafe181d5f6a5f3a0f1ce99e94a742fe9c5516ea8f5ffb7719f"
+      "bytes": 2985,
+      "sha256": "90643110fb8af89e14730aee9f9b1015e5fc3ed264130a457967d504aa6534b4"
     },
     {
       "path": ".gitignore",
@@ -25,7 +25,7 @@
     {
       "path": "android/app/src/main/AndroidManifest.xml",
       "bytes": 1047,
-      "sha256": "ef4020bb859dc651a1db7de63e1bca44a4b1882bd28fe880f2a3d3e58be08411"
+      "sha256": "79328e011908482b3927e903e24ce8189198befe50654c4c5ee580394948b4b9"
     },
     {
       "path": "android/app/src/main/java/org/quadrift/hddevelopment/BuildConfig.java",
@@ -50,12 +50,12 @@
     {
       "path": "android/build-unsigned.py",
       "bytes": 3170,
-      "sha256": "2c21369bb4b7abe7d3ff0a075fff3d6571fbc4cf2b119c390a4e9089294abd4c"
+      "sha256": "b7c1240a5f82ee9fd054090c20adc43535867bb59300af1799c254fdf6f1e0d2"
     },
     {
       "path": "android/expected-asset.sha256",
       "bytes": 65,
-      "sha256": "512eb334407aeb5727d4f3752511e61cd1c2050ed69c1be7eeaad1af9346d8bc"
+      "sha256": "7536de955efe38d23127d2ab478357485df25b753b562904f600c7d1013586a2"
     },
     {
       "path": "android/tests/day-night-ending.test.cjs",
@@ -75,7 +75,7 @@
     {
       "path": "android/tests/r82-wrapper.test.cjs",
       "bytes": 2754,
-      "sha256": "7a5eaf7cca252970cb2fa03f71bded6179da861d9d465a6e794f41708d8ecf42"
+      "sha256": "130279710b951fc2d58f9776c62c16abf62c52a76066b80cfddc170536ea58f7"
     },
     {
       "path": "android/tests/wrapper-r31.test.cjs",
@@ -90,7 +90,7 @@
     {
       "path": "android/verify-preview-apk.py",
       "bytes": 2456,
-      "sha256": "cca37e0519ebeadc4ed10f91f458bd5d3b0b00fe618b09a6b50604aba7a488ae"
+      "sha256": "358061f43877946fc2ec8b86af49800bd0732b4f8732f7e472779a35d764ddad"
     },
     {
       "path": "docs/ART_DIRECTION.md",
@@ -161,6 +161,11 @@
       "path": "docs/R90_POSTURE_CELLS_SKINS_KO.md",
       "bytes": 8515,
       "sha256": "b140884c77617b5694a7141ac167e8d9b0d43c5918003739e35849c4b1540caf"
+    },
+    {
+      "path": "docs/R91_MOTION_PSYCHEDELIA_KO.md",
+      "bytes": 9142,
+      "sha256": "19dfeeef758d2d8c08122f9a82a8558ae21550605e83823f9a9e145f8b1f149c"
     },
     {
       "path": "docs/VALIDATION.md",
@@ -718,6 +723,116 @@
       "sha256": "8cfc5256b890903cd07ba0a75f3015967e03dfae6a756bc3308b0acde37b5051"
     },
     {
+      "path": "evidence/r91-android-device.json",
+      "bytes": 6301,
+      "sha256": "ee0a1a18122ba40c24af033a239113fd41ad3fd3fc94245017c02704ecf03908"
+    },
+    {
+      "path": "evidence/r91-android-earned-skin.png",
+      "bytes": 804461,
+      "sha256": "33513aca164242e9eb6ad2a085e3c0634f4cd8246f530f8b46d04dbbb07b7882"
+    },
+    {
+      "path": "evidence/r91-android-free-rotation.png",
+      "bytes": 225602,
+      "sha256": "54a6c42281aa99c8dc9fceab7275a12a94a7002a2b64eeecbdb884ecfb383d9b"
+    },
+    {
+      "path": "evidence/r91-android-play.png",
+      "bytes": 97300,
+      "sha256": "b2a37dc09e9a0637528671f743b8968b069c7f1e2b88ca1653c21e91eae20dfa"
+    },
+    {
+      "path": "evidence/r91-android-reverse-wall.png",
+      "bytes": 169700,
+      "sha256": "9418d29113d570b3df9c3e69f4c030bee42c52de8d9563e6ce459c3858cd9450"
+    },
+    {
+      "path": "evidence/r91-android-stairs.png",
+      "bytes": 147168,
+      "sha256": "5b7d609dfdb27c51c10bf2e6e38251657371210346c46c57da6e5c0870c7e8e6"
+    },
+    {
+      "path": "evidence/r91-browser-motion.json",
+      "bytes": 175,
+      "sha256": "3beafbb83e7592febccdf7ee54fd9b1d920b9ac7c689b3040a6ec7e51a1ca91e"
+    },
+    {
+      "path": "evidence/r91-browser-report.json",
+      "bytes": 6154,
+      "sha256": "a358dd401a44cebec69f7c9f90159fbcd2c9bf5160e8d110fdf2d3bc17b40057"
+    },
+    {
+      "path": "evidence/r91-character-after.png",
+      "bytes": 80808,
+      "sha256": "053365b81633b4b3c0a8f7dea557eab9f1f163b5ed3d9f2aeac69bb97f01a478"
+    },
+    {
+      "path": "evidence/r91-character-before.png",
+      "bytes": 79611,
+      "sha256": "65da925ceeb41aa7ea1e68c9e5d3e425deacf3b6b0b9408ae738eda25ac1b67c"
+    },
+    {
+      "path": "evidence/r91-contact-audit.json",
+      "bytes": 7137,
+      "sha256": "b94eb2a765aca44ad15cd300b57d82a241c9c4c613d8a9b305561098e511cdee"
+    },
+    {
+      "path": "evidence/r91-field-balanced.png",
+      "bytes": 90924,
+      "sha256": "46bb876e885d2e66de126bdef0a68465e95c92ce2b1aeb850cc1e5ccfdcc8cc8"
+    },
+    {
+      "path": "evidence/r91-field-intense.png",
+      "bytes": 167152,
+      "sha256": "0da74d06d55625684d9449ca1d4a6a2e5ef6e652fa8d8289bd7526b5d04c0755"
+    },
+    {
+      "path": "evidence/r91-field-raster.json",
+      "bytes": 30116,
+      "sha256": "216ad7c3f88023994acfdbb4a6a4af644f25d1b24210f93215de5180d53afc78"
+    },
+    {
+      "path": "evidence/r91-filled-contact-audit.json",
+      "bytes": 7149,
+      "sha256": "e4b51b79183756a8f561e3342ae3ce76ba33e0698a54e23d067aedb45f667e5b"
+    },
+    {
+      "path": "evidence/r91-motion-contact-sheet.png",
+      "bytes": 1402316,
+      "sha256": "c64d09921be44635679886acee24eb98bcfa043bd96b30917948fe287de707c7"
+    },
+    {
+      "path": "evidence/r91-r90-baseline.json",
+      "bytes": 1437,
+      "sha256": "d10f4c47acd46a5c433a0a403187594ca2faea7dfe6aa23edbfbfd28cc62d017"
+    },
+    {
+      "path": "evidence/r91-raster-scenes.json",
+      "bytes": 3583,
+      "sha256": "c43db6573115ae556d92de65e102e39398e8f07f261511b04a00b84749a2ac81"
+    },
+    {
+      "path": "evidence/r91-signed-apk.json",
+      "bytes": 2170,
+      "sha256": "248f3f7a61bd0adc2ab63ccafceea3183b0fe553a7eb0f1085f4f6dd2bda3b77"
+    },
+    {
+      "path": "evidence/r91-skin-flow.json",
+      "bytes": 2801,
+      "sha256": "85f0d3634c01a603719ece831da72302a786a2b8ac17880083b48cfffff0dd8f"
+    },
+    {
+      "path": "evidence/r91-sustained.json",
+      "bytes": 932,
+      "sha256": "c7e57ab348adf3dca01cc0a2b94af452d1df4181bd74dd829e82eeacf1d04e3d"
+    },
+    {
+      "path": "evidence/r91-web-tests-summary.json",
+      "bytes": 1030,
+      "sha256": "ad49ae2de245f0e8c877494da1134486a1e74c874b94850a61728430f12bb948"
+    },
+    {
       "path": "evidence/runtime-sha256.json",
       "bytes": 2652,
       "sha256": "53e97db11d094b804a3ca9ab7eda84cfd99d79f626b13c393ac05535b582b037"
@@ -725,17 +840,17 @@
     {
       "path": "scripts/build-device-qa.py",
       "bytes": 1153,
-      "sha256": "1787f5bd18c19429ff204a87bb194c57a1ba07542aeb87bfd365295526ac0473"
+      "sha256": "ac7492c907e5174a040b6de9f5e8aa99ae4a8a96dcdeaf11a814bb7b2a06bb85"
     },
     {
       "path": "scripts/prepare-android-r80.py",
       "bytes": 795,
-      "sha256": "f6fe2e7cac385c241bf415632e24b09fb3fc55e290dee930afbdd0b8d5a0236c"
+      "sha256": "b8c99dad5b0480270aff3bde522b4943ed6d017d67da58b9a893e75605f527a7"
     },
     {
       "path": "scripts/test-build-portability.py",
       "bytes": 1909,
-      "sha256": "dd0e8a32d77abac1b765dad8e4c173988cbbf5d50685e80a035ea29c28835dab"
+      "sha256": "20d220817b459b8105142d5e4bd50513d748789fd69ea1e6621e6f6cd434b9e8"
     },
     {
       "path": "scripts/test.py",
@@ -745,7 +860,7 @@
     {
       "path": "scripts/verify-snapshot.py",
       "bytes": 693,
-      "sha256": "e519ebbf9c09d4e63caf678835ea378ac5e0b4c83da0211043e3e4c569629edd"
+      "sha256": "41548fbb03786ebb5f8601c3f11a6983b9ad193d9d1845bc21e8a5acade4540a"
     },
     {
       "path": "tools/audit-boss-exits.cjs",
@@ -781,6 +896,11 @@
       "path": "tools/audit-r90-filled-contact.cjs",
       "bytes": 3558,
       "sha256": "1567702da7f6a65f98cf515a950877941d10dc9bcf954231ed8289c9e21b1f4c"
+    },
+    {
+      "path": "tools/audit-r91-filled-contact.cjs",
+      "bytes": 3558,
+      "sha256": "8987a36c6f3c3ef61b349737241882955f11437a5605e105dc862d2e7b1dbe27"
     },
     {
       "path": "tools/audit-runtime.cjs",
@@ -828,9 +948,14 @@
       "sha256": "98f365381921458f7297a5422defc6946610569b4876324adead5c54f7330516"
     },
     {
+      "path": "tools/r91-device-visual.js",
+      "bytes": 2500,
+      "sha256": "012fa67970c99d5ec046633fd8817b0c76b1d413ec8c8cc28f6c2e82e7bdd65c"
+    },
+    {
       "path": "tools/verify-android-device.cjs",
-      "bytes": 12598,
-      "sha256": "da87a4e57fb19b9601da028733244f3b2a1d84697cfd7479cc4e556d0d860175"
+      "bytes": 13770,
+      "sha256": "45a6bd7b5f7143d2fc11628b8a3e50ea1bb666b06b309289c418dca25cfa6765"
     },
     {
       "path": "tools/verify-map-audio.py",
@@ -873,19 +998,34 @@
       "sha256": "3dcfd746d9a10510a28b9853385843152c9d8a704395f7c2615f5b78421246b1"
     },
     {
+      "path": "tools/verify-r91-art-contact.cjs",
+      "bytes": 1857,
+      "sha256": "4e5a41435d38665a2cc11aa0afd9859e6cf2e01125898b422969a0aab230aa0b"
+    },
+    {
+      "path": "tools/verify-r91-field.cjs",
+      "bytes": 3082,
+      "sha256": "919ef7a86c8293a022cfa911b1d0a91a8476c98b5ec845baeeb05146013b05d3"
+    },
+    {
+      "path": "tools/verify-r91-skin-flow.cjs",
+      "bytes": 2300,
+      "sha256": "b14bf39e9ce3a7d64e6ef66ea66e2b69040e6685f95eca56fc9a09f51c51fc9f"
+    },
+    {
       "path": "tools/verify-sustained.cjs",
       "bytes": 3149,
-      "sha256": "4f5224976bf1bc497ffcf6dc40f41446793aff64549b1895d149afff20a7b191"
+      "sha256": "93bd7d5c0f57e4f47db11413228313a7055e09071a609f791afe94f04be36482"
     },
     {
       "path": "tools/verify_browser.cjs",
       "bytes": 5073,
-      "sha256": "73689fa765feedf611b9e8b2cce5d1719bceb295891e57fe57585111b185ae5e"
+      "sha256": "1643c4d8a803abfdbc11daf20011ad2fd58c8d824545015bdfedee0137f96674"
     },
     {
-      "path": "web/MONGYU_R90.html",
-      "bytes": 11871354,
-      "sha256": "98a9b3f59898b17d2e2505b6138a582dbb0d9fdd1abcc35b9c0d92dfebd6c377"
+      "path": "web/MONGYU_R91.html",
+      "bytes": 11877380,
+      "sha256": "f4fde830057cdd1bb844369a45f7bf6430db59ae8fc5a71e8636cea63f13662f"
     },
     {
       "path": "web/assets/music/CC-BY-4.0.txt",
@@ -1000,12 +1140,12 @@
     {
       "path": "web/build-manifest.json",
       "bytes": 8035,
-      "sha256": "dadd15ea7ee48f27ca6842746bdd40b019220c9afe5c84db806f65a4b11c5968"
+      "sha256": "1ca4a62633fe3d83c5f910c5ea28e8f37dc0d3b17b7b2ddaf8f36c60723592d1"
     },
     {
       "path": "web/build.py",
       "bytes": 2258,
-      "sha256": "0132c7749c629f8dfa94b01693274467f06209a20b286780c775097354c0470b"
+      "sha256": "ff6ca2024e59874de605257b3c166e6adec85833c549f634acac468505962403"
     },
     {
       "path": "web/index.template.html",
@@ -1024,8 +1164,8 @@
     },
     {
       "path": "web/src/app.js",
-      "bytes": 152352,
-      "sha256": "6c2b00155a9e3727673d439c0c6c9a1e9ed9d194733f6630521dcea9de9a9b03"
+      "bytes": 152373,
+      "sha256": "87ffa7f317485e2a9cac5d9e4db56e0c8237dafe13dd7831dec66199fb09a95b"
     },
     {
       "path": "web/src/assets.js",
@@ -1154,8 +1294,8 @@
     },
     {
       "path": "web/src/mobile-presentation.js",
-      "bytes": 20647,
-      "sha256": "3ada3ec702c08c2c719900181c1b4b986a097cc792c138700dbe12a0ed30fb11"
+      "bytes": 22616,
+      "sha256": "19da285cce90150d9c714d14a36fae1e871e9e55f0c3e75db1d3663327a73c94"
     },
     {
       "path": "web/src/native-kernels.js",
@@ -1174,8 +1314,8 @@
     },
     {
       "path": "web/src/native-scene.js",
-      "bytes": 13463,
-      "sha256": "df6ce63b57227592c74cd1f004bae47985abb6e2d4ec30cda34e1d17b412fc36"
+      "bytes": 14237,
+      "sha256": "3456d6a96b7a4f997454d2fdc023c13ada9fc6986fecfeca02d6c00286522aa8"
     },
     {
       "path": "web/src/native-stability.js",
@@ -1194,8 +1334,8 @@
     },
     {
       "path": "web/src/presentation-runtime.js",
-      "bytes": 9504,
-      "sha256": "7d66eef6edd973cfc30fb6a776872f43faca5905cbd793216407346104014930"
+      "bytes": 10079,
+      "sha256": "d2345453bb5d02d266da0707383f93d0c18958f1bbcf88d7b73d72a0d0402fc5"
     },
     {
       "path": "web/src/progression.js",
@@ -1254,8 +1394,8 @@
     },
     {
       "path": "web/src/scene-stagecraft.js",
-      "bytes": 2563,
-      "sha256": "27f5a28d9f8f42181778d24316382055f60ce58ac715389047823ee527f0e764"
+      "bytes": 5250,
+      "sha256": "32463f91254b8bb8c81da8e7644b0261fd44c1600babaeeba3d77b7183475727"
     },
     {
       "path": "web/src/square-art.js",
@@ -1295,7 +1435,7 @@
     {
       "path": "web/tests/host.cjs",
       "bytes": 9363,
-      "sha256": "93ab2ac483adc55392683407a30316d5c88c6babfb908063df7760d0267ec930"
+      "sha256": "20fe34f0f80a0920f0f64e1cac81799dea31dbd03ea4bee008c0bc580a4ed390"
     },
     {
       "path": "web/tests/r29-day-night.test.cjs",
@@ -1310,12 +1450,12 @@
     {
       "path": "web/tests/r32-arcade-ui.test.cjs",
       "bytes": 5178,
-      "sha256": "15cbb3dbc3decb5ac68d78e1ee65e4770e1df42e0c14d9f831ec03c6c5ca323d"
+      "sha256": "7865b2b95c244a8590c143d2fec34aa3eaf85f1c2d4b13f0503acc26dc04a9f8"
     },
     {
       "path": "web/tests/r34-ui.test.cjs",
       "bytes": 6996,
-      "sha256": "ebe9997987450edea36ac5d56df3a263749cc78161ed87863203d3a2ef5f7a83"
+      "sha256": "ef89ec0c873fae594edc6a4bfd6aaa492881283feab0a50b269c70e78133734b"
     },
     {
       "path": "web/tests/r37-experience.test.cjs",
@@ -1335,7 +1475,7 @@
     {
       "path": "web/tests/r78-mask-presentation.test.cjs",
       "bytes": 4653,
-      "sha256": "f24b2d642ab5470cd0d3c525cb6689b6679665b8da39978e2a447590e12895ae"
+      "sha256": "427b352d82cc786c3c0f82542c6e6060c78505fed04232135eff3843304c3b0f"
     },
     {
       "path": "web/tests/r79-save-migration.test.cjs",
@@ -1374,8 +1514,8 @@
     },
     {
       "path": "web/tests/r83-corrections.test.cjs",
-      "bytes": 4570,
-      "sha256": "a256938057e7da6a87e5900b7332607d594f2785837eab7b2eb574f7756d3c11"
+      "bytes": 4672,
+      "sha256": "8082c97e0845b5392b73b83e019da59b51e63609f4bb4b1d07b8721fe0d06b4e"
     },
     {
       "path": "web/tests/r84-performance-story.test.cjs",
@@ -1434,13 +1574,18 @@
     },
     {
       "path": "web/tests/r89-art-audio.test.cjs",
-      "bytes": 6685,
-      "sha256": "333285765beaec43445c6cf3567ea970873e88b89a92c547100a7a0c13ebd307"
+      "bytes": 6738,
+      "sha256": "04ec1ffb0102065118b400f2d5745af5e2434bb2fb0abecc16a74c37b1011d3d"
     },
     {
       "path": "web/tests/r90-posture-skins.test.cjs",
-      "bytes": 3771,
-      "sha256": "94d9e48822b90884cfed049bfa421bb307928b4f2c2fcb827f61bafab031df19"
+      "bytes": 3816,
+      "sha256": "f98c1e93efbd33e5accde5d7ab6941b5eb77ee4627f3294c78617c03ffb4c5ec"
+    },
+    {
+      "path": "web/tests/r91-motion-field.test.cjs",
+      "bytes": 5711,
+      "sha256": "860f4b1f068670b4d7c93a07d74d14a21e04427c55d081f92a6b68b23fff510f"
     },
     {
       "path": "web/tests/tilt.test.cjs",

@@ -25,7 +25,7 @@ function joint(a,b,upper=11.5,lower=11.5,bend=1){
  return [a[0]+ux*reach-uy*rise*bend,a[1]+uy*reach+ux*rise*bend];
 }
 function legPose(hip,foot){
- const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,21.99/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
+ const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,21.7/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
  return [hip,joint(hip,ankle,11,11,-1),ankle];
 }
 // Quarter-unit edge tolerance keeps native rounded anchors valid while reserving
@@ -59,22 +59,39 @@ function plantedLeg(hip,foot,q){
  }return best;
 }
 
+const sole=[[-.8,-.35],[1.6,-.3],[2.05,.4],[1.9,.95],[-.9,.95],[-1,.1]];
+const ease=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+function footPoints(ankle,angle=0){const co=Math.cos(angle),si=Math.sin(angle);return sole.map(([x,y])=>[ankle[0]+x*co-y*si,ankle[1]+x*si+y*co])}
+function soleHeight(angle){return Math.max(...footPoints([0,0],angle).map(p=>p[1]))+.12}
+function runFoot(u){
+ const contact=.45,front=9.45,back=-9.45;
+ if(u<contact){const angle=u<.08?-.28*(1-ease(u/.08)):u>.3?.7*ease((u-.3)/.15):0;return {point:[front-42*u,-soleHeight(angle)],angle,contact:true}}
+ const v=(u-contact)/(1-contact),w=1-v,x=w*w*w*back+3*w*w*v*(back-7.7)+3*w*v*v*(front+7.7)+v*v*v*front;
+ const y0=-soleHeight(.7),y1=-soleHeight(-.28),lift=15*v*v*w*w*w*w/(16/729),y=y0+(y1-y0)*ease(v)-lift;
+ const angle=v<.45?.7+(-.55-.7)*ease(v/.45):-.55+(.27)*ease((v-.45)/.55);
+ return {point:[x,y],angle,contact:false};
+}
+function blendArm(a,b,u){
+ const mix=(x,y)=>x+Math.atan2(Math.sin(y-x),Math.cos(y-x))*u,s=a[0],upper=mix(Math.atan2(a[1][1]-s[1],a[1][0]-s[0]),Math.atan2(b[1][1]-s[1],b[1][0]-s[0])),lower=mix(Math.atan2(a[2][1]-a[1][1],a[2][0]-a[1][0]),Math.atan2(b[2][1]-b[1][1],b[2][0]-b[1][0])),elbow=[s[0]+8.5*Math.cos(upper),s[1]+8.5*Math.sin(upper)];return [s,elbow,[elbow[0]+7.5*Math.cos(lower),elbow[1]+7.5*Math.sin(lower)]];
+}
 function gait(time=0,q={},reduced=false){
- const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/(110/3):time*2.8;
- const bob=idle||air?0:-.35*(1-Math.cos(phase*TAU*2)),pelvis=idle?22.3:air?21.5:1+Math.sqrt(21.8**2-(11*Math.cos(phase*TAU))**2),hip=[0,-pelvis],shoulder=[3,-31.5+bob];
- const feet=[0,.5].map((offset,i)=>{const u=((phase+offset)%1+1)%1;
+ const idle=!!q.pose||reduced&&!Number.isFinite(q.strideDistance),wall=q.nativeState===12,height=Math.max(0,q.height||0),air=!!q.climbing||height>.05||wall,airMix=wall||q.climbing?1:ease(height/6),phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/42:time*2.4,local=((phase%1)+1)%1,step=local%.5;
+ const x=9.45-42*Math.min(step,.45),flight=step>.45?.7*Math.sin(Math.PI*(step-.45)/.05):0,runPelvis=1.12+Math.sqrt(21.2**2-x*x)+flight,turn=(!air&&q.turning)?Math.sin(Math.PI*(q.turnProgress||0)):0;
+ const pelvis=idle?22.3:(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn,bob=idle?0:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?0:-.65,-pelvis],shoulder=[3,-31.5+bob];
+ const samples=[0,.5].map(offset=>runFoot(((phase+offset)%1+1)%1));
+ const feet=samples.map((sample,i)=>{
   if(idle)return [i?3:-3,-1];
-  if(wall){const u=clamp((q.nativeFrame+(q.poseFraction||0))/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
+  if(wall){const u=clamp((q.poseFrame??q.nativeFrame??0)/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
   if(q.climbing)return i?[9,-16]:[-7,-3];
-  if(air){const kick=clamp(q.kick||0,0,1),u=clamp(q.jumpProgress??.5,0,1),fall=clamp((u-.55)/.45,0,1);return i?[8+kick*10,-14+11*fall-kick*5]:[-10+3*fall,-9+5*fall-Math.sin(Math.PI*u)*3]}
-  // Ground contact occupies 60% of the cycle, with a clean toe-off and recovery.
-  return u<.6?[11-22*u/.6,-1]:[-11+22*(u-.6)/.4,-1-9*Math.sin(Math.PI*(u-.6)/.4)];
+  if(air){const u=clamp(q.jumpProgress??.5,0,1),kick=clamp((q.kick||0)*2,0,1)*Math.sin(Math.PI*clamp(u/.7,0,1)),fall=ease((u-.55)/.45),target=i?[8+14*kick,-11-8*kick+8*fall]:[-9+5*fall,-8+5*fall-6*Math.sin(Math.PI*u)];return sample.point.map((v,k)=>v+(target[k]-v)*airMix)}
+  const target=i?[5,-8]:[-4,-5];return sample.point.map((v,k)=>v+(target[k]-v)*turn);
  });
- if(q.turning&&!air){const lift=22*Math.sin(Math.PI*(q.turnProgress||0));for(const foot of feet)foot[1]-=lift}
  const legs=feet.map(foot=>!air&&!q.pose&&q.nativeState===0?plantedLeg(hip,foot,q):legPose(hip,foot));
- const swing=idle?0:Math.sin(phase*TAU),hands=q.pose?[[q.pose==='open-arms'?-18:-10,q.pose==='raise-arms'?-46:-28],[q.pose==='open-arms'?20:14,q.pose==='raise-arms'?-46:-27]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:air?[[-7,-28],[11,-32+5*clamp(((q.jumpProgress??.5)-.55)/.45,0,1)]]:[[-5+swing*9,-23-swing*2],[8-swing*9,-24+swing*2]];
- const arms=!idle&&!air&&!q.climbing&&q.nativeState!==11?[0,1].map(i=>{const angle=-.85*Math.cos(phase*TAU+i*Math.PI),elbow=[shoulder[0]+9*Math.sin(angle),shoulder[1]+9*Math.cos(angle)],wrist=[elbow[0]+9*Math.sin(angle+1.65),elbow[1]+9*Math.cos(angle+1.65)];return [shoulder,elbow,wrist]}):hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,17.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,9,9,wrist[0]<shoulder[0]?-1:1),wrist]});
- return {hip,shoulder,legs,arms,air,bob};
+ const footAngles=samples.map((sample,i)=>idle||wall||q.climbing||q.turning||(!air&&Math.hypot(legs[i][2][0]-feet[i][0],legs[i][2][1]-feet[i][1])>1)?0:sample.angle*(1-airMix));
+ const u=clamp(q.jumpProgress??.5,0,1),reach=Math.sin(Math.PI*u),hands=q.pose?[[q.pose==='open-arms'?-18:-10,q.pose==='raise-arms'?-46:-28],[q.pose==='open-arms'?20:14,q.pose==='raise-arms'?-46:-27]]:idle?[[-4,-21],[7,-22]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:[[-7+2*reach,-27-4*reach],[10+2*reach,-30+4*ease((u-.55)/.45)]];
+ const running=[0,1].map(i=>{const swing=Math.cos(phase*TAU+i*Math.PI),angle=-.7*swing,flex=.975-.375*swing,elbow=[shoulder[0]+8.5*Math.sin(angle),shoulder[1]+8.5*Math.cos(angle)],wrist=[elbow[0]+7.5*Math.sin(angle+flex),elbow[1]+7.5*Math.cos(angle+flex)];return [shoulder,elbow,wrist]}),posed=hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,15.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,8.5,7.5,wrist[0]<shoulder[0]?-1:1),wrist]});
+ const arms=idle||wall||q.climbing||q.nativeState===11?posed:air?running.map((a,i)=>blendArm(a,posed[i],airMix)):running;
+ return {hip,shoulder,legs,arms,air,bob,footAngles};
 }
 // Forward motion and the surface normal are independent. Reversing mirrors
 // the runner along its surface; rotating by PI alone would bury its body.
@@ -89,8 +106,8 @@ function contourPath(c,points){
  c.closePath();
 }
 function contour(c,points,ink){c.beginPath();contourPath(c,points);c.fillStyle=ink;c.fill()}
-function paintLeg(c,bones,widths,ink){
- c.beginPath();contourPath(c,limbContour(bones,widths));const [x,y]=bones[2];contourPath(c,[[x-.8,y-.35],[x+1.6,y-.3],[x+2.05,y+.4],[x+1.9,y+.95],[x-.9,y+.95],[x-1,y+.1]]);c.fillStyle=ink;c.fill();
+function paintLeg(c,bones,widths,ink,angle=0){
+ c.beginPath();contourPath(c,limbContour(bones,widths));contourPath(c,footPoints(bones[2],angle));c.fillStyle=ink;c.fill();
 }
 function limbContour(bones,widths,foot=false){
  const [a,b,d]=bones,normal=(p,q)=>{const x=q[0]-p[0],y=q[1]-p[1],length=Math.hypot(x,y)||1;return [-y/length,x/length]},u=normal(a,b),v=normal(b,d),length=Math.hypot(u[0]+v[0],u[1]+v[1])||1,w=[(u[0]+v[0])/length,(u[1]+v[1])/length];
@@ -103,15 +120,15 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
  c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
  // Both legs are real filled contours; contact QA inspects their raster pixels.
- paintLeg(c,legs[0],[2,2.05,1.35,1.45,.72],ink);
- paintLeg(c,legs[1],[2.15,2.2,1.4,1.55,.75],ink);
- contour(c,limbContour(arms[0],[1.65,1.5,1.05,.95,.65]),ink);
+ paintLeg(c,legs[0],[1.25,1.35,.95,1.05,.55],ink,pose.footAngles[0]);
+ paintLeg(c,legs[1],[1.4,1.5,1.05,1.1,.58],ink,pose.footAngles[1]);
+ c.save();c.globalAlpha*=.72;contour(c,limbContour(arms[0],[1.15,1.05,.75,.68,.45]),ink);c.restore();
  const bob=pose.bob,lean=character==='elder'?2:0;
  c.beginPath();c.moveTo(hip[0]-1.8,hip[1]+1);c.bezierCurveTo(-2.1,hip[1]-3,-1.2,shoulder[1]+3,shoulder[0]-1.4,shoulder[1]-1.3);
- c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-35.5+bob);c.lineTo(5.4+lean,-35.3+bob);
+ c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-36+bob);c.lineTo(5.1+lean,-35.8+bob);
  c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(6.5,shoulder[1]+3,3,hip[1]-3,hip[0]+2.3,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
- contour(c,limbContour(arms[1],[1.7,1.55,1.1,1,.7]),ink);
- const headX=character==='elder'?6:4,headY=-38.5+bob;oval(c,headX,headY,2.65,3.9,ink);
+ contour(c,limbContour(arms[1],[1.25,1.1,.8,.72,.48]),ink);
+ const headX=character==='elder'?6:4,headY=-39+bob;oval(c,headX,headY,2.3,3.4,ink);
  if(character==='woman')contour(c,[[2,-41+bob],[-.5,-39+bob],[-.8,-35+bob],[-5,-33+bob],[-2.8,-36+bob],[.8,-41.5+bob]],ink);
  if(character==='elder')contour(c,[[-1,-30+bob],[-4,-29+bob],[-4.8,-24+bob],[.5,-21+bob],[2,-26+bob]],ink);
  if(style.detail==='leaf')contour(c,[[2,-43],[5,-45],[7,-43.5],[4,-42]],style.accent);
@@ -121,7 +138,7 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
 }
 
 function dog(c,q,fx={},reduced=false){
- if(!q)return;const phase=reduced?0:(q.strideDistance??(fx.poseTime??fx.t??0)*100)/(70/3),air=(q.height||0)>1;
+ if(!q)return;const phase=Number.isFinite(q.strideDistance)?q.strideDistance/(70/3):reduced?0:(fx.poseTime??fx.t??0)*100/(70/3),air=(q.height||0)>1;
  const ink=fx.ink||look().body;c.save();c.translate(q.x,q.y);const basis=actorBasis(q);c.rotate(basis.angle);c.scale((q.bodyHeight||23)/23,(q.bodyHeight||23)/23*basis.sign);
  for(let i=0;i<4;i++){const front=i>=2,x=front?7:-9,u=((phase+(i%2)*.5+(front?.12:0))%1+1)%1,foot=air?[x+(i%2?4:-4),-4]:u<.6?[x+7-14*u/.6,0]:[x-7+14*(u-.6)/.4,-6*Math.sin(Math.PI*(u-.6)/.4)];contour(c,limbContour([[x,-10],[x+(front?-2:2),-5],foot],[1.4,1.25,.9,.75,.5]),ink)}
  contour(c,[[-13,-14],[-8,-17],[5,-16],[10,-21],[15,-22],[17,-18],[21,-16],[20,-14],[14,-13],[10,-9],[-8,-9],[-13,-11]],ink);
@@ -218,5 +235,5 @@ function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=h
  $('shopOpen').textContent='옷장';$('shopOpen').onclick=e=>{host.open(e);render();$('wardrobeClose').focus({preventScroll:true})};
  render();return {render,view:()=>({selected:look().id,saved,collected:count(progress())})};
 }
-const api={joint,gait,actorBasis,contour,limbContour,worldPalette,nativeSupport,looks,available,decode,count,look,clock,sprite,dog,narrative,title,exterior,chamber,camera,cameraZoom,requestImmersive,hud,hint,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
+const api={joint,gait,runFoot,footPoints,actorBasis,contour,limbContour,worldPalette,nativeSupport,looks,available,decode,count,look,clock,sprite,dog,narrative,title,exterior,chamber,camera,cameraZoom,requestImmersive,hud,hint,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
