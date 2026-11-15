@@ -1,0 +1,72 @@
+{
+  "release": "R91",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 17.900000005960464,
+    "p95": 40.399999998509884,
+    "p99": 57.79999999701977,
+    "max": 100.89999999850988
+  },
+  "simulationMs": {
+    "samples": 179,
+    "p50": 10.699999995529652,
+    "p95": 19.399999998509884,
+    "p99": 42.100000001490116,
+    "max": 51.399999998509884
+  },
+  "longTasks": [
+    {
+      "start": 2134.39999999851,
+      "ms": 119
+    },
+    {
+      "start": 2253.89999999851,
+      "ms": 81
+    },
+    {
+      "start": 4348.29999999702,
+      "ms": 57
+    },
+    {
+      "start": 4432.60000000149,
+      "ms": 71
+    },
+    {
+      "start": 4550.69999999553,
+      "ms": 57
+    },
+    {
+      "start": 4910.60000000149,
+      "ms": 50
+    },
+    {
+      "start": 5138,
+      "ms": 68
+    },
+    {
+      "start": 6451.5,
+      "ms": 56
+    },
+    {
+      "start": 11290.69999999553,
+      "ms": 50
+    },
+    {
+      "start": 12938.89999999851,
+      "ms": 55
+    },
+    {
+      "start": 13012.69999999553,
+      "ms": 57
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 179,
+  "time": 13.424999999999962,
+  "state": "play",
+  "hearts": 3,
+  "measurementWindowClarification": "Begins immediately after the run start UI, includes countdown/initial native frames. Normal action begins after run.time reaches 2.4. Comparison uses the same window in both releases; prior protocol wording post-countdown is too broad."
+}

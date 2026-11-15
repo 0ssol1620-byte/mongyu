@@ -1,0 +1,52 @@
+{
+  "release": "R92",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 18.700000002980232,
+    "p95": 40.099999994039536,
+    "p99": 50.399999998509884,
+    "max": 92.39999999850988
+  },
+  "simulationMs": {
+    "samples": 181,
+    "p50": 11,
+    "p95": 18.899999998509884,
+    "p99": 24.399999998509884,
+    "max": 48.69999999552965
+  },
+  "longTasks": [
+    {
+      "start": 1565.2000000029802,
+      "ms": 104
+    },
+    {
+      "start": 3843.2000000029802,
+      "ms": 72
+    },
+    {
+      "start": 3917.3000000044703,
+      "ms": 55
+    },
+    {
+      "start": 5394.39999999851,
+      "ms": 55
+    },
+    {
+      "start": 9810.20000000298,
+      "ms": 53
+    },
+    {
+      "start": 12590.30000000447,
+      "ms": 55
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 181,
+  "time": 13.57499999999996,
+  "state": "play",
+  "hearts": 3,
+  "measurementWindowClarification": "Begins immediately after the run start UI, includes countdown/initial native frames. Normal action begins after run.time reaches 2.4. Comparison uses the same window in both releases; prior protocol wording post-countdown is too broad."
+}

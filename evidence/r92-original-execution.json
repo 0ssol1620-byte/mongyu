@@ -1,0 +1,252 @@
+{
+  "scope": "Private actual original-candidate execution, no original frames, PCM, notes or dialogue payload included. KTF V1.0.1 third-party archive is not authenticated as an official release. Fresh comparison omitted its preexisting p/ save files, then used normal OK key down/up and real-time emulation. Observed initial story and collection, not full completion. MIDI/PCM rendering through a modern emulator and soundfont is not original handset timbre certification.",
+  "engine": {
+    "engine": "wie",
+    "source": "github.com/Jun025/wie",
+    "wieHead": "1ca15ebf5a3ebc691a680a7854e99a32e75d46f4",
+    "crateVersion": "0.1.4",
+    "pinnedAt": "2026-10-31",
+    "publicDataEnginePin": "4ac38566adfe64b3d2255835de44847fdc6b6ab7",
+    "bootstrap": false,
+    "note": "wie publish CI \ubc1c\ud589 \uc544\ud2f0\ud329\ud2b8(fresh). repository_dispatch \uc218\uc2e0\ubd80 \uac31\uc2e0.",
+    "artifacts": {
+      "wasm": {
+        "file": "wie_web_bg.wasm",
+        "sha256": "a4a32d289c2281239d2d4e9c00c065d10203fe151969a6f324761e4e3a38ecdf",
+        "bytes": 17925360
+      },
+      "glue": {
+        "file": "wie_web.js",
+        "sha256": "02392ec64ed87938e5f432fbee76c030725b559e67461aaea9164aa8dbaad88b",
+        "bytes": 39859
+      }
+    },
+    "confirmedPlatforms": [
+      "KTF",
+      "SKT",
+      "LGT"
+    ]
+  },
+  "sourceJarSha256": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2",
+  "freshCapturesMetadataOnly": [
+    {
+      "captureIndex": 0,
+      "sha256": "c11274df3057990321fca6b92916de4edbc2bc5f52429078c3f294a4f2f81253",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 1,
+      "sha256": "283228eea7c641d9ebb13188f3020c5efd23d338e500138bc9aeec4b0f8f2ce9",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 2,
+      "sha256": "09029060b0e65aa68d14f9867454527ef6ce637e04693a00b9ef5233a685d2e4",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 3,
+      "sha256": "cc84674f7f55483ba766bbaa65c1a3266fcda49ec4352d5ad27ab79a8e65a90b",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 4,
+      "sha256": "9e20f7f83db06c951208888f05b3d38dc26556785f2824687b63e721cd0d66e9",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 5,
+      "sha256": "f38b3a4d6b34b8912978caa97ad5342f17adf7850d3a50ad47e265a6b0bda3a9",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 6,
+      "sha256": "a0895e090e928ffc9a04237225b86e03e44332759b28894fbea510af1c26dcb8",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 7,
+      "sha256": "3b16f79437d61fb67cb856266bb6b55dd3b80f63de80dcf84b95a8ca0033a023",
+      "observation": "First story page, question marker and protagonist"
+    },
+    {
+      "captureIndex": 8,
+      "sha256": "5c1435ac685846b7c3a73296ea3c4572b86442312685fb4ee7e8675317b92621",
+      "observation": "Second story page, transition proceeds after OK"
+    },
+    {
+      "captureIndex": 9,
+      "sha256": "eca1d52641a2a5a35484dbf4bb21d3aa342eb436c4428bb2e43c89950862ade4",
+      "observation": "Second collection entry reveal"
+    },
+    {
+      "captureIndex": 10,
+      "sha256": "b7c9804a42001a557d4867879991a3fbacac7d3e957675e069c223105cf8e399",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 11,
+      "sha256": "c99e8c19278b5cfb47e42dc936041de60a89f8fe7f50bbb34f27395ca1f3dcec",
+      "observation": "Private reference capture"
+    },
+    {
+      "captureIndex": 12,
+      "sha256": "3e0c66e0a767c73e33c83b531bb967e1bbc57ee5f9afab1399e7622ef1e6d338",
+      "observation": "Private reference capture"
+    }
+  ],
+  "audioPlaySummaries": [
+    {
+      "events": 68,
+      "noteOns": 9,
+      "midiChannels": 10,
+      "yamahaSysExEvents": 0,
+      "durationMetadataMs": 1868,
+      "repeat": false
+    },
+    {
+      "events": 1,
+      "noteOns": 0,
+      "midiChannels": 0,
+      "yamahaSysExEvents": 0,
+      "durationMetadataMs": 1343,
+      "repeat": false
+    },
+    {
+      "events": 54,
+      "noteOns": 8,
+      "midiChannels": 2,
+      "yamahaSysExEvents": 3,
+      "durationMetadataMs": 1540,
+      "repeat": false
+    },
+    {
+      "events": 1308,
+      "noteOns": 624,
+      "midiChannels": 10,
+      "yamahaSysExEvents": 13,
+      "durationMetadataMs": 15220,
+      "repeat": true
+    },
+    {
+      "events": 54,
+      "noteOns": 8,
+      "midiChannels": 2,
+      "yamahaSysExEvents": 3,
+      "durationMetadataMs": 1540,
+      "repeat": false
+    },
+    {
+      "events": 752,
+      "noteOns": 357,
+      "midiChannels": 6,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 15220,
+      "repeat": true
+    },
+    {
+      "events": 54,
+      "noteOns": 8,
+      "midiChannels": 2,
+      "yamahaSysExEvents": 3,
+      "durationMetadataMs": 1540,
+      "repeat": false
+    },
+    {
+      "events": 120,
+      "noteOns": 48,
+      "midiChannels": 4,
+      "yamahaSysExEvents": 4,
+      "durationMetadataMs": 1352,
+      "repeat": false
+    },
+    {
+      "events": 2784,
+      "noteOns": 1369,
+      "midiChannels": 7,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 30456,
+      "repeat": true
+    },
+    {
+      "events": 2795,
+      "noteOns": 1357,
+      "midiChannels": 14,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 30480,
+      "repeat": true
+    },
+    {
+      "events": 54,
+      "noteOns": 8,
+      "midiChannels": 2,
+      "yamahaSysExEvents": 3,
+      "durationMetadataMs": 1540,
+      "repeat": false
+    },
+    {
+      "events": 146,
+      "noteOns": 31,
+      "midiChannels": 8,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 1088,
+      "repeat": false
+    },
+    {
+      "events": 120,
+      "noteOns": 48,
+      "midiChannels": 4,
+      "yamahaSysExEvents": 4,
+      "durationMetadataMs": 1352,
+      "repeat": false
+    },
+    {
+      "events": 2784,
+      "noteOns": 1369,
+      "midiChannels": 7,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 30456,
+      "repeat": true
+    },
+    {
+      "events": 2784,
+      "noteOns": 1369,
+      "midiChannels": 7,
+      "yamahaSysExEvents": 11,
+      "durationMetadataMs": 30456,
+      "repeat": true
+    },
+    {
+      "events": 81,
+      "noteOns": 23,
+      "midiChannels": 6,
+      "yamahaSysExEvents": 5,
+      "durationMetadataMs": 508,
+      "repeat": false
+    },
+    {
+      "events": 81,
+      "noteOns": 23,
+      "midiChannels": 6,
+      "yamahaSysExEvents": 5,
+      "durationMetadataMs": 508,
+      "repeat": false
+    },
+    {
+      "events": 81,
+      "noteOns": 23,
+      "midiChannels": 6,
+      "yamahaSysExEvents": 5,
+      "durationMetadataMs": 508,
+      "repeat": false
+    },
+    {
+      "events": 1836,
+      "noteOns": 741,
+      "midiChannels": 13,
+      "yamahaSysExEvents": 14,
+      "durationMetadataMs": 20568,
+      "repeat": true
+    }
+  ]
+}
