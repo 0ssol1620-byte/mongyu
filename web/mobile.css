@@ -15,7 +15,7 @@ body[data-square=true] #titleContinue{min-height:62px;background:#eac5a1;color:#
 body[data-square=true] #titleContinue:after{content:'›';font-size:28px;font-weight:400;right:24px;top:11px}
 body[data-square=true] #restorationOpen{border:0;background:none;color:#dacdb9;font-size:13px;min-height:48px;text-align:center;padding:10px}
 body[data-square=true] .title-links{display:flex;justify-content:center;gap:30px;grid-column:1}
-.title-links #shopOpen,.title-links #modesOpen{width:auto;min-width:64px;min-height:44px;border:0;border-radius:22px;background:none;color:#b9c4cd;font-size:12px}
+.title-links #shopOpen,.title-links #storyOpen,.title-links #modesOpen{width:auto;min-width:64px;min-height:44px;border:0;border-radius:22px;background:none;color:#b9c4cd;font-size:12px}
 #shopMapOpen,#shopOfferDismiss{display:none!important}
 .overlay{padding:20px;background:#0b1423c9;backdrop-filter:blur(16px)}
 .box{border:1px solid #d3d9d21a;border-radius:30px;background:#172334ed;box-shadow:0 24px 100px #0004;padding:26px;width:min(470px,100%);scrollbar-gutter:auto;max-height:calc(100dvh - 40px)}
@@ -71,3 +71,19 @@ body[data-square=true] #bar #pause{position:fixed;top:max(12px,env(safe-area-ins
 body[data-square=true] #squareHud{top:max(14px,env(safe-area-inset-top),var(--native-safe-top,0px));left:max(18px,env(safe-area-inset-left),var(--native-safe-left,0px));padding:2px 0;background:none;border:0;box-shadow:none;text-shadow:0 1px 6px #0009;font-size:13px;line-height:1.5;letter-spacing:.05em}
 body[data-square=true] #hudCue{border:0;background:none;box-shadow:none;bottom:max(24px,env(safe-area-inset-bottom),var(--native-safe-bottom,0px));padding:4px 12px;font-size:12px!important;color:#f5eddd;text-shadow:0 2px 8px #000;max-width:calc(100% - 72px)!important}
 body[data-square=true] .top{top:max(16px,env(safe-area-inset-top),var(--native-safe-top,0px));right:max(18px,env(safe-area-inset-right),var(--native-safe-right,0px))}
+
+/* R82: a drawn settings icon keeps rendering consistent across mobile fonts. */
+#options{display:grid;place-items:center}#options svg{display:block;width:20px;height:20px;pointer-events:none}
+
+/* R83: the vivid world needs a compact, high-contrast score surface. */
+body[data-square=true][data-screen=play] #squareHud{background:#080615d9;color:#fff8de;padding:5px 10px;border-radius:14px;text-shadow:none}
+
+/* R84: dialogue belongs to a speaker; the story index respects existing unlocks. */
+#restorationScene[data-presentation=speech] .scene-balloon{position:relative;background:#f5eddc;color:#172334;border-radius:24px;padding:16px 20px;margin:8px auto;box-shadow:0 5px 18px #0002;width:min(460px,100%)}
+#restorationScene[data-presentation=speech] .scene-balloon:after{content:'';position:absolute;left:var(--speaker-x,50%);bottom:-8px;width:18px;height:18px;background:#f5eddc;transform:rotate(45deg)}
+#restorationScene[data-presentation=speech] #restorationSceneText{color:#172334;font-family:system-ui,sans-serif;font-size:clamp(20px,4vw,27px);line-height:1.55;font-weight:650;margin:8px 0}
+#restorationScene[data-presentation=speech] #restorationSceneSpeaker{color:#795b55;font-size:12px;font-weight:750}#restorationScene[data-presentation=speech] #restorationScenePage{color:#756d6b}
+#storyJournal .box{width:min(540px,100%)}.story-journal-note{font-size:12px;color:#b5bec8;line-height:1.6}#storyJournalList{display:grid;gap:6px;margin-top:18px}#storyJournalList button{text-align:left;min-height:48px;padding:12px 16px;border-radius:18px}#storyJournalList button:disabled{opacity:.4}
+@media(min-aspect-ratio:115/100){#restorationScene[data-presentation=speech] .scene-balloon:after{left:auto;right:-8px;top:45%;bottom:auto}}
+
+#restorationScene{background:var(--story-world,#eced8a)}#restorationSceneLabel,#restorationSceneRule{color:#40303d}#restorationScene #restorationSceneText{color:#18121d}#restorationSceneCast{filter:none}#restorationScene nav button{color:#18121d;border-color:#18121d40}#restorationScene nav #restorationSceneNext{background:#18121d;color:#fff8de;border:0}.scene-meta{color:#675660}

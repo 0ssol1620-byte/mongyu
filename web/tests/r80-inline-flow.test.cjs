@@ -15,6 +15,6 @@ test('exact distributable: story, unlock, playable stage, foreground hitch and b
 test('exact distributable: blocked storage remains playable and cosmetic save failure is disclosed',()=>{
  const h=boot({blockedRead:true,blockedWrite:true});h.click('shopOpen');h.click('look-ink');assert.equal(h.app.mobileWardrobe.view().selected,'ink');assert.equal(h.app.mobileWardrobe.view().saved,false);assert.match(h.e.wardrobeStatus.textContent,/이번 실행/);h.click('wardrobeClose');h.click('titleContinue');assert.equal(h.app.getState().dialog,'restorationScene');
 });
-test('exact distributable: three embedded soundtracks have a dedicated original menu theme',()=>{
- const h=boot(),tracks=h.ctx.MONGYU_EMBEDDED_MUSIC;assert.equal(Object.keys(tracks).length,3);const p=h.ctx.MongyuRestorationAudioPolicy.createPolicy({tracks});assert.equal(p.update({screen:'title'}).trackId,'night-corners');assert.equal(p.update({boss:true}).trackId,'racket-and-bang');assert.equal(tracks['night-corners'].license,'Project-original composition');
+test('exact distributable: twelve embedded soundtracks have a dedicated original menu theme',()=>{
+ const h=boot(),tracks=h.ctx.MONGYU_EMBEDDED_MUSIC;assert.equal(Object.keys(tracks).length,12);const p=h.ctx.MongyuRestorationAudioPolicy.createPolicy({tracks});assert.equal(p.update({screen:'title'}).trackId,'night-corners');assert.equal(p.update({boss:true}).trackId,'heart-circuit');assert.equal(tracks['night-corners'].license,'Project-original composition');
 });

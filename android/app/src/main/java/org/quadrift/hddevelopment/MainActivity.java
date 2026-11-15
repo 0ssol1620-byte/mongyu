@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Insets;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowInsets;
@@ -16,7 +17,12 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.RenderProcessGoneDetail;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Button;
+import android.view.Gravity;
 import android.window.OnBackInvokedDispatcher;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,11 +35,13 @@ import java.util.Map;
 public final class MainActivity extends Activity {
     private static final String GAME_URL = "https://appassets.androidplatform.net/index.html";
     private WebView web;
+    private int rendererFailures;
     private int safeLeft, safeTop, safeRight, safeBottom;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        rendererFailures = state == null ? 0 : state.getInt("rendererFailures", 0);
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.rgb(10, 12, 18));
         web = new WebView(this);
@@ -70,6 +78,18 @@ public final class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptCookie(false);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setWebViewClient(new WebViewClient() {
+            @Override public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+                // A dead renderer must never take the Activity down with it.
+                // Keep the origin's saved collection; do not clear WebView data.
+                if (web == view) web = null;
+                if (view.getParent() instanceof FrameLayout) ((FrameLayout)view.getParent()).removeView(view);
+                view.destroy();
+                if (!isFinishing() && !isDestroyed()) {
+                    if (rendererFailures++ == 0) recreate();
+                    else showRecovery(); // Bound automatic retries; the player chooses the next one.
+                }
+                return true;
+            }
             @Override public void onPageFinished(WebView view, String url) {
                 if (GAME_URL.equals(url)) publishSafeInsets();
             }
@@ -93,6 +113,39 @@ public final class MainActivity extends Activity {
                 OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::gameBack);
         }
         web.loadUrl(GAME_URL);
+    }
+
+    private void showRecovery() {
+        float density = getResources().getDisplayMetrics().density;
+        LinearLayout panel = new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setGravity(Gravity.CENTER);
+        panel.setBackgroundColor(Color.rgb(10, 12, 18));
+        panel.setPadding((int)(24*density), 0, (int)(24*density), 0);
+        TextView message = new TextView(this);
+        message.setText("잠시 숨을 고를게요");
+        message.setTextColor(Color.rgb(255, 248, 222));
+        message.setTextSize(21);
+        panel.addView(message);
+        Button retry = new Button(this);
+        retry.setText("다시 열기");
+        retry.setAllCaps(false);
+        retry.setTextColor(Color.rgb(24, 18, 29));
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(Color.rgb(239, 212, 172));
+        shape.setCornerRadius(32*density);
+        retry.setBackground(shape);
+        LinearLayout.LayoutParams button = new LinearLayout.LayoutParams((int)(168*density), (int)(54*density));
+        button.topMargin = (int)(28*density);
+        panel.addView(retry, button);
+        retry.setOnClickListener(v -> { rendererFailures = 0; recreate(); });
+        setContentView(panel);
+        enterImmersive();
+    }
+
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putInt("rendererFailures", rendererFailures);
+        super.onSaveInstanceState(state);
     }
 
     private void publishSafeInsets() {

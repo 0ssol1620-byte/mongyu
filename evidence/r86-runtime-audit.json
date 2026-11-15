@@ -1,0 +1,4628 @@
+{
+  "release": "R86",
+  "scope": "100 entry ledger; 74 native candidate slots, two seeds each, up to 420 real native updates after normal initialization; inputs only; not a 100-slot campaign completion or original equivalence proof",
+  "elapsedMs": 147453.967531,
+  "rows": [
+    {
+      "slot": 1,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 2,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        5,
+        13
+      ],
+      "maxStepMs": 52.365512999999964,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 194,
+      "hearts": 3
+    },
+    {
+      "slot": 2,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 401,
+      "postCountdownSteps": 372,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 372
+      },
+      "actorStates": [
+        0,
+        3,
+        5,
+        13,
+        1,
+        7,
+        10,
+        12
+      ],
+      "maxStepMs": 44.54490900000019,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 244,
+      "hearts": 3
+    },
+    {
+      "slot": 3,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 327,
+      "postCountdownSteps": 298,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 288,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        2,
+        4,
+        13,
+        1
+      ],
+      "maxStepMs": 212.8064199999999,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 251,
+      "hearts": 0
+    },
+    {
+      "slot": 3,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 187,
+      "postCountdownSteps": 158,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 158
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        1,
+        13
+      ],
+      "maxStepMs": 40.489010999999664,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 121,
+      "hearts": 0
+    },
+    {
+      "slot": 4,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 252,
+      "postCountdownSteps": 223,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 223
+      },
+      "actorStates": [
+        0,
+        4,
+        3,
+        10,
+        12,
+        13
+      ],
+      "maxStepMs": 46.91848800000116,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 186,
+      "hearts": 0
+    },
+    {
+      "slot": 4,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 213,
+      "postCountdownSteps": 184,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 184
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        4,
+        13
+      ],
+      "maxStepMs": 43.93901199999891,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 147,
+      "hearts": 0
+    },
+    {
+      "slot": 5,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 6,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 192,
+      "postCountdownSteps": 163,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 153,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4
+      ],
+      "maxStepMs": 38.45384700000068,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 116,
+      "hearts": 0
+    },
+    {
+      "slot": 6,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 224,
+      "postCountdownSteps": 195,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 185,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        1
+      ],
+      "maxStepMs": 41.12851000000046,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 148,
+      "hearts": 0
+    },
+    {
+      "slot": 7,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 412,
+      "postCountdownSteps": 383,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 373,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        1,
+        12,
+        13
+      ],
+      "maxStepMs": 101.40634800000043,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 336,
+      "hearts": 0
+    },
+    {
+      "slot": 7,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 282,
+      "postCountdownSteps": 253,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 253
+      },
+      "actorStates": [
+        0,
+        3,
+        1,
+        13,
+        12,
+        2
+      ],
+      "maxStepMs": 45.6741460000012,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 216,
+      "hearts": 0
+    },
+    {
+      "slot": 8,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        1,
+        4,
+        11,
+        13
+      ],
+      "maxStepMs": 49.392744000000675,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 1
+    },
+    {
+      "slot": 8,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 359,
+      "postCountdownSteps": 330,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 330
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        13,
+        2,
+        1
+      ],
+      "maxStepMs": 43.938154999999824,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 9,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 156,
+      "postCountdownSteps": 127,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 127
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        7,
+        5
+      ],
+      "maxStepMs": 40.23023199999807,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 90,
+      "hearts": 0
+    },
+    {
+      "slot": 9,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 226,
+      "postCountdownSteps": 197,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 187,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        5,
+        3,
+        7,
+        10,
+        13,
+        12
+      ],
+      "maxStepMs": 38.99953600000299,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 150,
+      "hearts": 0
+    },
+    {
+      "slot": 10,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 381,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        1,
+        4,
+        12,
+        11
+      ],
+      "maxStepMs": 148.314868999998,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 334,
+      "hearts": 1
+    },
+    {
+      "slot": 10,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 173,
+      "postCountdownSteps": 144,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 144
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 26.70799800000168,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 107,
+      "hearts": 0
+    },
+    {
+      "slot": 11,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 180,
+      "postCountdownSteps": 151,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 141,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12
+      ],
+      "maxStepMs": 26.859705000002577,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 104,
+      "hearts": 0
+    },
+    {
+      "slot": 11,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 149,
+      "postCountdownSteps": 120,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 110,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 23.09650099999999,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 73,
+      "hearts": 0
+    },
+    {
+      "slot": 12,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 181,
+      "postCountdownSteps": 152,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 152
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4,
+        1
+      ],
+      "maxStepMs": 29.39258499999778,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 115,
+      "hearts": 0
+    },
+    {
+      "slot": 12,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 373,
+      "postCountdownSteps": 344,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 334,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        4,
+        2,
+        1
+      ],
+      "maxStepMs": 60.391029999998864,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 297,
+      "hearts": 0
+    },
+    {
+      "slot": 13,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 14,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 381,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        4,
+        3,
+        10,
+        13,
+        1,
+        11,
+        12
+      ],
+      "maxStepMs": 44.42411299999367,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 354,
+      "hearts": 2
+    },
+    {
+      "slot": 14,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 367,
+      "postCountdownSteps": 338,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 318,
+        "morph": 10,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        12,
+        1,
+        13
+      ],
+      "maxStepMs": 36.613938000002236,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 281,
+      "hearts": 0
+    },
+    {
+      "slot": 15,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 170,
+      "postCountdownSteps": 141,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 141
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12
+      ],
+      "maxStepMs": 15.030182000002242,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 104,
+      "hearts": 0
+    },
+    {
+      "slot": 15,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 195,
+      "postCountdownSteps": 166,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 166
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        1,
+        4
+      ],
+      "maxStepMs": 22.99305400000594,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 129,
+      "hearts": 0
+    },
+    {
+      "slot": 16,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 17,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 383,
+      "postCountdownSteps": 354,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 304,
+        "notification": 40,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        11,
+        13,
+        1,
+        12,
+        4
+      ],
+      "maxStepMs": 101.18805699999939,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 255,
+      "hearts": 0
+    },
+    {
+      "slot": 17,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 345,
+      "postCountdownSteps": 316,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 296,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        2,
+        12,
+        1
+      ],
+      "maxStepMs": 114.77074600000196,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 259,
+      "hearts": 0
+    },
+    {
+      "slot": 18,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 363,
+      "postCountdownSteps": 334,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 324,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4,
+        1
+      ],
+      "maxStepMs": 99.0797689999963,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 287,
+      "hearts": 0
+    },
+    {
+      "slot": 18,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 371,
+      "postCountdownSteps": 342,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 332,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        4,
+        1
+      ],
+      "maxStepMs": 77.0368679999956,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 295,
+      "hearts": 0
+    },
+    {
+      "slot": 19,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 274,
+      "postCountdownSteps": 245,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 235,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        14,
+        13,
+        1
+      ],
+      "maxStepMs": 20.00953699999809,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 198,
+      "hearts": 0
+    },
+    {
+      "slot": 19,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 151,
+      "postCountdownSteps": 122,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 122
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        13,
+        2,
+        4
+      ],
+      "maxStepMs": 18.25967600000149,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 85,
+      "hearts": 0
+    },
+    {
+      "slot": 20,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        7,
+        13
+      ],
+      "maxStepMs": 32.683499999999185,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 1
+    },
+    {
+      "slot": 20,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 396,
+      "postCountdownSteps": 367,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 367
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        7,
+        10
+      ],
+      "maxStepMs": 27.630808000001707,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 21,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 381,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        4,
+        3,
+        10,
+        1,
+        12
+      ],
+      "maxStepMs": 56.87797000000137,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 380,
+      "hearts": 3
+    },
+    {
+      "slot": 21,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 259,
+      "postCountdownSteps": 230,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 230
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        12,
+        1,
+        13
+      ],
+      "maxStepMs": 45.53514200000063,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 193,
+      "hearts": 0
+    },
+    {
+      "slot": 22,
+      "entry": "scene",
+      "kind": "character",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 23,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 280,
+      "postCountdownSteps": 251,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 231,
+        "notification": 20
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        1,
+        4
+      ],
+      "maxStepMs": 31.724217999995744,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 194,
+      "hearts": 0
+    },
+    {
+      "slot": 23,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 223,
+      "postCountdownSteps": 194,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 184,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        1,
+        3,
+        12,
+        13
+      ],
+      "maxStepMs": 23.32659699999931,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 147,
+      "hearts": 0
+    },
+    {
+      "slot": 24,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 25,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 144,
+      "postCountdownSteps": 115,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 115
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        7
+      ],
+      "maxStepMs": 15.272252999995544,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 78,
+      "hearts": 0
+    },
+    {
+      "slot": 25,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 175,
+      "postCountdownSteps": 146,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 146
+      },
+      "actorStates": [
+        0,
+        3,
+        7,
+        10,
+        13,
+        5,
+        12
+      ],
+      "maxStepMs": 8.183369999998831,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 109,
+      "hearts": 0
+    },
+    {
+      "slot": 26,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 170,
+      "postCountdownSteps": 141,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 131,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4
+      ],
+      "maxStepMs": 27.52938799999538,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 94,
+      "hearts": 0
+    },
+    {
+      "slot": 26,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 147,
+      "postCountdownSteps": 118,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 108,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        5
+      ],
+      "maxStepMs": 19.60720399999991,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 71,
+      "hearts": 0
+    },
+    {
+      "slot": 27,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 202,
+      "postCountdownSteps": 173,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 163,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        10,
+        1,
+        4
+      ],
+      "maxStepMs": 16.500104999999166,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 126,
+      "hearts": 0
+    },
+    {
+      "slot": 27,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 239,
+      "postCountdownSteps": 210,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210
+      },
+      "actorStates": [
+        0,
+        12,
+        3,
+        13,
+        1
+      ],
+      "maxStepMs": 19.023441000004823,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 173,
+      "hearts": 0
+    },
+    {
+      "slot": 28,
+      "entry": "scene",
+      "kind": "interlude",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 29,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 192,
+      "postCountdownSteps": 163,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 163
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        5,
+        7
+      ],
+      "maxStepMs": 35.761389999999665,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 126,
+      "hearts": 0
+    },
+    {
+      "slot": 29,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 327,
+      "postCountdownSteps": 298,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 288,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        3,
+        13,
+        12,
+        5,
+        4
+      ],
+      "maxStepMs": 65.01782800000365,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 251,
+      "hearts": 0
+    },
+    {
+      "slot": 30,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 305,
+      "postCountdownSteps": 276,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 256,
+        "morph": 10,
+        "notification": 10
+      },
+      "actorStates": [
+        15,
+        9,
+        16,
+        0,
+        7,
+        10,
+        3,
+        13
+      ],
+      "maxStepMs": 34.806415999999444,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 219,
+      "hearts": 0
+    },
+    {
+      "slot": 30,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 195,
+      "postCountdownSteps": 166,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 166
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 38.76780699999654,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 129,
+      "hearts": 0
+    },
+    {
+      "slot": 31,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        11,
+        1,
+        13,
+        2
+      ],
+      "maxStepMs": 45.019571999997424,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 2
+    },
+    {
+      "slot": 31,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        13,
+        1,
+        2
+      ],
+      "maxStepMs": 40.136913000002096,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 1
+    },
+    {
+      "slot": 32,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 270,
+      "postCountdownSteps": 241,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 231,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4,
+        1,
+        11
+      ],
+      "maxStepMs": 54.11503000000084,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 170,
+      "hearts": 0
+    },
+    {
+      "slot": 32,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 280,
+      "postCountdownSteps": 251,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 241,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        4
+      ],
+      "maxStepMs": 46.68193600000086,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 204,
+      "hearts": 0
+    },
+    {
+      "slot": 33,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 252,
+      "postCountdownSteps": 223,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 213,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        11,
+        12,
+        2,
+        1,
+        4
+      ],
+      "maxStepMs": 48.19212400000106,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 164,
+      "hearts": 0
+    },
+    {
+      "slot": 33,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 192,
+      "postCountdownSteps": 163,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 153,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        1,
+        4
+      ],
+      "maxStepMs": 43.095658999998705,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 116,
+      "hearts": 0
+    },
+    {
+      "slot": 34,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 35,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 160,
+      "postCountdownSteps": 131,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 131
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4
+      ],
+      "maxStepMs": 40.13560900000448,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 94,
+      "hearts": 0
+    },
+    {
+      "slot": 35,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 161,
+      "postCountdownSteps": 132,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 132
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        1
+      ],
+      "maxStepMs": 40.686061000000336,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 95,
+      "hearts": 0
+    },
+    {
+      "slot": 36,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 338,
+      "postCountdownSteps": 309,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 289,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        1,
+        4,
+        13,
+        12,
+        2,
+        10
+      ],
+      "maxStepMs": 156.8875629999966,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 252,
+      "hearts": 0
+    },
+    {
+      "slot": 36,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 249,
+      "postCountdownSteps": 220,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        1,
+        13,
+        4,
+        12,
+        2
+      ],
+      "maxStepMs": 43.299288999987766,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 173,
+      "hearts": 0
+    },
+    {
+      "slot": 37,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 361,
+        "notification": 20,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        12,
+        6,
+        13,
+        5,
+        1
+      ],
+      "maxStepMs": 118.52188499999465,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 332,
+      "hearts": 1
+    },
+    {
+      "slot": 37,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 204,
+      "postCountdownSteps": 175,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 165,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        1
+      ],
+      "maxStepMs": 38.02965100000438,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 128,
+      "hearts": 0
+    },
+    {
+      "slot": 38,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        2,
+        1,
+        13
+      ],
+      "maxStepMs": 22.122504000013578,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 1
+    },
+    {
+      "slot": 38,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 253,
+      "postCountdownSteps": 224,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 224
+      },
+      "actorStates": [
+        0,
+        3,
+        1,
+        13,
+        2,
+        4
+      ],
+      "maxStepMs": 11.41510099999141,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 39,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 40,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 318,
+      "postCountdownSteps": 289,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 269,
+        "morph": 10,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        2,
+        1,
+        12,
+        4
+      ],
+      "maxStepMs": 82.22348300000886,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 232,
+      "hearts": 0
+    },
+    {
+      "slot": 40,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 159,
+      "postCountdownSteps": 130,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 130
+      },
+      "actorStates": [
+        0,
+        1,
+        13,
+        3
+      ],
+      "maxStepMs": 21.127066999993986,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 93,
+      "hearts": 0
+    },
+    {
+      "slot": 41,
+      "entry": "scene",
+      "kind": "interlude",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 42,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 195,
+      "postCountdownSteps": 166,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 166
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        5,
+        12,
+        11,
+        4
+      ],
+      "maxStepMs": 12.059975000011036,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 117,
+      "hearts": 0
+    },
+    {
+      "slot": 42,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 269,
+      "postCountdownSteps": 240,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 240
+      },
+      "actorStates": [
+        0,
+        5,
+        3,
+        13,
+        12,
+        1,
+        4,
+        2
+      ],
+      "maxStepMs": 32.40230000000156,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 203,
+      "hearts": 0
+    },
+    {
+      "slot": 43,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 238,
+      "postCountdownSteps": 209,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 199,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        5,
+        13,
+        7
+      ],
+      "maxStepMs": 7.941898000004585,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 162,
+      "hearts": 0
+    },
+    {
+      "slot": 43,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 183,
+      "postCountdownSteps": 154,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 144,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        13,
+        3,
+        12
+      ],
+      "maxStepMs": 3.8948059999966063,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 107,
+      "hearts": 0
+    },
+    {
+      "slot": 44,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 130,
+      "postCountdownSteps": 101,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 101
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        5,
+        12
+      ],
+      "maxStepMs": 10.55941499999608,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 64,
+      "hearts": 0
+    },
+    {
+      "slot": 44,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 127,
+      "postCountdownSteps": 98,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 98
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        5,
+        12
+      ],
+      "maxStepMs": 10.373000000006869,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 61,
+      "hearts": 0
+    },
+    {
+      "slot": 45,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 268,
+      "postCountdownSteps": 239,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 239
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        7,
+        13
+      ],
+      "maxStepMs": 23.33952200000931,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 45,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 382,
+      "postCountdownSteps": 353,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 353
+      },
+      "actorStates": [
+        0,
+        3,
+        7,
+        10,
+        13
+      ],
+      "maxStepMs": 27.32278300001053,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 46,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 194,
+      "postCountdownSteps": 165,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 165
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        5,
+        7
+      ],
+      "maxStepMs": 11.999899000002188,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 128,
+      "hearts": 0
+    },
+    {
+      "slot": 46,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 326,
+      "postCountdownSteps": 297,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 287,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        5,
+        7,
+        10,
+        13,
+        12,
+        1,
+        4
+      ],
+      "maxStepMs": 71.05619699999806,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 250,
+      "hearts": 0
+    },
+    {
+      "slot": 47,
+      "entry": "scene",
+      "kind": "character",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 48,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 204,
+      "postCountdownSteps": 175,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 165,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        4
+      ],
+      "maxStepMs": 16.137841999996454,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 128,
+      "hearts": 0
+    },
+    {
+      "slot": 48,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 235,
+      "postCountdownSteps": 206,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 196,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        1,
+        12,
+        4,
+        2
+      ],
+      "maxStepMs": 24.64414299999771,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 159,
+      "hearts": 0
+    },
+    {
+      "slot": 49,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 50,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 361,
+        "notification": 20,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        2,
+        12,
+        11,
+        1,
+        13,
+        4
+      ],
+      "maxStepMs": 52.168250000002445,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 326,
+      "hearts": 1
+    },
+    {
+      "slot": 50,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 173,
+      "postCountdownSteps": 144,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 134,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        1,
+        13,
+        4,
+        12
+      ],
+      "maxStepMs": 11.420872000002419,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 97,
+      "hearts": 0
+    },
+    {
+      "slot": 51,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 307,
+      "postCountdownSteps": 278,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 268,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        12,
+        1,
+        13
+      ],
+      "maxStepMs": 63.70321900000272,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 231,
+      "hearts": 0
+    },
+    {
+      "slot": 51,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 393,
+      "postCountdownSteps": 364,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 354,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        4,
+        2,
+        3,
+        1,
+        12,
+        13,
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 46.97652399999788,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 317,
+      "hearts": 0
+    },
+    {
+      "slot": 52,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 53,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 252,
+      "postCountdownSteps": 223,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 223
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        7,
+        10,
+        12
+      ],
+      "maxStepMs": 24.52440400001069,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 186,
+      "hearts": 0
+    },
+    {
+      "slot": 53,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 264,
+      "postCountdownSteps": 235,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 235
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        5,
+        7,
+        10,
+        12
+      ],
+      "maxStepMs": 14.633428000001004,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 198,
+      "hearts": 0
+    },
+    {
+      "slot": 54,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 227,
+      "postCountdownSteps": 198,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 188,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        8,
+        12,
+        11,
+        4,
+        1
+      ],
+      "maxStepMs": 11.51052699999127,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 127,
+      "hearts": 0
+    },
+    {
+      "slot": 54,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 149,
+      "postCountdownSteps": 120,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 110,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        7,
+        11,
+        1,
+        12,
+        4
+      ],
+      "maxStepMs": 7.013737999994191,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 61,
+      "hearts": 0
+    },
+    {
+      "slot": 55,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 56,
+      "entry": "scene",
+      "kind": "interlude",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 57,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 289,
+      "postCountdownSteps": 260,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 250,
+        "morph": 10
+      },
+      "actorStates": [
+        15,
+        9,
+        16,
+        0,
+        5,
+        10,
+        13
+      ],
+      "maxStepMs": 39.694097999992664,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 213,
+      "hearts": 0
+    },
+    {
+      "slot": 57,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 370,
+      "postCountdownSteps": 341,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 331,
+        "morph": 10
+      },
+      "actorStates": [
+        15,
+        9,
+        16,
+        0,
+        13,
+        2,
+        3,
+        1
+      ],
+      "maxStepMs": 62.049961000011535,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 294,
+      "hearts": 0
+    },
+    {
+      "slot": 58,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 202,
+      "postCountdownSteps": 173,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 173
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 19.52237599999353,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 58,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 163,
+      "postCountdownSteps": 134,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 134
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 17.4242099999974,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 59,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 214,
+      "postCountdownSteps": 185,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 175,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        1,
+        12,
+        13,
+        5
+      ],
+      "maxStepMs": 11.480629999990924,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 138,
+      "hearts": 0
+    },
+    {
+      "slot": 59,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 205,
+      "postCountdownSteps": 176,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 166,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        13,
+        12,
+        5,
+        10
+      ],
+      "maxStepMs": 15.182398000004468,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 129,
+      "hearts": 0
+    },
+    {
+      "slot": 60,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 269,
+      "postCountdownSteps": 240,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210,
+        "notification": 30
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        14,
+        13
+      ],
+      "maxStepMs": 10.997105999995256,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 173,
+      "hearts": 0
+    },
+    {
+      "slot": 60,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 114,
+      "postCountdownSteps": 85,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 85
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 18.227811000004294,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 48,
+      "hearts": 0
+    },
+    {
+      "slot": 61,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 209,
+      "postCountdownSteps": 180,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 180
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        5,
+        13,
+        12
+      ],
+      "maxStepMs": 32.10019799998554,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 143,
+      "hearts": 0
+    },
+    {
+      "slot": 61,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 260,
+      "postCountdownSteps": 231,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 231
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        13,
+        3,
+        12
+      ],
+      "maxStepMs": 11.341895999998087,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 194,
+      "hearts": 0
+    },
+    {
+      "slot": 62,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 63,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 149,
+      "postCountdownSteps": 120,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 110,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        5,
+        10,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 8.082904000009876,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 73,
+      "hearts": 0
+    },
+    {
+      "slot": 63,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 172,
+      "postCountdownSteps": 143,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 133,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        5,
+        12
+      ],
+      "maxStepMs": 11.197107999993023,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 96,
+      "hearts": 0
+    },
+    {
+      "slot": 64,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 123,
+      "postCountdownSteps": 94,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 94
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        5
+      ],
+      "maxStepMs": 12.168718999993871,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 57,
+      "hearts": 0
+    },
+    {
+      "slot": 64,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 195,
+      "postCountdownSteps": 166,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 166
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        7,
+        10,
+        5
+      ],
+      "maxStepMs": 12.89190500001132,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 129,
+      "hearts": 0
+    },
+    {
+      "slot": 65,
+      "entry": "scene",
+      "kind": "interlude",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 66,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 152,
+      "postCountdownSteps": 123,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 123
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        7,
+        13
+      ],
+      "maxStepMs": 9.09150999999838,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 66,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 182,
+      "postCountdownSteps": 153,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 153
+      },
+      "actorStates": [
+        0,
+        3,
+        7,
+        10,
+        13
+      ],
+      "maxStepMs": 9.697617000012542,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 67,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 162,
+      "postCountdownSteps": 133,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 123,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        1,
+        12,
+        2,
+        3,
+        10,
+        13
+      ],
+      "maxStepMs": 12.746715999994194,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 86,
+      "hearts": 0
+    },
+    {
+      "slot": 67,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 147,
+      "postCountdownSteps": 118,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 108,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        12,
+        2,
+        13,
+        3,
+        1
+      ],
+      "maxStepMs": 6.711630999998306,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 71,
+      "hearts": 0
+    },
+    {
+      "slot": 68,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 381,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        8,
+        1,
+        13,
+        11,
+        7,
+        5
+      ],
+      "maxStepMs": 99.30287300000782,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 340,
+      "hearts": 1
+    },
+    {
+      "slot": 68,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 160,
+      "postCountdownSteps": 131,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 131
+      },
+      "actorStates": [
+        0,
+        1,
+        3,
+        13,
+        12,
+        7,
+        10
+      ],
+      "maxStepMs": 9.521508999998332,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 94,
+      "hearts": 0
+    },
+    {
+      "slot": 69,
+      "entry": "scene",
+      "kind": "character",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 70,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 153,
+      "postCountdownSteps": 124,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 124
+      },
+      "actorStates": [
+        0,
+        3,
+        13
+      ],
+      "maxStepMs": 11.158809000000474,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 87,
+      "hearts": 0
+    },
+    {
+      "slot": 70,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 140,
+      "postCountdownSteps": 111,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 111
+      },
+      "actorStates": [
+        0,
+        3,
+        13
+      ],
+      "maxStepMs": 16.368172000002232,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 74,
+      "hearts": 0
+    },
+    {
+      "slot": 71,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 371,
+        "morph": 10,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        13,
+        4,
+        5,
+        11,
+        14
+      ],
+      "maxStepMs": 79.41237199999159,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 336,
+      "hearts": 1
+    },
+    {
+      "slot": 71,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 373,
+        "morph": 10,
+        "notification": 8
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        12,
+        4,
+        5,
+        1,
+        7,
+        10
+      ],
+      "maxStepMs": 77.31750200000533,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 345,
+      "hearts": 1
+    },
+    {
+      "slot": 72,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 196,
+      "postCountdownSteps": 167,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 157,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        5,
+        10,
+        12,
+        13,
+        11,
+        4
+      ],
+      "maxStepMs": 8.03060299999197,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 108,
+      "hearts": 0
+    },
+    {
+      "slot": 72,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 141,
+      "postCountdownSteps": 112,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 112
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        5,
+        6,
+        12
+      ],
+      "maxStepMs": 8.711551000000327,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 75,
+      "hearts": 0
+    },
+    {
+      "slot": 73,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 74,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 192,
+      "postCountdownSteps": 163,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 163
+      },
+      "actorStates": [
+        0,
+        5,
+        10,
+        3,
+        13,
+        7
+      ],
+      "maxStepMs": 5.249322000003303,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 126,
+      "hearts": 0
+    },
+    {
+      "slot": 74,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 310,
+      "postCountdownSteps": 281,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 261,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        5,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 77.64394500000344,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 224,
+      "hearts": 0
+    },
+    {
+      "slot": 75,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 235,
+      "postCountdownSteps": 206,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 196,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        12,
+        13,
+        1
+      ],
+      "maxStepMs": 5.704786999995122,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 159,
+      "hearts": 0
+    },
+    {
+      "slot": 75,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 173,
+      "postCountdownSteps": 144,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 144
+      },
+      "actorStates": [
+        0,
+        3,
+        2,
+        13,
+        12,
+        1
+      ],
+      "maxStepMs": 14.54013200000918,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 107,
+      "hearts": 0
+    },
+    {
+      "slot": 76,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 216,
+      "postCountdownSteps": 187,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 177,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        3,
+        13,
+        12,
+        1,
+        11,
+        4
+      ],
+      "maxStepMs": 23.08715099999972,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 128,
+      "hearts": 0
+    },
+    {
+      "slot": 76,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 161,
+      "postCountdownSteps": 132,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 122,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        13,
+        1,
+        3,
+        12,
+        4
+      ],
+      "maxStepMs": 9.252473999993526,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 85,
+      "hearts": 0
+    },
+    {
+      "slot": 77,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 175,
+      "postCountdownSteps": 146,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 146
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 9.798412000003736,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 77,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 207,
+      "postCountdownSteps": 178,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 178
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 13.01770700000634,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 78,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 174,
+      "postCountdownSteps": 145,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 135,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12
+      ],
+      "maxStepMs": 71.66880800000217,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 98,
+      "hearts": 0
+    },
+    {
+      "slot": 78,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 359,
+      "postCountdownSteps": 330,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 310,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        13,
+        5
+      ],
+      "maxStepMs": 137.6433720000059,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 273,
+      "hearts": 0
+    },
+    {
+      "slot": 79,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 221,
+      "postCountdownSteps": 192,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 182,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        5,
+        13,
+        4,
+        6
+      ],
+      "maxStepMs": 5.830780999996932,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 145,
+      "hearts": 0
+    },
+    {
+      "slot": 79,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 249,
+      "postCountdownSteps": 220,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        6,
+        5,
+        13,
+        14
+      ],
+      "maxStepMs": 5.733424000005471,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 173,
+      "hearts": 0
+    },
+    {
+      "slot": 80,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 81,
+      "entry": "scene",
+      "kind": "interlude",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 82,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 186,
+      "postCountdownSteps": 157,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 157
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        7,
+        5
+      ],
+      "maxStepMs": 19.313222000011592,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 120,
+      "hearts": 0
+    },
+    {
+      "slot": 82,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 239,
+      "postCountdownSteps": 210,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210
+      },
+      "actorStates": [
+        0,
+        5,
+        3,
+        12,
+        13,
+        7,
+        10
+      ],
+      "maxStepMs": 10.341580000007525,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 173,
+      "hearts": 0
+    },
+    {
+      "slot": 83,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 366,
+      "postCountdownSteps": 337,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 307,
+        "notification": 20,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        12,
+        4,
+        11,
+        1,
+        13,
+        14,
+        7
+      ],
+      "maxStepMs": 109.05561199999647,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 246,
+      "hearts": 0
+    },
+    {
+      "slot": 83,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 282,
+      "postCountdownSteps": 253,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 243,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        12,
+        1,
+        13,
+        4,
+        14
+      ],
+      "maxStepMs": 9.89259299999685,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 206,
+      "hearts": 0
+    },
+    {
+      "slot": 84,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 85,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 238,
+      "postCountdownSteps": 209,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 209
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        12,
+        2,
+        4
+      ],
+      "maxStepMs": 15.473953000007896,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 172,
+      "hearts": 0
+    },
+    {
+      "slot": 85,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 371,
+      "postCountdownSteps": 342,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 322,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        1,
+        12,
+        4,
+        3,
+        13
+      ],
+      "maxStepMs": 74.76039300000411,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 285,
+      "hearts": 0
+    },
+    {
+      "slot": 86,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 138,
+      "postCountdownSteps": 109,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 109
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        7
+      ],
+      "maxStepMs": 9.987518000009004,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 72,
+      "hearts": 0
+    },
+    {
+      "slot": 86,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 250,
+      "postCountdownSteps": 221,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 221
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        3,
+        13,
+        12,
+        5
+      ],
+      "maxStepMs": 17.125920999998925,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 184,
+      "hearts": 0
+    },
+    {
+      "slot": 87,
+      "entry": "scene",
+      "kind": "character",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 88,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 161,
+      "postCountdownSteps": 132,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 132
+      },
+      "actorStates": [
+        0,
+        5,
+        10,
+        3,
+        13,
+        6,
+        12,
+        1
+      ],
+      "maxStepMs": 16.155297999997856,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 95,
+      "hearts": 0
+    },
+    {
+      "slot": 88,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 151,
+      "postCountdownSteps": 122,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 122
+      },
+      "actorStates": [
+        0,
+        5,
+        13,
+        12,
+        4,
+        3
+      ],
+      "maxStepMs": 9.25283800001489,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 85,
+      "hearts": 0
+    },
+    {
+      "slot": 89,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 402,
+      "postCountdownSteps": 373,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 343,
+        "notification": 20,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        11,
+        13,
+        12,
+        7,
+        2,
+        8,
+        1,
+        4
+      ],
+      "maxStepMs": 86.10015600000042,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 258,
+      "hearts": 0
+    },
+    {
+      "slot": 89,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 165,
+      "postCountdownSteps": 136,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 126,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        13,
+        7,
+        10,
+        12,
+        1
+      ],
+      "maxStepMs": 7.030483999988064,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 89,
+      "hearts": 0
+    },
+    {
+      "slot": 90,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 390,
+      "postCountdownSteps": 361,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 361
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        1,
+        13,
+        2,
+        4
+      ],
+      "maxStepMs": 13.768910999991931,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 90,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 239,
+      "postCountdownSteps": 210,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 210
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        2,
+        1,
+        4
+      ],
+      "maxStepMs": 6.018664999981411,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 91,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 153,
+      "postCountdownSteps": 124,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 124
+      },
+      "actorStates": [
+        0,
+        3,
+        13
+      ],
+      "maxStepMs": 22.904564999975264,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 87,
+      "hearts": 0
+    },
+    {
+      "slot": 91,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 147,
+      "postCountdownSteps": 118,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 118
+      },
+      "actorStates": [
+        0,
+        3,
+        13
+      ],
+      "maxStepMs": 6.961440000013681,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 81,
+      "hearts": 0
+    },
+    {
+      "slot": 92,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 93,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 198,
+      "postCountdownSteps": 169,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 169
+      },
+      "actorStates": [
+        0,
+        8,
+        3,
+        10,
+        12,
+        13,
+        7,
+        11
+      ],
+      "maxStepMs": 10.073053000000073,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 120,
+      "hearts": 0
+    },
+    {
+      "slot": 93,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 183,
+      "postCountdownSteps": 154,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 154
+      },
+      "actorStates": [
+        0,
+        7,
+        10,
+        3,
+        13,
+        12
+      ],
+      "maxStepMs": 14.929151999996975,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 117,
+      "hearts": 0
+    },
+    {
+      "slot": 94,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 255,
+      "postCountdownSteps": 226,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 226
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        12,
+        13,
+        1
+      ],
+      "maxStepMs": 7.436497000016971,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 189,
+      "hearts": 0
+    },
+    {
+      "slot": 94,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 268,
+      "postCountdownSteps": 239,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 239
+      },
+      "actorStates": [
+        0,
+        3,
+        4,
+        12,
+        1,
+        13
+      ],
+      "maxStepMs": 11.07466100002057,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 202,
+      "hearts": 0
+    },
+    {
+      "slot": 95,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 130,
+      "postCountdownSteps": 101,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 91,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        13,
+        7,
+        12
+      ],
+      "maxStepMs": 5.02982600001269,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 54,
+      "hearts": 0
+    },
+    {
+      "slot": 95,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 131,
+      "postCountdownSteps": 102,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 92,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        13,
+        3,
+        12
+      ],
+      "maxStepMs": 19.663962999999058,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 55,
+      "hearts": 0
+    },
+    {
+      "slot": 96,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    },
+    {
+      "slot": 97,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 1,
+      "phases": {
+        "countdown": 29,
+        "play": 371,
+        "notification": 10,
+        "morph": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        10,
+        4,
+        12,
+        1,
+        13,
+        11,
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 68.14483199999086,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 318,
+      "hearts": 1
+    },
+    {
+      "slot": 97,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 192,
+      "postCountdownSteps": 163,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 153,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        13,
+        1,
+        4,
+        12
+      ],
+      "maxStepMs": 19.266468000016175,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 116,
+      "hearts": 0
+    },
+    {
+      "slot": 98,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 215,
+      "postCountdownSteps": 186,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 176,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        3,
+        5,
+        7,
+        13,
+        12
+      ],
+      "maxStepMs": 18.31243099999847,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 139,
+      "hearts": 0
+    },
+    {
+      "slot": 98,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 260,
+      "postCountdownSteps": 231,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 221,
+        "notification": 10
+      },
+      "actorStates": [
+        0,
+        7,
+        3,
+        13,
+        12,
+        5
+      ],
+      "maxStepMs": 18.753507000015816,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": true,
+      "state": "clear",
+      "reason": null,
+      "supported": true,
+      "score": 184,
+      "hearts": 0
+    },
+    {
+      "slot": 99,
+      "seed": 7,
+      "entry": "native-candidate",
+      "steps": 420,
+      "postCountdownSteps": 391,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 391
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 15.359622999996645,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "play",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 1
+    },
+    {
+      "slot": 99,
+      "seed": 19,
+      "entry": "native-candidate",
+      "steps": 227,
+      "postCountdownSteps": 198,
+      "maps": 0,
+      "phases": {
+        "countdown": 29,
+        "play": 198
+      },
+      "actorStates": [
+        15,
+        9,
+        16
+      ],
+      "maxStepMs": 27.854476000007708,
+      "finiteGeometry": true,
+      "fullOriginalEquivalence": "unverified",
+      "clear": false,
+      "state": "fail",
+      "reason": null,
+      "supported": true,
+      "score": 2,
+      "hearts": 0
+    },
+    {
+      "slot": 100,
+      "entry": "scene",
+      "kind": "story",
+      "steps": 0,
+      "fullOriginalEquivalence": "unverified"
+    }
+  ],
+  "summary": {
+    "slots": 100,
+    "nativeRuns": 148,
+    "errors": [],
+    "clears": 49
+  }
+}

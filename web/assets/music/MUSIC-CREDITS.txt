@@ -1,18 +1,9 @@
-1	MONGYU R39 — MUSIC CREDITS
-2	
-3	"Raving Energy (faster)" by Kevin MacLeod
-4	Source: https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1900012
-5	License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
-6	Changes: Original MP3 bytes unchanged. Runtime volume adjustment, pause/resume, looping, and crossfades between recordings; no edit or transcode.
-7	
-8	"Racket and Bang" by TeknoAXE
-9	Source: https://teknoaxe.com/Link_Code_3.php?genre=Drum_and_Bass&q=2375
-10	License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
-11	Changes: Removed 387 bytes of PHP server warning text before the ID3 tag in the official download response. All MP3 and ID3 bytes unchanged; no audio edit or transcode. Runtime volume adjustment, pause/resume, looping, and crossfades between recordings.
-12	
-13	These recordings are licensed separately from the game source. Full CC BY 4.0 legal text is included in CC-BY-4.0.txt. The license permits commercial use with attribution. No creator endorsement is implied.
-14	
+MONGYU R82 soundtrack
 
-R80: Night Corners / 밤의 모서리
-Original deterministic procedural composition for MONGYU. No third-party samples.
-Source: tools/compose_night_score.py. Separate project-original asset; CC BY licenses above apply only to the two named third-party recordings.
+All 12 recordings in manifest.json are original procedural compositions for MONGYU. They contain no NOM recordings or third-party samples.
+
+Night Corners: tools/compose_night_score.py
+Ten chapter themes and Heart Circuit: tools/compose_chapter_scores.py
+Synthesized using NumPy, encoded with FFmpeg/libmp3lame. Each file is pinned by SHA-256 in manifest.json. Runtime volume, looping and crossfades apply. Composition ownership follows the project; no third-party license is claimed for original work.
+
+Earlier builds shipped Raving Energy (faster) by Kevin MacLeod and Racket and Bang by TeknoAXE under CC BY 4.0. Those recordings are absent from the R82 distribution. The historical CC-BY-4.0.txt is retained for earlier versions only.

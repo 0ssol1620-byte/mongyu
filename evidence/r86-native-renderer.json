@@ -1,0 +1,538 @@
+{
+  "errors": [],
+  "scenarios": [
+    {
+      "name": "first-run",
+      "state": "play",
+      "phase": "play",
+      "cells": 28,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 1.015625,
+        "baseScale": 1.015625,
+        "zoom": 1,
+        "offsetX": -9.262500000000003,
+        "offsetY": 406.375,
+        "left": 9.120000000000003,
+        "right": 393.12,
+        "top": -400.12307692307695,
+        "bottom": 430.89230769230767,
+        "follow": true,
+        "framing": "viewport-cover"
+      },
+      "actor": {
+        "x": 132,
+        "y": 360
+      },
+      "companion": false
+    },
+    {
+      "name": "dog",
+      "state": "play",
+      "phase": "play",
+      "cells": 70,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 1.015625,
+        "baseScale": 1.015625,
+        "zoom": 1,
+        "offsetX": -74.2625,
+        "offsetY": 483.5625,
+        "left": 73.12,
+        "right": 457.12,
+        "top": -476.12307692307695,
+        "bottom": 354.89230769230767,
+        "follow": true,
+        "framing": "viewport-cover"
+      },
+      "actor": {
+        "x": 196,
+        "y": 284
+      },
+      "companion": true
+    },
+    {
+      "name": "boss-8",
+      "state": "play",
+      "phase": "play",
+      "cells": 126,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-20",
+      "state": "play",
+      "phase": "play",
+      "cells": 141,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-31",
+      "state": "play",
+      "phase": "play",
+      "cells": 126,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": true
+    },
+    {
+      "name": "boss-38",
+      "state": "play",
+      "phase": "play",
+      "cells": 122,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": true
+    },
+    {
+      "name": "boss-45",
+      "state": "play",
+      "phase": "play",
+      "cells": 122,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": true
+    },
+    {
+      "name": "boss-58",
+      "state": "play",
+      "phase": "play",
+      "cells": 120,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 225,
+        "y": 64.5
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-66",
+      "state": "play",
+      "phase": "play",
+      "cells": 109,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-77",
+      "state": "play",
+      "phase": "play",
+      "cells": 173,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 246.5,
+        "y": 101
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-90",
+      "state": "play",
+      "phase": "play",
+      "cells": 12,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 72,
+        "y": 334.5
+      },
+      "companion": false
+    },
+    {
+      "name": "boss-99",
+      "state": "play",
+      "phase": "play",
+      "cells": 52,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 252,
+        "y": 192
+      },
+      "companion": false
+    },
+    {
+      "name": "morph",
+      "state": "play",
+      "phase": "morph",
+      "cells": 0,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 312,
+        "y": 320
+      },
+      "companion": false
+    },
+    {
+      "name": "parry",
+      "state": "play",
+      "phase": "play",
+      "cells": 0,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 1.015625,
+        "baseScale": 1.015625,
+        "zoom": 1,
+        "offsetX": -222.54375,
+        "offsetY": 414.5,
+        "left": 219.11999999999998,
+        "right": 603.12,
+        "top": -408.12307692307695,
+        "bottom": 422.89230769230767,
+        "follow": true,
+        "framing": "viewport-cover"
+      },
+      "actor": {
+        "x": 342,
+        "y": 352
+      },
+      "companion": true
+    },
+    {
+      "name": "floating",
+      "state": "play",
+      "phase": "play",
+      "cells": 52,
+      "groups": 1,
+      "layout": "single",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 232,
+        "y": 294
+      },
+      "companion": false
+    },
+    {
+      "name": "partition-17",
+      "state": "play",
+      "phase": "play",
+      "cells": 90,
+      "groups": 2,
+      "layout": "partitioned",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 128,
+        "y": 360
+      },
+      "companion": false
+    },
+    {
+      "name": "partition-20",
+      "state": "play",
+      "phase": "play",
+      "cells": 108,
+      "groups": 4,
+      "layout": "partitioned",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 240,
+        "y": 292
+      },
+      "companion": false
+    },
+    {
+      "name": "partition-4",
+      "state": "play",
+      "phase": "play",
+      "cells": 128,
+      "groups": 4,
+      "layout": "partitioned",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 288,
+        "y": 280
+      },
+      "companion": false
+    },
+    {
+      "name": "partition-3",
+      "state": "play",
+      "phase": "play",
+      "cells": 116,
+      "groups": 4,
+      "layout": "partitioned",
+      "camera": {
+        "width": 390,
+        "height": 844,
+        "scale": 0.975,
+        "baseScale": 0.975,
+        "zoom": 1,
+        "offsetX": 7.800000000000011,
+        "offsetY": 251.68,
+        "left": -8.000000000000012,
+        "right": 392,
+        "top": -258.1333333333333,
+        "bottom": 607.5076923076923,
+        "framing": "native-layout",
+        "follow": false
+      },
+      "actor": {
+        "x": 128,
+        "y": 360
+      },
+      "companion": false
+    }
+  ],
+  "provenance": "Native snapshots exercised in a dedicated preview canvas, no player save or progression writes."
+}

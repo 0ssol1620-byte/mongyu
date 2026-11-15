@@ -19,6 +19,8 @@
   "observed-encounter.js",
   "restoration-stage-policy.js",
   "restoration-world.js",
+  "state-clone.js",
+  "native-stability.js",
   "native-kernels.js",
   "native-restoration-run.js",
   "dream-score.js",
@@ -26,6 +28,7 @@
   "restoration-audio-policy.js",
   "restoration-audio-lifecycle.js",
   "licensed-score.js",
+  "game-sfx.js",
   "immersive-art.js",
   "encounter-art.js",
   "square-art.js",
@@ -40,6 +43,9 @@
   "restoration-story-graph.js",
   "restoration-ui.js",
   "mobile-presentation.js",
+  "presentation-runtime.js",
+  "native-palette.js",
+  "native-scene.js",
   "release-policy.js",
   "app.js"
 ]

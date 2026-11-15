@@ -1,0 +1,54 @@
+{
+  "errors": [],
+  "frames": [
+    {
+      "step": 44,
+      "playerFace": 0,
+      "dogFace": 0,
+      "historyIndex": 6,
+      "zoom": 1.0221885773406783,
+      "dogScreen": {
+        "x": 61.42707683349403,
+        "y": 525.9879584878365
+      },
+      "meanDrawMs": 1.098333333331781
+    },
+    {
+      "step": 118,
+      "playerFace": 1,
+      "dogFace": 1,
+      "historyIndex": 4,
+      "zoom": 1.0221885773406783,
+      "dogScreen": {
+        "x": 331.48011186368024,
+        "y": 453.5596644089594
+      },
+      "meanDrawMs": 0.15333333333255722
+    },
+    {
+      "step": 164,
+      "playerFace": 2,
+      "dogFace": 2,
+      "historyIndex": 1,
+      "zoom": 1.0199697196066109,
+      "dogScreen": {
+        "x": 331.5813780547658,
+        "y": 71.99999999999999
+      },
+      "meanDrawMs": 0.10166666666821887
+    },
+    {
+      "step": 177,
+      "playerFace": 3,
+      "dogFace": 3,
+      "historyIndex": 0,
+      "zoom": 1.0798788784264424,
+      "dogScreen": {
+        "x": 347.324119045475,
+        "y": 236.07277832601036
+      },
+      "meanDrawMs": 0.1799999999968956
+    }
+  ],
+  "note": "Dedicated renderer capture of genuine native slot 23 snapshots; does not bypass or award player progression."
+}
