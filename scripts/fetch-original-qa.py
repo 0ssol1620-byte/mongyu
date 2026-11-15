@@ -1,6 +1,6 @@
 """Fetch a separately configured private QA reference; never publish game bytes."""
 from pathlib import Path
-import hashlib,os,urllib.request,re,html
+import hashlib,os,urllib.request,re,html,zipfile,io,json
 url=os.environ.get('MONGYU_ORIGINAL_QA_URL')
 if not url:
  # External research reference; game bytes remain temporary and are never distributed.
@@ -17,5 +17,11 @@ except Exception:raise SystemExit('Could not fetch the private QA reference; no 
 assert 22<=len(data)<=16*1024*1024
 expected=os.environ.get('MONGYU_ORIGINAL_QA_SHA256','b665ede83645e56828cb9cc93a1d32ed60303cb5efee286865f84df183fa43c8')
 assert hashlib.sha256(data).hexdigest()==expected,'QA reference digest differs; never silently substitute another game'
-folder=Path('ci/private-original');folder.mkdir(parents=True,exist_ok=True);(folder/'original.zip').write_bytes(data)
+folder=Path('ci/private-original');folder.mkdir(parents=True,exist_ok=True)
+# The public research bundle includes someone else's old progress. A new-game QA
+# fixture omits only p/ save records; executable and media entries remain identical.
+with zipfile.ZipFile(io.BytesIO(data)) as source,zipfile.ZipFile(folder/'original.zip','w') as fresh:
+ for item in source.infolist():
+  if not item.filename.startswith('p/'):fresh.writestr(item,source.read(item.filename))
+(folder/'fixture-metadata.json').write_text(json.dumps({'scope':'Fresh original game: only preexisting p/ save entries omitted, no code/media changes or injected progress','sourceArchiveSha256':expected,'freshArchiveSha256':hashlib.sha256((folder/'original.zip').read_bytes()).hexdigest()},indent=2)+'\n')
 print('Private QA reference verified. This directory must never be uploaded.')
