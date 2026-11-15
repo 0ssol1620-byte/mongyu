@@ -19,6 +19,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - uses: android-actions/setup-android@v3
       - name: Check exact web payload
         run: python3 scripts/test.py
       - name: Prepare SDK and QA packages
