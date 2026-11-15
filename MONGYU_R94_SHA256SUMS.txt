@@ -1,0 +1,2 @@
+dfb79edf7fff9edfc7c1948abee2532a1b4adcbc5e5fe29a8e5628a5db001b1d  MONGYU_R94_ANDROID.apk
+b2c6b2833ab8acafc4da106993de41b213092793ea050626a6dd768ed8aed21d  MONGYU_R94_source.zip

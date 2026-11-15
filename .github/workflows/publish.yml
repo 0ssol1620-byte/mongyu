@@ -1,0 +1,30 @@
+name: Publish verified R94 standalone preview
+on:
+  push:
+    branches: [codex/r94-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify signed payload and source archive
+        run: sha256sum -c MONGYU_R94_SHA256SUMS.txt
+      - name: Publish standalone Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r94-preview
+          --prerelease
+          --target 9c8aa2f73deb8e768a7a2d22d857debd0539f8da
+          --title '몽유 R94 · 원본 파일 없이 플레이'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R94_ANDROID.apk MONGYU_R94_source.zip MONGYU_R94_SHA256SUMS.txt
+      - name: Direct standalone players away from the superseded importer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit r93-preview --notes-file R93_SUPERSEDED.md
