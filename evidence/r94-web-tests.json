@@ -1,0 +1,13 @@
+{
+  "release": "R94",
+  "command": "python3 scripts/test.py",
+  "tests": 183,
+  "passed": 182,
+  "failed": 0,
+  "skipped": 1,
+  "skipReason": "external audit adapter not distributed in this checkout",
+  "durationMs": 224963.150241,
+  "sourceModules": 53,
+  "licensedTracks": 18,
+  "requiresOriginalFile": false
+}
