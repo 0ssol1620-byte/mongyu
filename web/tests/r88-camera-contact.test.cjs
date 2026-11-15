@@ -4,23 +4,25 @@ const N=require('../src/native-restoration-run.js'),C=require('../src/restoratio
 const cases=[[2,30],[3,70],[3,131],[4,154],[12,91],[12,126],[18,136],[48,123]];
 function encounter(slot,steps){const r=new N.RestorationRun({slot:C.getSlot(slot),period:'noon',settings:{speed:'fast'}});r.start();for(let i=0;i<steps;i++){if(i%7===0)r.action();P.advance(r,.075);P.geometry(r,{})}return r}
 const close=(a,b,label)=>assert.ok(Math.abs(a-b)<1e-7,`${label}: ${a} != ${b}`);
-function painter(){let matrix=[1,0,0,1,0,0],path=[],stack=[];const strokes=[],ellipses=[];
+function painter(){let matrix=[1,0,0,1,0,0],path=[],stack=[];const strokes=[],ellipses=[],fills=[];
  const mul=t=>{const [a,b,c,d,e,f]=matrix,[g,h,i,j,k,l]=t;matrix=[a*g+c*h,b*g+d*h,a*i+c*j,b*i+d*j,a*k+c*l+e,b*k+d*l+f]},point=(x,y)=>({x:matrix[0]*x+matrix[2]*y+matrix[4],y:matrix[1]*x+matrix[3]*y+matrix[5]});
- const c={globalAlpha:1,strokes,ellipses,save(){stack.push([...matrix])},restore(){matrix=stack.pop()},translate(x,y){mul([1,0,0,1,x,y])},rotate(a){mul([Math.cos(a),Math.sin(a),-Math.sin(a),Math.cos(a),0,0])},scale(x,y){mul([x,0,0,y,0,0])},quadraticCurveTo(){},bezierCurveTo(){},closePath(){},beginPath(){path=[]},moveTo(x,y){path.push(point(x,y))},lineTo(x,y){path.push(point(x,y))},stroke(){strokes.push({width:c.lineWidth,points:path.slice()})},ellipse(x,y){ellipses.push(point(x,y))},fill(){}};return c;
+ const c={globalAlpha:1,strokes,ellipses,fills,save(){stack.push([...matrix])},restore(){matrix=stack.pop()},translate(x,y){mul([1,0,0,1,x,y])},rotate(a){mul([Math.cos(a),Math.sin(a),-Math.sin(a),Math.cos(a),0,0])},scale(x,y){mul([x,0,0,y,0,0])},quadraticCurveTo(){},bezierCurveTo(){},closePath(){},beginPath(){path=[]},moveTo(x,y){path.push(point(x,y))},lineTo(x,y){path.push(point(x,y))},stroke(){strokes.push({width:c.lineWidth,points:path.slice()})},ellipse(x,y){ellipses.push(point(x,y))},fill(){fills.push(path.slice())}};return c;
 }
+function headPoint(c){const points=c.fills.at(-1);assert.ok(points&&points.length>=3,'actual filled head contour');return {x:points.reduce((n,p)=>n+p.x,0)/points.length,y:points.reduce((n,p)=>n+p.y,0)/points.length}}
 function rigStrokes(q){const basis=M.actorBasis(q),size=(q.bodyHeight||60)/43.5;return M.gait(0,q,false).legs.map(leg=>({points:leg.map(([x,y])=>({x:q.x+(x*basis.tx-y*basis.nx)*size,y:q.y+(x*basis.ty-y*basis.ny)*size}))}))}
 test('the displayed body centre stays at the viewport centre on both directions and every turn angle',()=>{
+ const reference=painter();M.sprite(reference,{x:0,y:0,renderAngle:0,direction:0,bodyHeight:43.5},{},false);const localHeadX=headPoint(reference).x;
  for(const [width,height]of [[390,844],[844,390],[320,568],[800,1280]])for(const direction of [0,1])for(let degree=0;degree<360;degree++){
-  const angle=degree*Math.PI/180,q={x:140+degree,y:300-degree/2,renderAngle:angle,direction,bodyHeight:42.5},g={nativeRuntime:true,player:q},cam=M.camera({width,height},g,{},{}),c=painter();M.sprite(c,q,{},false);const head=c.ellipses.at(-1);
+  const angle=degree*Math.PI/180,q={x:140+degree,y:300-degree/2,renderAngle:angle,direction,bodyHeight:42.5},g={nativeRuntime:true,player:q},cam=M.camera({width,height},g,{},{}),c=painter();M.sprite(c,q,{},false);const head=headPoint(c);
   // The centre target is halfway between the contact anchor and the body's height.
-  const normal={x:(head.x-q.x)-4*Math.cos(angle)*42.5/43.5,y:(head.y-q.y)-4*Math.sin(angle)*42.5/43.5},length=Math.hypot(normal.x,normal.y);
+  const normal={x:(head.x-q.x)-localHeadX*Math.cos(angle)*42.5/43.5,y:(head.y-q.y)-localHeadX*Math.sin(angle)*42.5/43.5},length=Math.hypot(normal.x,normal.y);
   close((q.x+normal.x/length*21.25)*cam.scale+cam.offsetX,width/2,'body x');close((q.y+normal.y/length*21.25)*cam.scale+cam.offsetY,height/2,'body y');
   assert.equal(cam.zoom,1);assert.equal(cam.scale,Math.min(width/384,height/384));
   assert.deepEqual(M.camera({width,height},{...g,companion:{x:-900,y:900}}, {},{}),cam,'dog cannot pull camera away from player');
  }
 });
 test('normal-input ground poses put the head above the supporting face in all eight face/direction combinations',()=>{
- const found=new Set();for(const [slot,steps]of cases){const r=encounter(slot,steps),before=structuredClone(r.nativeFrame),q=Scene.geometry(r).player,c=painter();assert.equal(q.height,0);assert.equal(q.nativeState,0);M.sprite(c,q,{},false);const h=c.ellipses.at(-1),face=r.nativeFrame.game.pool.objects[r.nativeFrame.game.pool.currentIndex].geometry.orientation,normal=[{x:0,y:-1},{x:-1,y:0},{x:0,y:1},{x:1,y:0}][face];
+ const found=new Set();for(const [slot,steps]of cases){const r=encounter(slot,steps),before=structuredClone(r.nativeFrame),q=Scene.geometry(r).player,c=painter();assert.equal(q.height,0);assert.equal(q.nativeState,0);M.sprite(c,q,{},false);const h=headPoint(c),face=r.nativeFrame.game.pool.objects[r.nativeFrame.game.pool.currentIndex].geometry.orientation,normal=[{x:0,y:-1},{x:-1,y:0},{x:0,y:1},{x:1,y:0}][face];
   assert.ok((h.x-q.x)*normal.x+(h.y-q.y)*normal.y>30,`body faces into tiles at slot ${slot}`);found.add(face+'/'+r.nativeFrame.game.pool.direction);assert.deepEqual(r.nativeFrame,before);
  }assert.equal(found.size,8);
 });
@@ -57,7 +59,7 @@ test('stairs shorten or lift planted legs without changing either rigid link len
 test('free-rotation poses consume the actual native actor orientation and anchor',()=>{
  const r=encounter(57,0),orientations=new Set();for(let i=0;i<180&&r.state==='play';i++){
   if(i%7===0)r.action();P.advance(r,.075);const command=r.nativeFrame.map.drawCommands.find(c=>c.role==='current-actor');if(!command)continue;const before=structuredClone(r.nativeFrame),g=Scene.geometry(r),angle=-command.variantOrientation*Math.PI/2,origin=r.nativeFrame.presentation.viewport;
-  close(g.player.x,(command.x-origin.x)*1.6+8*Math.sin(angle),'free anchor x');close(g.player.y,(command.y-origin.y)*1.6-8*Math.cos(angle),'free anchor y');orientations.add(command.variantOrientation);const c=painter();M.sprite(c,g.player,{},false);const h=c.ellipses.at(-1);assert.ok((h.x-g.player.x)*Math.sin(angle)-(h.y-g.player.y)*Math.cos(angle)>30);assert.deepEqual(r.nativeFrame,before);
+  close(g.player.x,(command.x-origin.x)*1.6+8*Math.sin(angle),'free anchor x');close(g.player.y,(command.y-origin.y)*1.6-8*Math.cos(angle),'free anchor y');orientations.add(command.variantOrientation);const c=painter();M.sprite(c,g.player,{},false);const h=headPoint(c);assert.ok((h.x-g.player.x)*Math.sin(angle)-(h.y-g.player.y)*Math.cos(angle)>30);assert.deepEqual(r.nativeFrame,before);
  }assert.equal(orientations.size,4);
 });
 

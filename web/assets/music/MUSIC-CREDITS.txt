@@ -1,11 +1,30 @@
-MONGYU R89 soundtrack
+MONGYU R92 music credits
+Music: Eric Skiff — Resistor Anthems
+Available at https://ericskiff.com/music/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
 
-All 15 recordings in manifest.json are project-original compositions. No NOM recordings, melodies, or third-party samples are included.
+The artist website explicitly permits use in products with attribution.
+These are licensed recordings, not MONGYU compositions and not the original NOM3 soundtrack.
+Edits: excerpting, loudness normalization, edge fades, sample-rate conversion and MP3 encoding.
+Role and map assignments are authored for MONGYU; tempo metadata is approximate.
+All source and output hashes and exact edits are pinned in manifest.json.
 
-Night Corners: tools/compose_night_score.py
-Ten map arrangements and four boss arrangements: tools/compose_map_scores.py
-Melodic foundations: tools/compose_chapter_scores.py
-
-NumPy synthesis, FFmpeg/libmp3lame encoding. Marimba, electric piano, glass, mallet, water keys, resonant pulse, strings and bells are synthesized, not sampled. Each file is pinned by SHA-256. Runtime volume, looping and crossfades apply. Project ownership applies; no third-party license is claimed for original work.
-
-The retained CC-BY-4.0.txt concerns recordings distributed in older versions, absent from this build.
+night-corners: Prologue — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/15%20Prologue.mp3
+chapter-01: Chibi Ninja — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/03%20Chibi%20Ninja.mp3
+chapter-02: A Night Of Dizzy Spells — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/01%20A%20Night%20Of%20Dizzy%20Spells.mp3
+chapter-03: Underclocked (underunderclocked mix) — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/02%20Underclocked%20(underunderclocked%20mix).mp3
+chapter-04: All of Us — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/04%20All%20of%20Us.mp3
+chapter-05: Come and Find Me — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/05%20Come%20and%20Find%20Me.mp3
+chapter-06: Searching — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/06%20Searching.mp3
+chapter-07: Ascending — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/08%20Ascending.mp3
+chapter-08: Arpanauts — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/10%20Arpanauts.mp3
+chapter-09: Digital Native — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/13%20Digital%20Native.mp3
+chapter-10: Jumpshot — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/14%20Jumpshot.mp3
+heart-circuit: We're the Resistors — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/07%20We%27re%20the%20Resistors.mp3
+boss-glass: HHavok-intro — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/11%20HHavok-intro.mp3
+boss-motor: HHAvok-main — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/12%20HHavok-main.mp3
+boss-orbit: There's a Power Here — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/18%20There%27s%20a%20Power%20Here.mp3
+menu-score: Come and Find Me - B mix — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/09%20Come%20and%20Find%20Me%20-%20B%20mix.mp3
+story-moon: We're all under the stars — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/16%20We%27re%20all%20under%20the%20stars.mp3
+story-waterfall: Behind the waterfall lies the beginning — Eric Skiff / Resistor Anthems. Source: https://ericskiff.com/music/Resistor%20Anthems/17%20Behind%20the%20waterfall%20lies%20the%20beginning.mp3

@@ -1,0 +1,149 @@
+{
+  "scope": "Decoded stereo files, EBU R128 integrated loudness and true peak. All 18 licensed edits must measure -20..-16 LUFS and at most -1 dBFS true peak. Does not certify subjective listening quality or handset speaker playback.",
+  "rows": [
+    {
+      "id": "night-corners",
+      "integratedLufs": -18.0,
+      "truePeakDbfs": -5.4,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "fde0aa11c53ac7a8f48ffb22ad6f673e345ab0f9b74bdd97e32d461ec7985e29"
+    },
+    {
+      "id": "chapter-01",
+      "integratedLufs": -17.2,
+      "truePeakDbfs": -4.0,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "ec75398410aa4f31017ba1a76bb2f2de8638db55fe394d6474d0bfc553bceb77"
+    },
+    {
+      "id": "chapter-02",
+      "integratedLufs": -18.0,
+      "truePeakDbfs": -4.1,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "45dabe1e3d3e0048a9a5764075365365263f91db72a623ef86deb45c2852973c"
+    },
+    {
+      "id": "chapter-03",
+      "integratedLufs": -16.9,
+      "truePeakDbfs": -2.5,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "bd9e0ba5ffcb10dadf0d91f3684972e14af69d95267254819a6480bab13c6fcc"
+    },
+    {
+      "id": "chapter-04",
+      "integratedLufs": -18.0,
+      "truePeakDbfs": -5.1,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "68bc8dec7499e48c6aaf17f41c24dbad1c863d20727f1bc15034fe40a5b00fca"
+    },
+    {
+      "id": "chapter-05",
+      "integratedLufs": -17.7,
+      "truePeakDbfs": -5.1,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "9d04a620b8de8c98516ed60410fc17bb2b40c6305176391e7273db66992117df"
+    },
+    {
+      "id": "chapter-06",
+      "integratedLufs": -18.2,
+      "truePeakDbfs": -7.4,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "19404faa3d5381361326e8319e35137e2a8004f460e428fad77c58a8a6149624"
+    },
+    {
+      "id": "chapter-07",
+      "integratedLufs": -17.6,
+      "truePeakDbfs": -4.4,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "3d47b9b55df3419c578249613a68587201765bdc70a3b6df252b24bf596dfd57"
+    },
+    {
+      "id": "chapter-08",
+      "integratedLufs": -17.7,
+      "truePeakDbfs": -3.0,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "b3fc3d26de3103c4cf33d8c42a1567f41661746552d11b77c259a360135f1e01"
+    },
+    {
+      "id": "chapter-09",
+      "integratedLufs": -18.2,
+      "truePeakDbfs": -5.3,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "b4546d51761f2c53c7529566d40187e1e272169310c611d543d1295e2f638442"
+    },
+    {
+      "id": "chapter-10",
+      "integratedLufs": -18.5,
+      "truePeakDbfs": -6.4,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "044828b86d33320ac8883da7f1cfa4f99aa807f6df1bce8ee7c8a77c786cb702"
+    },
+    {
+      "id": "heart-circuit",
+      "integratedLufs": -18.1,
+      "truePeakDbfs": -3.2,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "badbed975669e7aef3c3c6c0a735b62e577d3240435e3d722e074d228ef3879c"
+    },
+    {
+      "id": "boss-glass",
+      "integratedLufs": -18.4,
+      "truePeakDbfs": -3.5,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "2be01d4427c9a7ea6263d858c00ee2fc862081e362ec374e6a1f4f1c2291f17f"
+    },
+    {
+      "id": "boss-motor",
+      "integratedLufs": -18.3,
+      "truePeakDbfs": -4.6,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "31c882189cb03c29532c6a26039e8d274e2a3eeac95bdd6f04d7d119eef40b72"
+    },
+    {
+      "id": "boss-orbit",
+      "integratedLufs": -17.4,
+      "truePeakDbfs": -4.5,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "27303f4e633e676702683b4527929fdc27930884eb6f559c62a418a71f158e74"
+    },
+    {
+      "id": "menu-score",
+      "integratedLufs": -17.6,
+      "truePeakDbfs": -3.9,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "d0e7a49255b597b30cb880f50f7b952a16d1518f2bac7f9ed92a171efa93fad4"
+    },
+    {
+      "id": "story-moon",
+      "integratedLufs": -18.1,
+      "truePeakDbfs": -5.6,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "f4925aa2e44d7245cf15cce3853898aa87ea047787ae6cbf21ea951fb8aeb5cc"
+    },
+    {
+      "id": "story-waterfall",
+      "integratedLufs": -16.7,
+      "truePeakDbfs": -2.3,
+      "channels": 2,
+      "duration": 64.044,
+      "sha256": "20ef78ed61c9960682f4b570b5902f23ac1dc62ddd100e72f44914ba097d4fd6"
+    }
+  ]
+}
