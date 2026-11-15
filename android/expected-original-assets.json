@@ -34,8 +34,8 @@
     },
     {
       "path": "main.mjs",
-      "bytes": 9437,
-      "sha256": "c2596e4c5a06756615cc10c11e85c33aad949fe8bb49df2b6e92ad75d11e255f"
+      "bytes": 9412,
+      "sha256": "faff003d6351d8a4645495bab44efec2beaa3509737fb988a13a0b769916004d"
     },
     {
       "path": "runtime.mjs",
@@ -49,8 +49,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 6134,
-      "sha256": "c2d74da44e680f51a113162bca19dbe2ecf7e4113e60ca0e3a55d13e6ea7d46e"
+      "bytes": 6531,
+      "sha256": "99efac4f348defd16ae9c9a233d60bce97c0728de9e4df7b37c45ee3a66840ed"
     },
     {
       "path": "vendor/wie_web.js",
