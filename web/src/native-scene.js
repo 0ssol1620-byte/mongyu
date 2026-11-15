@@ -3,7 +3,7 @@
  * No input, collision, engine state or RNG is written here.
  */
 (function(root){'use strict';
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap();
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap(),fieldClocks=new WeakMap();
 function geometry(run){
  const s=run.nativeFrame,pool=s.game.pool,cur=pool.objects[pool.currentIndex],a=s.game.actor,A=run.kernels.Assembly;
  const q=A.rotatePoint(cur.scalarE+cur.position,cur.scalarF-a.height+(s.game.stage.behaviorCode===3?8:0),cur.geometry.orientation),origin=A.rotatePoint(0,0,cur.geometry.orientation),tip=A.rotatePoint(pool.direction===0?1:-1,0,cur.geometry.orientation),tangent={x:tip.x-origin.x,y:tip.y-origin.y};
@@ -107,12 +107,17 @@ function morph(c,geo,scene,run,opt,p,u,player){
  if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},!!opt.reduced,geo.characterId);
 }
 
+function fieldClock(run,opt){
+ const last=fieldClocks.get(run);if(run.state==='pause'&&last?.attempt===run.attempt)return last.time;
+ const time=Number.isFinite(opt.presentationTime)?opt.presentationTime:(run.time||0)+Math.max(0,Math.min(run.stepMs||75,run.remainder||0))/1000;
+ fieldClocks.set(run,{attempt:run.attempt,time});return time;
+}
 function draw(c,run,opt,geo){
  const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=scenePalette(scene.palette),special=scene.split||geo.boss;
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
  const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
  const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
- c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);if(art&&profile)art.draw(c,cam,profile,p,run.time||0,reduced);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
+ c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
   for(const cell of group.cells)tile(c,cell,scene,p,0,0,reduced);c.globalAlpha=1;

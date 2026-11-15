@@ -1,0 +1,15 @@
+/* Production background raster, central readability and actual intensity captures. */
+const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+(async()=>{const out=process.argv[2]||'/workspace/artifacts/r91-field';fs.mkdirSync(out,{recursive:true});const b=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
+ const page=await b.newPage({viewport:{width:390,height:844},deviceScaleFactor:2}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4173/web/MONGYU_R91.html');await page.waitForFunction(()=>window.QUAD_RIFT_APP);
+ const masks=await page.evaluate(()=>{const rows=[],canvas=document.createElement('canvas'),colors=['#ffffff','#00ffff','#ff00ff','#ffff00'];
+  for(const [width,height]of [[390,844],[844,390],[320,568],[800,1280]])for(const intensity of ['calm','balanced','intense'])for(const time of [0,3,8,20])for(const offCentre of [false,true]){
+   canvas.width=width;canvas.height=height;const c=canvas.getContext('2d',{willReadFrequently:true}),focus={x:width*(offCentre?.25:.5),y:height*(offCentre?.72:.5)},report=MongyuStagecraft.draw(c,{width,height,offsetX:0,offsetY:0},{id:'test',field:'orbit'},colors,time,false,{intensity,colors,focus,tempo:132}),radius=Math.min(width,height)*.06,pixels=c.getImageData(0,0,width,height).data;let centralPixels=0,maxCentralAlpha=0;
+   for(let y=Math.max(0,Math.floor(focus.y-radius));y<Math.min(height,focus.y+radius);y++)for(let x=Math.max(0,Math.floor(focus.x-radius));x<Math.min(width,focus.x+radius);x++)if((x+.5-focus.x)**2+(y+.5-focus.y)**2<radius*radius){centralPixels++;maxCentralAlpha=Math.max(maxCentralAlpha,pixels[(y*width+x)*4+3])}
+   rows.push({width,height,intensity,time,offCentre,...report,centralPixels,maxCentralAlpha});
+  }return rows;
+ });assert.ok(masks.every(r=>r.maxCentralAlpha===0),'background decoration enters protected player region');
+ await page.evaluate(fs.readFileSync(path.join(__dirname,'r91-device-visual.js'),'utf8'));const captures=[];
+ for(const intensity of ['calm','balanced','intense'])for(const [slot,steps]of [[12,126],[25,173]]){const row=await page.evaluate(opts=>__mongyuQaPose(opts),{slot,steps,intensity,phaseTime:8});assert.equal(row.intersections,0);captures.push({intensity,...row});await page.locator('#mongyuQaVisual').screenshot({path:path.join(out,`${intensity}-${slot}.png`)})}
+ assert.deepEqual(errors,[]);fs.writeFileSync(out+'/report.json',JSON.stringify({scope:'Production stagecraft raster at four viewport sizes, three levels, four clock positions and centre/off-centre player focus. Tests transparent decoration inside a 6% short-axis radius, not all possible gameplay readability. Six isolated normal-input full-render captures; no progress writes.',masks,captures,errors},null,2));console.log(JSON.stringify({masks:masks.length,captures:captures.length,maxCentralAlpha:Math.max(...masks.map(r=>r.maxCentralAlpha)),errors}));
+}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

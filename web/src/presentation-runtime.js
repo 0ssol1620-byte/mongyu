@@ -65,7 +65,10 @@ function segment(p,q){
 }
 function interpolatePlayer(p,q,alpha){
  const step=segment(p,q);if(!step||(p.direction??0)!==(q.direction??0)||[13,16].includes(q.nativeState))return {...q};alpha=clamp(alpha,0,1);const player={...q};
- for(const k of ['x','y','height','jumpProgress'])if(Number.isFinite(q[k])&&Number.isFinite(p[k]))player[k]=p[k]+(q[k]-p[k])*alpha;
+ for(const k of ['x','y','height'])if(Number.isFinite(q[k])&&Number.isFinite(p[k]))player[k]=p[k]+(q[k]-p[k])*alpha;
+ // Do not rewind a completed jump back to its take-off pose at landing.
+ if(Number.isFinite(p.jumpProgress)&&Number.isFinite(q.jumpProgress))player.jumpProgress=p.nativeState===q.nativeState&&q.jumpProgress>=p.jumpProgress?p.jumpProgress+(q.jumpProgress-p.jumpProgress)*alpha:(p.height||0)>(q.height||0)?Math.max(.75,q.jumpProgress):q.jumpProgress;
+ if(p.nativeState===12&&q.nativeState===12&&Number.isFinite(p.nativeFrame)&&Number.isFinite(q.nativeFrame))player.poseFrame=q.nativeFrame>=p.nativeFrame?p.nativeFrame+(q.nativeFrame-p.nativeFrame)*alpha:q.nativeFrame;
  const start=Math.atan2(p.tangent.y,p.tangent.x),end=Math.atan2(q.tangent.y,q.tangent.x),delta=Math.atan2(Math.sin(end-start),Math.cos(end-start));
  if(step.turn){const along=step.length*alpha;
   const angle=start+delta*alpha,height=player.height||0,sign=q.direction===1?-1:1;
@@ -90,7 +93,7 @@ function geometry(run,opt={}){
   f={key,state,attempt:run.attempt,map:run.mapChanges,updates:run.updates,current,previous,travel};frames.set(run,f);
  }
  const q=f.current.player,p=f.previous?.player;
- if(opt.reduced||state!=='play'||!p||!q)return f.current;
+ if(opt.reduced&&!opt.essentialMotion||state!=='play'||!p||!q)return f.current;
  const alpha=clamp((run.remainder||0)/Math.max(1,run.stepMs),0,1);
  const dog=f.current.companion,previousDog=f.previous?.companion;
  return {...f.current,player:interpolatePlayer(p,q,alpha),companion:dog&&previousDog?interpolatePlayer(previousDog,dog,alpha):dog};

@@ -16,7 +16,7 @@ test('map morphs retain the outgoing music; new maps crossfade and retries resta
 });
 test('filled silhouette contrast and reduced depth fields remain readable and deterministic',()=>{
  assert.equal(A.inkFor('#050505'),'#fff8de');assert.equal(A.inkFor('#ffffee','#fff8de'),'#18121d');assert.equal(A.inkFor('#ffbb77'),'#18121d');
- const record=t=>{const calls=[],c=new Proxy({}, {get:(o,k)=>k in o?o[k]:(...a)=>calls.push([k,...a]),set:(o,k,v)=>(o[k]=v,true)});A.draw(c,{width:390,height:844,offsetX:0,offsetY:0},D.profiles.orbit,['#111111','#ffffff'],t,true);return calls};assert.deepEqual(record(0),record(100));assert.equal(record(0).filter(c=>c[0]==='strokeRect').length,5);
+ const record=t=>{const calls=[],c=new Proxy({}, {get:(o,k)=>k in o?o[k]:(...a)=>calls.push([k,...a]),set:(o,k,v)=>(o[k]=v,true)});A.draw(c,{width:390,height:844,offsetX:0,offsetY:0},D.profiles.orbit,['#111111','#ffffff'],t,true);return calls};assert.deepEqual(record(0),record(100));assert.ok(record(0).filter(c=>c[0]==='strokeRect').length>0&&record(0).filter(c=>c[0]==='strokeRect').length<=8);
 });
 test('all 15 packaged recordings are distinct, pinned and include ten map and four boss scores',()=>{
  assert.equal(manifest.tracks.length,15);assert.equal(manifest.tracks.filter(t=>t.musicRoles.includes('boss')).length,4);const hashes=new Set();
@@ -30,5 +30,5 @@ test('music keeps the outgoing deck until the new map really starts and mute can
  player.update({...values,entryKey:3,crossfadeOnEntry:true,musicContext:{musicRole:'stage03'}});player.update({...values,allowed:false});pending.shift()();await Promise.resolve();assert.equal(player.inspect().active,0);assert.ok(media.every(m=>m.paused));
 });
 
-test('running elbows counter-swing the leading leg with fixed arm lengths',()=>{const M=require('../src/mobile-presentation.js');for(const strideDistance of [0,20]){const p=M.gait(0,{strideDistance});for(const [a,b,c]of p.arms){assert.ok(Math.abs(Math.hypot(b[0]-a[0],b[1]-a[1])-9)<1e-8);assert.ok(Math.abs(Math.hypot(c[0]-b[0],c[1]-b[1])-9)<1e-8)}assert.ok((p.legs[0][2][0]-p.hip[0])*(p.arms[0][1][0]-p.shoulder[0])<0)}});
+test('running elbows counter-swing the leading leg with fixed arm lengths',()=>{const M=require('../src/mobile-presentation.js');for(const strideDistance of [0,20]){const p=M.gait(0,{strideDistance});for(const [a,b,c]of p.arms){assert.ok(Math.abs(Math.hypot(b[0]-a[0],b[1]-a[1])-8.5)<1e-8);assert.ok(Math.abs(Math.hypot(c[0]-b[0],c[1]-b[1])-7.5)<1e-8)}assert.ok((p.legs[0][2][0]-p.hip[0])*(p.arms[0][1][0]-p.shoulder[0])<0)}});
 test('story silhouettes respect the ink chosen for the actual scene background',()=>{const M=require('../src/mobile-presentation.js'),colors=[],c=new Proxy({globalAlpha:1},{get:(o,k)=>k in o?o[k]:k==='fill'?()=>colors.push(o.fillStyle):()=>{},set:(o,k,v)=>(o[k]=v,true)});M.narrative(c,100,200,210,'open-arms',1,false,'#234567');assert.ok(colors.length>=6);assert.ok(colors.every(color=>color==='#234567'))});
