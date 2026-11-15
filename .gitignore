@@ -23,3 +23,6 @@ web/build-manifest.json
 
 android/app/src/main/assets/index.html
 ci/
+
+# Original-player assets are generated from web/original.
+android/app/src/main/assets/

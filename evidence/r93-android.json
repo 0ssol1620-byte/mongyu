@@ -1,0 +1,88 @@
+{
+  "scope": "Accelerated Android emulator, actual installed APKs. Original-file player. Synthetic version-92/93 host packages use one ephemeral QA signing key. Original archive is separately supplied for private QA and never packaged or uploaded. Not physical handset certification.",
+  "checks": [
+    {
+      "name": "actual system file picker imports unchanged original resources",
+      "resourceCount": 106,
+      "musicFiles": 17,
+      "jarDigest": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2",
+      "passed": true
+    },
+    {
+      "name": "actual original guest renders, runs at configured 1x, starts audio and writes its save",
+      "state": "play",
+      "frames": 2017,
+      "held": [],
+      "gameId": "56948be91ddea52565e35fe1d1403e6a398c9fcc231b5751b5cca85cca40ab2a",
+      "platform": "KTF",
+      "speed": 1,
+      "achievedSpeed": 0.6420059582919563,
+      "savedSequence": 3,
+      "saveError": null,
+      "audio": "running",
+      "ready": true,
+      "resourceCount": 106,
+      "originalMusicFiles": 17,
+      "jarDigest": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2",
+      "audioMessages": {
+        "plays": 28,
+        "notes": 15492,
+        "pcm": 7
+      },
+      "passed": true
+    },
+    {
+      "name": "pause freezes original frames and sound and releases input",
+      "passed": true
+    },
+    {
+      "name": "Android back and background require explicit resume",
+      "passed": true
+    },
+    {
+      "name": "APK update retains the exact imported file and original save record",
+      "passed": true
+    },
+    {
+      "name": "renderer recovery keeps imported file and private save storage",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "webView": [
+    "  Current WebView package (name, version): (com.android.webview, 124.0.6367.219)"
+  ],
+  "pickerTrace": [
+    [
+      "Quickstep isn't responding",
+      "Close app",
+      "Wait"
+    ],
+    [
+      "Images",
+      "Audio",
+      "Videos",
+      "Documents",
+      "Recent files",
+      "Grid view",
+      "Show roots",
+      "Recent",
+      "Search",
+      "More options",
+      "MONGYU-original-qa.zip",
+      "1:26 PM, 499 kB, ZIP archive",
+      "Preview the file MONGYU-original-qa.zip"
+    ]
+  ],
+  "environmentIssues": [
+    "First-boot Quickstep ANR dialog dismissed; never an application ANR"
+  ],
+  "inputScope": "Normal physical touch with 150ms hold; QA archive omits only preexisting p/ saves to start a genuine new game",
+  "passed": true,
+  "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43718973589",
+  "testedCommit": "4c47a33ec6e97f150f4f7c7b60d0c19b8db0949b",
+  "androidApi": 35,
+  "architecture": "x86_64",
+  "renderer": "SwiftShader",
+  "physicalHandset": false
+}

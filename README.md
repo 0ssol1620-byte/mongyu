@@ -1,21 +1,20 @@
-# 몽유 · MONGYU R92
+# 몽유 · 원작 파일 실행 R93
 
-[Android APK 다운로드](https://github.com/0ssol1620-byte/mongyu/releases/download/r92-preview/MONGYU_R92_ANDROID.apk) · [배포 파일·소스](https://github.com/0ssol1620-byte/mongyu/releases/tag/r92-preview)
+R93은 R92의 각색 엔진을 APK에서 제외하고, 사용자가 보유한 놈3 KTF ZIP/JAR의 실행 코드·그림·애니메이션·음악·대사·수집 규칙을 직접 실행하는 오프라인 플레이어입니다.
 
-100개 기억을 모으는 오프라인 게임의 개발 빌드입니다. R92는 메인·일시정지·설정에서 과거 실험 모드로 새던 경로와 그 그림 자산을 정리합니다. 각진 캐릭터 윤곽과 팔 스윙·점프·이야기 자세, 할머니가 주인공을 업는 모습을 수정하고, 이전 합성 음악을 Eric Skiff의 CC BY 4.0 녹음곡 18개로 교체합니다.
+**상용 원작 파일은 APK에 포함하지 않습니다. 처음 실행할 때 보유한 원본 파일을 한 번 선택해야 합니다.** 파일과 원본 저장은 이 기기에만 보관합니다. 원작이 들어 있는 별도 다운로드 링크를 제공하는 앱이 아닙니다.
 
-[원작 실행 조사·수정 이유·검증 범위](docs/R92_ORIGINAL_DIRECTION_KO.md) · [음악 출처와 편집 내역](web/assets/music/MUSIC-CREDITS.txt)
+[Android APK](https://github.com/0ssol1620-byte/mongyu/releases/download/r93-preview/MONGYU_R93_ANDROID.apk) · [원작 실행 방식·검증·한계](docs/R93_ORIGINAL_PLAYER_KO.md)
+
+원본 화면비·설정 1배속을 유지하며 탭은 OK 입력입니다. 아래 취소·방향·확인·숫자·별표/우물정 키로 원작 메뉴와 수집판을 조작합니다. 일시정지·앱 전환 시 입력과 오디오를 중단하며 명시적으로 재개합니다. 원본 코드가 만든 저장은 원본 파일별로 보관합니다. 예전 몽유 기록은 삭제하거나 원작 수집 진행으로 바꾸지 않습니다.
 
 ```sh
-python3 web/build.py
 python3 scripts/test.py
-python3 scripts/prepare-android-r80.py
-node --test android/tests/r82-wrapper.test.cjs
-node tools/verify_browser.cjs
+ANDROID_SDK_ROOT=/path/to/sdk python3 android/build-unsigned.py
+# 별도로 보유한 원작 자료로 실제 브라우저 검증
+node tools/verify-original-browser.cjs /private/path/to/original.zip
 ```
 
-Python 3.10+와 Node.js 18+가 필요합니다. `web/MONGYU_R92.html`은 오프라인 단일 HTML입니다. 브라우저 검사는 Playwright·Chromium과 4173번 로컬 서버, Android 빌드는 SDK 36/JDK 환경을 사용합니다.
+Python 3.10+, Node.js 22, Android SDK 36/JDK 17이 필요합니다. 브라우저 검사는 Playwright·Chromium과 저장소 루트를 제공하는 4173번 로컬 서버를 사용합니다. 이전 각색 엔진 검사는 `python3 scripts/test-legacy-r92.py`로 남깁니다. APK 자산은 `web/original`에서 생성하며 상용 게임 자료를 저장소나 빌드에 넣지 않습니다.
 
-Android 8.0 이상용 `몽유 R92 테스트`입니다. 기존 테스트와 앱 ID `org.quadrift.mongyu.preview.r82` 및 미리보기 인증서를 유지합니다. 기존 앱을 지우지 않고 업데이트하세요. 서명 비밀키는 소스와 배포 파일에 포함하지 않습니다. 합성 QA 버전 사이의 업데이트 검사와 최종 서명 APK 자체의 실기기 설치 검사는 구분합니다.
-
-원작 후보를 직접 실행하고 첫 이야기·캐릭터 시트·음악 구조를 확인했지만 원작 그림·음원·대사는 배포하지 않습니다. 원작 전체 일치·100구간 연속 완주·실기기 장시간 성능과 청음 검수는 남아 있습니다. 원작 복원 완료 또는 무지연을 주장하지 않습니다. 실제 결제·광고는 비활성입니다. 과거 문서와 evidence는 버전별 기록입니다.
+Android 8.0 이상용이며 기존 테스트의 앱 ID·인증서를 유지합니다. Android 에뮬레이터에서 불러오기·음악/효과음·저장·업데이트 후 기록 유지·렌더러 복구 검사를 통과했습니다. 설정은 1배속이지만 마지막 에뮬레이터 구간의 달성 속도는 약 0.642배로, 실기 속도나 끊김 해결을 보장하지 않습니다. 원작의 모든 버전·기기 기능·옛 통신사 서비스와의 동일 동작, 100개 수집 연속 완주, 옛 휴대폰과 동일한 Yamaha 음색·실기 장시간 성능은 확인이 필요합니다. 원본 코드를 실행한다는 이유로 이 검증까지 완료했다고 주장하지 않습니다. 실제 광고·결제는 없습니다.

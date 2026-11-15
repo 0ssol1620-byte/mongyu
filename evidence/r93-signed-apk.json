@@ -1,0 +1,90 @@
+{
+  "release": "R93",
+  "apk": "MONGYU_R93_ANDROID.apk",
+  "bytes": 5182740,
+  "sha256": "07ea7eba6074eb7f8d7818f6bd3c20c2123c8a17ba5d96061fa191b3caf73417",
+  "applicationId": "org.quadrift.mongyu.preview.r82",
+  "versionCode": 93,
+  "minAndroid": "8.0 (API 26)",
+  "targetSdk": 36,
+  "signed": true,
+  "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=MONGYU Preview, O=MONGYU\nSigner #1 certificate SHA-256 digest: 77897ae16ffcedcc3ebb530486065b8533fbeace11b92193795d1430035b4c8f\nSigner #1 certificate SHA-1 digest: 0eda45e7d5995134a8bb68f3fedf11d507ebf8be\nSigner #1 certificate MD5 digest: 5f34116200c2a0d70e7970d9ca34eada\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: a2da20fc8fb1e85b5b56faa2c0727f9e05c43cdade35f9d28001dba853427f41\nSigner #1 public key SHA-1 digest: 3981bcf20a012dc4f5c154c1f452eda3a54653b7\nSigner #1 public key MD5 digest: 0d3dffc1c4d262233afbaa28579e46ba\n",
+  "zipAlignmentVerified": true,
+  "zipIntegrityVerified": true,
+  "permissions": [],
+  "commercialOriginalPayloadIncluded": false,
+  "requiresUserOriginalFile": true,
+  "assets": [
+    {
+      "path": "archive.mjs",
+      "bytes": 7278,
+      "sha256": "4b497e69a64477dd1cc36ab0d9c17a7e776c1284990c84f1a0b1e8b52021c0ef"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5061,
+      "sha256": "ff834230ddf7f947d9e8307681c337a5c8f3936498572d178d16dd5713f19ecd"
+    },
+    {
+      "path": "licenses/Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/NeoDGM.txt",
+      "bytes": 4556,
+      "sha256": "c1997f54b659ff8bbe2addf4e7f03fb823db7d1b81b043fb2633183b1fc0c2f0"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_AUDIO.md",
+      "bytes": 1863,
+      "sha256": "b0badfdd721c42eaaa79cd59eca7cb28b681f8dbf8c041643cb32cc1763712e1"
+    },
+    {
+      "path": "licenses/WIE.txt",
+      "bytes": 1049,
+      "sha256": "ae7e83fe9d1e6f549b03479bb1980f13656fcf29535aabf5c0505f80691e9c38"
+    },
+    {
+      "path": "main.mjs",
+      "bytes": 9412,
+      "sha256": "faff003d6351d8a4645495bab44efec2beaa3509737fb988a13a0b769916004d"
+    },
+    {
+      "path": "runtime.mjs",
+      "bytes": 4086,
+      "sha256": "8114a7c4bcdba56333351c8ff6958f0a54b75ea57a400ffb1b98215bb7be92b1"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 4737,
+      "sha256": "1f75288459aa7e869dd2f6fc8b037c0ee9f220bbae5ebd16aa84858606f65b83"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 6531,
+      "sha256": "99efac4f348defd16ae9c9a233d60bce97c0728de9e4df7b37c45ee3a66840ed"
+    },
+    {
+      "path": "vendor/wie_web.js",
+      "bytes": 39859,
+      "sha256": "02392ec64ed87938e5f432fbee76c030725b559e67461aaea9164aa8dbaad88b"
+    },
+    {
+      "path": "vendor/wie_web_bg.wasm",
+      "bytes": 17925360,
+      "sha256": "a4a32d289c2281239d2d4e9c00c065d10203fe151969a6f324761e4e3a38ecdf"
+    }
+  ],
+  "finalSignedDirectDeviceInstall": false,
+  "storeRelease": false,
+  "deviceQa": {
+    "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43718973589",
+    "testedCommit": "4c47a33ec6e97f150f4f7c7b60d0c19b8db0949b",
+    "testedUnsignedSha256": "02a96885a5d85017c1740be0b99701b1cce8c5ad6df177e7714bfeee56bceac7",
+    "matchingNonSignatureEntries": 16,
+    "scope": "API 35 x86_64 accelerated emulator; ephemeral-key synthetic version 92 to 93 update; same unsigned release payload after signing",
+    "finalSignedDirectlyInstalled": false,
+    "physicalHandset": false
+  }
+}

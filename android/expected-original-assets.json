@@ -1,0 +1,66 @@
+{
+  "release": "R93",
+  "gamePayloadIncluded": false,
+  "files": [
+    {
+      "path": "archive.mjs",
+      "bytes": 7278,
+      "sha256": "4b497e69a64477dd1cc36ab0d9c17a7e776c1284990c84f1a0b1e8b52021c0ef"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5061,
+      "sha256": "ff834230ddf7f947d9e8307681c337a5c8f3936498572d178d16dd5713f19ecd"
+    },
+    {
+      "path": "licenses/Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/NeoDGM.txt",
+      "bytes": 4556,
+      "sha256": "c1997f54b659ff8bbe2addf4e7f03fb823db7d1b81b043fb2633183b1fc0c2f0"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_AUDIO.md",
+      "bytes": 1863,
+      "sha256": "b0badfdd721c42eaaa79cd59eca7cb28b681f8dbf8c041643cb32cc1763712e1"
+    },
+    {
+      "path": "licenses/WIE.txt",
+      "bytes": 1049,
+      "sha256": "ae7e83fe9d1e6f549b03479bb1980f13656fcf29535aabf5c0505f80691e9c38"
+    },
+    {
+      "path": "main.mjs",
+      "bytes": 9412,
+      "sha256": "faff003d6351d8a4645495bab44efec2beaa3509737fb988a13a0b769916004d"
+    },
+    {
+      "path": "runtime.mjs",
+      "bytes": 4086,
+      "sha256": "8114a7c4bcdba56333351c8ff6958f0a54b75ea57a400ffb1b98215bb7be92b1"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 4737,
+      "sha256": "1f75288459aa7e869dd2f6fc8b037c0ee9f220bbae5ebd16aa84858606f65b83"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 6531,
+      "sha256": "99efac4f348defd16ae9c9a233d60bce97c0728de9e4df7b37c45ee3a66840ed"
+    },
+    {
+      "path": "vendor/wie_web.js",
+      "bytes": 39859,
+      "sha256": "02392ec64ed87938e5f432fbee76c030725b559e67461aaea9164aa8dbaad88b"
+    },
+    {
+      "path": "vendor/wie_web_bg.wasm",
+      "bytes": 17925360,
+      "sha256": "a4a32d289c2281239d2d4e9c00c065d10203fe151969a6f324761e4e3a38ecdf"
+    }
+  ]
+}

@@ -1,0 +1,320 @@
+{
+  "scope": "Actual imported original guest with native key controls at three viewports; no game-state writes",
+  "reports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "rects": {
+        "UP": {
+          "x": 168,
+          "y": 548,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT": {
+          "x": 109,
+          "y": 601,
+          "width": 54,
+          "height": 48
+        },
+        "OK": {
+          "x": 168,
+          "y": 601,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT": {
+          "x": 227,
+          "y": 601,
+          "width": 54,
+          "height": 48
+        },
+        "STAR": {
+          "x": 109,
+          "y": 654,
+          "width": 54,
+          "height": 48
+        },
+        "DOWN": {
+          "x": 168,
+          "y": 654,
+          "width": 54,
+          "height": 48
+        },
+        "HASH": {
+          "x": 227,
+          "y": 654,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT_SOFT_KEY": {
+          "x": 109,
+          "y": 707,
+          "width": 54,
+          "height": 48
+        },
+        "CLEAR": {
+          "x": 168,
+          "y": 707,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT_SOFT_KEY": {
+          "x": 227,
+          "y": 707,
+          "width": 54,
+          "height": 48
+        }
+      },
+      "numeric": 12,
+      "directions": {
+        "screen": {
+          "left": 19.5,
+          "right": 370.5,
+          "top": 56,
+          "bottom": 524,
+          "width": 351,
+          "height": 468
+        },
+        "pad": {
+          "left": 94,
+          "right": 296,
+          "top": 533,
+          "bottom": 770,
+          "width": 202,
+          "height": 237
+        }
+      },
+      "numbers": {
+        "screen": {
+          "left": 38.25,
+          "right": 351.75,
+          "top": 56,
+          "bottom": 474,
+          "width": 313.5,
+          "height": 418
+        },
+        "pad": {
+          "left": 94,
+          "right": 296,
+          "top": 488,
+          "bottom": 770,
+          "width": 202,
+          "height": 282
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "rects": {
+        "UP": {
+          "x": 640,
+          "y": 158,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT": {
+          "x": 581,
+          "y": 211,
+          "width": 54,
+          "height": 48
+        },
+        "OK": {
+          "x": 640,
+          "y": 211,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT": {
+          "x": 699,
+          "y": 211,
+          "width": 54,
+          "height": 48
+        },
+        "STAR": {
+          "x": 581,
+          "y": 264,
+          "width": 54,
+          "height": 48
+        },
+        "DOWN": {
+          "x": 640,
+          "y": 264,
+          "width": 54,
+          "height": 48
+        },
+        "HASH": {
+          "x": 699,
+          "y": 264,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT_SOFT_KEY": {
+          "x": 581,
+          "y": 317,
+          "width": 54,
+          "height": 48
+        },
+        "CLEAR": {
+          "x": 640,
+          "y": 317,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT_SOFT_KEY": {
+          "x": 699,
+          "y": 317,
+          "width": 54,
+          "height": 48
+        }
+      },
+      "numeric": 12,
+      "directions": {
+        "screen": {
+          "left": 133.25,
+          "right": 410.75,
+          "top": 10,
+          "bottom": 380,
+          "width": 277.5,
+          "height": 370
+        },
+        "pad": {
+          "left": 566,
+          "right": 768,
+          "top": 143,
+          "bottom": 380,
+          "width": 202,
+          "height": 237
+        }
+      },
+      "numbers": {
+        "screen": {
+          "left": 133.25,
+          "right": 410.75,
+          "top": 10,
+          "bottom": 380,
+          "width": 277.5,
+          "height": 370
+        },
+        "pad": {
+          "left": 566,
+          "right": 768,
+          "top": 98,
+          "bottom": 380,
+          "width": 202,
+          "height": 282
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "rects": {
+        "UP": {
+          "x": 133,
+          "y": 272,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT": {
+          "x": 74,
+          "y": 325,
+          "width": 54,
+          "height": 48
+        },
+        "OK": {
+          "x": 133,
+          "y": 325,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT": {
+          "x": 192,
+          "y": 325,
+          "width": 54,
+          "height": 48
+        },
+        "STAR": {
+          "x": 74,
+          "y": 378,
+          "width": 54,
+          "height": 48
+        },
+        "DOWN": {
+          "x": 133,
+          "y": 378,
+          "width": 54,
+          "height": 48
+        },
+        "HASH": {
+          "x": 192,
+          "y": 378,
+          "width": 54,
+          "height": 48
+        },
+        "LEFT_SOFT_KEY": {
+          "x": 74,
+          "y": 431,
+          "width": 54,
+          "height": 48
+        },
+        "CLEAR": {
+          "x": 133,
+          "y": 431,
+          "width": 54,
+          "height": 48
+        },
+        "RIGHT_SOFT_KEY": {
+          "x": 192,
+          "y": 431,
+          "width": 54,
+          "height": 48
+        }
+      },
+      "numeric": 12,
+      "directions": {
+        "screen": {
+          "left": 88,
+          "right": 232,
+          "top": 56,
+          "bottom": 248,
+          "width": 144,
+          "height": 192
+        },
+        "pad": {
+          "left": 59,
+          "right": 261,
+          "top": 257,
+          "bottom": 494,
+          "width": 202,
+          "height": 237
+        }
+      },
+      "numbers": {
+        "screen": {
+          "left": 106.75,
+          "right": 213.25,
+          "top": 56,
+          "bottom": 198,
+          "width": 106.5,
+          "height": 142
+        },
+        "pad": {
+          "left": 59,
+          "right": 261,
+          "top": 212,
+          "bottom": 494,
+          "width": 202,
+          "height": 282
+        }
+      }
+    }
+  ]
+}
