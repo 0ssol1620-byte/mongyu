@@ -1,8 +1,16 @@
 """Fetch a separately configured private QA reference; never publish game bytes."""
 from pathlib import Path
-import hashlib,os,urllib.request
-url=os.environ.get('MONGYU_ORIGINAL_QA_URL');assert url and url.startswith('https://'),'Configure a lawful private QA reference URL'
-request=urllib.request.Request(url,headers={'User-Agent':'MONGYU-local-compatibility-QA'})
+import hashlib,os,urllib.request,re,html
+url=os.environ.get('MONGYU_ORIGINAL_QA_URL')
+if not url:
+ # External research reference; game bytes remain temporary and are never distributed.
+ request=urllib.request.Request('https://dubigame.tistory.com/16',headers={'User-Agent':'Mozilla/5.0'})
+ with urllib.request.urlopen(request,timeout=30) as response:page=response.read(262144).decode('utf-8')
+ links=[html.unescape(x) for x in re.findall(r'''href=["']([^"']+)''',page) if 'blog.kakaocdn.net' in x and '.zip?' in x]
+ assert len(links)==1,'External reference is unavailable; supply MONGYU_ORIGINAL_QA_URL'
+ url=links[0]
+assert url.startswith('https://'),'HTTPS reference required'
+request=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
 try:
  with urllib.request.urlopen(request,timeout=90) as response:data=response.read(16*1024*1024+1)
 except Exception:raise SystemExit('Could not fetch the private QA reference; no URL or payload is logged')

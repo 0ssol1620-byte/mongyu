@@ -25,7 +25,7 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - name: Verify player containers, save journal and packaged assets
         run: python3 scripts/test.py
-      - name: Fetch separately configured private QA reference
+      - name: Load external reference into the temporary QA directory
         env:
           MONGYU_ORIGINAL_QA_URL: ${{ secrets.MONGYU_ORIGINAL_QA_URL }}
         run: python3 scripts/fetch-original-qa.py
