@@ -49,8 +49,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 6442,
-      "sha256": "df29f882f0741eeaf671ac661cb0c757df6f6dec1d9885a8001e43aee75d95ae"
+      "bytes": 6134,
+      "sha256": "c2d74da44e680f51a113162bca19dbe2ecf7e4113e60ca0e3a55d13e6ea7d46e"
     },
     {
       "path": "vendor/wie_web.js",
