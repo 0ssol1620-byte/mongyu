@@ -18,7 +18,7 @@ SDK = Path(os.environ['ANDROID_SDK_ROOT']).resolve()
 BT = SDK / 'build-tools/36.0.0'
 ANDROID = SDK / 'platforms/android-36/android.jar'
 BUILD = ROOT / 'build'
-OUTPUT = ROOT / 'outputs/MONGYU_R93_TEST_DEBUG_UNSIGNED.apk'
+OUTPUT = ROOT / 'outputs/MONGYU_R94_TEST_DEBUG_UNSIGNED.apk'
 EXPECTED = (ROOT / 'expected-asset.sha256').read_text(encoding='utf-8').strip()
 
 def run(*args):
@@ -30,7 +30,7 @@ assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == EXPECTED
 assert (MAIN / 'assets/index.html').read_bytes() == SOURCE.read_bytes()
 assert (ROOT / 'expected-asset.sha256').read_text(encoding='utf-8').strip() == EXPECTED
 import json
-asset_manifest = json.loads((ROOT / 'expected-original-assets.json').read_text())
+asset_manifest = json.loads((ROOT / 'expected-playable-assets.json').read_text())
 assert {str(p.relative_to(MAIN / 'assets')) for p in (MAIN / 'assets').rglob('*') if p.is_file()} == {r['path'] for r in asset_manifest['files']}
 for row in asset_manifest['files']:
     assert hashlib.sha256((MAIN / 'assets' / row['path']).read_bytes()).hexdigest() == row['sha256']
