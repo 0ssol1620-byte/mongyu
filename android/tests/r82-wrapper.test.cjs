@@ -7,7 +7,7 @@ const boot=()=>host({inline:true,square:true,restoration:true,native:true});
 function play(h){h.click('titleContinue');h.click('restorationSceneNext');h.click('restorationSceneNext');h.click('restorationStart');h.advance(120)}
 test('Android staged payload is exactly current R92 and matches its pinned digest',()=>{
  const staged=fs.readFileSync(path.join(base,'app/src/main/assets/index.html')),web=fs.readFileSync(path.join(base,'../web/MONGYU_R92.html'));assert.deepEqual(staged,web);assert.equal(crypto.createHash('sha256').update(staged).digest('hex'),fs.readFileSync(path.join(base,'expected-asset.sha256'),'utf8').trim());
- const manifest=fs.readFileSync(path.join(base,'app/src/main/AndroidManifest.xml'),'utf8');assert.match(manifest,/versionCode="91"/);assert.match(manifest,/versionName="0\.91\.0-preview"/);assert.doesNotMatch(manifest,/uses-permission/);
+ const manifest=fs.readFileSync(path.join(base,'app/src/main/AndroidManifest.xml'),'utf8');assert.match(manifest,/versionCode="92"/);assert.match(manifest,/versionName="0\.92\.0-preview"/);assert.doesNotMatch(manifest,/uses-permission/);
 });
 for(const [i,name]of [[0,'back'],[1,'pause']])test('R92 native '+name+' cancels held input, freezes current run, preserves storage and needs explicit resume',()=>{
  const h=boot();play(h);const r=h.app.activeRun();h.fire('game','pointerdown',{pointerId:9,button:0,isPrimary:true});assert.equal(r.held,true);const data=[...h.data];
