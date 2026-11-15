@@ -9,10 +9,11 @@ test('dog uses native history render positions, including the delayed wall chang
   assert.deepEqual(r.nativeFrame,saved);
   const command=r.nativeFrame.map.drawCommands.find(x=>x.type==='semantic-actor-draw'&&x.role==='history-actor');
   if(!command){assert.equal(d,null);continue}assert.ok(d);visible++;faces.add(d.face);if(d.face!==g.player.face)delayedTurn=true;
-  // Native anchors include +8 actor-local units and 10/16 pixel truncation.
-  const offset=r.kernels.Assembly.rotatePoint(0,8,d.face),origin=r.kernels.Assembly.rotatePoint(0,0,d.face);
-  assert.equal(Math.trunc((d.x+offset.x-origin.x)*10/16)+r.nativeFrame.presentation.viewport.x,command.x);
-  assert.equal(Math.trunc((d.y+offset.y-origin.y)*10/16)+r.nativeFrame.presentation.viewport.y,command.y);
+  // The mask contact offset consumes the +8 actor anchor; ordinary feet do not.
+  const forward=r.nativeFrame.game.stage.behaviorCode===3?0:8;
+  const offset=r.kernels.Assembly.rotatePoint(0,r.nativeFrame.game.stage.behaviorCode===3?0:8,d.face),origin=r.kernels.Assembly.rotatePoint(0,0,d.face);
+  assert.equal(Math.trunc((d.x-d.tangent.x*forward+offset.x-origin.x)*10/16)+r.nativeFrame.presentation.viewport.x,command.x);
+  assert.equal(Math.trunc((d.y-d.tangent.y*forward+offset.y-origin.y)*10/16)+r.nativeFrame.presentation.viewport.y,command.y);
   assert.equal(d.nativeState,command.state);assert.equal(d.nativeFrame,command.frame);
   if([43,117,163,176].includes(i)){
    const cam=M.camera({width:390,height:844},g,{presentationTime:i*.075},r),a=Math.atan2(d.tangent.y,d.tangent.x);

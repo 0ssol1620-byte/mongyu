@@ -27,8 +27,17 @@ test('scoped capture sharing keeps old frames unchanged and exported checkpoints
  const m=fixture('morph');for(let i=0;i<16&&m.state==='play';i++)P.advance(m,.075);assert.equal(m.supported,true);assert.ok(Clone.inspect().sharedCaptureArrays>0);
 });
 
-test('lightweight rendering geometry matches canonical native actor coordinates in every physical slot after countdown',()=>{
- let count=0;for(const slot of C.slots){if(!N.slotMetadata(slot.number).supported)continue;const r=newRun(slot.number);for(let i=0;i<34;i++)P.advance(r,.075);const before=structuredClone(r.nativeFrame);assert.deepEqual(Scene.geometry(r).player,r.geometry().player,'slot '+slot.number);assert.deepEqual(r.nativeFrame,before);count++}assert.equal(count,74);
+test('rendering preserves native positions with an explicit eight-unit mask foot offset and independent facing',()=>{
+ let count=0;for(const slot of C.slots){
+  if(!N.slotMetadata(slot.number).supported)continue;const r=newRun(slot.number);for(let i=0;i<34;i++)P.advance(r,.075);
+  const before=structuredClone(r.nativeFrame),actual=Scene.geometry(r).player,canonical=r.geometry().player,sign=r.nativeFrame.game.pool.direction===0?1:-1;
+  const offset=r.nativeFrame.game.stage.behaviorCode===3?8:0,normal={x:canonical.inward.x*sign,y:canonical.inward.y*sign};
+  if(r.nativeFrame.game.controller.modeP>0){
+   const command=r.nativeFrame.map.drawCommands.find(c=>c.role==='current-actor'),angle=-command.variantOrientation*Math.PI/2,origin=r.nativeFrame.presentation.viewport;
+   assert.equal(actual.x,(command.x-origin.x)*1.6+8*Math.sin(angle));assert.equal(actual.y,(command.y-origin.y)*1.6-8*Math.cos(angle));assert.equal(actual.nativeFrame,command.frame);
+  }else assert.deepEqual(actual,{...canonical,x:canonical.x-normal.x*offset+canonical.tangent.x*(offset?0:8),y:canonical.y-normal.y*offset+canonical.tangent.y*(offset?0:8),baseX:canonical.x-normal.x*offset+canonical.tangent.x*(offset?0:8),baseY:canonical.y-normal.y*offset+canonical.tangent.y*(offset?0:8),inward:normal,direction:r.nativeFrame.game.pool.direction},'slot '+slot.number);
+  assert.deepEqual(r.nativeFrame,before);count++;
+ }assert.equal(count,74);
 });
 
 test('all ten boss outlines consume their real native draw cells without model or random writes',()=>{
