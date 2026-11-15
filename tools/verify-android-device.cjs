@@ -24,7 +24,7 @@ async function connect(){
  await send('Runtime.enable');await waitFor(()=>evaluate('!!window.QUAD_RIFT_APP'),'game initialization');return pid;
 }
 async function tap(id){const q=await evaluate(`(()=>{const e=document.getElementById(${JSON.stringify(id)});if(!e||e.disabled||e.hidden)return null;const r=e.getBoundingClientRect();return r.width&&r.height?{x:r.x+r.width/2,y:r.y+r.height/2}:null})()`);assert.ok(q,id+' is visible');await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[q]});await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(100)}
-async function screenshot(name){const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'))}
+async function screenshot(name){await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));fs.writeFileSync(path.join(out,name+'-android.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:16*1024*1024}))}
 const state=()=>evaluate('QUAD_RIFT_APP.activeRun()?.state');
 async function crashRenderer(){try{await send('Page.crash')}catch(_){}await delay(1000)}
 (async()=>{try{
@@ -36,6 +36,7 @@ async function crashRenderer(){try{await send('Page.crash')}catch(_){}await dela
  assert.equal(await state(),'play');const coverage=await evaluate('(()=>{const r=document.getElementById("stage").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,screenWidth:innerWidth,screenHeight:innerHeight}})()');report.checks.push({name:'actual fullscreen native play',coverage});assert.equal(coverage.x,0);assert.equal(coverage.y,0);
  // Android's integer innerWidth/Height round fractional CSS pixels at noninteger DPR.
  assert.ok(Math.abs(coverage.width-coverage.screenWidth)<1);assert.ok(Math.abs(coverage.height-coverage.screenHeight)<1);
+ const raster=await evaluate('(()=>{const c=document.getElementById("game"),p=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let colored=0;for(let y=1;y<33;y++)for(let x=1;x<33;x++){const i=(Math.floor(y*c.height/33)*c.width+Math.floor(x*c.width/33))*4;if(p[i]+p[i+1]+p[i+2]>36)colored++}return{width:c.width,height:c.height,colored,samples:1024}})()');report.checks.push({name:'native game canvas contains rendered content',raster});assert.ok(raster.colored>32,'game canvas is blank');await screenshot('native-play-ready');
  for(let i=0;i<4;i++){await tap('game');await delay(250)}await screenshot('play');
  await tap('pause');assert.equal(await state(),'pause');let time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');
  adb('shell','input','keyevent','4');await waitFor(async()=>await state()==='pause','Android back pause');time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);report.checks.push({name:'native back cancels input and freezes simulation',passed:true});
