@@ -36,33 +36,28 @@ async function androidSnapshot(){
 }
 async function androidTapLabel(label,snapshot){const {nodes}=snapshot||await androidSnapshot(),node=nodes.find(n=>(n.text===label||n['content-desc']===label)&&n.bounds);if(!node)return false;const b=node.bounds.match(/\[(\d+),(\d+)\]\[(\d+),(\d+)\]/);adb('shell','input','tap',String((+b[1]+ +b[3])/2),String((+b[2]+ +b[4])/2));return true}
 
-async function selectOriginal(){
- await tap('chooseOriginal');await delay(800);const file='MONGYU-original-qa.zip';report.pickerTrace=[];
- for(let i=0;i<8;i++){
-  const snapshot=await androidSnapshot(),{xml,nodes}=snapshot;report.pickerTrace.push(nodes.filter(n=>n.text||n['content-desc']).map(n=>n.text||n['content-desc']));
-  if(xml.includes("Quickstep isn&amp;apos;t responding")||xml.includes("Quickstep isn't responding")||xml.includes('Quickstep isn&apos;t responding')){
-   assert.ok(await androidTapLabel('Close app',snapshot),'dismiss only the explicitly identified system launcher ANR');(report.environmentIssues??=[]).push('First-boot Quickstep ANR dialog dismissed; never an application ANR');await delay(700);continue;
-  }
-  if(await androidTapLabel(file,snapshot))return;
-  if(xml.includes('원본 파일 열기')){await tap('chooseOriginal');await delay(500);continue}
-  await androidTapLabel('Show roots');await delay(250);await androidTapLabel('Downloads');await delay(450);
- }
- throw Error('Original file was not reachable in the actual system picker');
+async function dismissLauncherAnr(){
+ const snapshot=await androidSnapshot();
+ if(/Quickstep isn(?:'|&apos;|&amp;apos;)t responding/.test(snapshot.xml)){
+  assert.ok(await androidTapLabel('Close app',snapshot),'only the identified Quickstep system launcher ANR may be dismissed');
+  (report.environmentIssues??=[]).push('Dismissed explicitly identified first-boot Quickstep ANR; never a game ANR');await delay(600);
+ }else if(/(?:isn.t|not) responding/.test(snapshot.xml))throw Error('Unexpected application ANR; not dismissed');
 }
+
 const inspect=()=>evaluate('MongyuOriginal.inspect()');
 async function pixelHash(){const shot=await send('Page.captureScreenshot',{format:'png'});return crypto.createHash('sha256').update(Buffer.from(shot.data,'base64')).digest('hex')}
 (async()=>{try{
  await delay(20000);adb('logcat','-c');adb('shell','settings','put','secure','immersive_mode_confirmations','confirmed');
  adb('install','--no-incremental','-t','-r',process.argv[2]);adb('shell','am','start','-W','-n',activity);await connect();
- await waitFor(()=>evaluate('!!window.MongyuOriginal&&document.getElementById("busy").hidden'),'R93 import-only boot');assert.equal((await inspect()).ready,false);assert.equal(await evaluate('!!document.getElementById("chooseOriginal")'),true);
+ await waitFor(()=>evaluate('!!window.MongyuOriginal&&document.getElementById("busy").hidden'),'R93 import-only boot');await dismissLauncherAnr();assert.equal((await inspect()).ready,false);assert.equal(await evaluate('!!document.getElementById("chooseOriginal")'),true);
  assert.ok(await evaluate('_MongyuStore.write("mongyu.r93.qa","r94-update-canary")'));assert.ok(await evaluate('_MongyuStore.write("mongyu.r93.original.'+'a'.repeat(64)+'","opaque-original-journal-probe")'));report.checks.push({name:'actual R93 has no original selected; existing private keys recorded',passed:true});
  adb('install','--no-incremental','-t','-r',process.argv[3]);adb('shell','am','start','-W','-n',activity);await connect();
- assert.equal(await evaluate('QUAD_RIFT_APP.getState().state'),'title');assert.equal(await evaluate('document.querySelectorAll("input[type=file],#chooseOriginal").length'),0);assert.equal(await evaluate('typeof window.MongyuOriginal'),'undefined');assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.qa")'),'vr94-update-canary');assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.original.'+'a'.repeat(64)+'")'),'vopaque-original-journal-probe');await screenshot('title');report.checks.push({name:'R93 upgrades to standalone title without file requirement and preserves prior keys',passed:true});
+ await dismissLauncherAnr();assert.equal(await evaluate('QUAD_RIFT_APP.getState().state'),'title');assert.equal(await evaluate('document.querySelectorAll("input[type=file],#chooseOriginal").length'),0);assert.equal(await evaluate('typeof window.MongyuOriginal'),'undefined');assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.qa")'),'vr94-update-canary');assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.original.'+'a'.repeat(64)+'")'),'vopaque-original-journal-probe');await screenshot('title');report.checks.push({name:'R93 upgrades to standalone title without file requirement and preserves prior keys',passed:true});
  await tap('titleContinue');await tap('restorationSceneNext');await tap('restorationSceneNext');await tap('restorationStart');await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun()?.updates>45'),'real standalone movement');assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().state'),'play');
  const coverage=await evaluate('(()=>{const r=document.getElementById("stage").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,screenWidth:innerWidth,screenHeight:innerHeight}})()');assert.equal(coverage.x,0);assert.equal(coverage.y,0);assert.ok(Math.abs(coverage.width-coverage.screenWidth)<1&&Math.abs(coverage.height-coverage.screenHeight)<1);
  await waitFor(()=>evaluate('QUAD_RIFT_APP.musicView().playing'),'standalone audio');const music=await evaluate('QUAD_RIFT_APP.musicView()');assert.equal(music.backend,'licensed-media');assert.equal(music.artist,'Eric Skiff');
  const before=await evaluate('QUAD_RIFT_APP.activeRun().updates');await tap('game');await delay(250);const after=await evaluate('QUAD_RIFT_APP.activeRun().updates');assert.ok(after>before);await screenshot('play');report.checks.push({name:'no supplied game file: story, campaign start, full-screen movement, touch and music',coverage,music:{artist:music.artist,backend:music.backend,trackId:music.trackId},passed:true});
- await tap('pause');const time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(500);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');adb('shell','input','keyevent','4');await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun().state==="pause"'),'native back');adb('shell','input','keyevent','3');adb('shell','am','start','-W','-n',activity);await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().state'),'pause');report.checks.push({name:'pause, native back and background freeze play until explicit resume',passed:true});
+ await tap('pause');const time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(500);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');await dismissLauncherAnr();adb('shell','input','keyevent','4');await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun().state==="pause"'),'native back');adb('shell','input','keyevent','3');adb('shell','am','start','-W','-n',activity);await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().state'),'pause');report.checks.push({name:'pause, native back and background freeze play until explicit resume',passed:true});
  await tap('pauseHome');await tap('shopOpen');await tap('look-ink');await tap('wardrobeClose');const collected=await evaluate('QUAD_RIFT_APP.restoration.view().status.collected');assert.ok(collected>=1);
  adb('shell','am','force-stop',pkg);adb('shell','am','start','-W','-n',activity);await connect();assert.equal(await evaluate('QUAD_RIFT_APP.mobileWardrobe.view().selected'),'ink');assert.equal(await evaluate('QUAD_RIFT_APP.restoration.view().status.collected'),collected);assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.qa")'),'vr94-update-canary');report.checks.push({name:'cold relaunch retains legitimate story progress, outfit and R93 keys',collected,passed:true});
  const pid=adb('shell','pidof',pkg);await crashRenderer();await connect();assert.equal(adb('shell','pidof',pkg),pid);assert.equal(await evaluate('QUAD_RIFT_APP.mobileWardrobe.view().selected'),'ink');assert.equal(await evaluate('_MongyuStore.read("mongyu.r93.qa")'),'vr94-update-canary');report.checks.push({name:'renderer recovery returns to playable title without losing private records',passed:true});await screenshot('recovered');assert.deepEqual(report.errors,[]);
