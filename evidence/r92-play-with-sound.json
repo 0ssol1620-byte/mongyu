@@ -1,0 +1,13 @@
+{
+  "scope": "Live primary campaign Canvas and actual app audio graph. Real UI opening, two story taps, 24 normal Space presses and wall-clock progression. No progress, coordinates, health or media-position writes. Browser capture, not physical Android.",
+  "durationMs": 12437.5,
+  "updates": 210,
+  "state": "play",
+  "score": 140,
+  "hearts": 3,
+  "trackId": "chapter-02",
+  "title": "A Night Of Dizzy Spells",
+  "artist": "Eric Skiff",
+  "audioPlaying": true,
+  "errors": []
+}

@@ -5,7 +5,7 @@ function host(options={}){
  const elements={},dh={},wh={},writes=[],reads=[];let raf=null,now=0,rafId=0;const rafs=new Map();function flush(){const pending=[...rafs.values()];rafs.clear();pending.forEach(f=>f(now))}let unused=0;const data=new Map(Object.entries(options.storage||{}));
  if(options.saved!==undefined)data.set('quad-rift-hd-r4',options.saved);
  let blockedRead=options.blockedRead||false,blockedWrite=options.blockedWrite||false;
- const doc={hidden:false,activeElement:null,handlers:dh,documentElement:{dataset:{originMemories:'required',companionBridge:'required',squareReply:'required',dayNight:'required'}}};
+ const doc={hidden:false,activeElement:null,handlers:dh,documentElement:{dataset:{edition:'mongyu',originMemories:'required',companionBridge:'required',squareReply:'required',dayNight:'required'}}};
  function denied(rule,k,v){return typeof rule==='function'?rule(k,v):rule===true||Array.isArray(rule)&&rule.includes(k)}
  function element(tag='div',id=''){
   const e={tagName:tag.toUpperCase(),id,hidden:false,disabled:false,inert:false,value:'',checked:false,tabIndex:0,style:{},dataset:{},attrs:{},children:[],handlers:{},parentNode:null,clientWidth:options.width||336,clientHeight:options.height||676,width:720,height:960,textContent:'',innerText:'',scrollTop:0,

@@ -2009,7 +2009,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "솔과 함께 달렸던 길.",
+        "text": "강아지와 함께 달렸던 길.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2024,7 +2024,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "담의 등에 기대어 쉬었던 순간.",
+        "text": "할머니의 등에 기대어 쉬었던 순간.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2041,7 +2041,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "여울과 나누었던 마지막 인사.",
+        "text": "새 연인과 나누었던 마지막 인사.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2092,7 +2092,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "길은 그 자리에 멈추지 않기로 했습니다.",
+        "text": "주인공은 그 자리에 멈추지 않기로 했습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2126,7 +2126,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "길의 이야기는 여기까지입니다.",
+        "text": "주인공의 이야기는 여기까지입니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,

@@ -74,22 +74,28 @@ function runFoot(u){
 function blendArm(a,b,u){
  const mix=(x,y)=>x+Math.atan2(Math.sin(y-x),Math.cos(y-x))*u,s=a[0],upper=mix(Math.atan2(a[1][1]-s[1],a[1][0]-s[0]),Math.atan2(b[1][1]-s[1],b[1][0]-s[0])),lower=mix(Math.atan2(a[2][1]-a[1][1],a[2][0]-a[1][0]),Math.atan2(b[2][1]-b[1][1],b[2][0]-b[1][0])),elbow=[s[0]+8.5*Math.cos(upper),s[1]+8.5*Math.sin(upper)];return [s,elbow,[elbow[0]+7.5*Math.cos(lower),elbow[1]+7.5*Math.sin(lower)]];
 }
+function airborneFoot(progress,index){
+ const poses=[[[ -10,-3],[11,-5]],[[-5,-15],[7,-17]],[[-10,-9],[11,-12]],[[-5,-6],[8,-5]],[[-5,-1],[6,-1]]],times=[0,.22,.5,.76,1];
+ let segment=0;while(segment<3&&progress>times[segment+1])segment++;
+ const u=ease((progress-times[segment])/(times[segment+1]-times[segment]));
+ return poses[segment][index].map((v,k)=>v+(poses[segment+1][index][k]-v)*u);
+}
 function gait(time=0,q={},reduced=false){
  const idle=!!q.pose||reduced&&!Number.isFinite(q.strideDistance),wall=q.nativeState===12,height=Math.max(0,q.height||0),air=!!q.climbing||height>.05||wall,airMix=wall||q.climbing?1:ease(height/6),phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/42:time*2.4,local=((phase%1)+1)%1,step=local%.5;
  const x=9.45-42*Math.min(step,.45),flight=step>.45?.7*Math.sin(Math.PI*(step-.45)/.05):0,runPelvis=1.12+Math.sqrt(21.2**2-x*x)+flight,turn=(!air&&q.turning)?Math.sin(Math.PI*(q.turnProgress||0)):0;
- const pelvis=idle?22.3:(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn,bob=idle?0:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?0:-.65,-pelvis],shoulder=[3,-31.5+bob];
+ const pelvis=(idle?22.3:(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn)-(q.carrier?1:0),bob=idle?0:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?0:-.65,-pelvis],shoulder=[q.carrier?5:3,(q.carrier?-30.5:-31.5)+bob];
  const samples=[0,.5].map(offset=>runFoot(((phase+offset)%1+1)%1));
  const feet=samples.map((sample,i)=>{
   if(idle)return [i?3:-3,-1];
   if(wall){const u=clamp((q.poseFrame??q.nativeFrame??0)/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
   if(q.climbing)return i?[9,-16]:[-7,-3];
-  if(air){const u=clamp(q.jumpProgress??.5,0,1),kick=clamp((q.kick||0)*2,0,1)*Math.sin(Math.PI*clamp(u/.7,0,1)),fall=ease((u-.55)/.45),target=i?[8+14*kick,-11-8*kick+8*fall]:[-9+5*fall,-8+5*fall-6*Math.sin(Math.PI*u)];return sample.point.map((v,k)=>v+(target[k]-v)*airMix)}
+  if(air){const u=clamp(q.jumpProgress??.5,0,1),kick=clamp((q.kick||0)*2,0,1)*Math.sin(Math.PI*clamp(u/.7,0,1)),target=airborneFoot(u,i);if(i){target[0]+=14*kick;target[1]-=8*kick}return sample.point.map((v,k)=>v+(target[k]-v)*airMix)}
   const target=i?[5,-8]:[-4,-5];return sample.point.map((v,k)=>v+(target[k]-v)*turn);
  });
  const legs=feet.map(foot=>!air&&!q.pose&&q.nativeState===0?plantedLeg(hip,foot,q):legPose(hip,foot));
  const footAngles=samples.map((sample,i)=>idle||wall||q.climbing||q.turning||(!air&&Math.hypot(legs[i][2][0]-feet[i][0],legs[i][2][1]-feet[i][1])>1)?0:sample.angle*(1-airMix));
- const u=clamp(q.jumpProgress??.5,0,1),reach=Math.sin(Math.PI*u),hands=q.pose?[[q.pose==='open-arms'?-18:-10,q.pose==='raise-arms'?-46:-28],[q.pose==='open-arms'?20:14,q.pose==='raise-arms'?-46:-27]]:idle?[[-4,-21],[7,-22]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:[[-7+2*reach,-27-4*reach],[10+2*reach,-30+4*ease((u-.55)/.45)]];
- const running=[0,1].map(i=>{const swing=Math.cos(phase*TAU+i*Math.PI),angle=-.7*swing,flex=.975-.375*swing,elbow=[shoulder[0]+8.5*Math.sin(angle),shoulder[1]+8.5*Math.cos(angle)],wrist=[elbow[0]+7.5*Math.sin(angle+flex),elbow[1]+7.5*Math.cos(angle+flex)];return [shoulder,elbow,wrist]}),posed=hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,15.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,8.5,7.5,wrist[0]<shoulder[0]?-1:1),wrist]});
+ const u=clamp(q.jumpProgress??.5,0,1),reach=Math.sin(Math.PI*u),fall=ease((u-.55)/.45),hands=q.pose?[[-10,q.pose==='raise-arms'?-46:-25],[14,q.pose==='raise-arms'?-46:-25]]:idle?[[-4,-21],[7,-22]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:[[-10+3*reach,-29-8*reach+6*fall],[12+3*reach,-33-7*reach+10*fall]];
+ const running=[0,1].map(i=>{const swing=Math.cos(phase*TAU+i*Math.PI),angle=-.88*swing,flex=1.15-.65*swing,elbow=[shoulder[0]+8.5*Math.sin(angle),shoulder[1]+8.5*Math.cos(angle)],wrist=[elbow[0]+7.5*Math.sin(angle+flex),elbow[1]+7.5*Math.cos(angle+flex)];return [shoulder,elbow,wrist]}),posed=hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,15.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,8.5,7.5,wrist[0]<shoulder[0]?-1:1),wrist]});
  const arms=idle||wall||q.climbing||q.nativeState===11?posed:air?running.map((a,i)=>blendArm(a,posed[i],airMix)):running;
  return {hip,shoulder,legs,arms,air,bob,footAngles};
 }
@@ -106,6 +112,7 @@ function contourPath(c,points){
  c.closePath();
 }
 function contour(c,points,ink){c.beginPath();contourPath(c,points);c.fillStyle=ink;c.fill()}
+function angular(c,points,ink){c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.fillStyle=ink;c.fill()}
 function paintLeg(c,bones,widths,ink,angle=0){
  c.beginPath();contourPath(c,limbContour(bones,widths));contourPath(c,footPoints(bones[2],angle));c.fillStyle=ink;c.fill();
 }
@@ -116,21 +123,31 @@ function limbContour(bones,widths,foot=false){
  return foot?[...left,[d[0]+2.3,d[1]-.3],[d[0]+2.8,d[1]+.8],[d[0]-.6,d[1]+1],...right]:[...left,...right];
 }
 function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
- const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,q,reduced),{hip,shoulder,legs,arms}=pose;
+ const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,character==='elder'?{...q,carrier:true}:q,reduced),{hip,shoulder,legs,arms}=pose;
  const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
  c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
  // Both legs are real filled contours; contact QA inspects their raster pixels.
  paintLeg(c,legs[0],[1.25,1.35,.95,1.05,.55],ink,pose.footAngles[0]);
  paintLeg(c,legs[1],[1.4,1.5,1.05,1.1,.58],ink,pose.footAngles[1]);
- c.save();c.globalAlpha*=.72;contour(c,limbContour(arms[0],[1.15,1.05,.75,.68,.45]),ink);c.restore();
+ contour(c,limbContour(arms[0],[1.05,.95,.68,.6,.36]),ink);
  const bob=pose.bob,lean=character==='elder'?2:0;
  c.beginPath();c.moveTo(hip[0]-1.8,hip[1]+1);c.bezierCurveTo(-2.1,hip[1]-3,-1.2,shoulder[1]+3,shoulder[0]-1.4,shoulder[1]-1.3);
  c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-36+bob);c.lineTo(5.1+lean,-35.8+bob);
  c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(6.5,shoulder[1]+3,3,hip[1]-3,hip[0]+2.3,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
  contour(c,limbContour(arms[1],[1.25,1.1,.8,.72,.48]),ink);
- const headX=character==='elder'?6:4,headY=-39+bob;oval(c,headX,headY,2.3,3.4,ink);
+ // Independently drawn angular profile: no ball head or separate joint discs.
+ // The commercial atlas is research only, never a shipped texture or traced outline.
+ const headLean=character==='elder'?1.5:0;
+ angular(c,[[2.1+headLean,-36.2+bob],[2.5+headLean,-39.8+bob],[5.2+headLean,-42.5+bob],[7.1+headLean,-42.5+bob],[6.8+headLean,-39.4+bob],[5.5+headLean,-38.1+bob],[5.4+headLean,-35.8+bob]],ink);
  if(character==='woman')contour(c,[[2,-41+bob],[-.5,-39+bob],[-.8,-35+bob],[-5,-33+bob],[-2.8,-36+bob],[.8,-41.5+bob]],ink);
- if(character==='elder')contour(c,[[-1,-30+bob],[-4,-29+bob],[-4.8,-24+bob],[.5,-21+bob],[2,-26+bob]],ink);
+ if(character==='elder'){
+  // A second person rides on the carrier's back; a hump alone lost this event.
+  angular(c,[[-8,-39+bob],[-7,-43+bob],[-4,-45+bob],[-2.5,-44+bob],[-3,-41+bob],[-5,-39+bob]],ink);
+  contour(c,[[-5,-39+bob],[-2,-34+bob],[-1,-27+bob],[-5,-26+bob],[-7,-32+bob]],ink);
+  line(c,[[-3,-35+bob],[1,-32+bob],[5,-33+bob]],ink,1.5);
+  line(c,[[-4,-27+bob],[2,-24+bob],[3,-20+bob]],ink,1.6);
+  line(c,[[-5,-27+bob],[-7,-23+bob],[-3,-20+bob]],ink,1.4);
+ }
  if(style.detail==='leaf')contour(c,[[2,-43],[5,-45],[7,-43.5],[4,-42]],style.accent);
  if(style.detail==='star')oval(c,1,-43,1,1,style.accent);
  if(style.detail==='comet')contour(c,[[1,-40],[-4,-42],[-9,-40.5],[-4,-43.5]],style.accent);
@@ -224,7 +241,7 @@ function hint(v,run){
  if((v.time||0)<6&&(run.inputCount||run.jumps||0)===0)return v.boss?'타이밍에 맞춰 탭':'탭하여 점프';
  return '';
 }
-function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="#9eacac"/><g fill="'+item.body+'"><path d="M39 43Q35 49 29 52Q27 54 31 63L33 65L34 64L33 62L32 54Q40 52 42 47L48 53L41 63L40 65L44 65L45 63L53 54Q54 51 43 43L46 32L45 29L42 29Q42 35 39 43Z"/><path d="M43 33Q37 33 32 40L35 47L38 47L37 44L36 40L42 37Q48 41 53 40L56 35L54 33L51 37L46 33Z"/><ellipse cx="44" cy="24" rx="3.5" ry="5"/></g></svg>'}
+function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="#9eacac"/><g fill="'+item.body+'"><path d="M39 43Q35 49 29 52Q27 54 31 63L33 65L34 64L33 62L32 54Q40 52 42 47L48 53L41 63L40 65L44 65L45 63L53 54Q54 51 43 43L46 32L45 29L42 29Q42 35 39 43Z"/><path d="M43 33Q37 33 32 40L35 47L38 47L37 44L36 40L42 37Q48 41 53 40L56 35L54 33L51 37L46 33Z"/><path d="M41 29L41 23L46 19L50 19L49 24L46 27L46 30Z"/></g></svg>'}
 function narrative(c,x,y,h,pose,t,reduced,ink){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t,ink},reduced)}
 function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=host.progress;try{selected=decode(host.storage.getItem(KEY))}catch(_){saved=false}
  function render(){const n=count(progress()),equipped=look();$('wardrobeCount').textContent=n+' / 100개의 기억';$('wardrobeStatus').textContent=saved?'기억을 모으면 새로운 옷이 열려요.':'이번 실행에만 옷을 보관할 수 있어요.';

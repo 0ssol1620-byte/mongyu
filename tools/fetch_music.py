@@ -3,6 +3,10 @@ from pathlib import Path
 import hashlib,json,subprocess,sys,urllib.request
 root=Path(__file__).resolve().parents[1];folder=root/'web/assets/music';manifest=json.loads((folder/'manifest.json').read_text())
 for item in manifest['tracks']:
+ if item.get('masterSha256'):
+  from prepare_licensed_scores import restore
+  restore(item)
+  continue
  target=folder/item['file']
  if target.exists():
   assert hashlib.sha256(target.read_bytes()).hexdigest()==item['sha256'],target

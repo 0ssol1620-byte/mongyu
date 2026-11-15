@@ -1,0 +1,25 @@
+{
+  "release": "R92",
+  "runtimeVerifiedCommit": "c281245c0d1e103ec6267b49927712bd8ed55921",
+  "run": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43710355665",
+  "web": {
+    "tests": 183,
+    "passed": 182,
+    "failed": 0,
+    "skipped": 1
+  },
+  "currentAndroidWrapper": {
+    "file": "android/tests/r82-wrapper.test.cjs",
+    "tests": 5,
+    "passed": 5,
+    "failed": 0
+  },
+  "browser": {
+    "viewports": 4,
+    "screenStates": 40,
+    "errors": 0,
+    "actualLicensedPlayback": true
+  },
+  "androidDeviceChecks": 13,
+  "note": "Original game equivalence, physical handset performance and all historical Android fixture files are outside this pass."
+}

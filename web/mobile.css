@@ -92,3 +92,6 @@ body[data-square=true][data-screen=play] #squareHud{background:#080615d9;color:#
 #restorationGrid button{position:relative;overflow:hidden;isolation:isolate}
 #restorationGrid .map-skin-preview{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;z-index:-1;opacity:.78}
 #restorationGrid button[data-skin-palette] .world-number,#restorationGrid button[data-skin-palette] .world-state{color:#fff8de;text-shadow:0 1px 3px #18121d,0 0 3px #18121d}
+
+/* Retired prototypes have no player navigation in this edition. */
+html[data-edition=mongyu] #modesOpen,html[data-edition=mongyu] #pauseModes,html[data-edition=mongyu] #settingsModes,html[data-edition=mongyu] #journeyOpen,html[data-edition=mongyu] #memoriesOpen,html[data-edition=mongyu] #replay,html[data-edition=mongyu] #tiltOpen,html[data-edition=mongyu] #tutorialState,html[data-edition=mongyu] #saveState,html[data-edition=mongyu] #restorationLegacySettingsHelp,html[data-edition=mongyu] #settingsSkip,html[data-edition=mongyu] #modes,html[data-edition=mongyu] #journey,html[data-edition=mongyu] #memories,html[data-edition=mongyu] #r34Map,html[data-edition=mongyu] #mission,html[data-edition=mongyu] #riddle,html[data-edition=mongyu] #shopPanel{display:none!important}

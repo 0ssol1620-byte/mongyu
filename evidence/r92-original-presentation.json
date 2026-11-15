@@ -1,0 +1,1356 @@
+{
+  "scope": "Numeric metadata only from unauthenticated third-party KTF V1.0.1 candidate. Private rendering inspected separately; does not establish every state, every story, real-device timbre or official provenance. No commercial pixels, music events or dialogue are published.",
+  "jarSha256": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2",
+  "spriteResources": [
+    {
+      "file": "dog1.pzx",
+      "sha256": "f353f183987537894228351db23088a1220a114f17c0b3aa1dbd1312cc102ac8",
+      "states": 18,
+      "stateFrameCounts": [
+        4,
+        6,
+        6,
+        4,
+        4,
+        4,
+        4,
+        10,
+        10,
+        8,
+        4,
+        1,
+        6,
+        1,
+        3,
+        4,
+        1,
+        29
+      ],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        21,
+        362
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          14
+        ],
+        [
+          19,
+          13
+        ],
+        [
+          18,
+          14
+        ],
+        [
+          17,
+          15
+        ]
+      ]
+    },
+    {
+      "file": "dog1r.pzx",
+      "sha256": "69f96fa6066232511c964f8e441f20548c075c6783c8c0da05b31928546c9838",
+      "states": 18,
+      "stateFrameCounts": [
+        4,
+        6,
+        6,
+        4,
+        4,
+        4,
+        4,
+        10,
+        10,
+        8,
+        4,
+        1,
+        6,
+        1,
+        3,
+        4,
+        1,
+        29
+      ],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        21,
+        362
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          14
+        ],
+        [
+          19,
+          13
+        ],
+        [
+          18,
+          14
+        ],
+        [
+          17,
+          15
+        ]
+      ]
+    },
+    {
+      "file": "dog2.pzx",
+      "sha256": "b59e4525d2be15659bbcbd1e7cfca5187c0b5a059465e9991715b340e0102a5c",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        19,
+        377
+      ],
+      "firstFourImageBounds": [
+        [
+          14,
+          21
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          15,
+          17
+        ]
+      ]
+    },
+    {
+      "file": "dog2r.pzx",
+      "sha256": "4b6a2cf0d066e65b2791177a8feb8c7861cca65279883e9c37e9693770566483",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        19,
+        377
+      ],
+      "firstFourImageBounds": [
+        [
+          14,
+          21
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          15,
+          17
+        ]
+      ]
+    },
+    {
+      "file": "dog3.pzx",
+      "sha256": "abff72b8636f13fac35d4abe47990eeb67c06da3dfcad29c8a084c1545448171",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        21,
+        362
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          14
+        ],
+        [
+          19,
+          13
+        ],
+        [
+          18,
+          14
+        ],
+        [
+          17,
+          15
+        ]
+      ]
+    },
+    {
+      "file": "dog3r.pzx",
+      "sha256": "0e940837bde04532e09e9f4b6853332aaba3026f87219ab89e6859e6f26f6f24",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        21,
+        362
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          14
+        ],
+        [
+          19,
+          13
+        ],
+        [
+          18,
+          14
+        ],
+        [
+          17,
+          15
+        ]
+      ]
+    },
+    {
+      "file": "dog4.pzx",
+      "sha256": "4c5dec22eb17bf1dcb723ce5c65c2096a7552633cf5e494d8878673a9670a70e",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        19,
+        377
+      ],
+      "firstFourImageBounds": [
+        [
+          14,
+          21
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          15,
+          17
+        ]
+      ]
+    },
+    {
+      "file": "dog4r.pzx",
+      "sha256": "264d0a49aa78bd9aa22ebcc3e237af04dbe14db504d8acf198e9b3ea9b863c9d",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 23,
+      "atlasImages": 23,
+      "atlasSize": [
+        19,
+        377
+      ],
+      "firstFourImageBounds": [
+        [
+          14,
+          21
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          15,
+          17
+        ]
+      ]
+    },
+    {
+      "file": "gm1.pzx",
+      "sha256": "b936d03ae95e32742abbdbf0d649d10ea56e1f00f3b0fd6ff450ad492880635d",
+      "states": 18,
+      "stateFrameCounts": [
+        4,
+        4,
+        5,
+        6,
+        7,
+        6,
+        10,
+        9,
+        12,
+        8,
+        4,
+        13,
+        6,
+        10,
+        3,
+        4,
+        6,
+        7
+      ],
+      "composedFrames": 54,
+      "atlasImages": 54,
+      "atlasSize": [
+        35,
+        1243
+      ],
+      "firstFourImageBounds": [
+        [
+          22,
+          27
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          18,
+          29
+        ],
+        [
+          18,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "gm1r.pzx",
+      "sha256": "f84fc8c09a7a50d46b7a1700b720f7930c45573a569b1a343faa9e753e9c0d95",
+      "states": 18,
+      "stateFrameCounts": [
+        4,
+        4,
+        5,
+        6,
+        7,
+        6,
+        10,
+        9,
+        12,
+        8,
+        4,
+        13,
+        6,
+        10,
+        3,
+        4,
+        6,
+        7
+      ],
+      "composedFrames": 54,
+      "atlasImages": 54,
+      "atlasSize": [
+        35,
+        1243
+      ],
+      "firstFourImageBounds": [
+        [
+          22,
+          27
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          18,
+          29
+        ],
+        [
+          18,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "gm2.pzx",
+      "sha256": "e28622c98ba1165ee2a00827bb018532bbcf8aba19dc9081c4328f067675d910",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        34,
+        1182
+      ],
+      "firstFourImageBounds": [
+        [
+          27,
+          22
+        ],
+        [
+          29,
+          25
+        ],
+        [
+          29,
+          18
+        ],
+        [
+          27,
+          18
+        ]
+      ]
+    },
+    {
+      "file": "gm2r.pzx",
+      "sha256": "7188e0f8ef8a3f6a783cfa07c546a9bbd9c2eaa2b8ef82cd74e48b38098491cb",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        34,
+        1182
+      ],
+      "firstFourImageBounds": [
+        [
+          27,
+          22
+        ],
+        [
+          29,
+          25
+        ],
+        [
+          29,
+          18
+        ],
+        [
+          27,
+          18
+        ]
+      ]
+    },
+    {
+      "file": "gm3.pzx",
+      "sha256": "b34caef285c39d232d5e437e90f58956986bd5bc1d666e480a80fee7ab205a56",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        35,
+        1223
+      ],
+      "firstFourImageBounds": [
+        [
+          22,
+          27
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          18,
+          29
+        ],
+        [
+          18,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "gm3r.pzx",
+      "sha256": "477a771d28a6cd4309f61d6cf7dc00065140fbc48afbc72fca07eb7852348626",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        35,
+        1223
+      ],
+      "firstFourImageBounds": [
+        [
+          22,
+          27
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          18,
+          29
+        ],
+        [
+          18,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "gm4.pzx",
+      "sha256": "c329b17e3a3872fcdb62825575e5e47269cf443359f2f8d607e8f92dba472788",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        34,
+        1182
+      ],
+      "firstFourImageBounds": [
+        [
+          27,
+          22
+        ],
+        [
+          29,
+          25
+        ],
+        [
+          29,
+          18
+        ],
+        [
+          27,
+          18
+        ]
+      ]
+    },
+    {
+      "file": "gm4r.pzx",
+      "sha256": "17edc42f3faa5ead2bddc571d43fe12a667f1daf8c91421ecc932200cb5e08c3",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 50,
+      "atlasImages": 50,
+      "atlasSize": [
+        34,
+        1182
+      ],
+      "firstFourImageBounds": [
+        [
+          27,
+          22
+        ],
+        [
+          29,
+          25
+        ],
+        [
+          29,
+          18
+        ],
+        [
+          27,
+          18
+        ]
+      ]
+    },
+    {
+      "file": "nom1.pzx",
+      "sha256": "7cb86413009e538eac83b9064f433521965a3d46214e7f5c8c7ec0158d0e9542",
+      "states": 20,
+      "stateFrameCounts": [
+        4,
+        4,
+        6,
+        6,
+        6,
+        6,
+        10,
+        8,
+        13,
+        8,
+        4,
+        13,
+        6,
+        11,
+        3,
+        4,
+        5,
+        7,
+        22,
+        21
+      ],
+      "composedFrames": 75,
+      "atlasImages": 75,
+      "atlasSize": [
+        39,
+        1115
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          26
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          18,
+          28
+        ],
+        [
+          13,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "nom1r.pzx",
+      "sha256": "3ef7e02c6f3bcd49b859e54ef55706ba254a32478758c3a8ba2ac12a12826774",
+      "states": 20,
+      "stateFrameCounts": [
+        4,
+        4,
+        6,
+        6,
+        6,
+        6,
+        10,
+        8,
+        13,
+        8,
+        4,
+        13,
+        6,
+        11,
+        3,
+        4,
+        5,
+        7,
+        22,
+        21
+      ],
+      "composedFrames": 75,
+      "atlasImages": 75,
+      "atlasSize": [
+        39,
+        1115
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          26
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          18,
+          28
+        ],
+        [
+          13,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "nom2.pzx",
+      "sha256": "45e0a2fe8afffb71d7522c71085be0867f9d0f84cf3db8597883dab30bb314c7",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        40,
+        834
+      ],
+      "firstFourImageBounds": [
+        [
+          26,
+          21
+        ],
+        [
+          27,
+          26
+        ],
+        [
+          28,
+          18
+        ],
+        [
+          27,
+          13
+        ]
+      ]
+    },
+    {
+      "file": "nom2r.pzx",
+      "sha256": "24e19d841916b0dc453f98733e5d1e5e4dd4d190479ded4ed7bf8ca320b01ec0",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        40,
+        834
+      ],
+      "firstFourImageBounds": [
+        [
+          26,
+          21
+        ],
+        [
+          27,
+          26
+        ],
+        [
+          28,
+          18
+        ],
+        [
+          27,
+          13
+        ]
+      ]
+    },
+    {
+      "file": "nom3.pzx",
+      "sha256": "4c6d79b46cf474f6e717b1f505da8b6b535d91697448947ccf09d87435c13f51",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        39,
+        791
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          26
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          18,
+          28
+        ],
+        [
+          13,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "nom3r.pzx",
+      "sha256": "dd297e20079b234a643a19c77367d75b73b7a95dea8ec944724be05bd1b39b9e",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        39,
+        791
+      ],
+      "firstFourImageBounds": [
+        [
+          21,
+          26
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          18,
+          28
+        ],
+        [
+          13,
+          27
+        ]
+      ]
+    },
+    {
+      "file": "nom4.pzx",
+      "sha256": "6741055dcf0b122d9201467e5ef7bd528aa6fb90a1a9b65d204239897fe0fe9f",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        40,
+        834
+      ],
+      "firstFourImageBounds": [
+        [
+          26,
+          21
+        ],
+        [
+          27,
+          26
+        ],
+        [
+          28,
+          18
+        ],
+        [
+          27,
+          13
+        ]
+      ]
+    },
+    {
+      "file": "nom4r.pzx",
+      "sha256": "7c2b2851c6b11c974eab9033bdfa5dc37b10b33dd3b1af6eb35e6404d5bd6f8f",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 48,
+      "atlasImages": 48,
+      "atlasSize": [
+        40,
+        834
+      ],
+      "firstFourImageBounds": [
+        [
+          26,
+          21
+        ],
+        [
+          27,
+          26
+        ],
+        [
+          28,
+          18
+        ],
+        [
+          27,
+          13
+        ]
+      ]
+    },
+    {
+      "file": "nyun1.pzx",
+      "sha256": "e9340fc54a1af923e8ea2b2119241ee72b919be368e2f56ba6ee59a807d62fba",
+      "states": 18,
+      "stateFrameCounts": [
+        4,
+        4,
+        6,
+        7,
+        7,
+        7,
+        10,
+        9,
+        13,
+        8,
+        4,
+        13,
+        6,
+        11,
+        3,
+        4,
+        6,
+        11
+      ],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        36,
+        867
+      ],
+      "firstFourImageBounds": [
+        [
+          19,
+          28
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          13,
+          29
+        ],
+        [
+          14,
+          29
+        ]
+      ]
+    },
+    {
+      "file": "nyun1r.pzx",
+      "sha256": "1dd5145a3d1da54eedd42cafe8aa93076fa921e0a4d3dd2e816ee339647885cd",
+      "states": 18,
+      "stateFrameCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        36,
+        867
+      ],
+      "firstFourImageBounds": [
+        [
+          19,
+          28
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          13,
+          29
+        ],
+        [
+          14,
+          29
+        ]
+      ]
+    },
+    {
+      "file": "nyun2.pzx",
+      "sha256": "8697ab40e2733ab58e1422422225dbc9b86f48110c8b22b6d7e2034e4e3ebf95",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        37,
+        907
+      ],
+      "firstFourImageBounds": [
+        [
+          28,
+          19
+        ],
+        [
+          28,
+          21
+        ],
+        [
+          29,
+          13
+        ],
+        [
+          29,
+          14
+        ]
+      ]
+    },
+    {
+      "file": "nyun2r.pzx",
+      "sha256": "4c3e01bf3e25019d2afe7b931ea7662695c9a05591dfa9789e64d676f3bd90d3",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        37,
+        907
+      ],
+      "firstFourImageBounds": [
+        [
+          28,
+          19
+        ],
+        [
+          28,
+          21
+        ],
+        [
+          29,
+          13
+        ],
+        [
+          29,
+          14
+        ]
+      ]
+    },
+    {
+      "file": "nyun3.pzx",
+      "sha256": "d243819e9fba1893c9bc2b790bb4e138717238ca1615b29e29de58fd3fadf864",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        36,
+        867
+      ],
+      "firstFourImageBounds": [
+        [
+          19,
+          28
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          13,
+          29
+        ],
+        [
+          14,
+          29
+        ]
+      ]
+    },
+    {
+      "file": "nyun3r.pzx",
+      "sha256": "b66e135303ba20fa685d33cfcf0855310e7df86e79c378a1951e4a5f792487b7",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        36,
+        867
+      ],
+      "firstFourImageBounds": [
+        [
+          19,
+          28
+        ],
+        [
+          21,
+          28
+        ],
+        [
+          13,
+          29
+        ],
+        [
+          14,
+          29
+        ]
+      ]
+    },
+    {
+      "file": "nyun4.pzx",
+      "sha256": "9958e150f5bd3e1ccdf23be99ccb68bceecddd15a60490a95b4bbe20a6476859",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        37,
+        907
+      ],
+      "firstFourImageBounds": [
+        [
+          28,
+          19
+        ],
+        [
+          28,
+          21
+        ],
+        [
+          29,
+          13
+        ],
+        [
+          29,
+          14
+        ]
+      ]
+    },
+    {
+      "file": "nyun4r.pzx",
+      "sha256": "1a27a9f783cc7bb12c8174cb1a559563ebb1872e1272c2ff2cb8e60eeb900a25",
+      "states": 0,
+      "stateFrameCounts": [],
+      "composedFrames": 58,
+      "atlasImages": 58,
+      "atlasSize": [
+        37,
+        907
+      ],
+      "firstFourImageBounds": [
+        [
+          28,
+          19
+        ],
+        [
+          28,
+          21
+        ],
+        [
+          29,
+          13
+        ],
+        [
+          29,
+          14
+        ]
+      ]
+    }
+  ],
+  "audioResources": [
+    {
+      "file": "BgmBoss.mmf",
+      "bytes": 5502,
+      "sha256": "66e5d88fdf9dd1be074689ff0630bee32a1e55b92e3c7526b9622f7450f5329b",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmMenu.mmf",
+      "bytes": 2079,
+      "sha256": "1e61dc3b2088073c2bedcc1dc595a3031939b0261ea8cd70fd53f62cf531b646",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmSkin.mmf",
+      "bytes": 6409,
+      "sha256": "37088c9a16ef2314dd3a31b400d4e9205f796bdb75bac3563c24e22200a04288",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage01.mmf",
+      "bytes": 5243,
+      "sha256": "ef7302f89f35dd04457c26db6e2a0aed0f25a49928e4a98b5993d2083df5412b",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage02.mmf",
+      "bytes": 4891,
+      "sha256": "95c3f57fb01997cb7e52050dd2f1e2603a8c457b63b6d2e82dc4fc55e366a797",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage03.mmf",
+      "bytes": 4525,
+      "sha256": "331c5c5feff8e11413871cb095dde677ac27e56dbb515dfd6f1ebaa1b51cd78f",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage04.mmf",
+      "bytes": 4728,
+      "sha256": "9f514cb92bdfff97d7fd37a76c6b65a6ad557a67d4b2188676b10b2065569c43",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage05.mmf",
+      "bytes": 4276,
+      "sha256": "ebafe3607ddeb20781a948bdf9c947185505f0e31df6f9731f7d4ce156e4048b",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage06.mmf",
+      "bytes": 6197,
+      "sha256": "33ea73b8caa4cdb9c30e9a2f73855b72c28a5eb8820c6f4f8a5b248426264e56",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage07.mmf",
+      "bytes": 5753,
+      "sha256": "06fde5841e9ad4c7346ffee69bb6a4b9f5391d7acff78fdc45da05968b1d5566",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage08.mmf",
+      "bytes": 9479,
+      "sha256": "29f6f7868c91896e54873fdbf9da9df6fdb58c891c17dd1065cf325d7cead035",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage09.mmf",
+      "bytes": 11567,
+      "sha256": "506e188d131c4a5c7d388c8f03684493e4d311229bc650b6e201753ec163f977",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStage10.mmf",
+      "bytes": 7189,
+      "sha256": "6e4c041f7e36f99f138289d21d0d1affff05415d18704b5ed344e650d8e10c53",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStory1.mmf",
+      "bytes": 6403,
+      "sha256": "88c1bbff15494b1031ecf590225ae0119be57359bc5fe632821522c84dad43ae",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStory2.mmf",
+      "bytes": 6904,
+      "sha256": "61fc4f95e1ca604ec63d3290b9b556a65ff5b1564e6c28b59f4f5f4151de1011",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmStory3.mmf",
+      "bytes": 2680,
+      "sha256": "baa1a3de8b94eefb6ae26fd447dbf0c94885caba36708dda8a582aeb33b0faac",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "BgmTitle.mmf",
+      "bytes": 6870,
+      "sha256": "f4731701a86256da00ff289402d1faa0fa6015e7c310e439e72bb100161e837b",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "logo.mmf",
+      "bytes": 4013,
+      "sha256": "8a963dc1d0abd00629093801469fb281fd2776b6feb922cbb369d43e01b00e89",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndBD.mmf",
+      "bytes": 4543,
+      "sha256": "894a968b8ea031580ded832be41bb289ad07959ea8b5f593b1ac5066fcfa8247",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": false,
+      "containsVoiceSetup": false
+    },
+    {
+      "file": "sndDam1.mmf",
+      "bytes": 4105,
+      "sha256": "5d205e1c7c3729d333f7ea935848cf0d54740590d628cb70e057164922a92c26",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": false,
+      "containsVoiceSetup": false
+    },
+    {
+      "file": "sndDam2.mmf",
+      "bytes": 4913,
+      "sha256": "389cd3c4a07c081bc60ced6a8a22972332bbb8daaf6f7004fa43cedd3afa6d39",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": false,
+      "containsVoiceSetup": false
+    },
+    {
+      "file": "sndEff.mmf",
+      "bytes": 3741,
+      "sha256": "f66c8eae2eafd4b47f34b05bfe0a152d5a08d49a948aa34c72d8a70811c2738e",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": false,
+      "containsVoiceSetup": false
+    },
+    {
+      "file": "sndEff2.mmf",
+      "bytes": 511,
+      "sha256": "e80f02a8ced5b66047b631713d47fa8efb6976b8938834f9ec7eb0b7e6a09ec7",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndEnd1.mmf",
+      "bytes": 1156,
+      "sha256": "9ea188fb8d85eb851333fd643b660610e283e57e11950c6351c4829980c21862",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndEnd2.mmf",
+      "bytes": 1217,
+      "sha256": "f58b51764cc5b85af5f931e27c49769ffe52af73a394d247e848f7415160e538",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndMorph.mmf",
+      "bytes": 410,
+      "sha256": "775f6e139dbdee4fdcb2390ee9efa9cf72d49ff7d8553b9c29205c3f05f3e047",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndSkin1.mmf",
+      "bytes": 561,
+      "sha256": "98900a33bc5ed9d733fdff9ec66d2da609366f47fc367af74c45633f8c54380c",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndSkin2.mmf",
+      "bytes": 3565,
+      "sha256": "af24823d3138dbaad46dd3f2ba969e01c06f0b6f94df3d98aa2b177eea071054",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": true,
+      "containsVoiceSetup": true
+    },
+    {
+      "file": "sndTeam.mmf",
+      "bytes": 5495,
+      "sha256": "7dad355dadb3a04a690ca8b777826ce666c3a7a4ff6e9fd91b95fcd38ed60e2a",
+      "container": "Yamaha SMAF (MMMD)",
+      "containsSequence": false,
+      "containsVoiceSetup": false
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 /* Sustained post-countdown Chromium evidence. Desktop CPU throttling is not an Android device test. */
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
-(async()=>{const release=process.argv[2]||'R91',out=process.argv[3]||'/workspace/artifacts/'+release.toLowerCase(),browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
+(async()=>{const release=process.argv[2]||'R92',out=process.argv[3]||'/workspace/artifacts/'+release.toLowerCase(),browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
  fs.mkdirSync(out,{recursive:true});const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4173/web/MONGYU_'+release+'.html');await page.waitForFunction(()=>window.QUAD_RIFT_APP);await page.click('#titleContinue');await page.click('#restorationSceneNext');await page.click('#restorationSceneNext');await page.click('#restorationStart');
  const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
  const data=await page.evaluate(async()=>{
