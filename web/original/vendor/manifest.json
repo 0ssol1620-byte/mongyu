@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "engine": "wie",
+  "sourceCommit": "1ca15ebf5a3ebc691a680a7854e99a32e75d46f4",
+  "sourceUrl": "https://github.com/Jun025/wie",
+  "artifactSource": "https://featurephone.otterpebble.com/engine/manifest.json",
+  "files": [
+    {
+      "path": "vendor/wie_web.js",
+      "bytes": 39859,
+      "sha256": "02392ec64ed87938e5f432fbee76c030725b559e67461aaea9164aa8dbaad88b"
+    },
+    {
+      "path": "vendor/wie_web_bg.wasm",
+      "bytes": 17925360,
+      "sha256": "a4a32d289c2281239d2d4e9c00c065d10203fe151969a6f324761e4e3a38ecdf"
+    }
+  ]
+}

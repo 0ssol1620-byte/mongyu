@@ -3,6 +3,21 @@ package org.quadrift.hddevelopment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.Intent;
+import android.net.Uri;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
+import android.util.AtomicFile;
+import org.json.JSONObject;
+import java.io.File;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.security.MessageDigest;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 import android.graphics.Color;
 import android.graphics.Insets;
 import android.graphics.drawable.GradientDrawable;
@@ -37,6 +52,14 @@ import java.util.Map;
 public final class MainActivity extends Activity {
     private static final String GAME_URL = "https://appassets.androidplatform.net/index.html";
     private WebView web;
+    private OriginalFiles originalFiles;
+    private static final int IMPORT_ORIGINAL = 9301;
+    private static final int MAX_ORIGINAL = 16 * 1024 * 1024;
+    private static final Set<String> PACKAGED = new HashSet<>(Arrays.asList(
+        "index.html", "styles.css", "main.mjs", "runtime.mjs", "storage.mjs", "archive.mjs",
+        "vendor/wie_web.js", "vendor/wie_web_bg.wasm",
+        "licenses/WIE.txt", "licenses/Apache-2.0.txt", "licenses/NeoDGM.txt",
+        "licenses/THIRD_PARTY_AUDIO.md"));
     private int rendererFailures;
     private int safeLeft, safeTop, safeRight, safeBottom;
 
@@ -80,6 +103,8 @@ public final class MainActivity extends Activity {
         // Only packaged, non-navigable HTML executes here. This capability can
         // access bounded game-save keys, never files, intents or the network.
         web.addJavascriptInterface(new LocalStore(getSharedPreferences("mongyu.offline.v1", MODE_PRIVATE)), "_MongyuStore");
+        originalFiles = new OriginalFiles();
+        web.addJavascriptInterface(originalFiles, "_MongyuOriginal");
         CookieManager.getInstance().setAcceptCookie(false);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setWebViewClient(new WebViewClient() {
@@ -102,13 +127,25 @@ public final class MainActivity extends Activity {
                 return !GAME_URL.equals(request.getUrl().toString());
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                if ("GET".equals(request.getMethod()) && GAME_URL.equals(request.getUrl().toString())) {
+                Uri uri = request.getUrl();
+                if ("GET".equals(request.getMethod()) && "https".equals(uri.getScheme())
+                        && "appassets.androidplatform.net".equals(uri.getHost()) && uri.getPort() == -1) {
+                    String path = uri.getPath();
                     try {
-                        return new WebResourceResponse("text/html", "UTF-8", 200, "OK",
-                            contentHeaders(), getAssets().open("index.html"));
-                    } catch (IOException missing) {
-                        return response(500, "Missing asset", "Game assets are missing. Rebuild this package.");
-                    }
+                        if ("/original/current".equals(path) || "/original/pending".equals(path)) {
+                            byte[] data = originalFiles.readData(path.endsWith("pending"));
+                            return data == null ? response(404, "Missing", "No original selected")
+                                : new WebResourceResponse("application/octet-stream", null, 200, "OK", contentHeaders(), new ByteArrayInputStream(data));
+                        }
+                        String asset = path != null && path.startsWith("/") ? path.substring(1) : "";
+                        if (PACKAGED.contains(asset)) {
+                            String mime = asset.endsWith(".html") ? "text/html" : asset.endsWith(".css") ? "text/css"
+                                : asset.endsWith(".mjs") || asset.endsWith(".js") ? "application/javascript"
+                                : asset.endsWith(".wasm") ? "application/wasm" : asset.endsWith(".sf3") ? "application/octet-stream" : "text/plain";
+                            return new WebResourceResponse(mime, mime.startsWith("text/") || mime.equals("application/javascript") ? "UTF-8" : null,
+                                200, "OK", contentHeaders(), getAssets().open(asset));
+                        }
+                    } catch (IOException missing) { return response(500, "Missing asset", "Packaged or original file could not be read."); }
                 }
                 return response(403, "Blocked", "Offline package: request blocked.");
             }
@@ -118,6 +155,90 @@ public final class MainActivity extends Activity {
                 OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::gameBack);
         }
         web.loadUrl(GAME_URL);
+    }
+
+    /** Only explicitly chosen game bytes enter this store; no arbitrary path API. */
+    public final class OriginalFiles {
+        private final AtomicFile current = new AtomicFile(new File(getFilesDir(), "original-game-v1"));
+        private final AtomicFile pending = new AtomicFile(new File(getFilesDir(), "original-pending-v1"));
+        private boolean choosing;
+        private AtomicFile file(boolean candidate) { return candidate ? pending : current; }
+        private JSONObject header(DataInputStream in) throws Exception {
+            if (in.readInt() != 0x4d474f31) throw new IOException("Invalid container");
+            String name = in.readUTF(); int size = in.readInt(); String hash = in.readUTF();
+            if (name.length() > 180 || size < 22 || size > MAX_ORIGINAL || !hash.matches("[a-f0-9]{64}")) throw new IOException("Invalid metadata");
+            return new JSONObject().put("name", name).put("bytes", size).put("sha256", hash);
+        }
+        @JavascriptInterface public synchronized String info(boolean candidate) {
+            try (DataInputStream in = new DataInputStream(file(candidate).openRead())) { return header(in).toString(); }
+            catch (Exception absent) { return "null"; }
+        }
+        synchronized byte[] readData(boolean candidate) throws IOException {
+            try (DataInputStream in = new DataInputStream(file(candidate).openRead())) {
+                JSONObject meta = header(in); byte[] data = new byte[meta.getInt("bytes")]; in.readFully(data);
+                if (in.read() != -1) throw new IOException("Trailing bytes"); return data;
+            } catch (java.io.FileNotFoundException absent) { return null; }
+            catch (Exception invalid) { throw new IOException("Original file is incomplete", invalid); }
+        }
+        @JavascriptInterface public synchronized boolean accept(String expectedHash) {
+            if (expectedHash == null || !expectedHash.matches("[a-f0-9]{64}")) return false;
+            FileOutputStream output = null;
+            try {
+                String metadata = info(true); if (metadata.equals("null")) return false;
+                JSONObject meta = new JSONObject(metadata); byte[] data = readData(true);
+                if (!expectedHash.equals(meta.getString("sha256")) || !expectedHash.equals(digest(data))) return false;
+                output = current.startWrite(); DataOutputStream record = new DataOutputStream(output);
+                record.writeInt(0x4d474f31); record.writeUTF(meta.getString("name")); record.writeInt(data.length);
+                record.writeUTF(expectedHash); record.write(data); record.flush(); current.finishWrite(output); pending.delete(); return true;
+            } catch (Exception failed) { if (output != null) current.failWrite(output); return false; }
+        }
+        @JavascriptInterface public synchronized void discard() { pending.delete(); }
+        @JavascriptInterface public void choose() {
+            runOnUiThread(() -> {
+                if (choosing || isFinishing()) return; choosing = true;
+                Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT); pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("*/*"); pick.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try { startActivityForResult(pick, IMPORT_ORIGINAL); }
+                catch (Exception unavailable) { choosing = false; originalError("이 기기에서 파일 선택기를 열 수 없습니다."); }
+            });
+        }
+        synchronized void receive(Uri uri) throws Exception {
+            String name = "original.zip";
+            try (Cursor cursor = getContentResolver().query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) name = cursor.getString(0);
+            }
+            if (name == null || name.length() > 180 || !(name.toLowerCase(java.util.Locale.ROOT).endsWith(".zip") || name.toLowerCase(java.util.Locale.ROOT).endsWith(".jar"))) throw new IOException("ZIP 또는 JAR 원본 파일을 선택해 주세요.");
+            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+            try (InputStream input = getContentResolver().openInputStream(uri)) {
+                if (input == null) throw new IOException("선택한 파일을 읽지 못했습니다.");
+                byte[] buffer = new byte[16384]; int count;
+                while ((count = input.read(buffer)) != -1) { if (bytes.size() + count > MAX_ORIGINAL) throw new IOException("16MB 이하의 파일을 선택해 주세요."); bytes.write(buffer, 0, count); }
+            }
+            byte[] data = bytes.toByteArray(); if (data.length < 22) throw new IOException("파일이 비어 있거나 손상됐습니다.");
+            FileOutputStream output = null;
+            try { output = pending.startWrite(); DataOutputStream record = new DataOutputStream(output);
+                record.writeInt(0x4d474f31); record.writeUTF(name); record.writeInt(data.length); record.writeUTF(digest(data)); record.write(data); record.flush(); pending.finishWrite(output);
+            } catch (Exception failed) { if (output != null) pending.failWrite(output); throw failed; }
+        }
+    }
+    private static String digest(byte[] bytes) throws Exception {
+        byte[] hash = MessageDigest.getInstance("SHA-256").digest(bytes); StringBuilder text = new StringBuilder();
+        for (byte value : hash) text.append(String.format(java.util.Locale.ROOT, "%02x", value & 255)); return text.toString();
+    }
+    private void originalError(String message) {
+        runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.MongyuOriginal && window.MongyuOriginal.importFailure(" + JSONObject.quote(message) + ")", null); });
+    }
+    @SuppressWarnings("deprecation")
+    @Override protected void onActivityResult(int request, int result, Intent intent) {
+        super.onActivityResult(request, result, intent);
+        if (request != IMPORT_ORIGINAL) return;
+        originalFiles.choosing = false;
+        if (result != RESULT_OK || intent == null || intent.getData() == null) return;
+        Uri uri = intent.getData();
+        new Thread(() -> {
+            try { originalFiles.receive(uri); runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.MongyuOriginal && window.MongyuOriginal.importCandidate()", null); }); }
+            catch (Exception invalid) { originalError(invalid.getMessage() == null ? "파일을 읽지 못했습니다." : invalid.getMessage()); }
+        }, "mongyu-original-import").start();
     }
 
     public static final class LocalStore {
@@ -215,7 +336,7 @@ public final class MainActivity extends Activity {
     private static Map<String, String> contentHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Cache-Control", "no-store");
-        headers.put("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; media-src data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
+        headers.put("Content-Security-Policy", "default-src 'none'; script-src 'self' 'wasm-unsafe-eval' blob:; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
         return headers;
     }
     private static WebResourceResponse response(int status, String reason, String message) {
