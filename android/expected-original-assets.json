@@ -34,8 +34,8 @@
     },
     {
       "path": "main.mjs",
-      "bytes": 9044,
-      "sha256": "35e55cee0669ba1109f4c49a1af17c3a3c9623200f5606a23db32a3a3b5ed16c"
+      "bytes": 9066,
+      "sha256": "b55b75b3b0fed409c0fbd25928664d7c467c66481c6948bccf6447b0fd5d33f5"
     },
     {
       "path": "runtime.mjs",
