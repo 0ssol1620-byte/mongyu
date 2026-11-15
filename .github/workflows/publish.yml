@@ -1,0 +1,25 @@
+name: Publish verified R90 preview
+on:
+  push:
+    branches: [codex/r90-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact signed payload and source archive
+        run: sha256sum -c MONGYU_R90_SHA256SUMS.txt
+      - name: Publish Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r90-preview
+          --prerelease
+          --target e6321069627454418fe7502cd1bc392d45f013ec
+          --title '몽유 R90 · 달리기 자세·장애물·맵 스킨 개선'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R90_ANDROID.apk MONGYU_R90_source.zip MONGYU_R90_SHA256SUMS.txt
