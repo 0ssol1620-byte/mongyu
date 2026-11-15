@@ -1,0 +1,55 @@
+{
+  "scope": "Accelerated Android emulator, actual installed APKs. Synthetic version-86 baseline and current version-87 use one ephemeral QA signing key. Not a physical-phone performance certification.",
+  "checks": [
+    {
+      "name": "actual fullscreen native play",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      }
+    },
+    {
+      "name": "native game canvas contains rendered content",
+      "raster": {
+        "width": 618,
+        "height": 1373,
+        "colored": 1024,
+        "samples": 1024
+      }
+    },
+    {
+      "name": "native back cancels input and freezes simulation",
+      "passed": true
+    },
+    {
+      "name": "foreground return requires explicit resume",
+      "passed": true
+    },
+    {
+      "name": "APK update retains collected memories, outfit and origin storage",
+      "collected": 1,
+      "passed": true
+    },
+    {
+      "name": "renderer crash recovers once without killing app or erasing storage",
+      "passed": true
+    },
+    {
+      "name": "repeated renderer failure waits for player retry",
+      "passed": true
+    },
+    {
+      "name": "player retry restores game with saved data",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "webView": [
+    "  Current WebView package (name, version): (com.android.webview, 124.0.6367.219)"
+  ],
+  "passed": true
+}
