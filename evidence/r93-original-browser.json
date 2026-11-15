@@ -1,0 +1,97 @@
+{
+  "scope": "Actual separately supplied original guest. Normal physical inputs, original save bytes, reload, held-input cancellation, rejected replacement and native aspect ratio at four viewport sizes. No original media or game bytes in this report; not complete 100-collection or original handset timbre proof.",
+  "inputSha256": "52c6de2dfda824a6f4cf53c29306f99575ed24c4095381e9980b91ccf11d6169",
+  "playing": {
+    "state": "play",
+    "frames": 2527,
+    "held": [],
+    "gameId": "52c6de2dfda824a6f4cf53c29306f99575ed24c4095381e9980b91ccf11d6169",
+    "platform": "KTF",
+    "speed": 1,
+    "achievedSpeed": 0.89,
+    "savedSequence": 4,
+    "saveError": null,
+    "audio": "running",
+    "ready": true,
+    "resourceCount": 106,
+    "originalMusicFiles": 17,
+    "jarDigest": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2"
+  },
+  "paused": {
+    "state": "pause",
+    "frames": 2536,
+    "held": [],
+    "gameId": "52c6de2dfda824a6f4cf53c29306f99575ed24c4095381e9980b91ccf11d6169",
+    "platform": "KTF",
+    "speed": 1,
+    "achievedSpeed": 0.8790604697651174,
+    "savedSequence": 4,
+    "saveError": null,
+    "audio": "suspended",
+    "ready": true,
+    "resourceCount": 106,
+    "originalMusicFiles": 17,
+    "jarDigest": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2"
+  },
+  "reloaded": {
+    "state": "play",
+    "frames": 32,
+    "held": [],
+    "gameId": "52c6de2dfda824a6f4cf53c29306f99575ed24c4095381e9980b91ccf11d6169",
+    "platform": "KTF",
+    "speed": 1,
+    "achievedSpeed": 0.3320079522862823,
+    "savedSequence": 4,
+    "saveError": null,
+    "audio": "running",
+    "ready": true,
+    "resourceCount": 106,
+    "originalMusicFiles": 17,
+    "jarDigest": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2"
+  },
+  "surfaces": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "rect": {
+        "x": 0,
+        "y": 70.671875,
+        "width": 320,
+        "height": 426.65625
+      }
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "rect": {
+        "x": 283.25,
+        "y": 10,
+        "width": 277.5,
+        "height": 370
+      }
+    },
+    {
+      "viewport": {
+        "width": 800,
+        "height": 1280
+      },
+      "rect": {
+        "x": 0,
+        "y": 106.671875,
+        "width": 800,
+        "height": 1066.65625
+      }
+    }
+  ],
+  "audio": {
+    "plays": 27,
+    "notes": 9132,
+    "pcm": 6
+  },
+  "errors": [],
+  "missing": []
+}
