@@ -42,7 +42,7 @@ function tileBounds(cmd,scene){
 // Static terrain uses native numeric swatches; moving boxes use centred,
 // four-phase vector squares. Geometry is authored, not copied sprite pixels.
 function scenePalette(index){const colors=root.MongyuNativePalette?.get(index).colors;return colors?[colors[0],colors[3],colors[1],colors[2]]:root.MongyuMobile.worldPalette(index)}
-function cellStyle(cmd,scene,p){const colors=root.MongyuNativePalette?.get(cmd.palette??scene.palette).colors;if(!colors)return {base:cmd.frame===2?p[2]:p[1],accent:p[3]};return {base:cmd.frame===2?colors[1]:colors[3],accent:colors[1]}}
+function cellStyle(cmd,scene,p){const colors=root.MongyuNativePalette?.get(cmd.palette??scene.palette).colors;if(!colors)return {base:cmd.role!=='cell-decoration'&&cmd.frame===2?p[2]:p[1],accent:p[3]};return {base:cmd.role!=='cell-decoration'&&cmd.frame===2?colors[1]:colors[3],accent:colors[1]}}
 function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
  const color=cellStyle(cmd,scene,p);c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=color.base;
  if(cmd.role==='cell-decoration'){
