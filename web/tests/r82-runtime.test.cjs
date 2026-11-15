@@ -25,7 +25,7 @@ test('geometry is cached per native snapshot; display interpolation never writes
 });
 test('rigid knees and ankles retain segment lengths through the whole run and jump cycle',()=>{
  for(let i=0;i<180;i++)for(const q of [{},{height:10,jumpProgress:i/180,kick:.5},{climbing:true},{pose:'open-arms'}]){
-  const pose=M.gait(i/120,q);for(const [a,k,b]of pose.legs){assert.ok(Math.abs(Math.hypot(k[0]-a[0],k[1]-a[1])-12.5)<1e-7);assert.ok(Math.abs(Math.hypot(k[0]-b[0],k[1]-b[1])-12.5)<1e-7);assert.ok(b[1]<=.001)}
+  const pose=M.gait(i/120,q);for(const [a,k,b]of pose.legs){assert.ok(Math.abs(Math.hypot(k[0]-a[0],k[1]-a[1])-11)<1e-7);assert.ok(Math.abs(Math.hypot(k[0]-b[0],k[1]-b[1])-11)<1e-7);assert.ok(b[1]<=.001)}
  }
 });
 test('mobile render density stays within a 1.2 megapixel budget for DPR 1 through 4',()=>{

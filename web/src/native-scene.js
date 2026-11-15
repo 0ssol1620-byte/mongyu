@@ -39,8 +39,17 @@ function tileBounds(cmd,scene){
  // Ordinary surface commands supply a rotated bottom-left corner instead.
  return cmd.raw==='0x5113a'?{x:q.x-8,y:q.y-8,width:16,height:16}:{x:q.x-(orientation===1||orientation===2?16:0),y:q.y-(orientation===0||orientation===1?16:0),width:16,height:16};
 }
-function tile(c,cmd,scene,p,dx=0,dy=0){
- const r=tileBounds(cmd,scene);c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=cmd.frame%3===0?p[2]:p[1];c.fillRect(r.x+dx+.5,r.y+dy+.5,15,15);
+// Static terrain uses native numeric swatches; moving boxes use centred,
+// four-phase vector squares. Geometry is authored, not copied sprite pixels.
+function scenePalette(index){const colors=root.MongyuNativePalette?.get(index).colors;return colors?[colors[0],colors[3],colors[1],colors[2]]:root.MongyuMobile.worldPalette(index)}
+function cellStyle(cmd,scene,p){const colors=root.MongyuNativePalette?.get(cmd.palette??scene.palette).colors;if(!colors)return {base:cmd.role!=='cell-decoration'&&cmd.frame===2?p[2]:p[1],accent:p[3]};return {base:cmd.role!=='cell-decoration'&&cmd.frame===2?colors[1]:colors[3],accent:colors[1]}}
+function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
+ const color=cellStyle(cmd,scene,p);c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=color.base;
+ if(cmd.role==='cell-decoration'){
+  const q=point(cmd.screenX,cmd.screenY,scene),frame=reduced?3:((cmd.frame||0)%4+4)%4,angle=[-Math.PI/8,Math.PI/4,Math.PI/8,0][frame],size=frame===3?12.8:16/(Math.abs(Math.sin(angle))+Math.abs(Math.cos(angle)));
+  c.save();c.translate(q.x+dx,q.y+dy);c.rotate(angle);if(cmd.kind===2)c.fillStyle=color.accent;c.fillRect(-size/2,-size/2,size,size);c.restore();return;
+ }
+ const r=tileBounds(cmd,scene);c.fillRect(r.x+dx+.5,r.y+dy+.5,15,15);
 }
 
 const backgroundCache=new WeakMap();
@@ -93,20 +102,20 @@ function morph(c,geo,scene,run,opt,p,u,player){
  const n=Math.min(200,t.count,b.oldX.length,b.newX.length);
  for(let i=0;i<n;i++){
   const q=point(mix(b.oldX[i],b.newX[i]),mix(b.oldY[i],b.newY[i]),scene),frame=u<.5?b.oldCommands[i]:b.newCommands[i];
-  c.fillStyle=frame%3===0?p[2]:p[1];c.fillRect(q.x-(scene.mask?8:0),q.y-(scene.mask?8:16),15,15);
+  c.fillStyle=frame===2?p[2]:p[1];c.fillRect(q.x-(scene.mask?8:0),q.y-(scene.mask?8:16),15,15);
  }
  if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},!!opt.reduced,geo.characterId);
 }
 
 function draw(c,run,opt,geo){
- const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=M.worldPalette(scene.palette),special=scene.split||geo.boss;
+ const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=scenePalette(scene.palette),special=scene.split||geo.boss;
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
  const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
  const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
  c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);if(art&&profile)art.draw(c,cam,profile,p,run.time||0,reduced);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
-  for(const cell of group.cells)tile(c,cell,scene,p);c.globalAlpha=1;
+  for(const cell of group.cells)tile(c,cell,scene,p,0,0,reduced);c.globalAlpha=1;
   if(!reduced)effects(c,group,scene,p);
   if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId)}}
   c.restore();
@@ -125,5 +134,5 @@ function draw(c,run,opt,geo){
  if(scene.countdown>0){c.save();c.textAlign='center';c.textBaseline='middle';c.font='600 48px sans-serif';c.fillStyle=p[1];c.fillText(String(Math.ceil(scene.countdown/10)),cam.width/2,cam.height*.3);if(profile){c.font='500 16px sans-serif';c.fillText(profile.title,cam.width/2,cam.height*.3-48)}c.restore()}
  return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1};
 }
-const api={snapshot,geometry,overview,point,tileBounds,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
+const api={snapshot,geometry,overview,point,tileBounds,scenePalette,cellStyle,tile,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

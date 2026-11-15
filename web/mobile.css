@@ -87,3 +87,8 @@ body[data-square=true][data-screen=play] #squareHud{background:#080615d9;color:#
 @media(min-aspect-ratio:115/100){#restorationScene[data-presentation=speech] .scene-balloon:after{left:auto;right:-8px;top:45%;bottom:auto}}
 
 #restorationScene{background:var(--story-world,#eced8a)}#restorationSceneLabel,#restorationSceneRule{color:#40303d}#restorationScene #restorationSceneText{color:#18121d}#restorationSceneCast{filter:none}#restorationScene nav button{color:#18121d;border-color:#18121d40}#restorationScene nav #restorationSceneNext{background:#18121d;color:#fff8de;border:0}.scene-meta{color:#675660}
+
+/* Earned map patterns sit inside the existing collection controls. */
+#restorationGrid button{position:relative;overflow:hidden;isolation:isolate}
+#restorationGrid .map-skin-preview{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;z-index:-1;opacity:.78}
+#restorationGrid button[data-skin-palette] .world-number,#restorationGrid button[data-skin-palette] .world-state{color:#fff8de;text-shadow:0 1px 3px #18121d,0 0 3px #18121d}

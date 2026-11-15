@@ -25,8 +25,8 @@ function joint(a,b,upper=11.5,lower=11.5,bend=1){
  return [a[0]+ux*reach-uy*rise*bend,a[1]+uy*reach+ux*rise*bend];
 }
 function legPose(hip,foot){
- const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,24.99/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
- return [hip,joint(hip,ankle,12.5,12.5,-1),ankle];
+ const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,21.99/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
+ return [hip,joint(hip,ankle,11,11,-1),ankle];
 }
 // Quarter-unit edge tolerance keeps native rounded anchors valid while reserving
 // room for the filled skin, instead of testing only a thin centreline.
@@ -43,7 +43,7 @@ function plantedLeg(hip,foot,q){
  const world=([x,y])=>({x:q.x+(x*basis.tx-y*basis.nx)*size,y:q.y+(x*basis.ty-y*basis.ny)*size});
  const inside=(p,r)=>p.x>r.x+.5&&p.x<r.x+15.5&&p.y>r.y+.5&&p.y<r.y+15.5;
  const lift=(x,y,extra=0)=>{
-  const ankle=[x,y-2.3-extra];
+  const ankle=[x,y-extra];
   for(let i=0;i<8;i++){
    const p=world(ankle),r=rects.find(r=>inside(p,r));if(!r)break;
    const dx=basis.nx>1e-8?(r.x+18.3-p.x)/basis.nx:basis.nx< -1e-8?(r.x-2.3-p.x)/basis.nx:Infinity;
@@ -60,15 +60,15 @@ function plantedLeg(hip,foot,q){
 }
 
 function gait(time=0,q={},reduced=false){
- const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/40:time*2.8;
- const bob=idle||air?0:-.4*(1-Math.cos(phase*TAU*2)),hip=[0,-18.8+bob],shoulder=[3,-30+bob];
+ const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/(110/3):time*2.8;
+ const bob=idle||air?0:-.35*(1-Math.cos(phase*TAU*2)),pelvis=idle?22.3:air?21.5:1+Math.sqrt(21.8**2-(11*Math.cos(phase*TAU))**2),hip=[0,-pelvis],shoulder=[3,-31.5+bob];
  const feet=[0,.5].map((offset,i)=>{const u=((phase+offset)%1+1)%1;
-  if(idle)return [i?5:-5,0];
+  if(idle)return [i?3:-3,-1];
   if(wall){const u=clamp((q.nativeFrame+(q.poseFraction||0))/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
   if(q.climbing)return i?[9,-16]:[-7,-3];
   if(air){const kick=clamp(q.kick||0,0,1),u=clamp(q.jumpProgress??.5,0,1),fall=clamp((u-.55)/.45,0,1);return i?[8+kick*10,-14+11*fall-kick*5]:[-10+3*fall,-9+5*fall-Math.sin(Math.PI*u)*3]}
   // Ground contact occupies 60% of the cycle, with a clean toe-off and recovery.
-  return u<.6?[12-24*u/.6,0]:[-12+24*(u-.6)/.4,-10*Math.sin(Math.PI*(u-.6)/.4)];
+  return u<.6?[11-22*u/.6,-1]:[-11+22*(u-.6)/.4,-1-9*Math.sin(Math.PI*(u-.6)/.4)];
  });
  if(q.turning&&!air){const lift=22*Math.sin(Math.PI*(q.turnProgress||0));for(const foot of feet)foot[1]-=lift}
  const legs=feet.map(foot=>!air&&!q.pose&&q.nativeState===0?plantedLeg(hip,foot,q):legPose(hip,foot));
@@ -107,9 +107,9 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  paintLeg(c,legs[1],[2.15,2.2,1.4,1.55,.75],ink);
  contour(c,limbContour(arms[0],[1.65,1.5,1.05,.95,.65]),ink);
  const bob=pose.bob,lean=character==='elder'?2:0;
- c.beginPath();c.moveTo(hip[0]-2.1,hip[1]+1);c.bezierCurveTo(-2.5,-23+bob,-1.4,-28+bob,shoulder[0]-1.5,shoulder[1]-1.3);
+ c.beginPath();c.moveTo(hip[0]-1.8,hip[1]+1);c.bezierCurveTo(-2.1,hip[1]-3,-1.2,shoulder[1]+3,shoulder[0]-1.4,shoulder[1]-1.3);
  c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-35.5+bob);c.lineTo(5.4+lean,-35.3+bob);
- c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(7,-27+bob,3,-23+bob,hip[0]+2.6,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
+ c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(6.5,shoulder[1]+3,3,hip[1]-3,hip[0]+2.3,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
  contour(c,limbContour(arms[1],[1.7,1.55,1.1,1,.7]),ink);
  const headX=character==='elder'?6:4,headY=-38.5+bob;oval(c,headX,headY,2.65,3.9,ink);
  if(character==='woman')contour(c,[[2,-41+bob],[-.5,-39+bob],[-.8,-35+bob],[-5,-33+bob],[-2.8,-36+bob],[.8,-41.5+bob]],ink);
@@ -172,7 +172,7 @@ function cameraZoom(geo,opt={},run){
 function camera(viewport,geo,opt={},run){
  if(!geo.nativeRuntime||geo.boss||!geo.player)return null;
  const width=Math.max(1,viewport.width),height=Math.max(1,viewport.height),q=geo.player,basis=actorBasis(q);
- const baseScale=Math.min(width/320,height/320),zoom=cameraZoom(geo,opt,run),scale=baseScale;
+ const baseScale=Math.min(width/384,height/384),zoom=cameraZoom(geo,opt,run),scale=baseScale;
  // Track the displayed body centre, including interpolated jumps and turns.
  // A fixed screen target avoids the old direction-dependent orbit across the phone.
  const half=(q.bodyHeight||42.5)/2,targetX=q.x+basis.nx*half,targetY=q.y+basis.ny*half;

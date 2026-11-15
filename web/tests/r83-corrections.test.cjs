@@ -7,7 +7,7 @@ test('knees bend forward in actor-local space in every run and jump frame',()=>{
 });
 test('stance feet stay planted against actual forward distance rather than an unrelated wall clock',()=>{
  const a=M.gait(0,{strideDistance:0}),b=M.gait(100,{strideDistance:4});
- assert.ok(Math.abs(a.legs[0][2][0]-(4+b.legs[0][2][0]))<1e-8);assert.equal(a.legs[0][2][1],0);assert.equal(b.legs[0][2][1],0);
+ assert.ok(Math.abs(a.legs[0][2][0]-(4+b.legs[0][2][0]))<1e-8);assert.equal(a.legs[0][2][1],-1);assert.equal(b.legs[0][2][1],-1);
 });
 test('all four corner turns have continuous endpoints, a contact path and bounded angular increments',()=>{
  for(let face=0;face<4;face++){

@@ -1,0 +1,45 @@
+{
+  "release": "R89",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 14.899999998509884,
+    "p95": 34.400000005960464,
+    "p99": 45.19999999552965,
+    "max": 122.10000000149012
+  },
+  "simulationMs": {
+    "samples": 142,
+    "p50": 10.5,
+    "p95": 18.799999997019768,
+    "p99": 20.600000001490116,
+    "max": 68.69999999552965
+  },
+  "longTasks": [
+    {
+      "start": 4385.10000000149,
+      "ms": 87
+    },
+    {
+      "start": 6258.79999999702,
+      "ms": 53
+    },
+    {
+      "start": 7009.29999999702,
+      "ms": 68
+    },
+    {
+      "start": 7120.39999999851,
+      "ms": 59
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 143,
+  "time": 10.724999999999987,
+  "state": "play",
+  "hearts": 3,
+  "artifactSha256": "e80f5c4fe42638d4ea852ad8ec55143675ab294b676a481af8745f098646dc12",
+  "sourceCommit": "9dfe576465f62b8fb21d72bcd21015a90d6338f8"
+}

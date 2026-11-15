@@ -15,7 +15,7 @@ test('the displayed body centre stays at the viewport centre on both directions 
   // The centre target is halfway between the contact anchor and the body's height.
   const normal={x:(head.x-q.x)-4*Math.cos(angle)*42.5/43.5,y:(head.y-q.y)-4*Math.sin(angle)*42.5/43.5},length=Math.hypot(normal.x,normal.y);
   close((q.x+normal.x/length*21.25)*cam.scale+cam.offsetX,width/2,'body x');close((q.y+normal.y/length*21.25)*cam.scale+cam.offsetY,height/2,'body y');
-  assert.equal(cam.zoom,1);assert.equal(cam.scale,Math.min(width/320,height/320));
+  assert.equal(cam.zoom,1);assert.equal(cam.scale,Math.min(width/384,height/384));
   assert.deepEqual(M.camera({width,height},{...g,companion:{x:-900,y:900}}, {},{}),cam,'dog cannot pull camera away from player');
  }
 });
@@ -41,7 +41,7 @@ test('reverse airborne corners keep the inward normal separate from forward moti
 test('ordinary morphs and floating stages retain player tracking and scale; boss and split layouts retain their arena',()=>{
  const data=require('./r86-morph-fixture.json'),r=new N.RestorationRun({slot:C.getSlot(data.checkpoint.frame.r.slot+1),nativeFrame:data.checkpoint.frame,frameProvenance:data.provenance,settings:{speed:'fast'}});r.start();const g=P.geometry(r,{}),viewport={width:390,height:844};
  const context=new Proxy({globalAlpha:1},{get:(o,k)=>k in o?o[k]:()=>{},set:(o,k,v)=>(o[k]=v,true)});
- for(const remainder of [10,60]){r.remainder=remainder;const out=Scene.draw(context,r,{viewport},g);assert.equal(out.camera.follow,true);assert.equal(out.camera.scale,390/320);const u=(g.nativeScene.transition.step-1+remainder/r.stepMs)/10,q=Scene.morphPlayer(g,g.nativeScene,u),normal=M.actorBasis(q);close((q.x+normal.nx*21.25)*out.camera.scale+out.camera.offsetX,195,'morph centre x');close((q.y+normal.ny*21.25)*out.camera.scale+out.camera.offsetY,422,'morph centre y');}
+ for(const remainder of [10,60]){r.remainder=remainder;const out=Scene.draw(context,r,{viewport},g);assert.equal(out.camera.follow,true);assert.equal(out.camera.scale,390/384);const u=(g.nativeScene.transition.step-1+remainder/r.stepMs)/10,q=Scene.morphPlayer(g,g.nativeScene,u),normal=M.actorBasis(q);close((q.x+normal.nx*21.25)*out.camera.scale+out.camera.offsetX,195,'morph centre x');close((q.y+normal.ny*21.25)*out.camera.scale+out.camera.offsetY,422,'morph centre y');}
  const flat={...g,nativeScene:{...g.nativeScene,transition:null,floating:true,groups:[],backgrounds:[]}};assert.equal(Scene.draw(context,r,{viewport},flat).camera.follow,true);
  const boss={...flat,boss:{maxHp:1,hp:1}};assert.equal(Scene.draw(context,r,{viewport},boss).camera.follow,false);
  const split={...flat,nativeScene:{...flat.nativeScene,split:true}};assert.equal(Scene.draw(context,r,{viewport},split).camera.follow,false);
@@ -50,7 +50,7 @@ test('ordinary morphs and floating stages retain player tracking and scale; boss
 test('stairs shorten or lift planted legs without changing either rigid link length or native state',()=>{
  for(const [slot,steps]of [[7,66],[14,42],[6,42],[21,34],[25,90]]){
   const r=encounter(slot,steps),before=structuredClone(r.nativeFrame),g=P.geometry(r,{reduced:true}),scene=g.nativeScene,rects=scene.groups.flatMap(g=>g.cells).filter(c=>c.role==='terrain-cell'&&!/^0x4c/.test(c.raw)).map(c=>Scene.tileBounds(c,scene)),c=painter();M.sprite(c,g.player,{contrast:true},false);
-  for(const leg of rigStrokes(g.player))for(let n=1;n<3;n++){const a=leg.points[n-1],b=leg.points[n];close(Math.hypot(b.x-a.x,b.y-a.y),12.5*42.5/43.5,'rigid link');for(let k=0;k<=40;k++){const x=a.x+(b.x-a.x)*k/40,y=a.y+(b.y-a.y)*k/40;assert.equal(rects.some(r=>x>r.x+2.5&&x<r.x+13.5&&y>r.y+2.5&&y<r.y+13.5),false,'leg passes through step at slot '+slot)}}
+  for(const leg of rigStrokes(g.player))for(let n=1;n<3;n++){const a=leg.points[n-1],b=leg.points[n];close(Math.hypot(b.x-a.x,b.y-a.y),11*42.5/43.5,'rigid link');for(let k=0;k<=40;k++){const x=a.x+(b.x-a.x)*k/40,y=a.y+(b.y-a.y)*k/40;assert.equal(rects.some(r=>x>r.x+2.5&&x<r.x+13.5&&y>r.y+2.5&&y<r.y+13.5),false,'leg passes through step at slot '+slot)}}
   assert.deepEqual(r.nativeFrame,before);
  }
 });

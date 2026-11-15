@@ -1,0 +1,43 @@
+{
+  "candidateJarSha256": "aeadd87840c7b3f1f06548489406dbc0bf833b41de9cdfa3eaf741e832a213c2",
+  "resource": "box.pzx",
+  "resourceSha256": "a659ca5b7cfc15b78185f3ea1820b9dc7f922d9504e51e7faccfd1175adc6f49",
+  "resourceBytes": 332,
+  "privateAnalysisOnly": true,
+  "mediaRedistributed": false,
+  "indexedPlane": {
+    "width": 10,
+    "height": 40,
+    "frames": 4,
+    "frameWidth": 10,
+    "frameHeight": 10,
+    "inflatedScanlineBytes": 440,
+    "zlibOffset": 221,
+    "scanlineFilter": 0,
+    "frameOffsets": [
+      [
+        -5,
+        -5
+      ],
+      [
+        -5,
+        -5
+      ],
+      [
+        -5,
+        -5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ]
+  },
+  "authoredVectorPhasesRadians": [
+    -0.39269908169872414,
+    0.7853981633974483,
+    0.39269908169872414,
+    0
+  ],
+  "scope": "Binary metadata and simple geometric-frame comparison from an unauthenticated KTF candidate. New runtime shapes are vector squares, not original sprite payload or a pixel-equivalence claim."
+}

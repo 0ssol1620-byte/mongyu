@@ -2,7 +2,7 @@ name: Android device QA
 on:
   workflow_dispatch:
   push:
-    branches: [codex/r89-art-sound-direction]
+    branches: [codex/r90-upright-runner]
     paths-ignore: ['docs/**', 'evidence/**', 'README.md']
 permissions:
   contents: read
@@ -76,4 +76,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: verified-unsigned-payload
-          path: android/outputs/MONGYU_R89_TEST_DEBUG_UNSIGNED.apk
+          path: android/outputs/MONGYU_R90_TEST_DEBUG_UNSIGNED.apk

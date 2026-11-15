@@ -53,7 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
- const storage=native?native.isolatedStorage(host.storage):host.storage;
+ const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
  let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null;
  let mastery=M?.load(storage)||{ok:true,save:null},completionSequence=0;
@@ -74,6 +74,7 @@ function mount(host){
   const s=summary(),currentPage=page();text('restorationProgress',s.collected+' / 100');text('restorationPage',(currentPage+1)+' / 10');
   for(const entry of C.collection(save)){
    const b=buttons[entry.number-1];if(!b)continue;
+   const skin=skinJournal?.get(entry.number,entry.collected);if(skin!==null&&skin!==undefined&&b.dataset.skinPalette!==String(skin)){root.MongyuMapSkins.draw(b.skinPlate.getContext('2d'),skin);b.dataset.skinPalette=String(skin)}b.skinPlate.hidden=skin===null||skin===undefined;
    const chosen=entry.id===selected.id;b.hidden=Math.floor((entry.number-1)/10)!==currentPage;b.numberPlate.textContent=String(entry.number).padStart(3,'0');
    b.statePlate.textContent=entry.number===100&&entry.unlocked?(entry.collected?'감상 완료':'획득'):entry.collected?'찾음':entry.unlocked?'열림':'잠김';b.markPlate.textContent=entry.collected?'✓':entry.unlocked?(ticketKind(entry)||'→'):'×';
    b.dataset.collected=String(entry.collected);b.dataset.locked=String(!entry.unlocked);b.tabIndex=chosen?0:-1;b.setAttribute('aria-pressed',String(chosen));b.setAttribute('aria-label',entry.number+'. '+entry.title+'. '+(entry.number===100&&entry.unlocked?(entry.collected?'감상한 마지막 이야기':'획득한 마지막 이야기'):entry.collected?'찾은 기억':entry.unlocked?'열린 기억':'잠긴 기억'));
@@ -256,6 +257,7 @@ function mount(host){
   }
   const before=save.collected.length,priorAttempt=save.attempt,next=C.commit(save,activeSlot.id,result);
   qualified=result.attempt===priorAttempt+1&&next.attempt===result.attempt&&C.validateResult(activeSlot.id,result)&&C.meets(activeSlot,result,next);persist(next);
+  if(qualified&&run.nativeRuntime&&skinJournal&&!skinJournal.record(activeSlot.number,run.nativeFrame?.map?.t,true))storageOK=false;
   if(qualified&&aftermathSpec(run)&&run.state==='clear'&&run.boss?.hp===0){aftermathRuns.add(run);aftermath={run,elapsed:0,last:null,paused:false};}
   const objective=scoreProgress(activeSlot);award=save.pendingUnlock||save.collected.length>before?'기억을 찾았습니다.':qualified?'찾은 기억을 다시 만났습니다.':activeSlot.rule.type==='setting'?'설정 변경 조건을 확인하고 다시 바꿔 보세요.':objective.target?'이 기억 '+objective.current+' / '+objective.target+'점 · 다음 시도에 이어집니다.':'조건을 채우지 못했습니다. 같은 길에 다시 도전할 수 있어요.';
  }
@@ -301,7 +303,7 @@ function mount(host){
   if(config.freePlay){qualified=false;award='';return launch(event,config)}return start(event,activeSlot.id,{retry:true,config});
  }
  function startFree(event){if(!summary().finished)return false;selected=C.slots.find(slot=>slot.physical&&slot.rule.type==='tutorial')||C.slots.find(slot=>slot.physical);activeSlot=selected;award='';return launch(event,{...configFor(selected),freePlay:true,seed:Date.now()>>>0})}
- for(const slot of C.slots){const b=host.document.createElement('button');b.id='restoration-slot-'+slot.number;b.setAttribute('id',b.id);b.numberPlate=host.document.createElement('span');b.numberPlate.className='world-number';const kind=host.document.createElement('span');kind.className='world-kind';kind.textContent=ticketKind(slot);b.statePlate=host.document.createElement('span');b.statePlate.className='world-state';b.markPlate=host.document.createElement('span');b.markPlate.className='world-mark';b.markPlate.setAttribute('aria-hidden','true');b.append(b.numberPlate,kind,b.statePlate,b.markPlate);b.onclick=()=>select(slot.id);$('restorationGrid').appendChild(b);buttons.push(b)}
+ for(const slot of C.slots){const b=host.document.createElement('button');b.id='restoration-slot-'+slot.number;b.setAttribute('id',b.id);b.numberPlate=host.document.createElement('span');b.numberPlate.className='world-number';const kind=host.document.createElement('span');kind.className='world-kind';kind.textContent=ticketKind(slot);b.statePlate=host.document.createElement('span');b.statePlate.className='world-state';b.markPlate=host.document.createElement('span');b.markPlate.className='world-mark';b.markPlate.setAttribute('aria-hidden','true');b.skinPlate=host.document.createElement('canvas');b.skinPlate.width=b.skinPlate.height=32;b.skinPlate.className='map-skin-preview';b.skinPlate.setAttribute('aria-hidden','true');b.skinPlate.hidden=true;b.append(b.skinPlate,b.numberPlate,kind,b.statePlate,b.markPlate);b.onclick=()=>select(slot.id);$('restorationGrid').appendChild(b);buttons.push(b)}
  $('restorationGrid').addEventListener('keydown',event=>{const n=Number(event.target?.id?.replace('restoration-slot-',''));if(!n)return;const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-5,ArrowDown:5,PageUp:-10,PageDown:10}[event.code],target=event.code==='Home'?1:event.code==='End'?100:step?n+step:null;if(target!==null){event.preventDefault();select(Math.max(1,Math.min(100,target)),true)}});
  $('restorationPagePrev').onclick=()=>select(Math.max(1,selected.number-10));$('restorationPageNext').onclick=()=>select(Math.min(100,selected.number+10));$('restorationRouteNext').onclick=()=>summary().nextSlot&&select(summary().nextSlot,true);
  $('restorationSetting').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'fast':true,e);$('restorationSettingOff').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'slow':false,e);

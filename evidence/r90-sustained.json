@@ -1,0 +1,77 @@
+{
+  "release": "R90",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 14.799999997019768,
+    "p95": 37.400000005960464,
+    "p99": 69.39999999850988,
+    "max": 119.90000000596046
+  },
+  "simulationMs": {
+    "samples": 149,
+    "p50": 11,
+    "p95": 28.099999994039536,
+    "p99": 37,
+    "max": 47.79999999701977
+  },
+  "longTasks": [
+    {
+      "start": 3991.89999999851,
+      "ms": 64
+    },
+    {
+      "start": 4741.10000000149,
+      "ms": 50
+    },
+    {
+      "start": 10829.60000000149,
+      "ms": 63
+    },
+    {
+      "start": 10973.29999999702,
+      "ms": 103
+    },
+    {
+      "start": 11083.10000000149,
+      "ms": 111
+    },
+    {
+      "start": 11194.69999999553,
+      "ms": 83
+    },
+    {
+      "start": 11282.39999999851,
+      "ms": 67
+    },
+    {
+      "start": 11353.39999999851,
+      "ms": 71
+    },
+    {
+      "start": 11424.60000000149,
+      "ms": 79
+    },
+    {
+      "start": 11505.60000000149,
+      "ms": 73
+    },
+    {
+      "start": 11579,
+      "ms": 52
+    },
+    {
+      "start": 12787.89999999851,
+      "ms": 52
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 150,
+  "time": 11.249999999999982,
+  "state": "play",
+  "hearts": 3,
+  "artifactSha256": "98a9b3f59898b17d2e2505b6138a582dbb0d9fdd1abcc35b9c0d92dfebd6c377",
+  "sourceCommit": "6db586506fb419af493f38fd64fe603082dd4d86"
+}
