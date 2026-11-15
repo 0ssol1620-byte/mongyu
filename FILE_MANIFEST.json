@@ -1,6 +1,6 @@
 {
-  "scope": "All R87 source publication files except this manifest itself. Generated Android assets are prepared from the included web HTML.",
-  "runtimeVerifiedCommit": "8f763b7ff9ddd31f3ebe826e709ad13183b5eedd",
+  "scope": "All R88 source publication files except this manifest itself. Generated Android assets are prepared from the included web HTML.",
+  "runtimeVerifiedCommit": "74b3d3bf2d55a4cee913279b02cbfada587eca86",
   "files": [
     {
       "path": ".gitattributes",
@@ -9,8 +9,8 @@
     },
     {
       "path": ".github/workflows/android-device.yml",
-      "bytes": 2865,
-      "sha256": "3e62ceb5ff19f310046fcdacfbd0cc08d7774946cbfa643128856d57634acb86"
+      "bytes": 2978,
+      "sha256": "33b5b66e3d7a86f1e51ab4942c6a842e4ea36b300030336d34dccc532c5c46ae"
     },
     {
       "path": ".gitignore",
@@ -19,13 +19,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 2533,
-      "sha256": "f2d4cfe68572037f0ab3c2b2599a42f46a4440690f815e3f6da6b14588d4a095"
+      "bytes": 2509,
+      "sha256": "b41d7853354c31f9e86454e7f1786d5ab9cf5ac7f3226c8f93c5ad82bf3a58f9"
     },
     {
       "path": "android/app/src/main/AndroidManifest.xml",
       "bytes": 1047,
-      "sha256": "fe2ccc465c4faac6e5b0040ce9e6c5b81655f3fde752e8bdd1a40ee0aaa4d58e"
+      "sha256": "235904ebc089b1787003b1b09da00786657bc484ecd36103587f4d7e167f4b6b"
     },
     {
       "path": "android/app/src/main/java/org/quadrift/hddevelopment/BuildConfig.java",
@@ -50,12 +50,12 @@
     {
       "path": "android/build-unsigned.py",
       "bytes": 3170,
-      "sha256": "98bee2a46b5bc9409f7619ef7ca65ee3b7520a615845e0fe688b83b2a02468ef"
+      "sha256": "c6a3f11a996f1dba31281b8d8490fc09d4f5c4f2aa80a3c39ecf56f81754b17b"
     },
     {
       "path": "android/expected-asset.sha256",
       "bytes": 65,
-      "sha256": "f02eed51bf265d68915569c13e8565539c00d38899030f1a0e5bb36f71f5824e"
+      "sha256": "27f95b5f65694bd3d6a36f8d2bf3237650d7681b37eed0c17ebc3f47764e9ef1"
     },
     {
       "path": "android/tests/day-night-ending.test.cjs",
@@ -75,7 +75,7 @@
     {
       "path": "android/tests/r82-wrapper.test.cjs",
       "bytes": 2754,
-      "sha256": "66af6ebdf2b78847a336c3f807ea177f759a736c9d2a5205b2886f5e3f3fefe7"
+      "sha256": "b384529e01ae804b494095d2b5171ed5bee269a38b1a08d78dcd05a6f4b89464"
     },
     {
       "path": "android/tests/wrapper-r31.test.cjs",
@@ -90,7 +90,7 @@
     {
       "path": "android/verify-preview-apk.py",
       "bytes": 2456,
-      "sha256": "fc47d1fb70a83f3ee53503a9cfd888d23e1cfff27e6d56a50df6bfa73bac2802"
+      "sha256": "2b8d6271c1e50bfe209811ff3adf2eb0dc989152e52cbe23ba50acabdf0450fd"
     },
     {
       "path": "docs/ART_DIRECTION.md",
@@ -141,6 +141,11 @@
       "path": "docs/R87_ORIGINAL_RESEARCH_KO.md",
       "bytes": 11269,
       "sha256": "1b144b5f13c838a2ab8f403a85cfc24961b483a45fd135f19e9290187981d212"
+    },
+    {
+      "path": "docs/R88_CAMERA_CONTACT_KO.md",
+      "bytes": 7596,
+      "sha256": "347c3bf0ee12f635ba11e63841e5fd070463577f91faed7b3f732a62be3202c1"
     },
     {
       "path": "docs/VALIDATION.md",
@@ -418,6 +423,76 @@
       "sha256": "b44ee39d1f3bd333feea8d8ad944c632f3ce57184480004913eea2987f6da7a1"
     },
     {
+      "path": "evidence/r88-android-device.json",
+      "bytes": 4443,
+      "sha256": "86aaa15c9ce4dff8c08da36f2ab46b4987690b66a9771ba6b114660db8a5a914"
+    },
+    {
+      "path": "evidence/r88-android-free-rotation.png",
+      "bytes": 47924,
+      "sha256": "390e5bfc0c48160c81942dac878f13acf61d50415f99de351710bad3e140a5f0"
+    },
+    {
+      "path": "evidence/r88-android-play.png",
+      "bytes": 50595,
+      "sha256": "378d0d7522119c116be67235814ae6e2aa8bb58b286aff3f32c95ccad6b5f704"
+    },
+    {
+      "path": "evidence/r88-android-reverse-wall.png",
+      "bytes": 47518,
+      "sha256": "c8c3dd06a8bb2e8f096211510353eaee4e5c818033d65ee85d0a76144b173d22"
+    },
+    {
+      "path": "evidence/r88-android-stairs.png",
+      "bytes": 44700,
+      "sha256": "424a26b29f0a4d8cd39fcdb738af74786ac07c3c39711a9934cd26ffdf48bd21"
+    },
+    {
+      "path": "evidence/r88-browser-report.json",
+      "bytes": 5715,
+      "sha256": "186aeeb075ce47e3fc7c3730af0b4db6a31a4fad43a8ab1e69711b41996da9af"
+    },
+    {
+      "path": "evidence/r88-contact-audit.json",
+      "bytes": 7137,
+      "sha256": "b94eb2a765aca44ad15cd300b57d82a241c9c4c613d8a9b305561098e511cdee"
+    },
+    {
+      "path": "evidence/r88-motion-contact-sheet.png",
+      "bytes": 557616,
+      "sha256": "9dd6d279ab94e52d6a2d94274243350cfc046f762e75027ec2d8564f4a85b43e"
+    },
+    {
+      "path": "evidence/r88-motion.json",
+      "bytes": 175,
+      "sha256": "924d875eb0a35ae60ca072675a1787cda208426047737ceb3e00971881949b83"
+    },
+    {
+      "path": "evidence/r88-r87-current-baseline.json",
+      "bytes": 2630,
+      "sha256": "bc5dd5bfd0772e6b3e4f92135527c4bf0d47709cefb8b848a61b9a5f5acfa5f7"
+    },
+    {
+      "path": "evidence/r88-signed-apk.json",
+      "bytes": 2304,
+      "sha256": "44fce372c112b74de33b595440408ec9b899ea27457e0ebdc14e47dfd1f9e192"
+    },
+    {
+      "path": "evidence/r88-sustained-prototype.json",
+      "bytes": 2387,
+      "sha256": "9e2aad518e938e95c7b073e1fbcb93a93ab6d756adfea6c63b25288fc027b3c8"
+    },
+    {
+      "path": "evidence/r88-sustained.json",
+      "bytes": 2595,
+      "sha256": "33cf8625a67a1e88472daba12f69eea830418895b05ce895e5b5dc496763b209"
+    },
+    {
+      "path": "evidence/r88-web-tests-summary.json",
+      "bytes": 270,
+      "sha256": "7cde07f74aad905cdf3e5365754fd8fd840d033ff887b3a19c2a1d6881297e15"
+    },
+    {
       "path": "evidence/runtime-sha256.json",
       "bytes": 2652,
       "sha256": "53e97db11d094b804a3ca9ab7eda84cfd99d79f626b13c393ac05535b582b037"
@@ -425,17 +500,17 @@
     {
       "path": "scripts/build-device-qa.py",
       "bytes": 1153,
-      "sha256": "cb8337c22070ec67f96c82151a2d86307cf7d87642e6c647cb81df855a4098f1"
+      "sha256": "2c28029924f6c861b1cce75cd1ea1e9289b9ffc2d1ffd9d38a07c00d888d91c8"
     },
     {
       "path": "scripts/prepare-android-r80.py",
       "bytes": 795,
-      "sha256": "ebb3ba0703db11b15afc6142f3eb34261ffbe73721939c699cfd7dd62b5eabae"
+      "sha256": "c36ce5791286e37155e38b043f2f94305e7b2d0180f5b500b0f83cdf95b941b8"
     },
     {
       "path": "scripts/test-build-portability.py",
       "bytes": 1909,
-      "sha256": "183f483f4882ae308fd61ae652185fe22efa49c0baccfafd153275522951636d"
+      "sha256": "76f9bae48b92ddbfdae470380edbc1e18a117914f8dfab94923ff670260c01c8"
     },
     {
       "path": "scripts/test.py",
@@ -445,7 +520,7 @@
     {
       "path": "scripts/verify-snapshot.py",
       "bytes": 693,
-      "sha256": "6c46afedb2c96d72fe714549b2329dbb034a4a4b54383a9a0c52617b55434bd2"
+      "sha256": "c91211d73cc85f04c95bc48302d0a0996a5392b98bf73b2f387137e03aaf110f"
     },
     {
       "path": "tools/audit-boss-exits.cjs",
@@ -466,6 +541,11 @@
       "path": "tools/audit-original-fields.py",
       "bytes": 3561,
       "sha256": "0eee1e6c230dcb45ca240a373e4ec594d8430441f1ede6de9bf116d0b8d5bf12"
+    },
+    {
+      "path": "tools/audit-r88-contact.cjs",
+      "bytes": 3080,
+      "sha256": "f986403b3599aef1c1036087c7766973afca918734eb4fe7498a54a2ff9bbf44"
     },
     {
       "path": "tools/audit-runtime.cjs",
@@ -493,9 +573,14 @@
       "sha256": "0231a804c14b5aad3614a98fff06b1d50d58a834f720fb4231c05e4a05dccb14"
     },
     {
+      "path": "tools/r88-device-visual.js",
+      "bytes": 2506,
+      "sha256": "edc30f58c6956c79c22c7b1e380d6e11c16f5a772838fabb3b96f0f963dc3ab9"
+    },
+    {
       "path": "tools/verify-android-device.cjs",
-      "bytes": 10421,
-      "sha256": "6fbebbb81e250448d30d067998fd52ccf37e3b46d341249d987c0ac9f5834238"
+      "bytes": 11307,
+      "sha256": "3abfb6e9d2045d00582160a8a9cee3d4c1f256dfc91eb8fd9e11d5ed294152ea"
     },
     {
       "path": "tools/verify-r84-experience.cjs",
@@ -513,19 +598,24 @@
       "sha256": "d00c48921fadbd9f4d16f9fd428f33fe9f37f5d5a4828c8686db9d8864fd590b"
     },
     {
+      "path": "tools/verify-r88-camera-contact.cjs",
+      "bytes": 1789,
+      "sha256": "3de159b9593f4e7c748ca284c4e6424810284ff283bf34f0acd2e7a522812e4d"
+    },
+    {
       "path": "tools/verify-sustained.cjs",
       "bytes": 3149,
-      "sha256": "ea2a04c2dbd6edc473b972692ec9b06060a71a462e371a0cd7e315b18bdc05bd"
+      "sha256": "547541befd5e2287af845cd8816d68ae5c78970b224decef21e12d4eeda66cbc"
     },
     {
       "path": "tools/verify_browser.cjs",
       "bytes": 5073,
-      "sha256": "7b624f789f729985f46d685cdab5724113e0cea9fe108c8846ca1b913a542192"
+      "sha256": "a2d1d9140db8be4de6d2f22d148f2be7a6ec800a088322e7cfe39b0e6d24ad95"
     },
     {
-      "path": "web/MONGYU_R87.html",
-      "bytes": 9401789,
-      "sha256": "078729da76f3aceccf58ba7e08c849e8f4e21bb2aa09add3a5b4f1c8a7b2c8e4"
+      "path": "web/MONGYU_R88.html",
+      "bytes": 9406614,
+      "sha256": "6860f2192dc3b94d5b303c52eea2a31527547ae905c1c80bcb551014fe3743a1"
     },
     {
       "path": "web/assets/music/CC-BY-4.0.txt",
@@ -625,12 +715,12 @@
     {
       "path": "web/build-manifest.json",
       "bytes": 7170,
-      "sha256": "84c20da34deaa12b3da87fc89307a24d9bd755d0dbcd9f943a3ef6774046bbc0"
+      "sha256": "ec715e2167dc44ab435a8335212101cb128e4369dd102f18548a5f89444b594b"
     },
     {
       "path": "web/build.py",
       "bytes": 2258,
-      "sha256": "375db41c9218fc1fe8c0f13c067469d24a1c9292cec7a1736fbd2a99663883bd"
+      "sha256": "b53fe5bc01fb16375139042f1b61d218d97a46c8c07427f20717c3e111d90ade"
     },
     {
       "path": "web/index.template.html",
@@ -650,7 +740,7 @@
     {
       "path": "web/src/app.js",
       "bytes": 152292,
-      "sha256": "ed0bb3e8a62001cd07fa0faada6dd0dc0173844e63b0f6f4354a739821e4c3dc"
+      "sha256": "90cef02b048d09eaa3f036dd55698236d1b21787a60d4e0cc3b89f69df682abd"
     },
     {
       "path": "web/src/assets.js",
@@ -769,8 +859,8 @@
     },
     {
       "path": "web/src/mobile-presentation.js",
-      "bytes": 16959,
-      "sha256": "2980e334b6ace63cbbbc46fbcb1a95270ce7c7895d44c32300234562d435a4a4"
+      "bytes": 18580,
+      "sha256": "243021c2ca8bc43a2fb5094e43664f9264e7a287dcf91206b3af6f06d1941ced"
     },
     {
       "path": "web/src/native-kernels.js",
@@ -789,8 +879,8 @@
     },
     {
       "path": "web/src/native-scene.js",
-      "bytes": 10502,
-      "sha256": "3415eb93c8e1fa23098cac510b93a8f6d713446e84630ea7593bac03d08a8784"
+      "bytes": 11869,
+      "sha256": "cb37cc8fb9ccc5349c731b104cda195f41883c5c524dbe92db4f34e70530cb44"
     },
     {
       "path": "web/src/native-stability.js",
@@ -809,8 +899,8 @@
     },
     {
       "path": "web/src/presentation-runtime.js",
-      "bytes": 7667,
-      "sha256": "2d62b54acc817201a03ff560cf1bcc4d37e861304c0b298d53a417f966579a10"
+      "bytes": 9504,
+      "sha256": "7d66eef6edd973cfc30fb6a776872f43faca5905cbd793216407346104014930"
     },
     {
       "path": "web/src/progression.js",
@@ -905,7 +995,7 @@
     {
       "path": "web/tests/host.cjs",
       "bytes": 9363,
-      "sha256": "4c920e93f45bd634c670c307f343cf264bb5cddb28679bd614b4eb8e51395039"
+      "sha256": "b889b89791961eb4b57041cee2b64363571fdbf131e40844773a8f0c438ada2f"
     },
     {
       "path": "web/tests/r29-day-night.test.cjs",
@@ -920,12 +1010,12 @@
     {
       "path": "web/tests/r32-arcade-ui.test.cjs",
       "bytes": 5178,
-      "sha256": "2f0843e4ec6ce323da09f03cfb9dd78d6cf16522049f4d3cb6d554924442fec0"
+      "sha256": "9785f381b9cb0d008940d4350e7c4e39919b852a1eb823a215756ba24f4976ea"
     },
     {
       "path": "web/tests/r34-ui.test.cjs",
       "bytes": 6996,
-      "sha256": "f939ecae0f75e97c37e0c109c04d6e1fbaf5d0504a4ed73848832e5a27895413"
+      "sha256": "737b0024292987ab528accac82a24e1a0dd63e64abd6be99f09c82310637fd4a"
     },
     {
       "path": "web/tests/r37-experience.test.cjs",
@@ -945,7 +1035,7 @@
     {
       "path": "web/tests/r78-mask-presentation.test.cjs",
       "bytes": 4653,
-      "sha256": "28ff3a3bac46d26a7f596e9e4430d38ca3e7f8f58a9eab0913f1f34db066067c"
+      "sha256": "a2e07c6440b3fa94db7a6d2a4e1fd3b34f87f0030af2cdffd0451f1bf32af7e7"
     },
     {
       "path": "web/tests/r79-save-migration.test.cjs",
@@ -979,8 +1069,8 @@
     },
     {
       "path": "web/tests/r82-runtime.test.cjs",
-      "bytes": 6128,
-      "sha256": "d8543fbc7f163087acfd85ab8bbd20302bbd8ae4c88db897deddbb3109471ed1"
+      "bytes": 6321,
+      "sha256": "60a81f8e70eb47ccb3bed2c9044684a75385033da304f96d191fb3f02ef30126"
     },
     {
       "path": "web/tests/r83-corrections.test.cjs",
@@ -994,8 +1084,8 @@
     },
     {
       "path": "web/tests/r85-camera-companion.test.cjs",
-      "bytes": 4263,
-      "sha256": "e696272e90ea21927789f679eb1b2e1b7d786582a10198458951350787324c6a"
+      "bytes": 4414,
+      "sha256": "0d5d100f96293aff04bfef42013fb9a9da74d08cd2a5672f76a78df5dcfe7efb"
     },
     {
       "path": "web/tests/r86-floating-fixture.json",
@@ -1019,8 +1109,8 @@
     },
     {
       "path": "web/tests/r86-runtime-renderer.test.cjs",
-      "bytes": 7065,
-      "sha256": "50cc38b43f4c5fce3541d96b9bff83ed7173e02c3b4f7b558339d0630cec411a"
+      "bytes": 8004,
+      "sha256": "c94e474c65a4b775a04e536ac8c53896e4c92be9013568bff282f2b244681e7e"
     },
     {
       "path": "web/tests/r87-audio-inputs.test.cjs",
@@ -1036,6 +1126,11 @@
       "path": "web/tests/r87-normal-boss-inputs.json",
       "bytes": 8748,
       "sha256": "02e4fe5296441df12668d501a32c9d0b254feebfad7575699d1f9d73c15c03ae"
+    },
+    {
+      "path": "web/tests/r88-camera-contact.test.cjs",
+      "bytes": 9362,
+      "sha256": "ee626c8c004fc2e8a7a385f181d99ca05109bcc1636c1c658cba56e0638486a0"
     },
     {
       "path": "web/tests/tilt.test.cjs",

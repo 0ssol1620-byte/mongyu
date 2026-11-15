@@ -1,0 +1,9 @@
+{
+  "commit": "74b3d3bf2d55a4cee913279b02cbfada587eca86",
+  "ciRun": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43679752053",
+  "tests": 161,
+  "pass": 160,
+  "fail": 0,
+  "skipped": 1,
+  "skippedScope": "external adapter not distributed in this checkout"
+}

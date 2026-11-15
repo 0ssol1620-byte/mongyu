@@ -1,0 +1,18 @@
+{
+  "frames": 683,
+  "faces": [
+    0,
+    2,
+    1
+  ],
+  "directions": [
+    0,
+    1
+  ],
+  "phases": [
+    "play"
+  ],
+  "updates": 216,
+  "state": "play",
+  "hearts": 2
+}
