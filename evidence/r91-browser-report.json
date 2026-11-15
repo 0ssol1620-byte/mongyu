@@ -1,0 +1,308 @@
+{
+  "target": "http://127.0.0.1:4173/web/MONGYU_R91.html",
+  "errors": [],
+  "metrics": {
+    "samples": 120,
+    "cpuThrottle": 4,
+    "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+    "renderMedianMs": 1.8999999985098839,
+    "renderP95Ms": 4.899999998509884,
+    "frameMedianMs": 22.099999994039536,
+    "frameP95Ms": 58.29999999701977,
+    "state": "play",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scale": 1.0833333333333333,
+      "offsetX": 0,
+      "offsetY": 162,
+      "dpr": 1.5
+    },
+    "music": "유리 파도",
+    "copyBackend": {
+      "calls": 6370,
+      "fallbacks": 0,
+      "sharedCaptureArrays": 2835,
+      "backend": "owned-plain-snapshot"
+    }
+  },
+  "layouts": [
+    {
+      "width": 844,
+      "height": 390,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 844,
+        "height": 390
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 568
+      }
+    },
+    {
+      "width": 800,
+      "height": 1280,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 1280
+      }
+    }
+  ],
+  "offline": true,
+  "sound": {
+    "tracks": [
+      {
+        "id": "night-corners",
+        "bytes": 1281088,
+        "roles": [
+          "title",
+          "menu",
+          "skin",
+          "story1",
+          "story2",
+          "story3"
+        ]
+      },
+      {
+        "id": "chapter-01",
+        "bytes": 449108,
+        "roles": [
+          "stage01"
+        ]
+      },
+      {
+        "id": "chapter-02",
+        "bytes": 427940,
+        "roles": [
+          "stage02"
+        ]
+      },
+      {
+        "id": "chapter-03",
+        "bytes": 499004,
+        "roles": [
+          "stage03"
+        ]
+      },
+      {
+        "id": "chapter-04",
+        "bytes": 408788,
+        "roles": [
+          "stage04"
+        ]
+      },
+      {
+        "id": "chapter-05",
+        "bytes": 434996,
+        "roles": [
+          "stage05"
+        ]
+      },
+      {
+        "id": "chapter-06",
+        "bytes": 385100,
+        "roles": [
+          "stage06"
+        ]
+      },
+      {
+        "id": "chapter-07",
+        "bytes": 464732,
+        "roles": [
+          "stage07"
+        ]
+      },
+      {
+        "id": "chapter-08",
+        "bytes": 481364,
+        "roles": [
+          "stage08"
+        ]
+      },
+      {
+        "id": "chapter-09",
+        "bytes": 390644,
+        "roles": [
+          "stage09"
+        ]
+      },
+      {
+        "id": "chapter-10",
+        "bytes": 421388,
+        "roles": [
+          "stage10"
+        ]
+      },
+      {
+        "id": "heart-circuit",
+        "bytes": 374516,
+        "roles": [
+          "boss"
+        ]
+      },
+      {
+        "id": "boss-glass",
+        "bytes": 396692,
+        "roles": [
+          "boss"
+        ]
+      },
+      {
+        "id": "boss-motor",
+        "bytes": 354860,
+        "roles": [
+          "boss"
+        ]
+      },
+      {
+        "id": "boss-orbit",
+        "bytes": 408788,
+        "roles": [
+          "boss"
+        ]
+      }
+    ],
+    "coverage": {
+      "source": "licensed-substitute-recordings",
+      "originalAudioRestored": false,
+      "nativeMusicRoleCount": 17,
+      "availableRecordingCount": 15,
+      "availableStageRecordingCount": 10,
+      "dedicatedRoleCount": 17,
+      "assignments": [
+        {
+          "role": "title",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "menu",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "skin",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "story1",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "story2",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "story3",
+          "trackIds": [
+            "night-corners"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage01",
+          "trackIds": [
+            "chapter-01"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage02",
+          "trackIds": [
+            "chapter-02"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage03",
+          "trackIds": [
+            "chapter-03"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage04",
+          "trackIds": [
+            "chapter-04"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage05",
+          "trackIds": [
+            "chapter-05"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage06",
+          "trackIds": [
+            "chapter-06"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage07",
+          "trackIds": [
+            "chapter-07"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage08",
+          "trackIds": [
+            "chapter-08"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage09",
+          "trackIds": [
+            "chapter-09"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "stage10",
+          "trackIds": [
+            "chapter-10"
+          ],
+          "assignment": "dedicated-role"
+        },
+        {
+          "role": "boss",
+          "trackIds": [
+            "heart-circuit",
+            "boss-glass",
+            "boss-motor",
+            "boss-orbit"
+          ],
+          "assignment": "dedicated-role"
+        }
+      ]
+    }
+  }
+}

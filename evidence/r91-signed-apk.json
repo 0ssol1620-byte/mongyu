@@ -1,0 +1,33 @@
+{
+  "release": "R91",
+  "apk": "MONGYU_R91_ANDROID.apk",
+  "bytes": 8221212,
+  "sha256": "ec2e171b0d673ee63e8c2fad268244316013af3a2b93926d001c781ec6cfc9ea",
+  "applicationId": "org.quadrift.mongyu.preview.r82",
+  "label": "몽유 R91 테스트",
+  "versionCode": 91,
+  "versionName": "0.91.0-preview",
+  "minAndroid": "8.0 (API 26)",
+  "targetSdk": 36,
+  "signed": true,
+  "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=MONGYU Preview, O=MONGYU\nSigner #1 certificate SHA-256 digest: 77897ae16ffcedcc3ebb530486065b8533fbeace11b92193795d1430035b4c8f\nSigner #1 certificate SHA-1 digest: 0eda45e7d5995134a8bb68f3fedf11d507ebf8be\nSigner #1 certificate MD5 digest: 5f34116200c2a0d70e7970d9ca34eada\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: a2da20fc8fb1e85b5b56faa2c0727f9e05c43cdade35f9d28001dba853427f41\nSigner #1 public key SHA-1 digest: 3981bcf20a012dc4f5c154c1f452eda3a54653b7\nSigner #1 public key MD5 digest: 0d3dffc1c4d262233afbaa28579e46ba\n",
+  "zipAlignmentVerified": true,
+  "zipIntegrityVerified": true,
+  "permissions": [],
+  "embeddedHtmlSha256": "f4fde830057cdd1bb844369a45f7bf6430db59ae8fc5a71e8636cea63f13662f",
+  "embeddedHtmlMatchesFinalR91": true,
+  "deviceInstalledOrPlayed": false,
+  "storeRelease": false,
+  "deviceQa": {
+    "run": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43705266644",
+    "runtimeVerifiedCommit": "c8c2533ade16060a2de41c75d8d0f920d885ce79",
+    "actualInstalledQaPassed": true,
+    "syntheticBaselineVersion": 90,
+    "updatedVersion": 91,
+    "testSigning": "ephemeral CI certificate",
+    "testedUnsignedSha256": "abcff84bce017b4d4bedc5aa3812b599381e7056b5114803293489435b6faa69",
+    "identicalNonSignatureEntries": 5,
+    "physicalPhone": false,
+    "finalSignedDirectlyInstalled": false
+  }
+}
