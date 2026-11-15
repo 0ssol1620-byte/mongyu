@@ -90,7 +90,7 @@ function contourPath(c,points){
 }
 function contour(c,points,ink){c.beginPath();contourPath(c,points);c.fillStyle=ink;c.fill()}
 function paintLeg(c,bones,widths,ink){
- c.beginPath();contourPath(c,limbContour(bones,widths));const [x,y]=bones[2];contourPath(c,[[x-.8,y-.35],[x+1.6,y-.3],[x+2.6,y+.4],[x+2.4,y+.95],[x-.9,y+.95],[x-1,y+.1]]);c.fillStyle=ink;c.fill();
+ c.beginPath();contourPath(c,limbContour(bones,widths));const [x,y]=bones[2];contourPath(c,[[x-.8,y-.35],[x+1.6,y-.3],[x+2.05,y+.4],[x+1.9,y+.95],[x-.9,y+.95],[x-1,y+.1]]);c.fillStyle=ink;c.fill();
 }
 function limbContour(bones,widths,foot=false){
  const [a,b,d]=bones,normal=(p,q)=>{const x=q[0]-p[0],y=q[1]-p[1],length=Math.hypot(x,y)||1;return [-y/length,x/length]},u=normal(a,b),v=normal(b,d),length=Math.hypot(u[0]+v[0],u[1]+v[1])||1,w=[(u[0]+v[0])/length,(u[1]+v[1])/length];
