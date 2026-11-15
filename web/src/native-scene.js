@@ -6,9 +6,11 @@
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap();
 function geometry(run){
  const s=run.nativeFrame,pool=s.game.pool,cur=pool.objects[pool.currentIndex],a=s.game.actor,A=run.kernels.Assembly;
- const q=A.rotatePoint(cur.scalarE+cur.position,cur.scalarF-a.height,cur.geometry.orientation),origin=A.rotatePoint(0,0,cur.geometry.orientation),tip=A.rotatePoint(pool.direction===0?1:-1,0,cur.geometry.orientation),tangent={x:tip.x-origin.x,y:tip.y-origin.y};
+ const q=A.rotatePoint(cur.scalarE+cur.position,cur.scalarF-a.height+(s.game.stage.behaviorCode===3?8:0),cur.geometry.orientation),origin=A.rotatePoint(0,0,cur.geometry.orientation),tip=A.rotatePoint(pool.direction===0?1:-1,0,cur.geometry.orientation),tangent={x:tip.x-origin.x,y:tip.y-origin.y};
  const col=clamp(Math.trunc(cur.position/16),0,cur.geometry.activeLength-1),height=Math.max(0,a.height-cur.geometry.columns.c[col]);
- const player={...q,baseX:q.x,baseY:q.y,tangent,inward:{x:tangent.y,y:-tangent.x},face:cur.geometry.orientation,height,bodyHeight:42.5,poseClock:a.frame/8,jumpProgress:a.frame/Math.max(1,run.kernels.Trajectories.frameCount(a.actorState)),kick:[1,2,9,11].includes(a.actorState)?.5:0,impact:[13,16].includes(a.actorState)?.7:0,nativeState:a.actorState,nativeFrame:a.frame};
+ const forward=s.game.stage.behaviorCode===3?0:8,px=q.x+tangent.x*forward,py=q.y+tangent.y*forward;
+ let player={...q,x:px,y:py,baseX:px,baseY:py,tangent,inward:{x:tangent.y*(pool.direction===0?1:-1),y:-tangent.x*(pool.direction===0?1:-1)},direction:pool.direction,face:cur.geometry.orientation,height,bodyHeight:42.5,poseClock:a.frame/8,jumpProgress:a.frame/Math.max(1,run.kernels.Trajectories.frameCount(a.actorState)),kick:[1,2,9,11].includes(a.actorState)?.5:0,impact:[13,16].includes(a.actorState)?.7:0,nativeState:a.actorState,nativeFrame:a.frame};
+ if(s.game.controller.modeP>0){const command=(s.map.drawCommands||[]).find(c=>c.role==='current-actor');if(command){player=actorPose(command,{player},{origin:s.presentation.viewport,mask:false});player.baseX=player.x;player.baseY=player.y;player.face=cur.geometry.orientation;}}
  return {nativeRuntime:true,player,characterId:run.characterId,room:run.room,bounds:{left:0,top:0,right:384,bottom:384,width:384,height:384},nativeSurfaces:[],boss:run.boss?{...run.boss}:null,time:run.time,familyIndex:run.familyIndex};
 }
 function snapshot(run){
@@ -22,7 +24,7 @@ function snapshot(run){
  }
  const transition=s.game.controller.controllerStateUK===200||s.u.l===3;
  const view=s.game.view,cur=s.game.pool.objects[s.game.pool.currentIndex],floating=view.aq>0&&16*cur.geometry.activeLength<view.av;
- return {groups:groups.filter(g=>g.cells.length||g.actors.length||g.effects.length),backgrounds,origin:{x:v.x,y:v.y},palette:m.t,backgroundPeriod:root.MongyuNativeRenderParameters?.paletteByte(m.t,140)||6,counter:s.u.B,countdown:s.r.timerT,notification:s.u.D,notificationCode:s.u.aF,specialMode:s.u.musicModeI,floating,split:(s.u.actionLock&15)>0&&(s.u.actionLock&15)<=4,actionLock:s.u.actionLock,
+ return {mask:s.game.stage.behaviorCode===3,groups:groups.filter(g=>g.cells.length||g.actors.length||g.effects.length),backgrounds,origin:{x:v.x,y:v.y},palette:m.t,backgroundPeriod:root.MongyuNativeRenderParameters?.paletteByte(m.t,140)||6,counter:s.u.B,countdown:s.r.timerT,notification:s.u.D,notificationCode:s.u.aF,specialMode:s.u.musicModeI,floating,split:(s.u.actionLock&15)>0&&(s.u.actionLock&15)<=4,actionLock:s.u.actionLock,
   transition:transition?{step:m.ad,count:m.e,buffers:m.capture,actor:s.u.l===3?null:{fromX:m.Z,fromY:m.aa,toX:m.ab,toY:m.ac},boss:s.u.l===3}:null,
   phase:transition?'morph':s.u.l===4?'boss-confirm':s.r.timerT>0?'countdown':s.u.D>0?'notification':'play'};
 }
@@ -31,13 +33,16 @@ function overview(viewport){
  return {width,height,scale,baseScale:scale,zoom:1,offsetX,offsetY,left:-offsetX/scale,right:(width-offsetX)/scale,top:-offsetY/scale,bottom:(height-offsetY)/scale,framing:'native-layout',follow:false};
 }
 function point(x,y,scene){return {x:(x-scene.origin.x)*unit,y:(y-scene.origin.y)*unit}}
-function tile(c,cmd,scene,p,dx=0,dy=0){
+function tileBounds(cmd,scene){
  const q=point(cmd.screenX,cmd.screenY,scene),orientation=((cmd.orientation||0)%4+4)%4;
- const x=q.x+dx-(orientation===1||orientation===2?16:0),y=q.y+dy-(orientation===0||orientation===1?16:0);
- c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=cmd.frame%3===0?p[2]:p[1];
- // All four orientations remain axis-aligned: no per-cell canvas state stack.
- c.fillRect(x+.5,y+.5,15,15);
+ // The mask emitter supplies cell centres (16*column+8, 16*row+8).
+ // Ordinary surface commands supply a rotated bottom-left corner instead.
+ return cmd.raw==='0x5113a'?{x:q.x-8,y:q.y-8,width:16,height:16}:{x:q.x-(orientation===1||orientation===2?16:0),y:q.y-(orientation===0||orientation===1?16:0),width:16,height:16};
 }
+function tile(c,cmd,scene,p,dx=0,dy=0){
+ const r=tileBounds(cmd,scene);c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=cmd.frame%3===0?p[2]:p[1];c.fillRect(r.x+dx+.5,r.y+dy+.5,15,15);
+}
+
 const backgroundCache=new WeakMap();
 function background(c,viewport,scene,p,reduced){
  const palette=root.MongyuNativePalette,w=viewport.width,h=viewport.height,commands=scene.backgrounds||[];
@@ -69,25 +74,34 @@ function effects(c,group,scene,p){
 function actorPose(command,geo,scene){
  const d=command.role==='history-actor',base=d?geo.companion:geo.player;if(!base)return null;
  const q=point(command.x,command.y,scene),angle=-(command.variantOrientation||0)*Math.PI/2,sign=command.direction===0?1:-1;
- // Native actor anchors include eight local units below the feet.
- return {...base,x:q.x+8*Math.sin(angle),y:q.y-8*Math.cos(angle),tangent:{x:Math.cos(angle)*sign,y:Math.sin(angle)*sign},renderAngle:angle+(sign<0?Math.PI:0),nativeState:command.state,nativeFrame:command.frame};
+ // Mask contact consumes the eight-unit anchor; ordinary sprites end above it.
+ const offset=scene.mask?0:8;
+ return {...base,x:q.x+offset*Math.sin(angle),y:q.y-offset*Math.cos(angle),inward:{x:Math.sin(angle),y:-Math.cos(angle)},tangent:{x:Math.cos(angle)*sign,y:Math.sin(angle)*sign},renderAngle:angle+(sign<0?Math.PI:0),direction:command.direction,nativeState:command.state,nativeFrame:command.frame};
 }
-function morph(c,geo,scene,run,opt,p){
- const t=scene.transition,b=t.buffers;if(!b)return;
- const alpha=clamp(run.remainder/Math.max(1,run.stepMs),0,1);let u=clamp((t.step-1+alpha)/10,0,1);
+function morphProgress(scene,run,reduced){
+ const t=scene.transition,alpha=clamp(run.remainder/Math.max(1,run.stepMs),0,1);let u=clamp((t.step-1+alpha)/10,0,1);
  const last=morphClocks.get(run);if(run.state==='pause'&&last?.attempt===run.attempt&&last?.map===run.mapChanges)u=last.u;
- if(opt.reduced)u=t.step<5?0:1;
- morphClocks.set(run,{attempt:run.attempt,map:run.mapChanges,u});const mix=(a,z)=>a+(z-a)*u;
+ if(reduced)u=t.step<5?0:1;
+ morphClocks.set(run,{attempt:run.attempt,map:run.mapChanges,u});return u;
+}
+function morphPlayer(geo,scene,u){
+ const a=scene.transition?.actor;if(!a)return geo.player;const q=point(a.fromX+(a.toX-a.fromX)*u,a.fromY+(a.toY-a.fromY)*u,scene),basis=root.MongyuMobile.actorBasis(geo.player),offset=scene.mask?8:16;
+ return {...geo.player,x:q.x+basis.nx*offset,y:q.y+basis.ny*offset,nativeState:11};
+}
+function morph(c,geo,scene,run,opt,p,u,player){
+ const t=scene.transition,b=t.buffers;if(!b)return;const mix=(a,z)=>a+(z-a)*u;
  const n=Math.min(200,t.count,b.oldX.length,b.newX.length);
  for(let i=0;i<n;i++){
   const q=point(mix(b.oldX[i],b.newX[i]),mix(b.oldY[i],b.newY[i]),scene),frame=u<.5?b.oldCommands[i]:b.newCommands[i];
-  c.fillStyle=frame%3===0?p[2]:p[1];c.fillRect(q.x,q.y-16,15,15);
+  c.fillStyle=frame%3===0?p[2]:p[1];c.fillRect(q.x-(scene.mask?8:0),q.y-(scene.mask?8:16),15,15);
  }
- if(t.actor){const a=t.actor,q=point(mix(a.fromX,a.toX),mix(a.fromY,a.toY),scene);root.MongyuMobile.sprite(c,{...geo.player,...q,nativeState:11},{poseTime:opt.presentationTime||0,contrast:true},!!opt.reduced,geo.characterId)}
+ if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true},!!opt.reduced,geo.characterId);
 }
+
 function draw(c,run,opt,geo){
- const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=M.worldPalette(scene.palette),special=scene.split||scene.floating||scene.transition||geo.boss;
- const cam=special?overview(opt.viewport):M.camera(opt.viewport,geo,opt,run);
+ const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=M.worldPalette(scene.palette),special=scene.split||geo.boss;
+ const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
+ const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
  c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
@@ -96,7 +110,7 @@ function draw(c,run,opt,geo){
   if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true},reduced,geo.characterId)}}
   c.restore();
  }
- if(scene.transition)morph(c,geo,scene,run,opt,p);
+ if(scene.transition)morph(c,geo,scene,run,opt,p,progress,player);
  if(!scene.split&&!scene.transition){
   const visible=scene.groups.some(g=>g.actors.some(a=>a.role==='current-actor'));
   if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true},reduced);
@@ -110,5 +124,5 @@ function draw(c,run,opt,geo){
  if(scene.countdown>0){c.save();c.textAlign='center';c.textBaseline='middle';c.font='600 48px sans-serif';c.fillStyle=p[1];c.fillText(String(Math.ceil(scene.countdown/10)),cam.width/2,cam.height*.42);c.restore()}
  return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1};
 }
-const api={snapshot,geometry,overview,point,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
+const api={snapshot,geometry,overview,point,tileBounds,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

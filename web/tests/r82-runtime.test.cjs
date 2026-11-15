@@ -19,7 +19,7 @@ test('all 74 physical slots: output-command pruning preserves full native state,
  }assert.equal(count,74);
 });
 test('geometry is cached per native snapshot; display interpolation never writes actor or collision geometry',()=>{
- const r=newRun(2),saved=structuredClone(r.nativeFrame),canonical=r.geometry(),first=R.geometry(r,{});const plain=g=>{const {nativeSurfaces,...rest}=g;const {strideDistance,renderAngle,poseFraction,...player}=rest.player;return {...rest,player}};assert.deepEqual(plain(first),canonical);assert.equal(R.geometry(r,{}),first);assert.deepEqual(r.nativeFrame,saved);
+ const r=newRun(2),saved=structuredClone(r.nativeFrame),canonical=r.geometry(),first=R.geometry(r,{});const plain=g=>{const {nativeSurfaces,...rest}=g;const {strideDistance,renderAngle,poseFraction,direction,groundContact,turning,turnProgress,...player}=rest.player;return {...rest,player:{...player,x:player.x-player.tangent.x*8,y:player.y-player.tangent.y*8,baseX:player.baseX-player.tangent.x*8,baseY:player.baseY-player.tangent.y*8}}};assert.deepEqual(plain(first),canonical);assert.equal(R.geometry(r,{}),first);assert.deepEqual(r.nativeFrame,saved);
  R.advance(r,.095);const snap=structuredClone(r.nativeFrame);r.remainder=47.5;const mid=R.geometry(r,{});assert.deepEqual(r.nativeFrame,snap);assert.ok(Number.isFinite(mid.player.x));
  r.pause();const paused=R.geometry(r,{});assert.deepEqual(plain(paused).player,r.geometry().player);r.retry();assert.deepEqual(plain(R.geometry(r,{})),r.geometry());
 });

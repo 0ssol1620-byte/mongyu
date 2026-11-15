@@ -27,21 +27,29 @@ function historicalCompanion(run){
  const row=h.rows?.[h.aw];if(!row||row.length<6)return null;
  const pool=s.game.pool,cur=pool.objects[pool.currentIndex],mode=s.game.controller.modeP;
  const face=mode>0?s.game.actor.orientation:row[2],rotate=run.kernels.Assembly.rotatePoint;
- const point=rotate(cur.scalarE+row[0],cur.scalarF-row[1],face);
+ const point=rotate(cur.scalarE+row[0],cur.scalarF-row[1]+(s.game.stage.behaviorCode===3?8:0),face);
  const angle=mode>0?-row[2]*Math.PI/180:-face*Math.PI/2,sign=row[3]===0?1:-1;
  const tangent={x:Math.cos(angle)*sign,y:Math.sin(angle)*sign};
  // Height above the recorded face, rather than above the current runner's wall.
  const surface=pool.objects.find(x=>x.geometry.orientation===face)||cur;
  const col=clamp(Math.trunc(row[0]/16),0,surface.geometry.activeLength-1);
- return {...point,tangent,face,height:Math.max(0,row[1]-surface.geometry.columns.c[col]),bodyHeight:23,nativeState:row[4],nativeFrame:row[5],historyIndex:h.aw,source:'native-seven-pose-history'};
+ const forward=s.game.stage.behaviorCode===3?0:8;
+ return {...point,x:point.x+tangent.x*forward,y:point.y+tangent.y*forward,tangent,inward:{x:Math.sin(angle),y:-Math.cos(angle)},direction:row[3],face,height:Math.max(0,row[1]-surface.geometry.columns.c[col]),bodyHeight:23,nativeState:row[4],nativeFrame:row[5],historyIndex:h.aw,source:'native-seven-pose-history'};
+}
+function withGroundContact(geo,run){
+ const s=run.nativeFrame,p=s.game.pool,c=p.objects[p.currentIndex],A=run.kernels.Assembly,face=c.geometry.orientation,zero=A.rotatePoint(0,0,face),x=A.rotatePoint(1,0,face),n=A.rotatePoint(0,-1,face),column=Math.trunc(c.position/16),first=Math.max(0,column-2);
+ const groundContact={origin:A.rotatePoint(s.game.stage.behaviorCode===3?0:c.scalarE,s.game.stage.behaviorCode===3?384:c.scalarF,face),tangent:{x:x.x-zero.x,y:x.y-zero.y},inward:{x:n.x-zero.x,y:n.y-zero.y},first,columns:c.geometry.columns.c.slice(first,Math.min(c.geometry.activeLength,column+3))};
+ if(geo.nativeScene&&root.MongyuNativeScene){groundContact.blockers=geo.nativeScene.groups.flatMap(g=>g.cells).filter(c=>c.role==='terrain-cell'&&!/^0x4c/.test(c.raw)).map(c=>root.MongyuNativeScene.tileBounds(c,geo.nativeScene)).filter(r=>r.x<geo.player.x+96&&r.x+16>geo.player.x-96&&r.y<geo.player.y+96&&r.y+16>geo.player.y-96)}
+ return {...geo,player:{...geo.player,groundContact}};
 }
 function snapshot(run){
- if(root.MongyuNativeScene)return {...root.MongyuNativeScene.geometry(run),companion:historicalCompanion(run),nativeScene:root.MongyuNativeScene.snapshot(run)};
+ if(root.MongyuNativeScene)return withGroundContact({...root.MongyuNativeScene.geometry(run),companion:historicalCompanion(run),nativeScene:root.MongyuNativeScene.snapshot(run)},run);
  let K=facades.get(run.kernels);if(!K){const rotate=run.kernels.Assembly.rotatePoint;K={...run.kernels,Assembly:{...run.kernels.Assembly,projectSurfacePoint:(p,s,c)=>projectSurfacePoint(p,s,c,rotate)}};facades.set(run.kernels,K)}
  const geo=root.MongyuNativeRestoration.nativeGeometry(run.nativeFrame,run,K),pool=run.nativeFrame.game.pool;
  const nativeSurfaces=pool.objects.map((entry,side)=>{const angle=-entry.geometry.orientation*Math.PI/2,tangent=[Math.round(Math.cos(angle)),Math.round(Math.sin(angle))];
   const points=Array.from({length:entry.geometry.activeLength},(_,col)=>{const p=K.Assembly.projectSurfacePoint(pool,side,col);return p.sentinelValue===null?{x:p.x,y:p.y}:null});return {side,tangent,points};});
- return {...geo,nativeSurfaces,companion:historicalCompanion(run),...(root.MongyuNativeScene?{nativeScene:root.MongyuNativeScene.snapshot(run)}:{})};
+ const raw=geo.player,sign=pool.direction===0?1:-1,normal={x:raw.inward.x*sign,y:raw.inward.y*sign},mask=run.nativeFrame.game.stage.behaviorCode===3,player={...raw,x:raw.x+raw.tangent.x*(mask?0:8)-normal.x*(mask?8:0),y:raw.y+raw.tangent.y*(mask?0:8)-normal.y*(mask?8:0),direction:pool.direction,inward:normal};player.baseX=player.x;player.baseY=player.y;
+ return {...geo,player,nativeSurfaces,companion:historicalCompanion(run)};
 }
 const cross=(a,b)=>a.x*b.y-a.y*b.x;
 function segment(p,q){
@@ -49,22 +57,25 @@ function segment(p,q){
  if(d>96||!a||!b)return null;
  if(p.face===q.face)return {length:Math.max(0,dx*a.x+dy*a.y),turn:false};
  const den=cross(a,b);if(Math.abs(den)<.5)return null;
- const ground={x:p.x-a.y*(p.height||0),y:p.y+a.x*(p.height||0)},nextGround={x:q.x-b.y*(q.height||0),y:q.y+b.x*(q.height||0)};
+ const pn=p.inward||{x:a.y,y:-a.x},qn=q.inward||{x:b.y,y:-b.x};
+ const ground={x:p.x-pn.x*(p.height||0),y:p.y-pn.y*(p.height||0)},nextGround={x:q.x-qn.x*(q.height||0),y:q.y-qn.y*(q.height||0)};
  const delta={x:nextGround.x-ground.x,y:nextGround.y-ground.y},before=cross(delta,b)/den,after=cross(a,delta)/den;
  if(before<-.5||after<-.5||before+after>96)return null;
  return {length:Math.max(0,before)+Math.max(0,after),before:Math.max(0,before),ground,corner:{x:ground.x+a.x*Math.max(0,before),y:ground.y+a.y*Math.max(0,before)},turn:true};
 }
 function interpolatePlayer(p,q,alpha){
- const step=segment(p,q);if(!step||[13,16].includes(q.nativeState))return {...q};alpha=clamp(alpha,0,1);const player={...q};
+ const step=segment(p,q);if(!step||(p.direction??0)!==(q.direction??0)||[13,16].includes(q.nativeState))return {...q};alpha=clamp(alpha,0,1);const player={...q};
  for(const k of ['x','y','height','jumpProgress'])if(Number.isFinite(q[k])&&Number.isFinite(p[k]))player[k]=p[k]+(q[k]-p[k])*alpha;
  const start=Math.atan2(p.tangent.y,p.tangent.x),end=Math.atan2(q.tangent.y,q.tangent.x),delta=Math.atan2(Math.sin(end-start),Math.cos(end-start));
  if(step.turn){const along=step.length*alpha;
-  const angle=start+delta*alpha,height=player.height||0;
-  player.x=(along<step.before?step.ground.x+p.tangent.x*along:step.corner.x+q.tangent.x*(along-step.before))+Math.sin(angle)*height;
-  player.y=(along<step.before?step.ground.y+p.tangent.y*along:step.corner.y+q.tangent.y*(along-step.before))-Math.cos(angle)*height;
+  const angle=start+delta*alpha,height=player.height||0,sign=q.direction===1?-1:1;
+  player.x=(along<step.before?step.ground.x+p.tangent.x*along:step.corner.x+q.tangent.x*(along-step.before))+Math.sin(angle)*height*sign;
+  player.y=(along<step.before?step.ground.y+p.tangent.y*along:step.corner.y+q.tangent.y*(along-step.before))-Math.cos(angle)*height*sign;
  }
  player.renderAngle=start+delta*alpha;
+ if(q.inward)player.inward={x:Math.sin(player.renderAngle)*(q.direction===1?-1:1),y:-Math.cos(player.renderAngle)*(q.direction===1?-1:1)};
  player.poseFraction=alpha;
+ player.turning=step.turn;player.turnProgress=step.turn?alpha:0;
  player.strideDistance=(p.strideDistance||0)+step.length*alpha;
  return player;
 }

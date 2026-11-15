@@ -9,7 +9,7 @@ function playAct(h){for(let i=0;i<2400&&h.app.game.state==='play';i++){
 }return h.app.game.state}
 test('prominent challenge and original journey remain separate entries',()=>{
  const h=host();assert.equal(h.e.arcadeStart.hidden,false);assert.equal(h.e.titleContinue.hidden,false);
- assert.equal(h.e.arcadeStart.textContent,'54초 도전');assert.equal(h.app.candidateVersion,'r86');
+ assert.equal(h.e.arcadeStart.textContent,'54초 도전');assert.equal(h.app.candidateVersion,'r88');
  h.click('arcadeRisk');h.click('arcadeStart');assert.equal(h.app.game.mode,'arcade');assert.equal(h.app.game.hearts,1);
  assert.equal(h.e.arcadeStart.hidden,true);assert.equal(h.e.act.textContent,'점프');assert.equal(h.doc.activeElement.id,'game');
  h.click('home');assert.equal(h.app.game.state,'title');assert.equal(h.e.arcadeStart.hidden,false);assert.equal(h.e.titleContinue.hidden,false);assert.equal(h.e.arcadePanel.hidden,true);
