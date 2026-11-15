@@ -27,7 +27,19 @@ async function tap(id){const q=await evaluate(`(()=>{const e=document.getElement
 async function screenshot(name){await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));fs.writeFileSync(path.join(out,name+'-android.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:16*1024*1024}))}
 function xmlNodes(xml){return [...xml.matchAll(/<node\b[^>]+>/g)].map(m=>Object.fromEntries([...m[0].matchAll(/([\w-]+)="([^"]*)"/g)].map(x=>[x[1],x[2]])))}
 function androidTapLabel(label){adb('shell','uiautomator','dump','/sdcard/mongyu-picker.xml');const xml=adb('shell','cat','/sdcard/mongyu-picker.xml'),node=xmlNodes(xml).find(n=>(n.text===label||n['content-desc']===label)&&n.bounds);if(!node)return false;const b=node.bounds.match(/\[(\d+),(\d+)\]\[(\d+),(\d+)\]/);adb('shell','input','tap',String((+b[1]+ +b[3])/2),String((+b[2]+ +b[4])/2));return true}
-async function selectOriginal(){await tap('chooseOriginal');await delay(800);const file='MONGYU-original-qa.zip';for(let i=0;i<3;i++){if(androidTapLabel(file))return;androidTapLabel('Show roots');await delay(300);androidTapLabel('Downloads');await delay(500)}throw Error('Original file was not reachable in the actual system picker')}
+async function selectOriginal(){
+ await tap('chooseOriginal');await delay(800);const file='MONGYU-original-qa.zip';report.pickerTrace=[];
+ for(let i=0;i<8;i++){
+  adb('shell','uiautomator','dump','/sdcard/mongyu-picker.xml');const xml=adb('shell','cat','/sdcard/mongyu-picker.xml'),nodes=xmlNodes(xml);report.pickerTrace.push(nodes.filter(n=>n.text||n['content-desc']).map(n=>n.text||n['content-desc']));
+  if(xml.includes("Quickstep isn&amp;apos;t responding")||xml.includes("Quickstep isn't responding")||xml.includes('Quickstep isn&apos;t responding')){
+   assert.ok(androidTapLabel('Close app'),'dismiss only the explicitly identified system launcher ANR');(report.environmentIssues??=[]).push('First-boot Quickstep ANR dialog dismissed; never an application ANR');await delay(700);continue;
+  }
+  if(androidTapLabel(file))return;
+  if(xml.includes('원본 파일 열기')){await tap('chooseOriginal');await delay(500);continue}
+  androidTapLabel('Show roots');await delay(250);androidTapLabel('Downloads');await delay(450);
+ }
+ throw Error('Original file was not reachable in the actual system picker');
+}
 const inspect=()=>evaluate('MongyuOriginal.inspect()');
 async function pixelHash(){const shot=await send('Page.captureScreenshot',{format:'png'});return crypto.createHash('sha256').update(Buffer.from(shot.data,'base64')).digest('hex')}
 (async()=>{try{
