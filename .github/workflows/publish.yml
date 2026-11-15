@@ -1,0 +1,25 @@
+name: Publish verified R91 preview
+on:
+  push:
+    branches: [codex/r91-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact signed payload and source archive
+        run: sha256sum -c MONGYU_R91_SHA256SUMS.txt
+      - name: Publish Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r91-preview
+          --prerelease
+          --target 7fc6725a77337d77d04a7ad674bd8036c693eaf8
+          --title '몽유 R91 · 보행 연결·사이키델릭 배경'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R91_ANDROID.apk MONGYU_R91_source.zip MONGYU_R91_SHA256SUMS.txt MONGYU_R91_BROWSER_PREVIEW.webm
