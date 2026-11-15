@@ -28,9 +28,13 @@ async function screenshot(name){await evaluate('new Promise(resolve=>requestAnim
 const state=()=>evaluate('QUAD_RIFT_APP.activeRun()?.state');
 async function crashRenderer(){try{await send('Page.crash')}catch(_){}await delay(1000)}
 (async()=>{try{
+ // First-boot overlay/package initialization can relaunch every Activity.
+ // Let the disposable OS settle before measuring game input and persistence.
+ console.log('Waiting for first-boot package and display initialization');await delay(20000);
+ report.webView=adb('shell','dumpsys','webviewupdate').split('\n').filter(line=>/Current WebView package/.test(line));
  adb('logcat','-c');adb('shell','settings','put','secure','immersive_mode_confirmations','confirmed');
  adb('install','--no-incremental','-t','-r',process.argv[2]);adb('shell','am','start','-W','-n',activity);await connect();
- assert.equal(await evaluate('QUAD_RIFT_APP.getState().state'),'title');await screenshot('title');
+ console.log('Checking installed title and native play');assert.equal(await evaluate('QUAD_RIFT_APP.getState().state'),'title');await screenshot('title');
  await tap('titleContinue');await tap('restorationSceneNext');await tap('restorationSceneNext');await tap('restorationStart');
  await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun()?.updates>=45'),'post-countdown native movement');
  assert.equal(await state(),'play');const coverage=await evaluate('(()=>{const r=document.getElementById("stage").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,screenWidth:innerWidth,screenHeight:innerHeight}})()');report.checks.push({name:'actual fullscreen native play',coverage});assert.equal(coverage.x,0);assert.equal(coverage.y,0);
@@ -43,9 +47,9 @@ async function crashRenderer(){try{await send('Page.crash')}catch(_){}await dela
  adb('shell','input','keyevent','3');adb('shell','am','start','-W','-n',activity);await delay(400);assert.equal(await state(),'pause');report.checks.push({name:'foreground return requires explicit resume',passed:true});
  await evaluate('QUAD_RIFT_APP.home()');await tap('shopOpen');await tap('look-ink');await tap('wardrobeClose');
  const collected=await evaluate('QUAD_RIFT_APP.restoration.view().status.collected');assert.ok(collected>=1);await evaluate('MongyuStorage.create(localStorage).setItem("mongyu.device.qa","r87-update-canary")');
- adb('install','--no-incremental','-t','-r',process.argv[3]);adb('shell','am','start','-W','-n',activity);await connect();
+ console.log('Checking immediate APK update persistence');adb('install','--no-incremental','-t','-r',process.argv[3]);adb('shell','am','start','-W','-n',activity);await connect();
  assert.equal(await evaluate('MongyuStorage.create(localStorage).getItem("mongyu.device.qa")'),'r87-update-canary');assert.equal(await evaluate('QUAD_RIFT_APP.mobileWardrobe.view().selected'),'ink');assert.equal(await evaluate('QUAD_RIFT_APP.restoration.view().status.collected'),collected);assert.equal(await evaluate('MongyuNativePalette.count'),100);report.checks.push({name:'APK update retains collected memories, outfit and origin storage',collected,passed:true});
- let pid=adb('shell','pidof',pkg);await crashRenderer();await connect();assert.equal(adb('shell','pidof',pkg),pid);assert.equal(await evaluate('MongyuStorage.create(localStorage).getItem("mongyu.device.qa")'),'r87-update-canary');report.checks.push({name:'renderer crash recovers once without killing app or erasing storage',passed:true});
+ console.log('Checking bounded renderer recovery');let pid=adb('shell','pidof',pkg);await crashRenderer();await connect();assert.equal(adb('shell','pidof',pkg),pid);assert.equal(await evaluate('MongyuStorage.create(localStorage).getItem("mongyu.device.qa")'),'r87-update-canary');report.checks.push({name:'renderer crash recovers once without killing app or erasing storage',passed:true});
  await crashRenderer();await waitFor(()=>{adb('shell','uiautomator','dump','/sdcard/mongyu-recovery.xml');return adb('shell','cat','/sdcard/mongyu-recovery.xml').includes('다시 열기')},'bounded native recovery panel');assert.equal(adb('shell','pidof',pkg),pid);fs.writeFileSync(path.join(out,'recovery.png'),execFileSync('adb',['exec-out','screencap','-p']));report.checks.push({name:'repeated renderer failure waits for player retry',passed:true});
  const xml=adb('shell','cat','/sdcard/mongyu-recovery.xml'),bounds=xml.match(/text="다시 열기"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);assert.ok(bounds);adb('shell','input','tap',String((+bounds[1]+ +bounds[3])/2),String((+bounds[2]+ +bounds[4])/2));await connect();assert.equal(await evaluate('MongyuStorage.create(localStorage).getItem("mongyu.device.qa")'),'r87-update-canary');report.checks.push({name:'player retry restores game with saved data',passed:true});
  await screenshot('after-recovery');assert.deepEqual(report.errors,[]);
