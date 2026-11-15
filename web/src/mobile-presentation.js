@@ -28,18 +28,36 @@ function legPose(hip,foot){
  const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,24.99/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
  return [hip,joint(hip,ankle,12.5,12.5,-1),ankle];
 }
-function plantedLeg(hip,foot,q){
- const contact=q.groundContact;if(!contact)return legPose(hip,foot);
- const basis=actorBasis(q),size=(q.bodyHeight||60)/43.5,alignment=basis.nx*contact.inward.x+basis.ny*contact.inward.y;
- const useProfile=alignment>=.5;if(!useProfile&&!contact.blockers)return legPose(hip,foot);
- const sample=([x,y])=>{const wx=q.x+(x*basis.tx+y*basis.nx*-1)*size-contact.origin.x,wy=q.y+(x*basis.ty+y*basis.ny*-1)*size-contact.origin.y,column=Math.floor((wx*contact.tangent.x+wy*contact.tangent.y)/16)-contact.first,height=wx*contact.inward.x+wy*contact.inward.y;return {height,floor:contact.columns[column]}};
- const lift=([x,y],extra=0)=>{const s=sample([x,y]),rise=useProfile&&Number.isFinite(s.floor)&&s.floor>=0?Math.max(0,s.floor+2.3*size-s.height):0;return [x,y-rise/(alignment*size)-extra]};
- const clear=leg=>{for(let n=1;n<3;n++)for(let j=0;j<=32;j++){const a=leg[n-1],b=leg[n],point=[a[0]+(b[0]-a[0])*j/32,a[1]+(b[1]-a[1])*j/32],s=sample(point);if(useProfile&&s.floor>=0&&s.height<s.floor+.5)return false;if(contact.blockers){const x=q.x+(point[0]*basis.tx-point[1]*basis.nx)*size,y=q.y+(point[0]*basis.ty-point[1]*basis.ny)*size;if(contact.blockers.some(r=>x>r.x+.5&&x<r.x+15.5&&y>r.y+.5&&y<r.y+15.5))return false}}return true};
- let best=legPose(hip,lift(foot));if(clear(best))return best;let score=Infinity;
- // A short step is preferable to an ankle or knee passing through a stair.
- for(const x of [foot[0],foot[0]*.75,foot[0]*.5,foot[0]*.25,0,-4,-8,-14,-18,-21,4,8,14,18,21])for(const extra of [0,4,8,12,20,24]){const ankle=lift([x,foot[1]],extra),candidate=legPose(hip,ankle),cost=(ankle[0]-foot[0])**2+(ankle[1]-foot[1])**2*.7;if(cost<score&&clear(candidate)){best=candidate;score=cost}}
- return best;
+// Exact segment/rectangle intersection avoids per-frame sampling of each bone.
+function segmentHits(a,b,r){
+ let low=0,high=1;
+ for(const [p,d,min,max]of [[a.x,b.x-a.x,r.x+.5,r.x+15.5],[a.y,b.y-a.y,r.y+.5,r.y+15.5]]){
+  if(Math.abs(d)<1e-10){if(p<=min||p>=max)return false;continue}
+  const v=(min-p)/d,w=(max-p)/d;low=Math.max(low,Math.min(v,w));high=Math.min(high,Math.max(v,w));if(high-low<1e-8)return false;
+ }return high>=0&&low<=1;
 }
+function plantedLeg(hip,foot,q){
+ const blockers=q.groundContact?.blockers;if(!blockers?.length)return legPose(hip,foot);
+ const basis=actorBasis(q),size=(q.bodyHeight||60)/43.5,reach=44*size,rects=blockers.filter(r=>r.x<q.x+reach&&r.x+16>q.x-reach&&r.y<q.y+reach&&r.y+16>q.y-reach);
+ const world=([x,y])=>({x:q.x+(x*basis.tx-y*basis.nx)*size,y:q.y+(x*basis.ty-y*basis.ny)*size});
+ const inside=(p,r)=>p.x>r.x+.5&&p.x<r.x+15.5&&p.y>r.y+.5&&p.y<r.y+15.5;
+ const lift=(x,y,extra=0)=>{
+  const ankle=[x,y-2.3-extra];
+  for(let i=0;i<8;i++){
+   const p=world(ankle),r=rects.find(r=>inside(p,r));if(!r)break;
+   const dx=basis.nx>1e-8?(r.x+18.3-p.x)/basis.nx:basis.nx< -1e-8?(r.x-2.3-p.x)/basis.nx:Infinity;
+   const dy=basis.ny>1e-8?(r.y+18.3-p.y)/basis.ny:basis.ny< -1e-8?(r.y-2.3-p.y)/basis.ny:Infinity;
+   const distance=Math.min(dx,dy);if(!Number.isFinite(distance)||distance>64)break;ankle[1]-=distance/size;
+  }return ankle;
+ };
+ const clear=leg=>{const points=leg.map(world);return !rects.some(r=>segmentHits(points[0],points[1],r)||segmentHits(points[1],points[2],r))};
+ let best=legPose(hip,lift(...foot));if(clear(best)||rects.some(r=>inside(world(hip),r)))return best;let score=Infinity;
+ // Lift onto a step or shorten the stride, retaining both rigid bone lengths.
+ for(const x of [foot[0],foot[0]*.75,foot[0]*.5,foot[0]*.25,0,-4,-8,-14,-18,-21,4,8,14,18,21])for(const extra of [0,4,8,12,20,24]){
+  const ankle=lift(x,foot[1],extra),cost=(ankle[0]-foot[0])**2+(ankle[1]-foot[1])**2*.7;if(cost>=score)continue;const candidate=legPose(hip,ankle);if(clear(candidate)){best=candidate;score=cost}
+ }return best;
+}
+
 function gait(time=0,q={},reduced=false){
  const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/48:time*3.3;
  const bob=idle||air?0:-.4*(1-Math.cos(phase*TAU*2)),hip=[0,-18.8+bob],shoulder=[3,-30+bob];
