@@ -1,0 +1,25 @@
+name: Publish verified R88 preview
+on:
+  push:
+    branches: [codex/r88-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact signed payload and source archive
+        run: sha256sum -c MONGYU_R88_SHA256SUMS.txt
+      - name: Publish Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r88-preview
+          --prerelease
+          --target 427cd833eb6265563547e77a93ba7a5ba4b1640c
+          --title '몽유 R88 · 카메라·발 접촉 수정'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R88_ANDROID.apk MONGYU_R88_source.zip MONGYU_R88_SHA256SUMS.txt
