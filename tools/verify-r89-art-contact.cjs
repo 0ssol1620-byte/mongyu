@@ -1,0 +1,9 @@
+/* Actual raster snapshots of isolated normal-input encounters; no campaign credits awarded. */
+const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+(async()=>{const out=process.argv[2]||'/workspace/artifacts/r89-art',release=process.argv[3]||'R89';fs.mkdirSync(out,{recursive:true});const b=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
+ const page=await b.newPage({viewport:{width:390,height:844},deviceScaleFactor:2}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4173/web/MONGYU_'+release+'.html');await page.waitForFunction(()=>window.QUAD_RIFT_APP);await page.evaluate(fs.readFileSync(path.join(__dirname,'r89-device-visual.js'),'utf8'));const rows=[];
+ for(const [slot,steps]of [[2,30],[3,70],[3,131],[4,154],[12,91],[12,126],[18,136],[48,123],[7,66],[25,90],[57,38],[25,173],[79,183],[95,154],[78,134]]){
+  const row=await page.evaluate(({slot,steps})=>__mongyuQaPose({slot,steps}),{slot,steps});rows.push(row);await page.locator('#mongyuQaVisual').screenshot({path:path.join(out,`slot-${slot}-step-${steps}.png`)});assert.ok(row.centreError<1e-6);assert.equal(row.legFills,2);assert.ok(row.legPixels>100);assert.equal(row.intersections,0,'rendered legs intersect terrain at slot '+slot);
+ }
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({scope:'Actual filled Canvas leg pixels and raster snapshots. Isolated normal-input encounters, no progress writes; not an original-game equivalence or continuous campaign proof.',errors,rows},null,2));console.log(JSON.stringify({captures:rows.length,errors,intersections:rows.reduce((n,r)=>n+r.intersections,0)}));
+}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

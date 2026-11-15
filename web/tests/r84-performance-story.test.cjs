@@ -18,7 +18,7 @@ test('all 74 native physical entries: optimized and platform cloning produce ide
 });
 test('native normal arenas use stable width-based framing while the actor stays inside the edges',()=>{
  for(const [w,h]of [[390,844],[844,390],[320,568],[800,1280]])for(const mask of [false,true])for(const [x,y]of [[1,0],[0,1],[-1,0],[0,-1]]){
-  const g={nativeRuntime:true,bounds:{width:432,height:432},player:{x:200,y:200,tangent:{x,y},bodyHeight:42.5},...(mask?{nativeMaskCells:[]}:{} )},c=M.camera({width:w,height:h},g,{presentationTime:1},{time:0});assert.equal(c.framing,'viewport-cover');assert.equal(c.scale,Math.min(w/384,h/480));const px=200*c.scale+c.offsetX,py=200*c.scale+c.offsetY;assert.ok(px>=40&&px<=w-40);assert.ok(py>=40&&py<=h-40);
+  const g={nativeRuntime:true,bounds:{width:432,height:432},player:{x:200,y:200,tangent:{x,y},bodyHeight:42.5},...(mask?{nativeMaskCells:[]}:{} )},c=M.camera({width:w,height:h},g,{presentationTime:1},{time:0});assert.equal(c.framing,'viewport-cover');assert.equal(c.scale,Math.min(w/320,h/320));const px=200*c.scale+c.offsetX,py=200*c.scale+c.offsetY;assert.ok(px>=40&&px<=w-40);assert.ok(py>=40&&py<=h-40);
  }
 });
 test('story journal exposes only unlocked scenes and replaying the opening does not grant another memory',()=>{

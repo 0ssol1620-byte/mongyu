@@ -67,8 +67,8 @@ function createPolicy({tracks={},rng=Math.random}={}){
    role=STAGES[stageIndex];
   }
   const selection=candidates(catalog,role);
-  let chosen=selection.tracks.find(t=>t.id===lastTrackId);
-  if(role!==lastRole||!chosen){
+  const requested=selection.tracks.find(t=>t.id===context.recordingId);let chosen=requested||selection.tracks.find(t=>t.id===lastTrackId);
+  if(!requested&&(role!==lastRole||!chosen)){
    const previous=selection.tracks.findIndex(t=>t.id===lastTrackId);
    const next=selection.tracks.length>1?rejectPrevious(selection.tracks.length,previous,rng).index:0;
    chosen=selection.tracks[next];

@@ -61,7 +61,7 @@ function createPlayer(context,options={}){
   if(keyed)entryKey=values.entryKey;else entryKey=null;
   // Explicit scene/attempt entries restart. Authored map-only transitions retain
   // the clock when native roles share one substitute recording. Legacy unchanged.
-  if(entryChanged&&!(values.preserveTrackOnEntry===true&&current?.track.id===desired.id)){for(const deck of decks)halt(deck);retiring=null;begin(desired,{restart:true})}
+  if(entryChanged&&!(values.preserveTrackOnEntry===true&&current?.track.id===desired.id)){if(values.crossfadeOnEntry!==true){for(const deck of decks)halt(deck);retiring=null}begin(desired,{restart:true})}
   else if(!current||current.track.id!==desired.id){if(current?.pending)halt(current);if(retiring){halt(retiring);retiring=null}begin(desired,{restart:values.restartOnResume===true})}
   else if(!current.pending&&(!current.started||current.media.paused||current.media.ended)){begin(desired,{restart:values.restartOnResume===true})}
   else if(!current.pending&&!retiring&&Number.isFinite(current.media.duration)&&current.media.duration>CROSSFADE*4&&current.media.currentTime>=current.media.duration-(current.track.loopFade??CROSSFADE)){begin(desired,{restart:true})}

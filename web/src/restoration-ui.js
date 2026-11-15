@@ -42,6 +42,7 @@ function sceneStage(slot,index,kind,mark=''){
  return {beat:'journey',actors:[actor(id,360,mark)]};
 }
 function sceneElder(c,x,y,height){
+ if(root.MongyuMobile){root.MongyuMobile.sprite(c,{x,y,bodyHeight:height,pose:'stand',tangent:{x:1,y:0}},{ink:'#fff8de'},true,'elder');c.save();c.strokeStyle='#fff8de';c.lineWidth=height/100;c.beginPath();c.moveTo(x+height*.2,y-height*.5);c.lineTo(x+height*.23,y);c.stroke();c.restore();return;}
  // Separate standing visitor: gameplay's elder renderer carries the runner.
  c.save();c.translate(x,y);c.scale(height/100,height/100);c.strokeStyle='#f6f3e9';c.fillStyle='#f6f3e9';c.lineWidth=4;c.lineCap='round';
  c.beginPath();c.arc(0,-83,7,0,Math.PI*2);c.fill();
@@ -156,7 +157,7 @@ function mount(host){
   const effect=scene.vignette?.effect||'',reduced=host.reduced?.(),phase=Math.min(1,(scene.elapsed-scene.beatAt)/.6);
   const lift=effect==='levitate'&&scene.index<2?(scene.index===0?(reduced?35:35*phase):70):0;
   canvas.dataset.character=id;canvas.dataset.reaction=reaction();canvas.dataset.effect=effect;canvas.setAttribute('aria-label',(C.characters.find(x=>x.id===id)?.name||'길')+' · '+(scene.vignette?.name||scene.intro?.name||'이야기'));
-  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0};
+  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0,ink:'#fff8de'};
   canvas.dataset.actors=stage.actors.map(a=>a.id).join(',');canvas.dataset.beat=stage.beat;
   canvas.dataset.roles=stage.actors.map(a=>a.sourceRole).join(',');
   canvas.dataset.speakerLane=String(stage.speakerLane??'');canvas.dataset.markerCode=String(stage.markerCode??'');canvas.dataset.renderCode=String(stage.nativeRenderCode??'');

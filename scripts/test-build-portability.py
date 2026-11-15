@@ -11,7 +11,7 @@ import tempfile
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED = hashlib.sha256((ROOT/'web/MONGYU_R88.html').read_bytes()).hexdigest()
+EXPECTED = hashlib.sha256((ROOT/'web/MONGYU_R89.html').read_bytes()).hexdigest()
 read_text = Path.read_text
 
 def explicit_utf8(path, *args, **kwargs):
@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory(prefix='mongyu-portability-') as directory:
             path.write_bytes(path.read_bytes().replace(b'\r\n', b'\n').replace(b'\n', line_ending))
         with patch.object(Path, 'read_text', explicit_utf8), patch.object(Path, 'write_text', reject_text_output):
             runpy.run_path(str(web/'build.py'), run_name='__main__')
-        output = (web/'MONGYU_R88.html').read_bytes()
+        output = (web/'MONGYU_R89.html').read_bytes()
         assert b'\r\n' not in output
         assert hashlib.sha256(output).hexdigest() == EXPECTED
 
