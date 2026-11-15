@@ -1,0 +1,51 @@
+{
+  "scope": "API35 emulator; actual R93 importer to R94 standalone upgrade with one ephemeral QA key. No original game file, progress injection or file import. Not physical handset certification.",
+  "checks": [
+    {
+      "name": "actual R93 has no original selected; existing private keys recorded",
+      "passed": true
+    },
+    {
+      "name": "R93 upgrades to standalone title without file requirement and preserves prior keys",
+      "passed": true
+    },
+    {
+      "name": "no supplied game file: story, campaign start, full-screen movement, touch and music",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      },
+      "music": {
+        "artist": "Eric Skiff",
+        "backend": "licensed-media",
+        "trackId": "chapter-02"
+      },
+      "passed": true
+    },
+    {
+      "name": "pause, native back and background freeze play until explicit resume",
+      "passed": true
+    },
+    {
+      "name": "cold relaunch retains legitimate story progress, outfit and R93 keys",
+      "collected": 1,
+      "passed": true
+    },
+    {
+      "name": "renderer recovery returns to playable title without losing private records",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "testedCommit": "f476e1b7e427e38ea22b10b4852852dad0d8c5f3",
+  "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43721995606",
+  "androidApi": 35,
+  "architecture": "x86_64",
+  "renderer": "SwiftShader",
+  "physicalHandset": false
+}

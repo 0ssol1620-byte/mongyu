@@ -55,11 +55,7 @@ public final class MainActivity extends Activity {
     private OriginalFiles originalFiles;
     private static final int IMPORT_ORIGINAL = 9301;
     private static final int MAX_ORIGINAL = 16 * 1024 * 1024;
-    private static final Set<String> PACKAGED = new HashSet<>(Arrays.asList(
-        "index.html", "styles.css", "main.mjs", "runtime.mjs", "storage.mjs", "archive.mjs",
-        "vendor/wie_web.js", "vendor/wie_web_bg.wasm",
-        "licenses/WIE.txt", "licenses/Apache-2.0.txt", "licenses/NeoDGM.txt",
-        "licenses/THIRD_PARTY_AUDIO.md"));
+    private static final Set<String> PACKAGED = new HashSet<>(Arrays.asList("index.html"));
     private int rendererFailures;
     private int safeLeft, safeTop, safeRight, safeBottom;
 
@@ -104,7 +100,7 @@ public final class MainActivity extends Activity {
         // access bounded game-save keys, never files, intents or the network.
         web.addJavascriptInterface(new LocalStore(getSharedPreferences("mongyu.offline.v1", MODE_PRIVATE)), "_MongyuStore");
         originalFiles = new OriginalFiles();
-        web.addJavascriptInterface(originalFiles, "_MongyuOriginal");
+        // Imported R93 files remain in private storage; standalone play needs no file bridge.
         CookieManager.getInstance().setAcceptCookie(false);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setWebViewClient(new WebViewClient() {
@@ -132,11 +128,6 @@ public final class MainActivity extends Activity {
                         && "appassets.androidplatform.net".equals(uri.getHost()) && uri.getPort() == -1) {
                     String path = uri.getPath();
                     try {
-                        if ("/original/current".equals(path) || "/original/pending".equals(path)) {
-                            byte[] data = originalFiles.readData(path.endsWith("pending"));
-                            return data == null ? response(404, "Missing", "No original selected")
-                                : new WebResourceResponse("application/octet-stream", null, 200, "OK", contentHeaders(), new ByteArrayInputStream(data));
-                        }
                         String asset = path != null && path.startsWith("/") ? path.substring(1) : "";
                         if (PACKAGED.contains(asset)) {
                             String mime = asset.endsWith(".html") ? "text/html" : asset.endsWith(".css") ? "text/css"
@@ -336,7 +327,7 @@ public final class MainActivity extends Activity {
     private static Map<String, String> contentHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Cache-Control", "no-store");
-        headers.put("Content-Security-Policy", "default-src 'none'; script-src 'self' 'wasm-unsafe-eval' blob:; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
+        headers.put("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; media-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
         return headers;
     }
     private static WebResourceResponse response(int status, String reason, String message) {

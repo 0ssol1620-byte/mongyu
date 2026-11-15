@@ -1,6 +1,7 @@
 """Build the offline R80 game. Assets are pinned, credits are bundled."""
 from pathlib import Path
-import base64, hashlib, json
+import base64, hashlib, json, argparse
+parser=argparse.ArgumentParser();parser.add_argument('--release',choices=['R92','R94'],default='R92');release=parser.parse_args().release
 p=Path(__file__).resolve().parent
 def digest(data): return hashlib.sha256(data).hexdigest()
 def asset(folder,item):
@@ -25,7 +26,8 @@ assert template.count('<!--SCRIPTS-->')==1 and template.count('/*MOBILE_CSS*/')=
 out=template.replace('/*MOBILE_CSS*/',(p/'mobile.css').read_text(encoding='utf-8')).replace('<!--SCRIPTS-->','\n'.join('<script>'+s+'</script>' for s in sources))
 assert "connect-src 'none'" in out and "default-src 'none'" in out
 assert not any(x in out for x in ['NOM3_ASSETS','Nom3Study','menu-7.png','nom1-0.png'])
-data=out.encode('utf-8');(p/'MONGYU_R92.html').write_bytes(data)
-report={'release':'R92','bytes':len(data),'sha256':digest(data),'sourceCount':len(files),'sources':source_hashes,'audio':[{k:t[k] for k in ['id','sha256','bytes','license']} for t in manifest['tracks']]}
+if release=='R94':out=out.replace('<title>몽유 · MONGYU R86</title>','<title>몽유 · MONGYU R94</title>')
+data=out.encode('utf-8');(p/f'MONGYU_{release}.html').write_bytes(data)
+report={'release':release,'bytes':len(data),'sha256':digest(data),'sourceCount':len(files),'sources':source_hashes,'audio':[{k:t[k] for k in ['id','sha256','bytes','license']} for t in manifest['tracks']]}
 (p/'build-manifest.json').write_bytes((json.dumps(report,indent=2)+'\n').encode('utf-8'))
 print(json.dumps({k:v for k,v in report.items() if k!='sources'}))

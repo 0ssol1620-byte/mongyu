@@ -1,20 +1,18 @@
-# 몽유 · 원작 파일 실행 R93
+# 몽유 R94 · 설치 후 플레이
 
-R93은 R92의 각색 엔진을 APK에서 제외하고, 사용자가 보유한 놈3 KTF ZIP/JAR의 실행 코드·그림·애니메이션·음악·대사·수집 규칙을 직접 실행하는 오프라인 플레이어입니다.
+R94는 원본 파일 선택을 요구하던 R93의 시작 차단을 수정합니다. **KTF ZIP/JAR 없이 설치 후 ‘꿈속으로’를 누르면 이야기와 게임을 시작할 수 있습니다.** 몽유의 자체 게임 코드·그림·이야기·사용 허가된 BGM이 APK에 들어 있으며 네트워크 연결도 필요하지 않습니다.
 
-**상용 원작 파일은 APK에 포함하지 않습니다. 처음 실행할 때 보유한 원본 파일을 한 번 선택해야 합니다.** 파일과 원본 저장은 이 기기에만 보관합니다. 원작이 들어 있는 별도 다운로드 링크를 제공하는 앱이 아닙니다.
+[Android APK 다운로드](https://github.com/0ssol1620-byte/mongyu/releases/download/r94-preview/MONGYU_R94_ANDROID.apk) · [수정 내용과 검증](docs/R94_PLAYABLE_KO.md)
 
-[Android APK](https://github.com/0ssol1620-byte/mongyu/releases/download/r93-preview/MONGYU_R93_ANDROID.apk) · [원작 실행 방식·검증·한계](docs/R93_ORIGINAL_PLAYER_KO.md)
+기존 앱을 삭제하지 않고 업데이트하세요. 동일한 앱 ID·미리보기 인증서와 더 높은 버전 코드 94를 사용합니다. 이전 몽유 기록과 R93의 내부 파일·저장을 삭제하지 않습니다. R93 원작 실행 기록을 몽유 진행으로 변환하지 않습니다.
 
-원본 화면비·설정 1배속을 유지하며 탭은 OK 입력입니다. 아래 취소·방향·확인·숫자·별표/우물정 키로 원작 메뉴와 수집판을 조작합니다. 일시정지·앱 전환 시 입력과 오디오를 중단하며 명시적으로 재개합니다. 원본 코드가 만든 저장은 원본 파일별로 보관합니다. 예전 몽유 기록은 삭제하거나 원작 수집 진행으로 바꾸지 않습니다.
+이 수정은 R92 기반의 독립 플레이 경로를 복구하는 작업입니다. 원작 놈3의 완전 동일 복구판이나 원작 그림·대사·음원 배포판은 아닙니다. 원본 실행기 소스와 이전 조사 기록은 저장소 이력에 남습니다. 실제 광고·결제는 없습니다.
 
 ```sh
 python3 scripts/test.py
 ANDROID_SDK_ROOT=/path/to/sdk python3 android/build-unsigned.py
-# 별도로 보유한 원작 자료로 실제 브라우저 검증
-node tools/verify-original-browser.cjs /private/path/to/original.zip
 ```
 
-Python 3.10+, Node.js 22, Android SDK 36/JDK 17이 필요합니다. 브라우저 검사는 Playwright·Chromium과 저장소 루트를 제공하는 4173번 로컬 서버를 사용합니다. 이전 각색 엔진 검사는 `python3 scripts/test-legacy-r92.py`로 남깁니다. APK 자산은 `web/original`에서 생성하며 상용 게임 자료를 저장소나 빌드에 넣지 않습니다.
+Python 3.10+, Node.js 22+, JDK 17, Android SDK/platform/build-tools 36이 필요합니다. `scripts/test.py`는 기존 게임 검사를 실행하고 R94 오프라인 HTML·Android 자산을 만듭니다. 브라우저 확인은 Playwright·Chromium, 저장소 루트를 제공하는 4173번 서버와 `node tools/verify-r94-playable.cjs`를 사용합니다. Android 8.0 이상용 미리보기입니다.
 
-Android 8.0 이상용이며 기존 테스트의 앱 ID·인증서를 유지합니다. Android 에뮬레이터에서 불러오기·음악/효과음·저장·업데이트 후 기록 유지·렌더러 복구 검사를 통과했습니다. 설정은 1배속이지만 마지막 에뮬레이터 구간의 달성 속도는 약 0.642배로, 실기 속도나 끊김 해결을 보장하지 않습니다. 원작의 모든 버전·기기 기능·옛 통신사 서비스와의 동일 동작, 100개 수집 연속 완주, 옛 휴대폰과 동일한 Yamaha 음색·실기 장시간 성능은 확인이 필요합니다. 원본 코드를 실행한다는 이유로 이 검증까지 완료했다고 주장하지 않습니다. 실제 광고·결제는 없습니다.
+BGM: Eric Skiff / Resistor Anthems, CC BY 4.0. 곡별 출처·편집·해시·라이선스는 앱 설정의 음악 정보와 `web/assets/music`에 포함합니다.

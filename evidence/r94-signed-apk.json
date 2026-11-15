@@ -1,0 +1,35 @@
+{
+  "release": "R94",
+  "apk": "MONGYU_R94_ANDROID.apk",
+  "bytes": 14336540,
+  "sha256": "dfb79edf7fff9edfc7c1948abee2532a1b4adcbc5e5fe29a8e5628a5db001b1d",
+  "applicationId": "org.quadrift.mongyu.preview.r82",
+  "versionCode": 94,
+  "minAndroid": "8.0 (API 26)",
+  "targetSdk": 36,
+  "signed": true,
+  "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=MONGYU Preview, O=MONGYU\nSigner #1 certificate SHA-256 digest: 77897ae16ffcedcc3ebb530486065b8533fbeace11b92193795d1430035b4c8f\nSigner #1 certificate SHA-1 digest: 0eda45e7d5995134a8bb68f3fedf11d507ebf8be\nSigner #1 certificate MD5 digest: 5f34116200c2a0d70e7970d9ca34eada\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: a2da20fc8fb1e85b5b56faa2c0727f9e05c43cdade35f9d28001dba853427f41\nSigner #1 public key SHA-1 digest: 3981bcf20a012dc4f5c154c1f452eda3a54653b7\nSigner #1 public key MD5 digest: 0d3dffc1c4d262233afbaa28579e46ba\n",
+  "zipAlignmentVerified": true,
+  "zipIntegrityVerified": true,
+  "permissions": [],
+  "commercialOriginalPayloadIncluded": false,
+  "requiresUserOriginalFile": false,
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 20049056,
+      "sha256": "76fe19c83b53a3c16211f8a734230d637ce882afc02b5cfab5a3ec6a5324ca0d"
+    }
+  ],
+  "finalSignedDirectDeviceInstall": false,
+  "storeRelease": false,
+  "deviceQa": {
+    "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43721995606",
+    "testedCommit": "f476e1b7e427e38ea22b10b4852852dad0d8c5f3",
+    "testedUnsignedSha256": "c8af9944c517e3534e796abd62a78e918feef93f3e37dd7d0d358021e775c43a",
+    "matchingNonSignatureEntries": 5,
+    "scope": "Actual R93 source to current R94 with ephemeral certificate, API35 emulator, no original file selected",
+    "finalSignedDirectlyInstalled": false,
+    "physicalHandset": false
+  }
+}
