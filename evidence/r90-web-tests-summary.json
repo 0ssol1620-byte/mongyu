@@ -1,0 +1,14 @@
+{
+  "runtimeCommit": "6db586506fb419af493f38fd64fe603082dd4d86",
+  "androidRunUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43697029576",
+  "webSuiteRunUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43696815592",
+  "tests": 174,
+  "pass": 173,
+  "fail": 0,
+  "skipped": 1,
+  "skippedScope": "external audit adapter not distributed",
+  "sourceHashCacheReusedOnAndroidRun": true,
+  "androidWrapperTests": 5,
+  "androidWrapperPass": 5,
+  "embeddedHtmlSha256": "98a9b3f59898b17d2e2505b6138a582dbb0d9fdd1abcc35b9c0d92dfebd6c377"
+}

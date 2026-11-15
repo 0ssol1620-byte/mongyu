@@ -1,0 +1,27 @@
+{
+  "scope": "Deterministic presentation rig measurements; degrees at the knee, 180 is straight. Loaded mid-stance uses flat ground contact. No native game state is modified.",
+  "rows": [
+    {
+      "release": "R89",
+      "standingKneeDegrees": [
+        102.18143015235917,
+        102.18143015235917
+      ],
+      "loadedMidstanceKneeDegrees": 88.31113423486858,
+      "midstancePelvisHeight": 19.6,
+      "cameraScale": 1.21875,
+      "nominalBodyWidthRatio": 0.1328125
+    },
+    {
+      "release": "R90",
+      "standingKneeDegrees": [
+        155.7751371339055,
+        155.7751371339055
+      ],
+      "loadedMidstanceKneeDegrees": 167.87468943222967,
+      "midstancePelvisHeight": 22.8,
+      "cameraScale": 1.015625,
+      "nominalBodyWidthRatio": 0.11067708333333333
+    }
+  ]
+}
