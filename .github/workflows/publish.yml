@@ -1,0 +1,25 @@
+name: Publish verified R93 original-file preview
+on:
+  push:
+    branches: [codex/r93-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact signed payload and source archive
+        run: sha256sum -c MONGYU_R93_SHA256SUMS.txt
+      - name: Publish Android preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r93-preview
+          --prerelease
+          --target e4f42e529a71fe30532021cc21b6a72e256dfa9d
+          --title '몽유 R93 · 원작 파일 실행'
+          --notes-file RELEASE_NOTES.md
+          MONGYU_R93_ANDROID.apk MONGYU_R93_source.zip MONGYU_R93_SHA256SUMS.txt
