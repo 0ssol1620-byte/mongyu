@@ -208,7 +208,7 @@ function hint(v,run){
  return '';
 }
 function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="#9eacac"/><g fill="'+item.body+'"><path d="M39 43Q35 49 29 52Q27 54 31 63L33 65L34 64L33 62L32 54Q40 52 42 47L48 53L41 63L40 65L44 65L45 63L53 54Q54 51 43 43L46 32L45 29L42 29Q42 35 39 43Z"/><path d="M43 33Q37 33 32 40L35 47L38 47L37 44L36 40L42 37Q48 41 53 40L56 35L54 33L51 37L46 33Z"/><ellipse cx="44" cy="24" rx="3.5" ry="5"/></g></svg>'}
-function narrative(c,x,y,h,pose,t,reduced){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t,onDark:true},reduced)}
+function narrative(c,x,y,h,pose,t,reduced,ink){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t,ink},reduced)}
 function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=host.progress;try{selected=decode(host.storage.getItem(KEY))}catch(_){saved=false}
  function render(){const n=count(progress()),equipped=look();$('wardrobeCount').textContent=n+' / 100개의 기억';$('wardrobeStatus').textContent=saved?'기억을 모으면 새로운 옷이 열려요.':'이번 실행에만 옷을 보관할 수 있어요.';
   for(const item of looks){const b=$('look-'+item.id),owned=available(item.id,n);b.disabled=!owned;b.setAttribute('aria-pressed',String(equipped.id===item.id));b.setAttribute('aria-label',item.name+(owned?equipped.id===item.id?' · 입는 중':' · 입기':' · 기억 '+item.at+'개 필요'));b.querySelector('small').textContent=owned?equipped.id===item.id?'입는 중':'입기':'기억 '+item.at+'개'}

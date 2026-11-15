@@ -31,3 +31,4 @@ test('music keeps the outgoing deck until the new map really starts and mute can
 });
 
 test('running elbows counter-swing the leading leg with fixed arm lengths',()=>{const M=require('../src/mobile-presentation.js');for(const strideDistance of [0,20]){const p=M.gait(0,{strideDistance});for(const [a,b,c]of p.arms){assert.ok(Math.abs(Math.hypot(b[0]-a[0],b[1]-a[1])-9)<1e-8);assert.ok(Math.abs(Math.hypot(c[0]-b[0],c[1]-b[1])-9)<1e-8)}assert.ok((p.legs[0][2][0]-p.hip[0])*(p.arms[0][1][0]-p.shoulder[0])<0)}});
+test('story silhouettes respect the ink chosen for the actual scene background',()=>{const M=require('../src/mobile-presentation.js'),colors=[],c=new Proxy({globalAlpha:1},{get:(o,k)=>k in o?o[k]:k==='fill'?()=>colors.push(o.fillStyle):()=>{},set:(o,k,v)=>(o[k]=v,true)});M.narrative(c,100,200,210,'open-arms',1,false,'#234567');assert.ok(colors.length>=6);assert.ok(colors.every(color=>color==='#234567'))});
