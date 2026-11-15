@@ -47,5 +47,6 @@
   "native-palette.js",
   "native-scene.js",
   "release-policy.js",
+  "durable-storage.js",
   "app.js"
 ]

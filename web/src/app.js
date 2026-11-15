@@ -1,4 +1,5 @@
 (function(){'use strict';
+const localStorage=(()=>{let storage;try{storage=globalThis.localStorage}catch(error){storage={getItem(){throw error},setItem(){throw error},removeItem(){throw error}}}return typeof MongyuStorage!=='undefined'?MongyuStorage.create(storage):storage})();
 const $=id=>document.getElementById(id),C=QuadRiftContent,P=QuadRiftProgress,canvas=$('game'),ctx=canvas.getContext('2d');
 // Old source-only fixtures omit optional modules; the current HTML explicitly requires this one.
 const M=typeof QuadRiftOriginRecords==='undefined'?null:QuadRiftOriginRecords;
