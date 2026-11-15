@@ -1,0 +1,129 @@
+{
+  "release": "R88",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 16.099999994039536,
+    "p95": 47.69999999552965,
+    "p99": 90.39999999850988,
+    "max": 265.1000000014901
+  },
+  "simulationMs": {
+    "samples": 166,
+    "p50": 10.399999998509884,
+    "p95": 36.29999999701977,
+    "p99": 74.70000000298023,
+    "max": 107.5
+  },
+  "longTasks": [
+    {
+      "start": 2170.2999999970198,
+      "ms": 78
+    },
+    {
+      "start": 4422.5,
+      "ms": 60
+    },
+    {
+      "start": 4651,
+      "ms": 92
+    },
+    {
+      "start": 4743.79999999702,
+      "ms": 54
+    },
+    {
+      "start": 5905,
+      "ms": 50
+    },
+    {
+      "start": 6531.5999999940395,
+      "ms": 235
+    },
+    {
+      "start": 6772.89999999851,
+      "ms": 192
+    },
+    {
+      "start": 6978.19999999553,
+      "ms": 117
+    },
+    {
+      "start": 7097.0999999940395,
+      "ms": 228
+    },
+    {
+      "start": 7505.69999999553,
+      "ms": 55
+    },
+    {
+      "start": 7561.39999999851,
+      "ms": 69
+    },
+    {
+      "start": 13204,
+      "ms": 50
+    },
+    {
+      "start": 13353.19999999553,
+      "ms": 67
+    },
+    {
+      "start": 13439.29999999702,
+      "ms": 59
+    },
+    {
+      "start": 13523.59999999404,
+      "ms": 88
+    },
+    {
+      "start": 13623.5,
+      "ms": 190
+    },
+    {
+      "start": 13823.5,
+      "ms": 70
+    },
+    {
+      "start": 13895.5,
+      "ms": 66
+    },
+    {
+      "start": 14137.19999999553,
+      "ms": 53
+    },
+    {
+      "start": 14219.29999999702,
+      "ms": 63
+    },
+    {
+      "start": 14305.19999999553,
+      "ms": 53
+    },
+    {
+      "start": 14741.89999999851,
+      "ms": 109
+    },
+    {
+      "start": 14852.39999999851,
+      "ms": 75
+    },
+    {
+      "start": 14928.59999999404,
+      "ms": 73
+    },
+    {
+      "start": 15003.29999999702,
+      "ms": 95
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 166,
+  "time": 12.44999999999997,
+  "state": "play",
+  "hearts": 3,
+  "artifactSha256": "6860f2192dc3b94d5b303c52eea2a31527547ae905c1c80bcb551014fe3743a1",
+  "sourceCommit": "74b3d3bf2d55a4cee913279b02cbfada587eca86"
+}

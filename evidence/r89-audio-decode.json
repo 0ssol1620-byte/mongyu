@@ -1,0 +1,125 @@
+{
+  "scope": "Decoded stereo files, EBU R128 integrated loudness and true peak. New 14 arrangements must measure -20..-16 LUFS and at most -1 dBFS true peak. Does not certify subjective listening quality or handset speaker playback.",
+  "rows": [
+    {
+      "id": "night-corners",
+      "integratedLufs": -21.1,
+      "truePeakDbfs": -8.9,
+      "channels": 2,
+      "duration": 64.026122,
+      "sha256": "d653d0ca6b896719b83688477b9e6995cb7dd507c7d19d4f924610c6d3968b33"
+    },
+    {
+      "id": "chapter-01",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -2.5,
+      "channels": 2,
+      "duration": 32.04,
+      "sha256": "a13d142952ca81a9087b4b0422d68540f3971288874e3deb57c0f18d752e1baf"
+    },
+    {
+      "id": "chapter-02",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -3.7,
+      "channels": 2,
+      "duration": 30.528,
+      "sha256": "50e5e21d6d9635e1eef725b269f60cda2405026322527fe5ecdc592dcaae3451"
+    },
+    {
+      "id": "chapter-03",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -2.2,
+      "channels": 2,
+      "duration": 35.604,
+      "sha256": "4e856113095f89679eb1957ba62dacbac508e4986ca49f412b82c9f74d1776a4"
+    },
+    {
+      "id": "chapter-04",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -2.4,
+      "channels": 2,
+      "duration": 29.16,
+      "sha256": "184250967879f61a3e764c59bb0342d1cdd6aedaa74b3cd04c922c468f1440b0"
+    },
+    {
+      "id": "chapter-05",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -3.1,
+      "channels": 2,
+      "duration": 31.032,
+      "sha256": "5f2408e461812fcec4ed30a790b273e0a66434445327cbe6426ca72e19be0b5d"
+    },
+    {
+      "id": "chapter-06",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -4.4,
+      "channels": 2,
+      "duration": 27.468,
+      "sha256": "e7e46172adb8ba4b0dbd2ed2d24a2c3a6d5ec0d5a9f5a5bb715bbf014e7474f4"
+    },
+    {
+      "id": "chapter-07",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -2.3,
+      "channels": 2,
+      "duration": 33.156,
+      "sha256": "42ea91915afcb1347bd4679ae538b082283bc424ee35386cee41c88837001bc6"
+    },
+    {
+      "id": "chapter-08",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -2.1,
+      "channels": 2,
+      "duration": 34.344,
+      "sha256": "80b05cba88ed715a831ac0fe1bf8298d1531563e0b7f703d3df0a091177dfc02"
+    },
+    {
+      "id": "chapter-09",
+      "integratedLufs": -17.9,
+      "truePeakDbfs": -4.4,
+      "channels": 2,
+      "duration": 27.864,
+      "sha256": "4984da1ab5678ba659c61fb2f5ad845b20399fd0aa48e118a2873505b1cf6a42"
+    },
+    {
+      "id": "chapter-10",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -3.2,
+      "channels": 2,
+      "duration": 30.06,
+      "sha256": "ec44baf26f8161157c36ddf3433f14a2547d8fa914bbbbcd5c80c84124f5df8e"
+    },
+    {
+      "id": "heart-circuit",
+      "integratedLufs": -17.7,
+      "truePeakDbfs": -3.5,
+      "channels": 2,
+      "duration": 26.712,
+      "sha256": "75eb11e2e827980b92ea17c710be988753732d6d090f26e6a05c030285035cb0"
+    },
+    {
+      "id": "boss-glass",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -2.4,
+      "channels": 2,
+      "duration": 28.296,
+      "sha256": "07e4509ab3f127718c0b9874d229ff7466863915efa4745029cdb18d76c3f29b"
+    },
+    {
+      "id": "boss-motor",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -2.9,
+      "channels": 2,
+      "duration": 25.308,
+      "sha256": "64985a247a14bc2c3ed1db7a8ca2d53a0cec243f383d28d75e6c9faa4dae1b1c"
+    },
+    {
+      "id": "boss-orbit",
+      "integratedLufs": -17.8,
+      "truePeakDbfs": -2.9,
+      "channels": 2,
+      "duration": 29.16,
+      "sha256": "8100d4c2b581551f75d8b6c50fcb59b85813808c573f765661c6600d9ba85dd5"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "scope": "Accelerated Android emulator, actual installed APKs. Synthetic version-88 baseline and current version-89 use one ephemeral QA signing key. Not a physical-phone performance certification.",
+  "checks": [
+    {
+      "name": "actual fullscreen native play",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      }
+    },
+    {
+      "name": "native game canvas contains rendered content",
+      "raster": {
+        "width": 618,
+        "height": 1373,
+        "colored": 1024,
+        "samples": 1024
+      }
+    },
+    {
+      "name": "native back cancels input and freezes simulation",
+      "passed": true
+    },
+    {
+      "name": "foreground return requires explicit resume",
+      "passed": true
+    },
+    {
+      "name": "R89 actual renderer body-centre and leg-contact checks",
+      "scope": "Isolated normal-input encounters; no campaign progress writes. Tests actual filled leg raster pixels against inner terrain, not original-game equivalence.",
+      "rows": [
+        {
+          "slot": 2,
+          "steps": 30,
+          "direction": 0,
+          "face": 0,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1973,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 3,
+          "steps": 70,
+          "direction": 0,
+          "face": 1,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 2016,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 3,
+          "steps": 131,
+          "direction": 0,
+          "face": 2,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1704,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 4,
+          "steps": 154,
+          "direction": 0,
+          "face": 3,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1921,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 12,
+          "steps": 91,
+          "direction": 1,
+          "face": 2,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1708,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 12,
+          "steps": 126,
+          "direction": 1,
+          "face": 1,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1544,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 18,
+          "steps": 136,
+          "direction": 1,
+          "face": 0,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1975,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 48,
+          "steps": 123,
+          "direction": 1,
+          "face": 3,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1709,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 7,
+          "steps": 66,
+          "direction": 0,
+          "face": 0,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1706,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 25,
+          "steps": 90,
+          "direction": 0,
+          "face": 0,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1934,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 57,
+          "steps": 38,
+          "direction": 0,
+          "face": 0,
+          "state": 9,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1870,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 25,
+          "steps": 173,
+          "direction": 0,
+          "face": 1,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1501,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 79,
+          "steps": 183,
+          "direction": 0,
+          "face": 3,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1507,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 95,
+          "steps": 154,
+          "direction": 0,
+          "face": 2,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1508,
+          "intersections": 0,
+          "centreError": 0
+        },
+        {
+          "slot": 78,
+          "steps": 134,
+          "direction": 0,
+          "face": 3,
+          "state": 0,
+          "phase": "play",
+          "legFills": 2,
+          "legPixels": 1581,
+          "intersections": 0,
+          "centreError": 0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "APK update retains collected memories, outfit and origin storage",
+      "collected": 1,
+      "passed": true
+    },
+    {
+      "name": "renderer crash recovers once without killing app or erasing storage",
+      "passed": true
+    },
+    {
+      "name": "repeated renderer failure waits for player retry",
+      "passed": true
+    },
+    {
+      "name": "player retry restores game with saved data",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "webView": [
+    "  Current WebView package (name, version): (com.android.webview, 124.0.6367.219)"
+  ],
+  "passed": true
+}
