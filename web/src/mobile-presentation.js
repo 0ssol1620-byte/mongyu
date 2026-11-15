@@ -28,10 +28,11 @@ function legPose(hip,foot){
  const dx=foot[0]-hip[0],dy=foot[1]-hip[1],d=Math.hypot(dx,dy),k=Math.min(1,24.99/(d||1)),ankle=[hip[0]+dx*k,hip[1]+dy*k];
  return [hip,joint(hip,ankle,12.5,12.5,-1),ankle];
 }
-// Exact segment/rectangle intersection avoids per-frame sampling of each bone.
+// Quarter-unit edge tolerance keeps native rounded anchors valid while reserving
+// room for the filled skin, instead of testing only a thin centreline.
 function segmentHits(a,b,r){
  let low=0,high=1;
- for(const [p,d,min,max]of [[a.x,b.x-a.x,r.x+.5,r.x+15.5],[a.y,b.y-a.y,r.y+.5,r.y+15.5]]){
+ for(const [p,d,min,max]of [[a.x,b.x-a.x,r.x+.25,r.x+15.75],[a.y,b.y-a.y,r.y+.25,r.y+15.75]]){
   if(Math.abs(d)<1e-10){if(p<=min||p>=max)return false;continue}
   const v=(min-p)/d,w=(max-p)/d;low=Math.max(low,Math.min(v,w));high=Math.min(high,Math.max(v,w));if(high-low<1e-8)return false;
  }return high>=0&&low<=1;
@@ -59,20 +60,20 @@ function plantedLeg(hip,foot,q){
 }
 
 function gait(time=0,q={},reduced=false){
- const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/48:time*3.3;
+ const idle=!!q.pose||reduced,wall=q.nativeState===12,air=!!q.climbing||(q.height||0)>1||wall,phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/40:time*2.8;
  const bob=idle||air?0:-.4*(1-Math.cos(phase*TAU*2)),hip=[0,-18.8+bob],shoulder=[3,-30+bob];
  const feet=[0,.5].map((offset,i)=>{const u=((phase+offset)%1+1)%1;
   if(idle)return [i?5:-5,0];
   if(wall){const u=clamp((q.nativeFrame+(q.poseFraction||0))/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
   if(q.climbing)return i?[9,-16]:[-7,-3];
-  if(air){const kick=clamp(q.kick||0,0,1);return i?[10+kick*10,-10-kick*6]:[-10,-7-Math.sin(Math.PI*clamp(q.jumpProgress??.5,0,1))*4]}
+  if(air){const kick=clamp(q.kick||0,0,1),u=clamp(q.jumpProgress??.5,0,1),fall=clamp((u-.55)/.45,0,1);return i?[8+kick*10,-14+11*fall-kick*5]:[-10+3*fall,-9+5*fall-Math.sin(Math.PI*u)*3]}
   // Ground contact occupies 60% of the cycle, with a clean toe-off and recovery.
-  return u<.6?[14.4-28.8*u/.6,0]:[-14.4+28.8*(u-.6)/.4,-10*Math.sin(Math.PI*(u-.6)/.4)];
+  return u<.6?[12-24*u/.6,0]:[-12+24*(u-.6)/.4,-10*Math.sin(Math.PI*(u-.6)/.4)];
  });
  if(q.turning&&!air){const lift=22*Math.sin(Math.PI*(q.turnProgress||0));for(const foot of feet)foot[1]-=lift}
  const legs=feet.map(foot=>!air&&!q.pose&&q.nativeState===0?plantedLeg(hip,foot,q):legPose(hip,foot));
- const swing=idle?0:Math.sin(phase*TAU),hands=q.pose?[[q.pose==='open-arms'?-18:-10,q.pose==='raise-arms'?-46:-28],[q.pose==='open-arms'?20:14,q.pose==='raise-arms'?-46:-27]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:air?[[-11,-33],[15,-38]]:[[-7-swing*4,-29],[12+swing*4,-27]];
- const arms=hands.map((hand,i)=>[shoulder,joint(shoulder,hand,9,9,i?-1:1),hand]);
+ const swing=idle?0:Math.sin(phase*TAU),hands=q.pose?[[q.pose==='open-arms'?-18:-10,q.pose==='raise-arms'?-46:-28],[q.pose==='open-arms'?20:14,q.pose==='raise-arms'?-46:-27]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:air?[[-7,-28],[11,-32+5*clamp(((q.jumpProgress??.5)-.55)/.45,0,1)]]:[[-5+swing*9,-23-swing*2],[8-swing*9,-24+swing*2]];
+ const arms=!idle&&!air&&!q.climbing&&q.nativeState!==11?[0,1].map(i=>{const angle=-.85*Math.cos(phase*TAU+i*Math.PI),elbow=[shoulder[0]+9*Math.sin(angle),shoulder[1]+9*Math.cos(angle)],wrist=[elbow[0]+9*Math.sin(angle+1.65),elbow[1]+9*Math.cos(angle+1.65)];return [shoulder,elbow,wrist]}):hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,17.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,9,9,wrist[0]<shoulder[0]?-1:1),wrist]});
  return {hip,shoulder,legs,arms,air,bob};
 }
 // Forward motion and the surface normal are independent. Reversing mirrors
@@ -81,28 +82,50 @@ function actorBasis(q){
  const angle=q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1),sign=q.direction===1?-1:1;
  return {angle,sign,tx:Math.cos(angle),ty:Math.sin(angle),nx:Math.sin(angle)*sign,ny:-Math.cos(angle)*sign};
 }
-// The default is a plain, small-headed runner. No hood, face mask or scarf.
+// Tapered, filled anatomy follows the contact rig. No circles at the joints.
+function contourPath(c,points){
+ const last=points[points.length-1],first=points[0];c.moveTo((last[0]+first[0])/2,(last[1]+first[1])/2);
+ for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length];c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2)}
+ c.closePath();
+}
+function contour(c,points,ink){c.beginPath();contourPath(c,points);c.fillStyle=ink;c.fill()}
+function paintLeg(c,bones,widths,ink){
+ c.beginPath();contourPath(c,limbContour(bones,widths));const [x,y]=bones[2];contourPath(c,[[x-.8,y-.35],[x+1.6,y-.3],[x+2.05,y+.4],[x+1.9,y+.95],[x-.9,y+.95],[x-1,y+.1]]);c.fillStyle=ink;c.fill();
+}
+function limbContour(bones,widths,foot=false){
+ const [a,b,d]=bones,normal=(p,q)=>{const x=q[0]-p[0],y=q[1]-p[1],length=Math.hypot(x,y)||1;return [-y/length,x/length]},u=normal(a,b),v=normal(b,d),length=Math.hypot(u[0]+v[0],u[1]+v[1])||1,w=[(u[0]+v[0])/length,(u[1]+v[1])/length];
+ const centres=[a,[(a[0]+b[0])/2,(a[1]+b[1])/2],b,[(b[0]+d[0])/2,(b[1]+d[1])/2],d],normals=[u,u,w,v,v];
+ const left=centres.map((p,i)=>[p[0]+normals[i][0]*widths[i],p[1]+normals[i][1]*widths[i]]),right=centres.map((p,i)=>[p[0]-normals[i][0]*widths[i],p[1]-normals[i][1]*widths[i]]).reverse();
+ return foot?[...left,[d[0]+2.3,d[1]-.3],[d[0]+2.8,d[1]+.8],[d[0]-.6,d[1]+1],...right]:[...left,...right];
+}
 function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
- const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,q,reduced),{hip,shoulder,legs,arms}=pose,ink=fx.onDark&&style.body==='#18121d'?'#fff8de':style.body,light=parseInt(ink.slice(1,3),16)+parseInt(ink.slice(3,5),16)+parseInt(ink.slice(5,7),16)>540;
- const basis=actorBasis(q);c.save();c.translate(q.x,q.y);c.rotate(basis.angle);const size=(q.bodyHeight||60)/43.5;c.scale(size,size*basis.sign);
- if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
- for(const i of [0,1]){c.globalAlpha*=i?1:.82;if(light||fx.contrast){const outline=light?'#18121d':'#fff8de';line(c,legs[i],outline,4.6);line(c,arms[i],outline,4.3)}line(c,legs[i],ink,3.1);const foot=legs[i][2];line(c,[[foot[0]-.5,foot[1]],[foot[0]+3,foot[1]-.2]],ink,2.5);line(c,arms[i],ink,2.8);if(!i)c.globalAlpha/=.82}
- if(light||fx.contrast)line(c,[hip,[1,-25+pose.bob],shoulder],light?'#18121d':'#fff8de',5.8);line(c,[hip,[1,-25+pose.bob],shoulder],ink,4.3);
- const headX=character==='elder'?6:4,headY=-38.5+pose.bob;
- if(character==='woman')line(c,[[1,-39],[-4,-36],[-8,-31+Math.sin(t*8)*1.4]],ink,3.2);
- if(light||fx.contrast)oval(c,headX,headY,4.8,5.4,light?'#18121d':'#fff8de');oval(c,headX,headY,3.9,4.5,ink);
- if(character==='elder'){oval(c,-7,-32,3,3.5,ink);line(c,[[-7,-28],[-8,-22],[-2,-18],[3,-23]],ink,2.5)}
- if(style.detail==='leaf')oval(c,0,-43,4,1.6,style.accent);
- if(style.detail==='star')oval(c,1,-45,1.5,1.5,style.accent);
- if(style.detail==='comet')line(c,[[-1,-41],[-7,-44],[-12,-43]],style.accent,1.6);
+ const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,q,reduced),{hip,shoulder,legs,arms}=pose;
+ const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
+ c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
+ // Both legs are real filled contours; contact QA inspects their raster pixels.
+ paintLeg(c,legs[0],[2,2.05,1.35,1.45,.72],ink);
+ paintLeg(c,legs[1],[2.15,2.2,1.4,1.55,.75],ink);
+ contour(c,limbContour(arms[0],[1.65,1.5,1.05,.95,.65]),ink);
+ const bob=pose.bob,lean=character==='elder'?2:0;
+ c.beginPath();c.moveTo(hip[0]-2.1,hip[1]+1);c.bezierCurveTo(-2.5,-23+bob,-1.4,-28+bob,shoulder[0]-1.5,shoulder[1]-1.3);
+ c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-35.5+bob);c.lineTo(5.4+lean,-35.3+bob);
+ c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(7,-27+bob,3,-23+bob,hip[0]+2.6,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
+ contour(c,limbContour(arms[1],[1.7,1.55,1.1,1,.7]),ink);
+ const headX=character==='elder'?6:4,headY=-38.5+bob;oval(c,headX,headY,2.65,3.9,ink);
+ if(character==='woman')contour(c,[[2,-41+bob],[-.5,-39+bob],[-.8,-35+bob],[-5,-33+bob],[-2.8,-36+bob],[.8,-41.5+bob]],ink);
+ if(character==='elder')contour(c,[[-1,-30+bob],[-4,-29+bob],[-4.8,-24+bob],[.5,-21+bob],[2,-26+bob]],ink);
+ if(style.detail==='leaf')contour(c,[[2,-43],[5,-45],[7,-43.5],[4,-42]],style.accent);
+ if(style.detail==='star')oval(c,1,-43,1,1,style.accent);
+ if(style.detail==='comet')contour(c,[[1,-40],[-4,-42],[-9,-40.5],[-4,-43.5]],style.accent);
  c.restore();return true;
 }
+
 function dog(c,q,fx={},reduced=false){
  if(!q)return;const phase=reduced?0:(q.strideDistance??(fx.poseTime??fx.t??0)*100)/(70/3),air=(q.height||0)>1;
- const ink=look().body,light=ink==='#fff8de';c.save();c.translate(q.x,q.y);const basis=actorBasis(q);c.rotate(basis.angle);c.scale((q.bodyHeight||23)/23,(q.bodyHeight||23)/23*basis.sign);
- const limbs=[];for(let i=0;i<4;i++){const front=i>=2,x=front?7:-9,u=((phase+(i%2)*.5+(front?.12:0))%1+1)%1,foot=air?[x+(i%2?4:-4),-4]:u<.6?[x+7-14*u/.6,0]:[x-7+14*(u-.6)/.4,-6*Math.sin(Math.PI*(u-.6)/.4)];limbs.push([[x,-10],[x+(front?-2:2),-5],foot])}
- for(const width of light?[4.8,2.8]:[2.8]){const color=light&&width===4.8?'#18121d':ink;for(const limb of limbs)line(c,limb,color,width);line(c,[[-11,-12],[-17,-16],[-19,-21+Math.sin(phase*TAU)*1.2]],color,width)}
- if(light)line(c,[[-11,-13],[7,-13],[11,-18],[17,-17]],'#18121d',10);line(c,[[-11,-13],[7,-13],[11,-18],[17,-17]],ink,7);line(c,[[10,-18],[8,-23],[14,-20]],ink,3);line(c,[[16,-17],[20,-15]],ink,3);c.restore();
+ const ink=fx.ink||look().body;c.save();c.translate(q.x,q.y);const basis=actorBasis(q);c.rotate(basis.angle);c.scale((q.bodyHeight||23)/23,(q.bodyHeight||23)/23*basis.sign);
+ for(let i=0;i<4;i++){const front=i>=2,x=front?7:-9,u=((phase+(i%2)*.5+(front?.12:0))%1+1)%1,foot=air?[x+(i%2?4:-4),-4]:u<.6?[x+7-14*u/.6,0]:[x-7+14*(u-.6)/.4,-6*Math.sin(Math.PI*(u-.6)/.4)];contour(c,limbContour([[x,-10],[x+(front?-2:2),-5],foot],[1.4,1.25,.9,.75,.5]),ink)}
+ contour(c,[[-13,-14],[-8,-17],[5,-16],[10,-21],[15,-22],[17,-18],[21,-16],[20,-14],[14,-13],[10,-9],[-8,-9],[-13,-11]],ink);
+ contour(c,[[9,-20],[8,-25],[14,-22],[13,-18]],ink);contour(c,[[-11,-12],[-16,-15],[-20,-21],[-17,-20],[-14,-16],[-10,-15]],ink);c.restore();
 }
 const themes=[['#121a2b','#43607a','#d6a582'],['#10252d','#306869','#8ddbc8'],['#231e38','#6d548a','#c2b0e5'],['#211e2e','#704e70','#ecadc2'],['#152924','#446844','#bed798'],['#302124','#87554b','#f2ba88'],['#152633','#38698b','#8bcee5'],['#211e36','#665c9a','#c2b4f2'],['#2d2224','#884d50','#f7a89d'],['#242237','#6a657b','#eed8a1']];
 function atmosphere(c,x,y,w,h,t,stage=0,gain=1){const p=themes[stage%10];
@@ -149,7 +172,7 @@ function cameraZoom(geo,opt={},run){
 function camera(viewport,geo,opt={},run){
  if(!geo.nativeRuntime||geo.boss||!geo.player)return null;
  const width=Math.max(1,viewport.width),height=Math.max(1,viewport.height),q=geo.player,basis=actorBasis(q);
- const baseScale=Math.min(width/384,height/480),zoom=cameraZoom(geo,opt,run),scale=baseScale;
+ const baseScale=Math.min(width/320,height/320),zoom=cameraZoom(geo,opt,run),scale=baseScale;
  // Track the displayed body centre, including interpolated jumps and turns.
  // A fixed screen target avoids the old direction-dependent orbit across the phone.
  const half=(q.bodyHeight||42.5)/2,targetX=q.x+basis.nx*half,targetY=q.y+basis.ny*half;
@@ -184,8 +207,8 @@ function hint(v,run){
  if((v.time||0)<6&&(run.inputCount||run.jumps||0)===0)return v.boss?'타이밍에 맞춰 탭':'탭하여 점프';
  return '';
 }
-function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="#e4d9a2"/><path d="M39 47L47 55L39 66M39 47L30 55L32 66M41 33L30 40L34 46M41 33L51 40L55 34" fill="none" stroke="'+item.body+'" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M41 33L39 47" stroke="'+item.body+'" stroke-width="5" stroke-linecap="round"/><circle cx="42" cy="24" r="5" fill="'+item.body+'"/></svg>'}
-function narrative(c,x,y,h,pose,t,reduced){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t},reduced)}
+function icon(item){return '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35" fill="#9eacac"/><g fill="'+item.body+'"><path d="M39 43Q35 49 29 52Q27 54 31 63L33 65L34 64L33 62L32 54Q40 52 42 47L48 53L41 63L40 65L44 65L45 63L53 54Q54 51 43 43L46 32L45 29L42 29Q42 35 39 43Z"/><path d="M43 33Q37 33 32 40L35 47L38 47L37 44L36 40L42 37Q48 41 53 40L56 35L54 33L51 37L46 33Z"/><ellipse cx="44" cy="24" rx="3.5" ry="5"/></g></svg>'}
+function narrative(c,x,y,h,pose,t,reduced,ink){return sprite(c,{x,y,bodyHeight:h,pose,tangent:{x:1,y:0}},{poseTime:t,ink},reduced)}
 function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=host.progress;try{selected=decode(host.storage.getItem(KEY))}catch(_){saved=false}
  function render(){const n=count(progress()),equipped=look();$('wardrobeCount').textContent=n+' / 100개의 기억';$('wardrobeStatus').textContent=saved?'기억을 모으면 새로운 옷이 열려요.':'이번 실행에만 옷을 보관할 수 있어요.';
   for(const item of looks){const b=$('look-'+item.id),owned=available(item.id,n);b.disabled=!owned;b.setAttribute('aria-pressed',String(equipped.id===item.id));b.setAttribute('aria-label',item.name+(owned?equipped.id===item.id?' · 입는 중':' · 입기':' · 기억 '+item.at+'개 필요'));b.querySelector('small').textContent=owned?equipped.id===item.id?'입는 중':'입기':'기억 '+item.at+'개'}
@@ -195,5 +218,5 @@ function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=h
  $('shopOpen').textContent='옷장';$('shopOpen').onclick=e=>{host.open(e);render();$('wardrobeClose').focus({preventScroll:true})};
  render();return {render,view:()=>({selected:look().id,saved,collected:count(progress())})};
 }
-const api={joint,gait,actorBasis,worldPalette,nativeSupport,looks,available,decode,count,look,clock,sprite,dog,narrative,title,exterior,chamber,camera,cameraZoom,requestImmersive,hud,hint,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
+const api={joint,gait,actorBasis,contour,limbContour,worldPalette,nativeSupport,looks,available,decode,count,look,clock,sprite,dog,narrative,title,exterior,chamber,camera,cameraZoom,requestImmersive,hud,hint,mount,storageKey:KEY};root.MongyuMobile=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

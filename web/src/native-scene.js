@@ -95,33 +95,34 @@ function morph(c,geo,scene,run,opt,p,u,player){
   const q=point(mix(b.oldX[i],b.newX[i]),mix(b.oldY[i],b.newY[i]),scene),frame=u<.5?b.oldCommands[i]:b.newCommands[i];
   c.fillStyle=frame%3===0?p[2]:p[1];c.fillRect(q.x-(scene.mask?8:0),q.y-(scene.mask?8:16),15,15);
  }
- if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true},!!opt.reduced,geo.characterId);
+ if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},!!opt.reduced,geo.characterId);
 }
 
 function draw(c,run,opt,geo){
  const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=M.worldPalette(scene.palette),special=scene.split||geo.boss;
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
  const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
- c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
+ const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
+ c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);if(art&&profile)art.draw(c,cam,profile,p,run.time||0,reduced);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
   for(const cell of group.cells)tile(c,cell,scene,p);c.globalAlpha=1;
   if(!reduced)effects(c,group,scene,p);
-  if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true},reduced,geo.characterId)}}
+  if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId)}}
   c.restore();
  }
  if(scene.transition)morph(c,geo,scene,run,opt,p,progress,player);
  if(!scene.split&&!scene.transition){
   const visible=scene.groups.some(g=>g.actors.some(a=>a.role==='current-actor'));
-  if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true},reduced);
-  if(visible||scene.groups.length===0)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true},reduced,geo.characterId);
+  if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);
+  if(visible||scene.groups.length===0)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
   if(scene.phase==='notification'){
    const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=p[1];c.fillText('…',x,y-2);c.restore();
   }
- }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true},reduced,geo.characterId);
+ }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
  c.restore();
  if(geo.boss&&geo.boss.maxHp>0){c.save();const w=Math.min(140,cam.width*.35),x=(cam.width-w)/2,y=64;c.fillStyle=p[1];c.fillRect(x,y,w,4);c.fillStyle=p[3];c.fillRect(x,y,w*clamp(geo.boss.hp/geo.boss.maxHp,0,1),4);c.restore()}
- if(scene.countdown>0){c.save();c.textAlign='center';c.textBaseline='middle';c.font='600 48px sans-serif';c.fillStyle=p[1];c.fillText(String(Math.ceil(scene.countdown/10)),cam.width/2,cam.height*.42);c.restore()}
+ if(scene.countdown>0){c.save();c.textAlign='center';c.textBaseline='middle';c.font='600 48px sans-serif';c.fillStyle=p[1];c.fillText(String(Math.ceil(scene.countdown/10)),cam.width/2,cam.height*.3);if(profile){c.font='500 16px sans-serif';c.fillText(profile.title,cam.width/2,cam.height*.3-48)}c.restore()}
  return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1};
 }
 const api={snapshot,geometry,overview,point,tileBounds,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;

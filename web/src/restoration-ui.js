@@ -41,7 +41,8 @@ function sceneStage(slot,index,kind,mark=''){
  if(id==='dog')return {beat:'companions',actors:[actor('walker',285,mark),actor('dog-only',490,'')]};
  return {beat:'journey',actors:[actor(id,360,mark)]};
 }
-function sceneElder(c,x,y,height){
+function sceneElder(c,x,y,height,ink='#18121d'){
+ if(root.MongyuMobile){root.MongyuMobile.sprite(c,{x,y,bodyHeight:height,pose:'stand',tangent:{x:1,y:0}},{ink},true,'elder');c.save();c.strokeStyle=ink;c.lineWidth=height/100;c.beginPath();c.moveTo(x+height*.2,y-height*.5);c.lineTo(x+height*.23,y);c.stroke();c.restore();return;}
  // Separate standing visitor: gameplay's elder renderer carries the runner.
  c.save();c.translate(x,y);c.scale(height/100,height/100);c.strokeStyle='#f6f3e9';c.fillStyle='#f6f3e9';c.lineWidth=4;c.lineCap='round';
  c.beginPath();c.arc(0,-83,7,0,Math.PI*2);c.fill();
@@ -128,9 +129,9 @@ function mount(host){
  }
  function reaction(){if(scene?.graph)return '';return scene?.intro?.reaction??scene?.vignette?.reactions[scene.index]??STORY_REACTIONS[(scene.slot||selected).number]?.[scene.index]??''}
  // Native marker meanings, independently drawn shapes. Cadence is authored.
- function drawNativeMarker(c,marker,x,y,size){
+ function drawNativeMarker(c,marker,x,y,size,ink='#18121d'){
   c.save();c.translate(x,y);c.scale(size/24,size/24);c.lineWidth=2.6;c.lineCap='round';
-  c.fillStyle=marker.kind==='heart'?'#ed4776':marker.kind==='blue-drop'?'#79caff':'#f6f3e9';c.strokeStyle=c.fillStyle;
+  c.fillStyle=marker.kind==='heart'?'#ed4776':marker.kind==='blue-drop'?'#32528c':ink;c.strokeStyle=c.fillStyle;
   c.beginPath();
   if(marker.kind==='heart'){c.moveTo(0,9);c.bezierCurveTo(-22,-4,-7,-17,0,-7);c.bezierCurveTo(7,-17,22,-4,0,9);c.fill()}
   else if(marker.kind==='blue-drop'){c.moveTo(0,-13);c.bezierCurveTo(-3,-5,-9,0,-8,5);c.bezierCurveTo(-7,15,7,15,8,5);c.bezierCurveTo(9,0,3,-5,0,-13);c.fill()}
@@ -138,8 +139,8 @@ function mount(host){
   else if(marker.kind==='exclamation'){c.moveTo(0,-12);c.lineTo(0,4);c.stroke();c.fillRect(-1.6,8,3.2,3.2)}
   c.restore();
  }
- function drawNarrativePose(c,x,y,h,pose,t,reduced){
-  if(root.MongyuMobile)return root.MongyuMobile.narrative(c,x,y,h,pose,t,reduced);
+ function drawNarrativePose(c,x,y,h,pose,t,reduced,ink){
+  if(root.MongyuMobile)return root.MongyuMobile.narrative(c,x,y,h,pose,t,reduced,ink);
   const wave=reduced?1:(Math.sin(t*3)+1)/2,turn=pose==='turn-head'?(reduced?0.55:Math.sin(t*2.4)):0;
   c.save();c.translate(x,y);c.scale(h/100,h/100);c.strokeStyle='#f6f3e9';c.fillStyle='#f6f3e9';c.lineWidth=5;c.lineCap='round';
   c.fillRect(-7+turn*4,-100,14,16);c.fillRect(-8,-81,16,39);
@@ -156,7 +157,7 @@ function mount(host){
   const effect=scene.vignette?.effect||'',reduced=host.reduced?.(),phase=Math.min(1,(scene.elapsed-scene.beatAt)/.6);
   const lift=effect==='levitate'&&scene.index<2?(scene.index===0?(reduced?35:35*phase):70):0;
   canvas.dataset.character=id;canvas.dataset.reaction=reaction();canvas.dataset.effect=effect;canvas.setAttribute('aria-label',(C.characters.find(x=>x.id===id)?.name||'길')+' · '+(scene.vignette?.name||scene.intro?.name||'이야기'));
-  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0};
+  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0,ink:root.MongyuStagecraft?.inkFor(root.MongyuMobile.worldPalette((slot.chapter||1)-1)[0],root.MongyuMobile.look().body)||'#18121d'};
   canvas.dataset.actors=stage.actors.map(a=>a.id).join(',');canvas.dataset.beat=stage.beat;
   canvas.dataset.roles=stage.actors.map(a=>a.sourceRole).join(',');
   canvas.dataset.speakerLane=String(stage.speakerLane??'');canvas.dataset.markerCode=String(stage.markerCode??'');canvas.dataset.renderCode=String(stage.nativeRenderCode??'');
@@ -172,14 +173,14 @@ function mount(host){
   for(const actor of stage.actors){
    const x=actor.x,dog=actor.id==='dog-only',red=actor.id==='red-form',h=red?bodyHeight*.18:dog?bodyHeight*.4:bodyHeight;
    c.save();if(actor.facing===-1||effect==='look-back'&&scene.index<2){c.translate(x*2,0);c.scale(-1,1)}
-   if(actor.pose)drawNarrativePose(c,x,baseline,h,actor.pose,scene.elapsed,!!reduced);
-   else if(actor.id==='elder-alone')sceneElder(c,x,baseline,bodyHeight);
+   if(actor.pose)drawNarrativePose(c,x,baseline,h,actor.pose,scene.elapsed,!!reduced,fx.ink);
+   else if(actor.id==='elder-alone')sceneElder(c,x,baseline,bodyHeight,fx.ink);
    else if(red){c.fillStyle='#ed4776';for(const [dx,dy,w,h]of [[-20,-12,40,12],[-12,-20,24,8],[-4,-27,12,7]])c.fillRect(x+dx,baseline+dy,w,h)}
    else A.characters(c,{characterId:dog?'dog':actor.id,player:dog?null:{x,y:baseline-lift,tangent:{x:1,y:0},height:lift,bodyHeight:h},companion:dog?{x,y:baseline,tangent:{x:1,y:0},bodyHeight:h}:null},fx,true);
    c.restore();
-   if(actor.marker)drawNativeMarker(c,actor.marker,x+42,Math.max(28,baseline-h-15),short?22:30);
-   if(actor.activeSpeaker&&scene.graph){const by=Math.max(22,baseline-h-20);c.strokeStyle='#f6f3e9';c.lineWidth=2;c.beginPath();c.ellipse(x,by,30,15,0,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(x-6,by+14);c.lineTo(x-12,by+24);c.lineTo(x+4,by+15);c.stroke();c.fillStyle='#f6f3e9';for(const dx of [-10,0,10])c.fillRect(x+dx-2,by-2,4,4)}
-   c.fillStyle='#f6f3e9';c.font='900 '+(short?26:38)+'px sans-serif';c.textAlign='center';c.fillText(actor.reaction,x+10,Math.max(28,baseline-h-(red?35:lift+12)));
+   if(actor.marker)drawNativeMarker(c,actor.marker,x+42,Math.max(28,baseline-h-15),short?22:30,fx.ink);
+   if(actor.activeSpeaker&&scene.graph){const by=Math.max(22,baseline-h-20);c.strokeStyle=fx.ink;c.lineWidth=2;c.beginPath();c.ellipse(x,by,30,15,0,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(x-6,by+14);c.lineTo(x-12,by+24);c.lineTo(x+4,by+15);c.stroke();c.fillStyle=fx.ink;for(const dx of [-10,0,10])c.fillRect(x+dx-2,by-2,4,4)}
+   c.fillStyle=fx.ink;c.font='900 '+(short?26:38)+'px sans-serif';c.textAlign='center';c.fillText(actor.reaction,x+10,Math.max(28,baseline-h-(red?35:lift+12)));
   }
   if(effect==='ringtone'){c.font='700 24px sans-serif';c.textAlign='right';c.fillText(scene.index===2?'…':'따르릉',650,Math.max(40,baseline-bodyHeight/2));}
   c.restore();

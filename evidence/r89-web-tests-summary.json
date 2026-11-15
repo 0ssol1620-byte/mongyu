@@ -1,0 +1,12 @@
+{
+  "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/43688251721",
+  "commit": "9dfe576465f62b8fb21d72bcd21015a90d6338f8",
+  "tests": 168,
+  "pass": 167,
+  "fail": 0,
+  "skipped": 1,
+  "skippedScope": "external adapter unavailable; not counted as a pass",
+  "androidWrapperTests": 5,
+  "androidWrapperPass": 5,
+  "generatedHtmlSha256": "e80f5c4fe42638d4ea852ad8ec55143675ab294b676a481af8745f098646dc12"
+}

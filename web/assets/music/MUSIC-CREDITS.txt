@@ -1,9 +1,11 @@
-MONGYU R82 soundtrack
+MONGYU R89 soundtrack
 
-All 12 recordings in manifest.json are original procedural compositions for MONGYU. They contain no NOM recordings or third-party samples.
+All 15 recordings in manifest.json are project-original compositions. No NOM recordings, melodies, or third-party samples are included.
 
 Night Corners: tools/compose_night_score.py
-Ten chapter themes and Heart Circuit: tools/compose_chapter_scores.py
-Synthesized using NumPy, encoded with FFmpeg/libmp3lame. Each file is pinned by SHA-256 in manifest.json. Runtime volume, looping and crossfades apply. Composition ownership follows the project; no third-party license is claimed for original work.
+Ten map arrangements and four boss arrangements: tools/compose_map_scores.py
+Melodic foundations: tools/compose_chapter_scores.py
 
-Earlier builds shipped Raving Energy (faster) by Kevin MacLeod and Racket and Bang by TeknoAXE under CC BY 4.0. Those recordings are absent from the R82 distribution. The historical CC-BY-4.0.txt is retained for earlier versions only.
+NumPy synthesis, FFmpeg/libmp3lame encoding. Marimba, electric piano, glass, mallet, water keys, resonant pulse, strings and bells are synthesized, not sampled. Each file is pinned by SHA-256. Runtime volume, looping and crossfades apply. Project ownership applies; no third-party license is claimed for original work.
+
+The retained CC-BY-4.0.txt concerns recordings distributed in older versions, absent from this build.

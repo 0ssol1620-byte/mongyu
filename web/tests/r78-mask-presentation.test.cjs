@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const web=path.resolve(__dirname,'..');
 function load(inline){
- const context=vm.createContext({structuredClone}),html=inline?fs.readFileSync(path.join(web,'MONGYU_R88.html'),'utf8'):null;
+ const context=vm.createContext({structuredClone}),html=inline?fs.readFileSync(path.join(web,'MONGYU_R89.html'),'utf8'):null;
  const scripts=html?[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]):[];
  for(const name of ['native-kernels.js','native-restoration-run.js','restoration-catalog.js','square-art.js']){
   const source=fs.readFileSync(path.join(web,'src',name),'utf8'),normalized=s=>s.replaceAll('\r\n','\n').trim();
