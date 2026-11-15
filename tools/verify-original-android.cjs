@@ -26,17 +26,25 @@ async function connect(){
 async function tap(id){const q=await evaluate(`(()=>{const e=document.getElementById(${JSON.stringify(id)});if(!e||e.disabled||e.hidden)return null;e.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});const r=e.getBoundingClientRect();return r.width&&r.height?{x:r.x+r.width/2,y:r.y+r.height/2}:null})()`);assert.ok(q,id+' is visible');await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[q]});await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(100)}
 async function screenshot(name){await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));fs.writeFileSync(path.join(out,name+'-android.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:16*1024*1024}))}
 function xmlNodes(xml){return [...xml.matchAll(/<node\b[^>]+>/g)].map(m=>Object.fromEntries([...m[0].matchAll(/([\w-]+)="([^"]*)"/g)].map(x=>[x[1],x[2]])))}
-function androidTapLabel(label){adb('shell','uiautomator','dump','/sdcard/mongyu-picker.xml');const xml=adb('shell','cat','/sdcard/mongyu-picker.xml'),node=xmlNodes(xml).find(n=>(n.text===label||n['content-desc']===label)&&n.bounds);if(!node)return false;const b=node.bounds.match(/\[(\d+),(\d+)\]\[(\d+),(\d+)\]/);adb('shell','input','tap',String((+b[1]+ +b[3])/2),String((+b[2]+ +b[4])/2));return true}
+async function androidSnapshot(){
+ for(let attempt=0;attempt<8;attempt++){
+  try{const result=adb('shell','uiautomator','dump','--compressed','/sdcard/mongyu-picker.xml');if(result.includes('dumped')){const xml=adb('shell','cat','/sdcard/mongyu-picker.xml');if(xml.includes('<hierarchy'))return {xml,nodes:xmlNodes(xml)}}}catch(_){}
+  await delay(350);
+ }
+ throw Error('System picker accessibility tree did not settle');
+}
+async function androidTapLabel(label,snapshot){const {nodes}=snapshot||await androidSnapshot(),node=nodes.find(n=>(n.text===label||n['content-desc']===label)&&n.bounds);if(!node)return false;const b=node.bounds.match(/\[(\d+),(\d+)\]\[(\d+),(\d+)\]/);adb('shell','input','tap',String((+b[1]+ +b[3])/2),String((+b[2]+ +b[4])/2));return true}
+
 async function selectOriginal(){
  await tap('chooseOriginal');await delay(800);const file='MONGYU-original-qa.zip';report.pickerTrace=[];
  for(let i=0;i<8;i++){
-  adb('shell','uiautomator','dump','/sdcard/mongyu-picker.xml');const xml=adb('shell','cat','/sdcard/mongyu-picker.xml'),nodes=xmlNodes(xml);report.pickerTrace.push(nodes.filter(n=>n.text||n['content-desc']).map(n=>n.text||n['content-desc']));
+  const snapshot=await androidSnapshot(),{xml,nodes}=snapshot;report.pickerTrace.push(nodes.filter(n=>n.text||n['content-desc']).map(n=>n.text||n['content-desc']));
   if(xml.includes("Quickstep isn&amp;apos;t responding")||xml.includes("Quickstep isn't responding")||xml.includes('Quickstep isn&apos;t responding')){
-   assert.ok(androidTapLabel('Close app'),'dismiss only the explicitly identified system launcher ANR');(report.environmentIssues??=[]).push('First-boot Quickstep ANR dialog dismissed; never an application ANR');await delay(700);continue;
+   assert.ok(await androidTapLabel('Close app',snapshot),'dismiss only the explicitly identified system launcher ANR');(report.environmentIssues??=[]).push('First-boot Quickstep ANR dialog dismissed; never an application ANR');await delay(700);continue;
   }
-  if(androidTapLabel(file))return;
+  if(await androidTapLabel(file,snapshot))return;
   if(xml.includes('원본 파일 열기')){await tap('chooseOriginal');await delay(500);continue}
-  androidTapLabel('Show roots');await delay(250);androidTapLabel('Downloads');await delay(450);
+  await androidTapLabel('Show roots');await delay(250);await androidTapLabel('Downloads');await delay(450);
  }
  throw Error('Original file was not reachable in the actual system picker');
 }

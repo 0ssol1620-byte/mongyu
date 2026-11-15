@@ -42,6 +42,9 @@ export async function prepareOriginal(bytes,name){
  const entries=zipIndex(bytes),inner=entries.filter(r=>r.name.toLowerCase().endsWith('.jar'));let jar,archive=bytes,engineName='original.jar';
  if(inner.length){if(inner.length!==1)throw Error('게임 하나만 들어 있는 원본 ZIP을 선택해 주세요.');jar=await unzipEntry(bytes,inner[0]);engineName='original.zip'}else jar=bytes;
  const resources=zipIndex(jar),names=new Set(resources.map(r=>r.name));
+ // Validate real output lengths and CRCs, not only the untrusted ZIP directory.
+ let verified=0;for(const row of resources){await unzipEntry(jar,row);if(++verified%16===0)await new Promise(resolve=>setTimeout(resolve,0))}
+ if(inner.length)for(const row of entries){if(row!==inner[0])await unzipEntry(bytes,row)}
  for(const required of ['nom1.pzx','dog1.pzx','gm1.pzx','nyun1.pzx','GETSKINTABLE.bin','BgmStage01.mmf','BgmStage10.mmf'])if(!names.has(required))throw Error('놈3 KTF 원본 구성으로 확인되지 않았습니다. 실행 파일과 리소스가 함께 든 파일을 선택해 주세요.');
  if(!resources.some(r=>/^client\.bin\d+$/.test(r.name)))throw Error('원본 실행 파일이 없습니다.');
  const id=await sha256(bytes),jarDigest=await sha256(jar),adf=entries.find(r=>r.name.endsWith('__adf__'));

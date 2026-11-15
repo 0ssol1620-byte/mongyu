@@ -36,3 +36,6 @@ test('future saves fail closed and recovered corruption is archived before the f
  const storage=memory(),journal=new SaveJournal(id,storage);journal.write(snapshot('one'));journal.write(snapshot('two'));storage.data.set(journal.key,'damaged');const recovered=new SaveJournal(id,storage);assert.equal(recovered.load().recovered,true);recovered.write(snapshot('three'));assert.equal(storage.getItem(journal.key+'.damaged'),'damaged');
  const before=storage.getItem(journal.key);storage.data.set(journal.key+'.backup','{"schema":2}');assert.throws(()=>new SaveJournal(id,storage).load(),/새 버전/);assert.equal(storage.getItem(journal.key),before);
 });
+test('a corrupted inner resource cannot pass a valid outer JAR container check',async()=>{
+ const jar=fakeResources(),index=zipIndex(jar),bad=jar.slice();bad[index[0].start]^=1;const wrapped=storedZip([['original.jar',bad],['__adf__',bytes('MClass:Nom3\n')]]);await assert.rejects(prepareOriginal(wrapped,'bad.zip'),/검사/);
+});
