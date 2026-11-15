@@ -16,9 +16,9 @@ async function connect(){
  const pid=await waitFor(()=>adb('shell','pidof',pkg).split(' ')[0],'app process');
  await waitFor(()=>adb('shell','cat','/proc/net/unix').includes('webview_devtools_remote_'+pid),'WebView debug socket');
  adb('forward','tcp:9223','localabstract:webview_devtools_remote_'+pid);
- const target=await waitFor(async()=>{const rows=await(await fetch('http://127.0.0.1:9223/json')).json();return rows.find(r=>r.url==='https://appassets.androidplatform.net/index.html')},'packaged page');
+ const target=await waitFor(async()=>{const rows=await(await fetch('http://127.0.0.1:9223/json',{signal:AbortSignal.timeout(5000)})).json();return rows.find(r=>r.url==='https://appassets.androidplatform.net/index.html')},'packaged page');
  ws=new WebSocket(target.webSocketDebuggerUrl);
- await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=()=>reject(Error('WebView WebSocket failed'));});
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{ws.close();reject(Error('WebView WebSocket handshake timed out'))},10000);ws.onopen=()=>{clearTimeout(timer);resolve()};ws.onerror=()=>{clearTimeout(timer);reject(Error('WebView WebSocket failed'))};});
  ws.onmessage=e=>{const m=JSON.parse(e.data),p=pending.get(m.id);if(p){clearTimeout(p.timer);pending.delete(m.id);if(m.error)p.reject(Error(JSON.stringify(m.error)));else p.resolve(m.result)}else if(m.method==='Runtime.exceptionThrown')report.errors.push(m.params.exceptionDetails.text)};
  ws.onclose=()=>{for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('renderer disconnected'))}pending.clear()};
  await send('Runtime.enable');await waitFor(()=>evaluate('!!window.QUAD_RIFT_APP'),'game initialization');return pid;
@@ -33,7 +33,9 @@ async function crashRenderer(){try{await send('Page.crash')}catch(_){}await dela
  assert.equal(await evaluate('QUAD_RIFT_APP.getState().state'),'title');await screenshot('title');
  await tap('titleContinue');await tap('restorationSceneNext');await tap('restorationSceneNext');await tap('restorationStart');
  await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun()?.updates>=45'),'post-countdown native movement');
- assert.equal(await state(),'play');const coverage=await evaluate('(()=>{const r=document.getElementById("stage").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,screenWidth:innerWidth,screenHeight:innerHeight}})()');assert.equal(coverage.x,0);assert.equal(coverage.y,0);assert.equal(coverage.width,coverage.screenWidth);assert.equal(coverage.height,coverage.screenHeight);report.checks.push({name:'actual fullscreen native play',coverage});
+ assert.equal(await state(),'play');const coverage=await evaluate('(()=>{const r=document.getElementById("stage").getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,screenWidth:innerWidth,screenHeight:innerHeight}})()');report.checks.push({name:'actual fullscreen native play',coverage});assert.equal(coverage.x,0);assert.equal(coverage.y,0);
+ // Android's integer innerWidth/Height round fractional CSS pixels at noninteger DPR.
+ assert.ok(Math.abs(coverage.width-coverage.screenWidth)<1);assert.ok(Math.abs(coverage.height-coverage.screenHeight)<1);
  for(let i=0;i<4;i++){await tap('game');await delay(250)}await screenshot('play');
  await tap('pause');assert.equal(await state(),'pause');let time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');
  adb('shell','input','keyevent','4');await waitFor(async()=>await state()==='pause','Android back pause');time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);report.checks.push({name:'native back cancels input and freezes simulation',passed:true});

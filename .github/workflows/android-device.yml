@@ -23,8 +23,26 @@ jobs:
         with:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
+      - uses: actions/cache/restore@v4
+        id: web-cache
+        with:
+          path: ci/web-tests-passed
+          key: web-node22-${{ hashFiles('web/**', 'scripts/test.py', 'scripts/test-build-portability.py', 'scripts/verify-snapshot.py') }}
       - name: Check exact web payload
-        run: python3 scripts/test.py
+        run: |
+          if [ '${{ steps.web-cache.outputs.cache-hit }}' = 'true' ]; then
+            python3 web/build.py
+            python3 scripts/verify-snapshot.py
+          else
+            python3 scripts/test.py
+          fi
+          mkdir -p ci/web-tests-passed
+          cp web/build-manifest.json ci/web-tests-passed/
+      - uses: actions/cache/save@v4
+        if: steps.web-cache.outputs.cache-hit != 'true'
+        with:
+          path: ci/web-tests-passed
+          key: ${{ steps.web-cache.outputs.cache-primary-key }}
       - name: Prepare SDK and QA packages
         run: |
           export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
