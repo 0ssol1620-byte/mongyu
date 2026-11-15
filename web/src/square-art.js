@@ -87,15 +87,15 @@ function velocity(c,cam,geo,fx){if(!fx.gain||!geo.feel)return;const b=geo.bounds
  c.restore();
 }
 // A short tapered wake follows the actual facing direction; it carries no collision meaning.
-function wake(c,geo,fx,reduced){const q=geo.player;if(!q||reduced||!geo.feel)return;const tier=fx.tier||0;c.save();c.translate(q.x,q.y);c.rotate(Math.atan2(q.tangent?.y||0,q.tangent?.x??1));
+function wake(c,geo,fx,reduced){const q=geo.player;if(!q||reduced||!geo.feel)return;const tier=fx.tier||0;c.save();c.translate(q.x,q.y);c.rotate((q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)));
  for(let i=0;i<3+tier;i++){const x=-24-i*15,y=-24+(i%3-1)*9;c.globalAlpha=(.36-i*.045)*fx.gain;line(c,[[x,y],[x-10-fx.pace*5,y]],INK,7);line(c,[[x,y],[x-10-fx.pace*5,y]],i%2?IVORY:fx.p.hot,2.5);}
  c.restore();
 }
 function inGap(geo,x,y){for(const g of geo.track?.gaps||[])if(Math.hypot(x-g.x,y-g.y)<g.width/2)return true;return false}
 function supportPath(c,geo){if(Array.isArray(geo.nativePaths)){c.beginPath();for(const path of geo.nativePaths){const points=Array.isArray(path)?path:path.points;let started=false;for(const p of points||[]){if(!Number.isFinite(p.x)||!Number.isFinite(p.y)){started=false;continue}if(started)c.lineTo(p.x,p.y);else{c.moveTo(p.x,p.y);started=true}}}return}const pts=geo.track?.points;if(pts?.length>1){c.beginPath();let started=false;const count=geo.track.closed!==false?pts.length+1:pts.length;for(let i=0;i<count;i++){const p=pts[i%pts.length],x=Array.isArray(p)?p[0]:p.x,y=Array.isArray(p)?p[1]:p.y;if(inGap(geo,x,y)){started=false;continue}if(started)c.lineTo(x,y);else{c.moveTo(x,y);started=true}}if(geo.track.closed!==false&&!(geo.track.gaps?.length))c.closePath();return}const b=geo.bounds;rounded(c,b.left,b.top,b.width||b.right-b.left,b.height||b.bottom-b.top,geo.room?.radius||0)}
 // q3 tiles use the actual occupied cells; decorative column profiles must not replace this contact layer.
-function nativeMaskSupport(c,cells,fx){c.save();for(const cell of cells){c.fillStyle=INK;c.fillRect(cell.x,cell.y,cell.width,cell.height);c.fillStyle=fx.p.wall;c.fillRect(cell.x+1,cell.y+1,cell.width-2,cell.height-2);c.fillStyle=IVORY;c.fillRect(cell.x+2,cell.y+2,cell.width-4,2);}c.restore();}
-function support(c,geo,fx){if(Array.isArray(geo.nativeMaskCells)){nativeMaskSupport(c,geo.nativeMaskCells,fx);return;}if(geo.faceCounter){faceArena(c,geo,fx);return;}if(geo.legSweep){aftermathFrame(c,geo,{...fx,p:{...fx.p,wall:'#70f344'}});return;}if(geo.boss?.ruleId==='boundary-strike')return heartSupport(c,geo,fx);c.save();supportPath(c,geo);c.globalAlpha=.6;c.strokeStyle=INK;c.lineWidth=24;c.lineJoin='round';c.lineCap='round';c.stroke();c.restore();supportPath(c,geo);c.strokeStyle=INK;c.lineWidth=13;c.lineJoin='round';c.lineCap='round';c.stroke();supportPath(c,geo);c.strokeStyle=IVORY;c.lineWidth=3;c.stroke();
+function nativeMaskSupport(c,cells,fx){const p=root.MongyuMobile?.worldPalette(fx.stage);c.save();for(const cell of cells){c.fillStyle=p?((cell.row+cell.column)%3?p[1]:p[2]):fx.p.wall;c.fillRect(cell.x+.5,cell.y+.5,cell.width-1,cell.height-1);}c.restore();}
+function support(c,geo,fx){if(geo.nativeRuntime&&!Array.isArray(geo.nativeMaskCells)&&root.MongyuMobile?.nativeSupport(c,geo,fx))return;if(Array.isArray(geo.nativeMaskCells)){nativeMaskSupport(c,geo.nativeMaskCells,fx);return;}if(geo.faceCounter){faceArena(c,geo,fx);return;}if(geo.legSweep){aftermathFrame(c,geo,{...fx,p:{...fx.p,wall:'#70f344'}});return;}if(geo.boss?.ruleId==='boundary-strike')return heartSupport(c,geo,fx);c.save();supportPath(c,geo);c.globalAlpha=.6;c.strokeStyle=INK;c.lineWidth=24;c.lineJoin='round';c.lineCap='round';c.stroke();c.restore();supportPath(c,geo);c.strokeStyle=INK;c.lineWidth=13;c.lineJoin='round';c.lineCap='round';c.stroke();supportPath(c,geo);c.strokeStyle=IVORY;c.lineWidth=3;c.stroke();
  const paths=Array.isArray(geo.nativePaths)?geo.nativePaths.map(p=>({points:Array.isArray(p)?p:p.points,closed:false})):[geo.track];for(const path of paths){const points=path?.points;if(points?.length>1){let carry=0,tile=0;const count=path.closed===false?points.length-1:points.length;for(let i=0;i<count;i++){const a=points[i],b=points[(i+1)%points.length],ax=Array.isArray(a)?a[0]:a.x,ay=Array.isArray(a)?a[1]:a.y,bx=Array.isArray(b)?b[0]:b.x,by=Array.isArray(b)?b[1]:b.y,len=Math.hypot(bx-ax,by-ay);if(!Number.isFinite(len)||len<.001)continue;for(let d=carry;d<len;d+=10){const x=ax+(bx-ax)*d/len,y=ay+(by-ay)*d/len;if(!inGap(geo,x,y)){c.fillStyle=tile++%3===0?fx.p.wall:IVORY;c.fillRect(x-3.2,y-3.2,6.4,6.4)}}carry=(carry-len)%10;if(carry<0)carry+=10;}}}
 }
 // One visible heart is the actual polyline collider. Colour feedback never moves it.
@@ -152,7 +152,7 @@ function womanRunner(c,phase,air,kick=0,climbing=false){const swing=Math.sin(pha
  for(const edge of [true,false]){const color=edge?INK:IVORY;for(const limb of [...legs,...arms])line(c,limb,color,edge?7.2:3.2);ellipse(c,5,-36,edge?5.5:3.6,edge?6.5:4.6,color)}
  polygon(c,[[0,-30],[7,-28],[5,-22],[9,-15],[-7,-15],[-2,-23]],'#b7b2ff',INK,2);line(c,[[0,-25],[5,-24]],IVORY,2);line(c,[[1,-39],[7,-40],[9,-37]],INK,2.4);
 }
-function dogCompanion(c,q,fx,reduced){if(!q)return;c.save();c.translate(q.x,q.y);c.rotate(Math.atan2(q.tangent?.y||0,q.tangent?.x??1));const scale=(q.bodyHeight||24)/22;c.scale(scale,scale);const stride=Math.sin(reduced?.8:fx.t*15),gold='#ffcb71';
+function dogCompanion(c,q,fx,reduced){if(!q)return;if(root.MongyuMobile?.dog)return root.MongyuMobile.dog(c,q,fx,reduced);c.save();c.translate(q.x,q.y);c.rotate((q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)));const scale=(q.bodyHeight||24)/22;c.scale(scale,scale);const stride=Math.sin(reduced?.8:fx.t*15),gold='#ffcb71';
  for(const edge of [true,false]){const color=edge?INK:gold,width=edge?5.5:2.4;line(c,[[-10,-10],[-16,-13],[-18,-18]],color,width);for(const x of [-8,7]){line(c,[[x,-9],[x+stride*4,-4],[x-stride*3,0]],color,width);line(c,[[x,-9],[x-stride*4,-4],[x+stride*3,0]],color,width)}}
  polygon(c,[[-12,-14],[6,-15],[10,-8],[-11,-7]],gold,INK,2.2);polygon(c,[[5,-16],[5,-22],[10,-18],[14,-18],[18,-13],[13,-9],[7,-10]],gold,INK,2);c.fillStyle=INK;c.fillRect(12,-16,2,2);c.fillRect(16,-13,3,2);line(c,[[6,-13],[7,-8]],'#b54764',2);c.restore();
 }
@@ -168,7 +168,7 @@ function runner(c,q,{p,t,gain,poseTime},reduced,characterId='walker'){if(root.Mo
  for(const edge of [true,false]){const color=edge?INK:IVORY,width=edge?7.2:3.2;for(const limb of [...legs,...arms])line(c,limb,color,width);line(c,[hip,[0,-23],shoulder],color,edge?8.4:4.4);ellipse(c,5,-36,edge?5.5:3.6,edge?6.5:4.6,color)}
  line(c,[[2,-28],[6,-25]],p.hot,3);c.restore();
 }
-function response(c,geo,fx,reduced){const q=geo.player;if(!q)return;const scale=(q.bodyHeight||60)/42.5;c.save();c.translate(q.x,q.y);c.rotate(Math.atan2(q.tangent?.y||0,q.tangent?.x??1));c.scale(scale,scale);
+function response(c,geo,fx,reduced){const q=geo.player;if(!q)return;const scale=(q.bodyHeight||60)/42.5;c.save();c.translate(q.x,q.y);c.rotate((q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)));c.scale(scale,scale);
  if((q.height||0)>3&&!reduced){for(const y of [-19,-11]){line(c,[[-18,y],[-29,y+5]],INK,6);line(c,[[-18,y],[-29,y+5]],IVORY,2.5)}}
  const f=geo.feedback;if(f&&['perfect','seal','hit'].includes(f.kind)){const u=reduced?0:1-clamp(f.remaining/(f.kind==='hit'?1.2:f.kind==='seal'?1:.65),0,1),spread=5+u*15;c.globalAlpha=reduced?.9:1-u;
   for(let i=0;i<3;i++){const x=-18-spread-i*6,y=-23+(i-1)*12;c.fillStyle=INK;c.fillRect(x-4,y-4,8,8);c.fillStyle=f.kind==='hit'?PINK:fx.p.hot;c.fillRect(x-2.5,y-2.5,5,5)}
@@ -177,7 +177,7 @@ function response(c,geo,fx,reduced){const q=geo.player;if(!q)return;const scale=
   for(let i=0;i<count;i++){const a=ground?Math.PI+(i/(count-1))*Math.PI:i*TAU/count,x=Math.cos(a)*spread,y=centerY+Math.sin(a)*spread*.65;line(c,[[x,y],[x+Math.cos(a)*7,y+Math.sin(a)*5]],INK,6);line(c,[[x,y],[x+Math.cos(a)*7,y+Math.sin(a)*5]],impact.kind==='hit'?PINK:fx.p.hot,2.5);}
  }c.restore();
 }
-function portal(c,q,fx){if(!q||q.visible===false||!Number.isFinite(q.x)||!Number.isFinite(q.y))return;c.save();c.translate(q.x,q.y);c.rotate(Math.atan2(q.tangent?.y||0,q.tangent?.x??1));const w=q.width||24,h=q.height||48,open=q.open!==false;c.fillStyle=INK;c.fillRect(-w/2-5,-h-4,w+10,h+6);c.strokeStyle=open?fx.p.hot:IVORY;c.lineWidth=4;c.strokeRect(-w/2,-h,w,h);c.fillStyle=open?IVORY:fx.p.fold;c.fillRect(-w/2+5,-h+5,w-10,h-5);if(!open){c.fillStyle=IVORY;c.fillRect(-w/2+3,-h*.65,w-6,4);c.fillRect(-w/2+3,-h*.35,w-6,4)}else{c.fillStyle=fx.p.hot;c.fillRect(-3,-h-11,6,6)}c.restore()}
+function portal(c,q,fx){if(!q||q.visible===false||!Number.isFinite(q.x)||!Number.isFinite(q.y))return;c.save();c.translate(q.x,q.y);c.rotate((q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)));const w=q.width||24,h=q.height||48,open=q.open!==false;c.fillStyle=INK;c.fillRect(-w/2-5,-h-4,w+10,h+6);c.strokeStyle=open?fx.p.hot:IVORY;c.lineWidth=4;c.strokeRect(-w/2,-h,w,h);c.fillStyle=open?IVORY:fx.p.fold;c.fillRect(-w/2+5,-h+5,w-10,h-5);if(!open){c.fillStyle=IVORY;c.fillRect(-w/2+3,-h*.65,w-6,4);c.fillRect(-w/2+3,-h*.35,w-6,4)}else{c.fillStyle=fx.p.hot;c.fillRect(-3,-h-11,6,6)}c.restore()}
 function bossLane(geo){return Number.isFinite(geo.boss?.targetLane)?geo.boss.targetLane:1}
 
 
@@ -216,7 +216,7 @@ function attacks(c,geo,fx){if(geo.faceCounter){faceArt(c,geo,fx);return;}if(geo.
  const s=a.size||28;c.save();c.translate(a.target.x,a.target.y);c.strokeStyle=IVORY;c.lineWidth=2;c.strokeRect(-s*.65,-s*.65,s*1.3,s*1.3);c.restore();
  if(a.phase==='flight'){c.fillStyle=INK;c.fillRect(a.x-s/2-3,a.y-s/2-3,s+6,s+6);c.fillStyle=fx.p.hot;c.fillRect(a.x-s/2,a.y-s/2,s,s);c.fillStyle=INK;c.fillRect(a.x-5,a.y-5,10,10)}
  }
- for(const q of geo.projectiles||[]){if(q.phase==='waiting'||q.phase==='cleared')continue;const w=q.width||16,h=q.height||w;c.fillStyle=INK;c.fillRect(q.x-w/2-3,q.y-h/2-3,w+6,h+6);c.fillStyle=q.owner==='player'?IVORY:fx.p.hot;if(q.decoy||q.phase==='decoy'){c.strokeStyle=IVORY;c.lineWidth=2;c.strokeRect(q.x-w/2,q.y-h/2,w,h)}else{c.fillRect(q.x-w/2,q.y-h/2,w,h);c.fillStyle=fx.p.fold;c.fillRect(q.x-w*.2,q.y-h*.2,w*.4,h*.4)}}
+ for(const q of geo.projectiles||[]){if(q.phase==='waiting'||q.phase==='cleared')continue;const w=q.width||16,h=q.height||w;if(geo.nativeRuntime){const p=root.MongyuMobile?.worldPalette(fx.stage);c.fillStyle=q.owner==='player'?'#fff8de':p?.[1]||INK;for(let x=0;x<w;x+=16)for(let y=0;y<h;y+=16)c.fillRect(q.x-w/2+x+.5,q.y-h/2+y+.5,Math.min(15,w-x),Math.min(15,h-y));continue;}c.fillStyle=INK;c.fillRect(q.x-w/2-3,q.y-h/2-3,w+6,h+6);c.fillStyle=q.owner==='player'?IVORY:fx.p.hot;if(q.decoy||q.phase==='decoy'){c.strokeStyle=IVORY;c.lineWidth=2;c.strokeRect(q.x-w/2,q.y-h/2,w,h)}else{c.fillRect(q.x-w/2,q.y-h/2,w,h);c.fillStyle=fx.p.fold;c.fillRect(q.x-w*.2,q.y-h*.2,w*.4,h*.4)}}
  if(geo.boss){const hp=Math.max(0,geo.boss.hp||0),max=Math.max(1,geo.boss.maxHp||hp),unit=23.5,phase=Number.isFinite(geo.boss.phase)?geo.boss.phase:({preview:0,ready:1,active:2,recover:3}[geo.boss.phase]||0),t=fx.t*fx.gain,kind=fx.stage,anticipate=['aim','telegraph','windup','ready'].includes(geo.boss.state||geo.boss.attackPhase||geo.boss.phase)?1:0;
   c.save();c.translate(geo.boss.x||0,geo.boss.y||0);c.scale((geo.boss.width||310)/310,(geo.boss.height||310)/310);c.rotate(kind===3||kind===8?Math.sin(t*.3)*.18:0);
   if(kind===1){const unit=13,headY=-127,aim=((bossLane(geo))-1)*95,stretch=anticipate?1:.25;const limb=(ax,ay,bx,by)=>{const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,by-ay)/14));for(let j=0;j<=n;j++){const f=j/n;c.fillStyle=j%3===0?'#39b562':'#b8ef46';c.fillRect(ax+(bx-ax)*f-unit/2,ay+(by-ay)*f-unit/2,unit,unit);c.strokeStyle=INK;c.lineWidth=1.4;c.strokeRect(ax+(bx-ax)*f-unit/2,ay+(by-ay)*f-unit/2,unit,unit)}};
@@ -242,7 +242,7 @@ function attacks(c,geo,fx){if(geo.faceCounter){faceArt(c,geo,fx);return;}if(geo.
 function actionCue(c,geo,fx,symbolScale=1){const cue=geo.cue,boss=geo.boss;if(!cue)return;
  if(boss&&Number.isFinite(cue.targetLane)&&['locked-lane','safe-lane-sequence'].includes(boss.ruleId)){for(const lane of geo.lanes||[]){const x=lane.x,selected=lane.index===cue.targetLane;c.globalAlpha=selected?.9:.4;c.strokeStyle=selected?(boss.ruleId==='locked-lane'?PINK:fx.p.hot):IVORY;c.lineWidth=selected?4:2;c.strokeRect(x-lane.width/2,lane.top,lane.width,lane.bottom-lane.top);if(selected){c.fillStyle=c.strokeStyle;c.fillRect(x-8,lane.top+5,16,16)}}c.globalAlpha=1;}
  if(boss&&['charge-release','open-shield','double-pulse','alternating-relay'].includes(boss.ruleId)){const x=boss.attackTarget?.x??((boss.x||0)+(boss.ruleId==='alternating-relay'?(((boss.maxHp||0)-(boss.hp||0))%2?90:-90):0)),y=boss.attackTarget?.y??((boss.y||0)+45);c.strokeStyle=boss.vulnerable?fx.p.hot:INK;c.lineWidth=4;c.strokeRect(x-20,y-20,40,40);if(!boss.vulnerable){c.fillStyle=INK;c.fillRect(x-20,y-3,40,6)}}
- const q=geo.player;if(!q)return;c.save();c.translate(q.x,q.y);c.rotate(Math.atan2(q.tangent?.y||0,q.tangent?.x??1));c.translate(0,-(q.bodyHeight||60)-23);c.scale(symbolScale,symbolScale);const x=0,y=0;c.fillStyle=INK;c.fillRect(x-13,y-13,26,26);c.strokeStyle=cue.phase==='ready'||cue.phase==='active'?fx.p.hot:IVORY;c.lineWidth=2;c.strokeRect(x-11,y-11,22,22);c.fillStyle=c.strokeStyle;
+ const q=geo.player;if(!q)return;c.save();c.translate(q.x,q.y);c.rotate((q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)));c.translate(0,-(q.bodyHeight||60)-23);c.scale(symbolScale,symbolScale);const x=0,y=0;c.fillStyle=INK;c.fillRect(x-13,y-13,26,26);c.strokeStyle=cue.phase==='ready'||cue.phase==='active'?fx.p.hot:IVORY;c.lineWidth=2;c.strokeRect(x-11,y-11,22,22);c.fillStyle=c.strokeStyle;
  if(cue.verb==='wait'){c.fillRect(x-6,y-6,4,12);c.fillRect(x+2,y-6,4,12)}else if(cue.verb==='hold')c.fillRect(x-6,y-6,12,12);else if(cue.verb==='release'){c.fillRect(x-2,y-7,4,14);c.fillRect(x-6,y+1,12,4)}else if(cue.verb==='switch'){c.fillRect(x-7,y-2,14,4);c.fillRect(x+3,y-6,4,12)}else{c.fillRect(x-3,y-3,6,6)}c.restore();
 }
 // Original-authored brief expression balloons; detailed instruction remains in the HUD.
@@ -252,7 +252,7 @@ function actionCue(c,geo,fx,symbolScale=1){const cue=geo.cue,boss=geo.boss;if(!c
 function expressionLayout(geo){
  const e=geo.expression,q=geo.player,b=geo.bounds;
  if(!e||!q||!b||!e.text||e.remaining<=0||geo.cellTransition)return null;
- const angle=Math.atan2(q.tangent?.y||0,q.tangent?.x??1),w=[...e.text].length*28+16,h=40;
+ const angle=(q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1)),w=[...e.text].length*28+16,h=40;
  const hx=(Math.abs(Math.cos(angle))*w+Math.abs(Math.sin(angle))*h)/2,hy=(Math.abs(Math.sin(angle))*w+Math.abs(Math.cos(angle))*h)/2;
  const left=b.left??-b.width/2,right=b.right??b.width/2,top=b.top??-b.height/2,bottom=b.bottom??b.height/2;
  if(right-left<hx*2+24||bottom-top<hy*2+24)return null;
@@ -372,11 +372,12 @@ function aftermath(c,geo,fx,view,reduced,cam){
   c.fillStyle=IVORY;c.fillText(view.text,x,y,width);c.restore();
  }
 }
-function draw(c,run,opt={},geometry){const geo=geometry||run.geometry(opt.aftermath?.elapsed||0),b=geo.bounds,nominal=run?.room||root.QuadRiftSquare?.ROOMS?.[geo.room?.index]||geo.room;
+function draw(c,run,opt={},geometry){const geo=geometry||(root.MongyuPresentation?root.MongyuPresentation.geometry(run,opt):run.geometry(opt.aftermath?.elapsed||0)),b=geo.bounds,nominal=run?.room||root.QuadRiftSquare?.ROOMS?.[geo.room?.index]||geo.room;
+ if(geo.nativeRuntime&&geo.nativeScene&&root.MongyuNativeScene)return root.MongyuNativeScene.draw(c,run,opt,geo);
  if(geo.encounter)return EncounterArt.draw(c,geo,opt,{camera,parameters,bossHealthBar,expression});
  // Fit the complete room's authored 16% fold envelope, not its current width.
  // Thus actual walls visibly travel during a fold instead of camera fit cancelling it.
- const frame=geo.cameraEnvelope||{width:Math.max(nominal?.width||b.width,geo.transition?.to?.width||0)*1.16,height:Math.max(nominal?.height||b.height,geo.transition?.to?.height||0)*1.16},cam=root.MongyuMobile?.camera(opt.viewport,geo,opt,run)||camera(opt.viewport,b,frame),fx=parameters(geo,opt),layout=replicaLayout(geo,cam),replica=layout.kind!=='single',stripes=layout.kind==='stripe-replicas',reduced=!!(opt.reduced||geo.reducedMotion);c.save();c.clearRect(0,0,cam.width,cam.height);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);exterior(c,cam,b,fx);
+ const frame=geo.cameraEnvelope||{width:Math.max(nominal?.width||b.width,geo.transition?.to?.width||0)*1.16,height:Math.max(nominal?.height||b.height,geo.transition?.to?.height||0)*1.16},cam=root.MongyuMobile?.camera(opt.viewport,geo,opt,run)||camera(opt.viewport,b,frame),fx={...parameters(geo,opt),viewBounds:cam},layout=replicaLayout(geo,cam),replica=layout.kind!=='single',stripes=layout.kind==='stripe-replicas',reduced=!!(opt.reduced||geo.reducedMotion);c.save();c.clearRect(0,0,cam.width,cam.height);c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);exterior(c,cam,b,fx);
  // Clip chamber to the exact room; perspective motion never moves collision geometry.
  c.save();rounded(c,b.left,b.top,b.width||b.right-b.left,b.height||b.bottom-b.top,geo.room?.radius||0);c.clip();if(geo.boss)c.globalAlpha=.18;else if(replica)c.globalAlpha=.32;chamber(c,b,fx);c.restore();velocity(c,cam,geo,fx);
  if(opt.aftermath)aftermath(c,geo,fx,opt.aftermath,reduced,cam);else if(geo.cellTransition)cellScatter(c,geo,fx,reduced);else{

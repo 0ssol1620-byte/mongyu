@@ -1,0 +1,108 @@
+{
+  "scope": "one scripted browser comparison; neither physical-device certification nor normal-input full clear",
+  "baselineCommit": "62c4a1d943cd7b70c0252eb00dfd0c9557d0f51f",
+  "baseline": {
+    "samples": 120,
+    "cpuThrottle": 4,
+    "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+    "renderMedianMs": 82.60000000009313,
+    "renderP95Ms": 122,
+    "frameMedianMs": 267.80000000004657,
+    "frameP95Ms": 372.20000000018626,
+    "state": "play",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scale": 1.0833333333333333,
+      "offsetX": 0,
+      "offsetY": 162,
+      "dpr": 2
+    },
+    "music": "Raving Energy (faster)"
+  },
+  "candidate": {
+    "samples": 120,
+    "cpuThrottle": 4,
+    "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+    "renderMedianMs": 1.5999999998603016,
+    "renderP95Ms": 3.4000000001396984,
+    "frameMedianMs": 16.5,
+    "frameP95Ms": 35.200000000186265,
+    "state": "play",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scale": 1.0833333333333333,
+      "offsetX": 0,
+      "offsetY": 162,
+      "dpr": 1.5
+    },
+    "music": "사탕 미로"
+  },
+  "baselineHtmlBytes": 28716797,
+  "candidateHtmlBytes": 9344306,
+  "candidateSha256": "92cde8600ed7a97b56156456af94061744ec5d664fb8f193b99da3d4c5324685",
+  "candidateBrowserErrors": [],
+  "candidateOfflineBoot": true,
+  "candidateStageRecordingCount": 10,
+  "candidateLayouts": [
+    {
+      "width": 844,
+      "height": 390,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 844,
+        "height": 390
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 568
+      }
+    },
+    {
+      "width": 800,
+      "height": 1280,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 1280
+      }
+    }
+  ],
+  "webTests": {
+    "total": 112,
+    "pass": 111,
+    "fail": 0,
+    "skip": 1
+  },
+  "finalPresentationTests": {
+    "total": 11,
+    "pass": 11
+  },
+  "currentAndroidSourceContractTests": {
+    "total": 5,
+    "pass": 5,
+    "deviceTest": false
+  },
+  "historicalAndroidR31Fixtures": {
+    "baselineR81": {
+      "total": 24,
+      "pass": 2,
+      "fail": 22
+    },
+    "candidateR82": {
+      "total": 24,
+      "pass": 2,
+      "fail": 22
+    },
+    "reason": "R31 fixed digest/version and outdated DOM/Canvas stubs; not a current-device test"
+  }
+}

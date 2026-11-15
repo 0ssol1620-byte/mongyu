@@ -1,5 +1,6 @@
 /* R79 functional-kernel bundle. Generated; no original assets. */
 (function(root){'use strict';
+const structuredClone=root.MongyuStateClone?.clone||root.structuredClone; // R84 snapshot copy binding
 const factories={
 "evidence/r75-research/collision-native/airborne_adapter.cjs":function(module,exports,require){
 "use strict";
@@ -1020,6 +1021,7 @@ function posthookX(slots,{geometry,actor,workBudget=10000}){
  integer(workBudget,'authored execution budget');if(workBudget<1)throw new TypeError('positive workBudget required');
  for(const entity of slots){if(entity===null||entity.a===0)continue;const seen=new Set();let moves=0;
   while(rectangle(geometry.position,actor.height,entity.n,entity.o,add(entity.i<<3,48),add(entity.i<<3,48),-4,16,actor.direction)){
+   if((seen.has(entity.n+','+entity.o)||moves>=workBudget)&&root.MongyuNativeStability?.escapeOverlap(entity,{geometry,actor},(n,o)=>!rectangle(geometry.position,actor.height,n,o,add(entity.i<<3,48),add(entity.i<<3,48),-4,16,actor.direction)&&floorPenetration({...entity,n,o},geometry)<=0))break; // R86 bounded spawn recovery binding
    const key=entity.n+','+entity.o;if(seen.has(key))throw new UnsupportedEntityPath('native posthook-x nonterminating cycle',{n:entity.n,o:entity.o,moves});
    if(moves>=workBudget)throw new UnsupportedEntityPath('authored posthook-x work budget',{moves});seen.add(key);
    entity.n=add(entity.n,sign(sub(geometry.N>>1,entity.n))<<4);entity.o=add(entity.o,sign(sub(geometry.N>>1,entity.o))<<4);moves++;
@@ -2701,6 +2703,7 @@ function stepBoss(input,providers={}){
  function hurt(at){mark('boss-actor-damage',at);effects.push({kind:'sound-request',cue:'boss-contact-damage',raw:at,originalAudioIncluded:false});const r=Actor.setActorState(s,13,providers.actorProviders||providers);s=r.state;effects.push(...(r.effects||[]));trace.push(...(r.trace||[]));if(!r.supported){const e=new Error(r.reason);e.name='BossPortBarrier';throw e;}}
  function actorInputs(){int(a().height,'actor.height');int(a().p,'actor.p');}
  try{
+  if(b().H<=0)b().Y=0; // R87 verified idle recovery 0x55c6c -> 0x56f20 -> 0x55c8a
   b().H=b().H>0?sub(b().H,1):0;mark('boss-timer','0x55c62..55c8a',{H:b().H});
   if(b().K<=0&&s.u.s>0){b().K=0;s.u.s=-10;b().H=50;b().Y=2;const r=clearEntities(s);s=r.state;trace.push(...r.trace);return result(true,'boss-depleted-clear');}
   if(b().H>=1000){int(b().T,'boss.T');const header=(providers.bossHeader||Geometry.bossHeader)(b().J);const x=int(header[0],'boss header0');if(x< -128||x>127)throw new RangeError('signed boss header byte');b().W=add(x<<4,div(mul(sub(b().H,1000),b().T)<<4,30));if(b().H===1000)b().H=0;mark('boss-entrance','0x56e4a..56ed8',{W:b().W,H:b().H});return result(true,'boss-entrance');}
@@ -2854,7 +2857,7 @@ function actorTail(input,providers={}){
    mark('boss-entity-attack','0x427da',{variant});
    radialImpulse(e,sub(geometry().position,8),add(actor().height,[2,3,8].includes(variant)?8:0),variant===8?19:16,variant===8?24:21,draw);
    if(e.l===0)e.l=variant===3?23:15;
-   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.l=3;
+   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.c=3; // R87 verified y.c field token 0x012c0095; y.l is 0x012c00a7
   }
   e.j=8;mark('entity-attack-cooldown','0x426f2');
  }
@@ -4906,4 +4909,5 @@ const edges={"experiments/r77-native-frame-driver/frame-driver.cjs":{"../r76-nat
 function load(id){if(cache[id])return cache[id].exports;if(!factories[id])throw Error('Unknown native module '+id);const module={exports:{}};cache[id]=module;factories[id](module,module.exports,name=>{const target=edges[id][name];if(!target)throw Error('Unlisted dependency '+name);return load(target)});return module.exports;}
 
 root.MongyuNativeKernels=Object.freeze({"Driver":load("experiments/r77-native-frame-driver/frame-driver.cjs"),"SettingsCredit":load("experiments/r77-native-goals/settings-credit.cjs"),"Entry":load("experiments/r77-native-goals/attempt-entry.cjs"),"Fixture":load("experiments/r77-native-frame-driver/fixture.cjs"),"Assembly":load("experiments/r75-procedural-geometry/assembly.cjs"),"Trajectories":load("experiments/r77-native-trajectories/trajectories.cjs"),"MapSetup":load("experiments/r77-native-map-setup/map-setup.cjs"),"MapProviders":load("experiments/r77-native-map-setup/functional-providers.cjs"),"MapPorts":load("experiments/r77-native-frame-driver/map-ports.cjs"),"Mask":load("experiments/r77-native-mask-geometry/mask-geometry.cjs")});
+root.MongyuNativeRenderParameters=Object.freeze(load("experiments/r77-native-render/parameters.cjs")); // R86 read-only render parameters binding
 })(globalThis);

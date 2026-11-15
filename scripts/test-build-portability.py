@@ -11,7 +11,7 @@ import tempfile
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED = 'a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968'
+EXPECTED = hashlib.sha256((ROOT/'web/MONGYU_R87.html').read_bytes()).hexdigest()
 read_text = Path.read_text
 
 def explicit_utf8(path, *args, **kwargs):
@@ -26,13 +26,13 @@ with tempfile.TemporaryDirectory(prefix='mongyu-portability-') as directory:
     web = Path(directory)/'web'
     shutil.copytree(ROOT/'web', web)
     for line_ending in (b'\n', b'\r\n'):
-        for relative in ['index.template.html', 'assets/r10/manifest.json',
+        for relative in ['index.template.html', 'mobile.css', 'sources.json', 'assets/r10/manifest.json', 'assets/music/manifest.json',
                          *[str(p.relative_to(web)) for p in (web/'src').glob('*.js')]]:
             path = web/relative
             path.write_bytes(path.read_bytes().replace(b'\r\n', b'\n').replace(b'\n', line_ending))
         with patch.object(Path, 'read_text', explicit_utf8), patch.object(Path, 'write_text', reject_text_output):
             runpy.run_path(str(web/'build.py'), run_name='__main__')
-        output = (web/'MONGYU_R31.html').read_bytes()
+        output = (web/'MONGYU_R87.html').read_bytes()
         assert b'\r\n' not in output
         assert hashlib.sha256(output).hexdigest() == EXPECTED
 

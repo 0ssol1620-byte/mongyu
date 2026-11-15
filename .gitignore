@@ -22,3 +22,4 @@ web/MONGYU_R*.html
 web/build-manifest.json
 
 android/app/src/main/assets/index.html
+ci/

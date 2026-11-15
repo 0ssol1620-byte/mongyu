@@ -1,0 +1,28 @@
+{
+  "scope": "Accelerated Android emulator, actual installed APKs. Synthetic version-86 baseline and current version-87 use one ephemeral QA signing key. Not a physical-phone performance certification.",
+  "checks": [
+    {
+      "name": "actual fullscreen native play",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      }
+    },
+    {
+      "name": "native game canvas contains rendered content",
+      "raster": {
+        "width": 618,
+        "height": 1373,
+        "colored": 1024,
+        "samples": 1024
+      }
+    }
+  ],
+  "errors": [],
+  "failure": "Error: Android back pause did not become ready\n    at waitFor (/home/runner/work/mongyu/mongyu/tools/verify-android-device.cjs:13:211)\n    at async /home/runner/work/mongyu/mongyu/tools/verify-android-device.cjs:42:38",
+  "passed": false
+}

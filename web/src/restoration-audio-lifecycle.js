@@ -11,7 +11,7 @@ function sceneRole(scene){
  // Telephone/interlude cues keep their existing exclusive authored SFX path.
  return null;
 }
-function createController({rng=Math.random}={}){
+function createController({rng=Math.random,chapterScores=false}={}){
  let current=null,serial=0,lastRun=null,lastAttempt=null,lastMap=null,stageIndex=null,selection=null;
  function update({enabled=false,title=false,dialog=null,entry=null,run=null,otherRun=false}={}){
   if(!enabled||otherRun)return null;
@@ -21,8 +21,11 @@ function createController({rng=Math.random}={}){
   else if(dialog)return null;
   else if(run){
    if(!['play','transition'].includes(run.state)||run.deathAnimation||Number.isFinite(run.hearts)&&run.hearts<=0)return null;
+   const native=run.nativeRuntime?run.nativeFrame:null;
+   if(native&&(native.r.timerT>0||native.game.controller.controllerStateUK===200||[2,3].includes(native.u.l)))return null;
    if(run!==lastRun||run.attempt!==lastAttempt||run.mapChanges!==lastMap){
-    selection=Policy.rejectPrevious(10,stageIndex,rng);stageIndex=selection.index;
+    const nativeIndex=native?.u.ax;
+    selection=Number.isInteger(nativeIndex)&&nativeIndex>=0&&nativeIndex<10?{index:nativeIndex,draws:0,fallback:false,source:'native-audio-selector'}:chapterScores&&Number.isInteger(run.familyIndex)&&run.familyIndex>=0&&run.familyIndex<10?{index:run.familyIndex,draws:0,fallback:false,source:'authored-chapter'}:Policy.rejectPrevious(10,stageIndex,rng);stageIndex=selection.index;
     lastRun=run;lastAttempt=run.attempt;lastMap=run.mapChanges;
    }
    role=run.boss?'boss':Policy.STAGES[stageIndex];scope='gameplay';owner=run;map=run.mapChanges;attempt=run.attempt;

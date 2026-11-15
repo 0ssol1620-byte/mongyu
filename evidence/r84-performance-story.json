@@ -1,0 +1,94 @@
+{
+  "release": "R84",
+  "scope": "Chromium/VM/compiled artifact tests; no physical device test",
+  "baselineR83": {
+    "samples": 120,
+    "cpuThrottle": 4,
+    "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+    "renderMedianMs": 1.1999999999534339,
+    "renderP95Ms": 2.799999999930151,
+    "frameMedianMs": 16.199999999953434,
+    "frameP95Ms": 99.90000000002328,
+    "state": "play",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scale": 1.0833333333333333,
+      "offsetX": 0,
+      "offsetY": 162,
+      "dpr": 1.5
+    },
+    "music": "사탕 미로",
+    "copyBackend": null
+  },
+  "candidateR84": {
+    "samples": 120,
+    "cpuThrottle": 4,
+    "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+    "renderMedianMs": 0.8999999999068677,
+    "renderP95Ms": 3.199999999953434,
+    "frameMedianMs": 15.600000000093132,
+    "frameP95Ms": 29.79999999993015,
+    "state": "play",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scale": 1.0833333333333333,
+      "offsetX": 0,
+      "offsetY": 162,
+      "dpr": 1.5
+    },
+    "music": "사탕 미로",
+    "copyBackend": {
+      "calls": 3797,
+      "fallbacks": 0,
+      "backend": "owned-plain-snapshot"
+    }
+  },
+  "cameraAndStory": {
+    "errors": [],
+    "storyReplayPreservesProgress": true,
+    "lockedStoriesRemainLocked": true,
+    "keyboardFocusVerified": true,
+    "firstRun": {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scale": 1.0833333333333333,
+        "offsetX": 0,
+        "offsetY": 162,
+        "dpr": 1.5
+      },
+      "framing": "viewport-cover",
+      "cameraScale": 1.5071428571428571,
+      "bodyPixels": 64.05357142857143,
+      "foot": {
+        "x": 124.8,
+        "y": 772
+      },
+      "copy": {
+        "calls": 1120,
+        "fallbacks": 0,
+        "backend": "owned-plain-snapshot"
+      }
+    }
+  },
+  "htmlSha256": "7beaa1924f1ce9c90d3e63f538716b85f8af2e9e0e7751f08f8524b0b58db40d",
+  "apkSha256": "a8788732ffe829f6a04496f1d5f9f643e7357507ee84b30237e3e452d5b3e657",
+  "sameUpdateSigningCertificate": true,
+  "webTests": {
+    "total": 127,
+    "pass": 126,
+    "fail": 0,
+    "skip": 1
+  },
+  "nativeWrapperTests": {
+    "total": 5,
+    "pass": 5
+  },
+  "cloneEquivalence": {
+    "physicalSlots": 74,
+    "stepsPerSlot": 16,
+    "scope": "full state, RNG, effects, traces, input events and terminal results"
+  }
+}

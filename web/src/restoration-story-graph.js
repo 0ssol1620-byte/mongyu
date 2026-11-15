@@ -18,7 +18,7 @@ const sequences=freeze([
           "str-494"
         ],
         "sourceTextIndex": 0,
-        "text": "낯선 곳에 떨어졌다. 여기가 어디일까.",
+        "text": "여긴… 어디지?",
         "kind": "reflection",
         "authored": true,
         "speakerLane": null,
@@ -33,7 +33,7 @@ const sequences=freeze([
           "str-021"
         ],
         "sourceTextIndex": 1,
-        "text": "답을 찾으려면 움직여야겠다. 길을 따라가 보자.",
+        "text": "온통 네모뿐이네. 일단 달려보자.",
         "kind": "reflection",
         "authored": true,
         "speakerLane": null,
@@ -267,7 +267,7 @@ const sequences=freeze([
           "str-191"
         ],
         "sourceTextIndex": 47,
-        "text": "길가에 작은 강아지가 앉아 있다.",
+        "text": "너도 혼자야?",
         "kind": "dialogue",
         "authored": true,
         "speakerLane": 0,
@@ -552,7 +552,7 @@ const sequences=freeze([
           "str-387"
         ],
         "sourceTextIndex": 51,
-        "text": "앞에 어르신이 계신다.",
+        "text": "어르신, 이 길은 어디로 이어져요?",
         "kind": "dialogue",
         "authored": true,
         "speakerLane": 0,
@@ -2009,7 +2009,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다.",
+        "text": "솔과 함께 달렸던 길.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2024,7 +2024,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 2",
+        "text": "담의 등에 기대어 쉬었던 순간.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2041,7 +2041,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 3",
+        "text": "여울과 나누었던 마지막 인사.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2058,7 +2058,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 4",
+        "text": "모두 지나온 길에 남았습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2075,7 +2075,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 5",
+        "text": "돌아오지 않는 마음도 있습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2092,7 +2092,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 6",
+        "text": "길은 그 자리에 멈추지 않기로 했습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2109,7 +2109,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 7",
+        "text": "다음 모서리 너머로 발을 내딛습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2126,7 +2126,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 8",
+        "text": "길의 이야기는 여기까지입니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2143,7 +2143,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 9",
+        "text": "끝까지 함께 달려 주셔서 고맙습니다.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,
@@ -2160,7 +2160,7 @@ const sequences=freeze([
           "str-541"
         ],
         "sourceTextIndex": 111,
-        "text": "아직 전하지 못한 마음이 저편에 남아 있다. · 10",
+        "text": "몽유 · 끝.",
         "kind": "closing",
         "authored": true,
         "speakerLane": null,

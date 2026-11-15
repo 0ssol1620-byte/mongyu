@@ -1,0 +1,85 @@
+{
+  "scope": "Ten explicit defeated-boss fixtures exercise scatter, confirmation and result. No user campaign writes; does not establish ten normal-input victories.",
+  "rows": [
+    {
+      "slot": 8,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 30,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 20,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 40,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 31,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 30,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 38,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 26,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 45,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 26,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 58,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 24,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 66,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 13,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 77,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 77,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 90,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 12,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    },
+    {
+      "slot": 99,
+      "scope": "controlled defeated-boss fixture, not normal-input victory",
+      "scatterRenderedReadOnly": true,
+      "captureCells": 52,
+      "waitedForConfirmation": true,
+      "confirmationReturnedNativeResult": true
+    }
+  ]
+}

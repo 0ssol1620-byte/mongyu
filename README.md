@@ -1,49 +1,22 @@
-# 몽유 · MONGYU R81
+# 몽유 · MONGYU R87
 
-네 벽을 달리며 100개의 기억을 모으는 오프라인 게임 개발 빌드입니다. R79 최신 로컬 실행본의 엔진을 바탕으로 모바일 화면, 캐릭터, 카메라, 옷장, 오디오 및 프레임 지연 처리를 개선했습니다.
+[Android APK 다운로드](https://github.com/0ssol1620-byte/mongyu/releases/download/r87-preview/MONGYU_R87_ANDROID.apk) · [소스와 변경 기록](https://github.com/0ssol1620-byte/mongyu/releases/tag/r87-preview)
 
-**출시 상태: 플레이 가능한 개발 빌드. 원작 놈3의 완전 동일 복원이나 스토어 출시 인증을 의미하지 않습니다.** 상용 결제·광고·서버 권한 검증은 활성화하지 않았습니다. Codex Cloud 작업 기록은 인증 부재로 확인하지 못했고, GitHub R31 브랜치와 사용자 PC의 R79를 비교했습니다.
-
-## 실행
-
-Python 3.10 이상과 Node.js 18 이상이 필요합니다. 배포 HTML 실행에는 네트워크나 npm 패키지가 필요 없습니다. GitHub 소스 체크아웃은 음원을 포함하지 않으므로 첫 준비에 네트워크와 NumPy/FFmpeg가 필요합니다. 음원이 포함된 소스 ZIP에서는 다운로드/재합성이 생략됩니다.
+100개 기억을 모으는 오프라인 게임의 개발 빌드입니다. 원작 전체 복원 완료 상태가 아닙니다. R87은 직접 확보한 KTF 후보를 대조해 보스 반격의 잘못된 필드를 수정하고, 100개 숫자 팔레트와 실제 배경 명령, 음악 선택·피격 효과를 연결합니다. 이전 버전의 지연·관절·상시 확대 수정도 포함합니다.
 
 ```sh
-python3 tools/fetch_music.py
 python3 web/build.py
 python3 scripts/test.py
+node tools/audit-runtime.cjs
+node tools/audit-native-patterns.cjs
 ```
 
-생성된 `web/MONGYU_R81.html`을 브라우저에서 엽니다. 소스 43개, 이미지, 음원 3곡이 하나의 HTML에 들어갑니다. 원래 제공된 R79 테스트 APK에서 추출한 스크립트가 복원 기준이며, 엔진 6개 파일은 `web/tests/r80-native-integrity.json`으로 바이트 동일성을 확인합니다.
+Python 3.10+와 Node.js 18+가 필요합니다. web/MONGYU_R87.html은 오프라인 단일 HTML입니다. 브라우저 도구는 Playwright와 Chromium을 별도로 사용합니다. Android는 python3 scripts/prepare-android-r80.py로 입력 파일을 준비한 뒤 SDK 36/JDK 환경에서 빌드합니다.
 
-## R80 변경
+[발견한 문제, 수정, 원작 콘텐츠별 현황과 검증 한계](docs/R87_ORIGINAL_RESEARCH_KO.md)를 확인하세요. 생성 위치 조정의 반복 복구는 원작 동일성을 주장하지 않는 명시적 안정성 수정입니다. 원본 캐릭터·스킨 그림과 음원·대사의 재현, 필드 아이템/확대의 정확한 연계 대조, 100개 정상 완주, Android 실기기 검수는 아직 남아 있습니다.
 
-- 일식·별궤도 타이틀, 둥근 조작 버튼, 간결한 꿈 지도와 이야기·결과 화면.
-- 12종 의상: 2종 기본 제공, 나머지는 기억 1~100개에 따라 해금. 실제 캐릭터에 적용하고 별도 저장합니다.
-- 연속적인 팔다리·스카프 연출. 판정과 난수 사용은 변경하지 않습니다.
-- 긴 일반 구간은 캐릭터를 따라가는 카메라로 전환. 마스크 지형·보스는 전체 경기장을 유지합니다.
-- 화면 갱신이 250ms 늦어질 때마다 강제 메뉴가 뜨던 동작 수정. 한 번에 최대 100ms만 처리하며 백그라운드·명시적 일시정지는 유지합니다.
-- 64초 자체 제작 앰비언트 테마 `Night Corners`와 기존 라이선스 음원 2곡. 메뉴/이야기는 전용 테마를 사용합니다.
-- `release-policy.js`에 선택형 상품 노출과 보상 광고 조건을 구현했습니다. 실제 결제·광고 SDK는 연결하지 않았으며 유료 권한을 로컬 저장으로 지급하지 않습니다.
+APK는 몽유 R87 테스트이며 org.quadrift.mongyu.preview.r82 ID와 같은 인증서를 사용합니다. R82~R86을 삭제하지 않고 업데이트할 수 있습니다. 최소 Android 8.0입니다. 공개 검증 결과는 evidence/r87-signed-apk.json에 남깁니다. 서명 비밀키는 소스에 포함하지 않습니다.
 
-## 음원
+음원은 몽유용 자체 제작 12곡입니다. 실제 결제·광고는 비활성입니다. 상품/광고/출시 운영 계획은 docs/R81_RELEASE_REVIEW_KO.md에 있으며 이전 버전 문서와 evidence는 과거 기록으로 보존합니다.
 
-`web/assets/music/MUSIC-CREDITS.txt`와 `CC-BY-4.0.txt`를 확인하세요. 기존 두 음원의 라이선스와 자체 테마의 권리는 별개입니다. 자체 테마를 재생성하려면 NumPy 및 FFmpeg가 설치된 환경에서 `python3 tools/compose_night_score.py`를 실행합니다. 일반 빌드는 이미 포함된 MP3를 사용합니다.
-
-## 검증 범위
-
-배포 HTML 자체를 실행하는 VM 검사에 옷장·저장 실패·서사 해금·네이티브 달리기·지연 프레임·백그라운드 복귀·음원 역할 검사를 포함했습니다. 별도의 브라우저에서 390×844 화면도 검토했습니다. 자동 검사가 실제 Android 성능이나 100개 기억 전부의 사람 입력 완주를 대신하지 않습니다.
-
-`web/tests/r78-mask-presentation.test.cjs`의 외부 감사 어댑터 검사는 해당 별도 도구가 이 저장소에 없어 명시적으로 생략합니다. 게임 본체의 소스/배포본 마스크 검사는 수행합니다.
-
-## Android와 출시
-
-기존 `android/` 및 과거 evidence/docs는 R31/R79 기록으로 취급하세요. R80 Android 입력 파일 준비는 `python3 scripts/prepare-android-r80.py`를 사용합니다. 스토어용 AAB, 프로덕션 서명, 실기기 통과를 이 웹 빌드로 주장하지 않습니다.
-
-사업·출시·과금 상세 판단과 남은 검증은 [R80_RELEASE_REVIEW_KO.md](docs/R81_RELEASE_REVIEW_KO.md)에 있습니다.
-
-## R81 전체화면 수정
-
-게임 영역은 노치 밖까지 채우고 HUD만 안전영역을 적용합니다. Android 시스템 바는 몰입 모드로 숨기며 가장자리 스와이프로 다시 표시됩니다. 모바일 웹은 지원되는 브라우저의 사용자 시작 제스처에서 전체화면을 요청합니다. 거절되거나 미지원이면 계속 플레이합니다. 첫 탭 뒤 하단 안내가 사라지며 플레이 중 별도의 점프 버튼은 없습니다. SDK 36/JDK 24 컴파일 검증은 통과했으며 실기기 검증은 별도입니다.
-
-`node tools/audit_slots.cjs`로 100개 구간의 분류와 74개 물리 스테이지의 12단계 초기화/입력 검사를 다시 만들 수 있습니다. 이것은 전체 완주 검사가 아닙니다.
+R87은 가속 Android 15 / WebView 124에서 실제 설치 APK의 입력·전체 화면·업데이트 저장·복구 검사 8개를 통과했습니다. 웹 검사는 153개 중 152개 통과·외부 어댑터 1개 제외입니다. [공개 Android 검사](https://github.com/0ssol1620-byte/mongyu/actions/runs/43667332494). Android는 최신 System WebView가 필요하며 실제 휴대폰 장시간 성능·청음 검수는 남아 있습니다.

@@ -2,6 +2,7 @@
  * Bootstrap seed/clock/UI scheduling are authored. No original media or disk I/O.
  */
 (function(root){'use strict';
+const structuredClone=root.MongyuStateClone?.clone||root.structuredClone; // R84 snapshot copy binding
 const clone=x=>structuredClone(x),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const INT=(x,label)=>{if(!Number.isInteger(x)||x< -2147483648||x>2147483647)throw new RangeError(label+' requires int32');return x;};
 // Numeric control metadata only: CON_STAGE categories and GETSKINTABLE int pairs.

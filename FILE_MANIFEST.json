@@ -1,5 +1,6 @@
 {
-  "scope": "All publication files except this manifest itself",
+  "scope": "All R87 source publication files except this manifest itself. Generated Android assets are prepared from the included web HTML.",
+  "runtimeVerifiedCommit": "8f763b7ff9ddd31f3ebe826e709ad13183b5eedd",
   "files": [
     {
       "path": ".gitattributes",
@@ -7,24 +8,24 @@
       "sha256": "2f3e084b1d5450cb1c7ba0cd666f19f239f25611e7b46a69c64d9d136f82a300"
     },
     {
+      "path": ".github/workflows/android-device.yml",
+      "bytes": 2865,
+      "sha256": "3e62ceb5ff19f310046fcdacfbd0cc08d7774946cbfa643128856d57634acb86"
+    },
+    {
       "path": ".gitignore",
-      "bytes": 331,
-      "sha256": "8f780cd59ed3483b4309273a3bcde2bf5ca9eac5142eb6e695291514725fea38"
+      "bytes": 451,
+      "sha256": "ec51e8c0a3a80d3ddb07c91d9a45eae76c89595c8a74596cac727546ad983207"
     },
     {
       "path": "README.md",
-      "bytes": 4136,
-      "sha256": "d4cbba931b5a9129e89bc186e1e33e557bdc109a02855ecd52e60a744cc0257f"
+      "bytes": 2533,
+      "sha256": "f2d4cfe68572037f0ab3c2b2599a42f46a4440690f815e3f6da6b14588d4a095"
     },
     {
       "path": "android/app/src/main/AndroidManifest.xml",
-      "bytes": 1048,
-      "sha256": "811498b2f4b24c9d248e492ecf9fa2004881dc58de4c3a19d94878347a808480"
-    },
-    {
-      "path": "android/app/src/main/assets/index.html",
-      "bytes": 1056113,
-      "sha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968"
+      "bytes": 1047,
+      "sha256": "fe2ccc465c4faac6e5b0040ce9e6c5b81655f3fde752e8bdd1a40ee0aaa4d58e"
     },
     {
       "path": "android/app/src/main/java/org/quadrift/hddevelopment/BuildConfig.java",
@@ -33,8 +34,8 @@
     },
     {
       "path": "android/app/src/main/java/org/quadrift/hddevelopment/MainActivity.java",
-      "bytes": 6167,
-      "sha256": "cad9ee2509ef0604da9412a7e23284bda57b17e2ced069e9b23169cc8ff562db"
+      "bytes": 12806,
+      "sha256": "d7564811cd69981bc57e50bf7a4cb7bdb0d1712aa50ea32244b5f2586dc18478"
     },
     {
       "path": "android/app/src/main/res/drawable/ic_launcher.xml",
@@ -43,18 +44,18 @@
     },
     {
       "path": "android/app/src/main/res/values/styles.xml",
-      "bytes": 480,
-      "sha256": "b7ffed48c00fe76e8f543e4925e9a87604baee122d737000cd336ad2f7cde6b7"
+      "bytes": 538,
+      "sha256": "86658711b0cf457c00ad585a44c9fef06381979ed57f7b48c877203943f44556"
     },
     {
       "path": "android/build-unsigned.py",
-      "bytes": 3168,
-      "sha256": "697ce6b929a0181cc46515774b03f65c50e2dee8bf42ebe043b1743d7d066818"
+      "bytes": 3170,
+      "sha256": "98bee2a46b5bc9409f7619ef7ca65ee3b7520a615845e0fe688b83b2a02468ef"
     },
     {
       "path": "android/expected-asset.sha256",
       "bytes": 65,
-      "sha256": "7376d69746e33bb0e3b8cb7dc52ffe4b9fb78fba9d4ce195a11005a32e4f9fc1"
+      "sha256": "f02eed51bf265d68915569c13e8565539c00d38899030f1a0e5bb36f71f5824e"
     },
     {
       "path": "android/tests/day-night-ending.test.cjs",
@@ -72,6 +73,11 @@
       "sha256": "cdaf9024aaf70221f6a7bacf35a27f574ede73c1dda100bd5c415b761d86a5da"
     },
     {
+      "path": "android/tests/r82-wrapper.test.cjs",
+      "bytes": 2754,
+      "sha256": "66af6ebdf2b78847a336c3f807ea177f759a736c9d2a5205b2886f5e3f3fefe7"
+    },
+    {
       "path": "android/tests/wrapper-r31.test.cjs",
       "bytes": 12622,
       "sha256": "5f027ece6e9d1b29fc7c452f363360c6938025cefbeac780b6a3152a059c2460"
@@ -82,14 +88,59 @@
       "sha256": "01f9290482d1e5f50eaf7995fdbeab9499a238d0111d0e14ec29cec8fbf30e1d"
     },
     {
+      "path": "android/verify-preview-apk.py",
+      "bytes": 2456,
+      "sha256": "fc47d1fb70a83f3ee53503a9cfd888d23e1cfff27e6d56a50df6bfa73bac2802"
+    },
+    {
       "path": "docs/ART_DIRECTION.md",
-      "bytes": 1905,
-      "sha256": "b8a05de8541a942a31c40586059cbf491ffc3b36ff41bc783be1820872ae28b3"
+      "bytes": 2432,
+      "sha256": "4fb1e8b5a1754b34e9109b4494625e063fed659f612479c5abfd1528c232fdff"
     },
     {
       "path": "docs/R31_BEHAVIOR.md",
       "bytes": 1162,
       "sha256": "54dd3bbcff48e3e0a2e28ff810f369c9947a6ff3a57597ddedcfd6e2d978d59d"
+    },
+    {
+      "path": "docs/R80_RELEASE_REVIEW_KO.md",
+      "bytes": 11942,
+      "sha256": "2acafb4f9eada9dd6296283aea711a831a3c88f9be30501b8fc46550f328f20d"
+    },
+    {
+      "path": "docs/R81_RELEASE_REVIEW_KO.md",
+      "bytes": 13981,
+      "sha256": "51692f1ba701613bf05e931328791067bc281ce9688b10a47504e388144390ca"
+    },
+    {
+      "path": "docs/R82_REVIEW_KO.md",
+      "bytes": 8891,
+      "sha256": "63e4a95f4afdb5b3c1a2b1fa75f0cab1f576fce82dd041062ebc30bce8fcb460"
+    },
+    {
+      "path": "docs/R83_CORRECTIONS_KO.md",
+      "bytes": 5815,
+      "sha256": "7d427d0355d8a30667a31daea43a773821bc9c51fbaa6c655b78ac8e784f705e"
+    },
+    {
+      "path": "docs/R84_PERFORMANCE_FULLSCREEN_STORY_KO.md",
+      "bytes": 4919,
+      "sha256": "ee61d097bc5c56aee841714564dc0ba0d52f2c4ec7de93820681e3625b83632e"
+    },
+    {
+      "path": "docs/R85_CAMERA_COMPANION_KO.md",
+      "bytes": 3515,
+      "sha256": "bfdb76e1a46f941b04d5438abe9eb2eca888954bc5a8f8a6204a588ed56aeef2"
+    },
+    {
+      "path": "docs/R86_AUDIT_KO.md",
+      "bytes": 10206,
+      "sha256": "9693b2ec7bd847a7bbd7baf214322813621e6c43ebda533d3bc2050ff5717c31"
+    },
+    {
+      "path": "docs/R87_ORIGINAL_RESEARCH_KO.md",
+      "bytes": 11269,
+      "sha256": "1b144b5f13c838a2ab8f403a85cfc24961b483a45fd135f19e9290187981d212"
     },
     {
       "path": "docs/VALIDATION.md",
@@ -122,29 +173,434 @@
       "sha256": "1d54f00a0ad82a33426f4b1700ba2ebc0ba1860bb7aa1208bfcf63843011957d"
     },
     {
+      "path": "evidence/r81-android-compile.json",
+      "bytes": 300,
+      "sha256": "2b5348abda472b261fad2497791b972be45977325f8987e9dc328b8fe6904cdf"
+    },
+    {
+      "path": "evidence/r81-slot-audit.json",
+      "bytes": 32575,
+      "sha256": "043af125146c98af0b2fe86f9571f71f895669939abcd1b04e8f1ea2948aea1f"
+    },
+    {
+      "path": "evidence/r82-audio-verification.json",
+      "bytes": 2630,
+      "sha256": "9aa4834bdf693849031123852ec93c82b018eb466ebb137f689b6a5f2c391233"
+    },
+    {
+      "path": "evidence/r82-browser-comparison.json",
+      "bytes": 2557,
+      "sha256": "03a31af3f790fae7ed24e59c1b8c43051c96d730ac1c5af5df2e2699624f5f4c"
+    },
+    {
+      "path": "evidence/r82-portability.log",
+      "bytes": 4226,
+      "sha256": "38d0f9c8a8e750b2017e139162387dd7bcbc3347fd05b72b7490cb8f97665a3f"
+    },
+    {
+      "path": "evidence/r82-signed-apk.json",
+      "bytes": 1645,
+      "sha256": "16b4e18b79d62666cdcccb0a60a1d761cb4d7b78c1cf1d9345133904607ea3df"
+    },
+    {
+      "path": "evidence/r82-web-tests.log",
+      "bytes": 16647,
+      "sha256": "7cf93b08c8f99e2745aa168a632e0ed890afc5e97ebc1f05a7e9fcec76f07933"
+    },
+    {
+      "path": "evidence/r82-wrapper-tests.log",
+      "bytes": 630,
+      "sha256": "e28cba764ae9aef5a13521dcc5c097598c796bb5540fded92a630710ad05e264"
+    },
+    {
+      "path": "evidence/r83-corrections.json",
+      "bytes": 9763,
+      "sha256": "3df9de73629fc08e2ad09279fa0b7a2aed7e44343a721f7ed81613ddfb99eca5"
+    },
+    {
+      "path": "evidence/r83-final-render-tests.log",
+      "bytes": 3076,
+      "sha256": "ab1e7fcfc26083491fcc8d5e93ea5da906541468c2149a46d6bc5b615dd44e52"
+    },
+    {
+      "path": "evidence/r83-signed-apk.json",
+      "bytes": 1684,
+      "sha256": "d7ccbc70b6474f51b71ecae1bdd53fb5cf74b86834290dc39fdacf32fffd3ef7"
+    },
+    {
+      "path": "evidence/r83-web-tests.log",
+      "bytes": 17434,
+      "sha256": "8782322ebbb61ddb8f324156ceccaaee2e3ec0978bb36837b17a6f21f6c9ffc4"
+    },
+    {
+      "path": "evidence/r83-wrapper-tests.log",
+      "bytes": 629,
+      "sha256": "1424a384731c81a8a8d43dc786f754d1b421392652df859cdc89c868435142a2"
+    },
+    {
+      "path": "evidence/r84-performance-story.json",
+      "bytes": 2500,
+      "sha256": "11ccc49d1b9e933fc059e2cba2ac2c6ad1ea8430959757149406ca6d23a873e4"
+    },
+    {
+      "path": "evidence/r84-signed-apk.json",
+      "bytes": 1684,
+      "sha256": "e3106370f9cd23c86e4eca0a0649f923f29531d4ba8de8df96ac6d05d81b1604"
+    },
+    {
+      "path": "evidence/r84-web-tests.log",
+      "bytes": 18272,
+      "sha256": "ed45a20a22e9d5fbe8a5ab2dd82815931bdfeb087e11f142b78278d88ee69865"
+    },
+    {
+      "path": "evidence/r84-wrapper-tests.log",
+      "bytes": 629,
+      "sha256": "6595808eb2f0e4244e38558252914f0affe14d8fee76202ba56f12271f6aeabd"
+    },
+    {
+      "path": "evidence/r85-browser-report.json",
+      "bytes": 5677,
+      "sha256": "b9db1959f8e81d1c2ae07e5b64835912fc1f8ee311dc85ae81a073d66b761345"
+    },
+    {
+      "path": "evidence/r85-camera-companion.json",
+      "bytes": 1223,
+      "sha256": "fee0205385bc9573d1895f2f3f25d41da34907a49b20478fd9829ceff584c595"
+    },
+    {
+      "path": "evidence/r85-signed-apk.json",
+      "bytes": 1645,
+      "sha256": "79a6f206af9e903e2e72dbd8b63da3508ef87fd1bfd2a541f7ced0130a6eb6a6"
+    },
+    {
+      "path": "evidence/r85-web-tests.log",
+      "bytes": 18711,
+      "sha256": "f4e3e156b2c98d5165b701a6f0a6fe6109ac69ea0a12abc4625b79dcaff9b4b4"
+    },
+    {
+      "path": "evidence/r85-wrapper-tests.log",
+      "bytes": 628,
+      "sha256": "0ce1a34c2e39332381ca13355555404a5ab242f24bedb46c320b2c3328f529f7"
+    },
+    {
+      "path": "evidence/r86-boss-exits.json",
+      "bytes": 2752,
+      "sha256": "5dac12e1e7d3e379454b23a294fdeaea030e167ca89e9f5a82eef7ac9b6e04c3"
+    },
+    {
+      "path": "evidence/r86-browser-report.json",
+      "bytes": 5728,
+      "sha256": "bc9dc8af99696b1b7ac4b49aa8b386f8d49c37418e13b6c3022559eca1c2a6eb"
+    },
+    {
+      "path": "evidence/r86-content-inventory.json",
+      "bytes": 62475,
+      "sha256": "fd73c2ee4b81a90a9eb5c86ee3de4a0612be09dafcda08584cb7662e9015cb0b"
+    },
+    {
+      "path": "evidence/r86-native-renderer.json",
+      "bytes": 12215,
+      "sha256": "5f9b0bb09c809aeb5c4edfbfdb66f1e2f0d7e509cf6dc35684a6ac19144cc097"
+    },
+    {
+      "path": "evidence/r86-pattern-audit.json",
+      "bytes": 117143,
+      "sha256": "bc213a1cb6ff253941bc4d9fc299588b3d3291166c368a77c0eaf3cedd491591"
+    },
+    {
+      "path": "evidence/r86-runtime-audit.json",
+      "bytes": 91333,
+      "sha256": "e6fa660e761f7c5bae44cd892a0b328b21dd5ecfcf7a27dccec2a8a11ad3c089"
+    },
+    {
+      "path": "evidence/r86-signed-apk.json",
+      "bytes": 1645,
+      "sha256": "fb21a4cafb2d3e1b73f5eb7bddba97269fb01a5250d4e898a0d916c13d38c687"
+    },
+    {
+      "path": "evidence/r86-sustained-baseline-r85.json",
+      "bytes": 10772,
+      "sha256": "e8930cad95b69272c18dfb81e534b70a6e5d8ae9bd151f40571319a86ac7d444"
+    },
+    {
+      "path": "evidence/r86-sustained.json",
+      "bytes": 1158,
+      "sha256": "1608640a501ef3d39346bfb2f605e0baedba7b6766f983e2416f77374c09a910"
+    },
+    {
+      "path": "evidence/r86-verification-summary.json",
+      "bytes": 1471,
+      "sha256": "c75b7b31078b5807a8d63ef6c693adaeb062c83aeae5f914203ab7b4fc11e20a"
+    },
+    {
+      "path": "evidence/r86-web-tests.log",
+      "bytes": 19776,
+      "sha256": "0ad1ae0ce5e978fcd70ed408cc00c17a0c4ad50b410a9bff7c686f1678493a31"
+    },
+    {
+      "path": "evidence/r86-wrapper-tests.log",
+      "bytes": 631,
+      "sha256": "582ef088158c2e77a231193dfdee54ab28b962197e778a7d89fe476c4ad251fd"
+    },
+    {
+      "path": "evidence/r87-android-device.json",
+      "bytes": 1454,
+      "sha256": "d337ca4201f42f6e4791fb80ac6f2ef2ec6385183f1fa88dd404d85766b6f6b4"
+    },
+    {
+      "path": "evidence/r87-android-first-boot-failure.json",
+      "bytes": 770,
+      "sha256": "c37c40a7e6e99f05c5bd23b2364824c888a0c0a998f18ea0a4f439a82a7f5b3f"
+    },
+    {
+      "path": "evidence/r87-android-google-image-failure.json",
+      "bytes": 939,
+      "sha256": "fd78a50fe55e80c2846f7cca5d669622c5623f3ac58101959dea57aca1d114fd"
+    },
+    {
+      "path": "evidence/r87-android-play.png",
+      "bytes": 49909,
+      "sha256": "cbe285875de97bfa4655cfbee3dd56101f3c51e8afb4fdb381413aceab806080"
+    },
+    {
+      "path": "evidence/r87-android-recovery.png",
+      "bytes": 31111,
+      "sha256": "a48d73b8f20fa9960e66e1c94e5ddda91580f37090661fe534451e04f2263928"
+    },
+    {
+      "path": "evidence/r87-android-title.png",
+      "bytes": 847437,
+      "sha256": "01ac61a960994d27aee30f25d84d695181c552576eb7a1ea01c95c5a0d3a76d0"
+    },
+    {
+      "path": "evidence/r87-browser-report.json",
+      "bytes": 5729,
+      "sha256": "19b6bcdf75917087182962e76f10eddede4de4fc9fe455100536af74bf6c33c8"
+    },
+    {
+      "path": "evidence/r87-normal-bosses.json",
+      "bytes": 9562,
+      "sha256": "359da58f42ad331f5032b205c3f15aa4dc8220fccc3dd390c2a2d3c8475a8833"
+    },
+    {
+      "path": "evidence/r87-original-file-audit.json",
+      "bytes": 16732,
+      "sha256": "32bfc0d1660041733245907f556ed49eb330283bf8647ea13d381454bc12d411"
+    },
+    {
+      "path": "evidence/r87-runtime-audit.json",
+      "bytes": 91272,
+      "sha256": "12f9758bae8854e63836f1661b122945041fc82c4a02db36d7bea39c36f3da43"
+    },
+    {
+      "path": "evidence/r87-signed-apk.json",
+      "bytes": 2300,
+      "sha256": "718518a1b16638bca17aa09f75cf95e80a2175cf6723ae0fcb1ee044a742bcfb"
+    },
+    {
+      "path": "evidence/r87-sustained-contended.json",
+      "bytes": 1745,
+      "sha256": "57d6d53045e513437cc2c3bbece9866a2ddee60264e78d88c2082591fb0b1aa6"
+    },
+    {
+      "path": "evidence/r87-sustained.json",
+      "bytes": 1015,
+      "sha256": "dad5d9b65c42e86f1acbf598da33fda3d61f865a477a82b953ec11a82164d84c"
+    },
+    {
+      "path": "evidence/r87-web-tests.log",
+      "bytes": 21173,
+      "sha256": "b3d5b2d062b82c17268c393e2ffa696f10dcf4fdae40370f80bb64d27cfb5bf8"
+    },
+    {
+      "path": "evidence/r87-wrapper-tests.log",
+      "bytes": 631,
+      "sha256": "b44ee39d1f3bd333feea8d8ad944c632f3ce57184480004913eea2987f6da7a1"
+    },
+    {
       "path": "evidence/runtime-sha256.json",
       "bytes": 2652,
       "sha256": "53e97db11d094b804a3ca9ab7eda84cfd99d79f626b13c393ac05535b582b037"
     },
     {
+      "path": "scripts/build-device-qa.py",
+      "bytes": 1153,
+      "sha256": "cb8337c22070ec67f96c82151a2d86307cf7d87642e6c647cb81df855a4098f1"
+    },
+    {
+      "path": "scripts/prepare-android-r80.py",
+      "bytes": 795,
+      "sha256": "ebb3ba0703db11b15afc6142f3eb34261ffbe73721939c699cfd7dd62b5eabae"
+    },
+    {
       "path": "scripts/test-build-portability.py",
-      "bytes": 1846,
-      "sha256": "5bfcf729d8e018fa8278972f2b733758544841c500a4aab4eda2134fea5eb7c4"
+      "bytes": 1909,
+      "sha256": "183f483f4882ae308fd61ae652185fe22efa49c0baccfafd153275522951636d"
     },
     {
       "path": "scripts/test.py",
-      "bytes": 804,
-      "sha256": "b1307ed8d2c0f47e8381bf370158acddf5968684dbce4d108cac9bec5b4556c1"
+      "bytes": 465,
+      "sha256": "08cb3fb0f5760fba23adbef6a8e90e54e51c0bd9f4986f0c9231717ff096ce93"
     },
     {
       "path": "scripts/verify-snapshot.py",
-      "bytes": 665,
-      "sha256": "7a0a89c5e613a7312fe73e00bd18d581db8d7ed96c8f9a180049d5269ede805a"
+      "bytes": 693,
+      "sha256": "6c46afedb2c96d72fe714549b2329dbb034a4a4b54383a9a0c52617b55434bd2"
     },
     {
-      "path": "web/MONGYU_R31.html",
-      "bytes": 1056113,
-      "sha256": "a7fb4f597a6356ba6a42fe9bba75a42f565ea2ca9426a370652889216235f968"
+      "path": "tools/audit-boss-exits.cjs",
+      "bytes": 2268,
+      "sha256": "4e929648704a1bbcf5b560c05621b289e7d436fe5ef5183481feb8d1b1c67eef"
+    },
+    {
+      "path": "tools/audit-native-patterns.cjs",
+      "bytes": 2453,
+      "sha256": "9ff22632de783973f2d982c091de42bb4c39b2d883b9675524a2c6aae93b6a33"
+    },
+    {
+      "path": "tools/audit-normal-bosses.cjs",
+      "bytes": 1744,
+      "sha256": "bce579ea1266a040731fbf28f041bee649a939d31a93810745fe828a69b9a226"
+    },
+    {
+      "path": "tools/audit-original-fields.py",
+      "bytes": 3561,
+      "sha256": "0eee1e6c230dcb45ca240a373e4ec594d8430441f1ede6de9bf116d0b8d5bf12"
+    },
+    {
+      "path": "tools/audit-runtime.cjs",
+      "bytes": 3105,
+      "sha256": "2a45e097df9bcb7418696bbfa5fed094e21ada9c77c67921ef575878c6a276be"
+    },
+    {
+      "path": "tools/audit_slots.cjs",
+      "bytes": 1677,
+      "sha256": "ca096078b7a75a59e5d7295965ad62e70272d1a6031ec1c461355114a0161982"
+    },
+    {
+      "path": "tools/compose_chapter_scores.py",
+      "bytes": 5951,
+      "sha256": "df67d4dae6c648f230ce92ae55a13f18c1386473ade938c606cf8d8b8b7ffc26"
+    },
+    {
+      "path": "tools/compose_night_score.py",
+      "bytes": 3085,
+      "sha256": "bec84c86f926d044268c4a11f5b33112a6698e8d56a97db4dda3a8ea9c2eba16"
+    },
+    {
+      "path": "tools/fetch_music.py",
+      "bytes": 1199,
+      "sha256": "0231a804c14b5aad3614a98fff06b1d50d58a834f720fb4231c05e4a05dccb14"
+    },
+    {
+      "path": "tools/verify-android-device.cjs",
+      "bytes": 10421,
+      "sha256": "6fbebbb81e250448d30d067998fd52ccf37e3b46d341249d987c0ac9f5834238"
+    },
+    {
+      "path": "tools/verify-r84-experience.cjs",
+      "bytes": 2695,
+      "sha256": "af6f831677c9f2bb57b82979f175cce4341b02acc05473a78adbff32c0faf21c"
+    },
+    {
+      "path": "tools/verify-r85-camera-companion.cjs",
+      "bytes": 2102,
+      "sha256": "24546014c2b7ef4154e382c75139cdc61a012ffd1e2e9699e7250771b90f63fa"
+    },
+    {
+      "path": "tools/verify-r86-renderer.cjs",
+      "bytes": 3173,
+      "sha256": "d00c48921fadbd9f4d16f9fd428f33fe9f37f5d5a4828c8686db9d8864fd590b"
+    },
+    {
+      "path": "tools/verify-sustained.cjs",
+      "bytes": 3149,
+      "sha256": "ea2a04c2dbd6edc473b972692ec9b06060a71a462e371a0cd7e315b18bdc05bd"
+    },
+    {
+      "path": "tools/verify_browser.cjs",
+      "bytes": 5073,
+      "sha256": "7b624f789f729985f46d685cdab5724113e0cea9fe108c8846ca1b913a542192"
+    },
+    {
+      "path": "web/MONGYU_R87.html",
+      "bytes": 9401789,
+      "sha256": "078729da76f3aceccf58ba7e08c849e8f4e21bb2aa09add3a5b4f1c8a7b2c8e4"
+    },
+    {
+      "path": "web/assets/music/CC-BY-4.0.txt",
+      "bytes": 20138,
+      "sha256": "6380e3ce28ee39a83b7c68df54f10571c50993218da27259ad4d1a88470b849e"
+    },
+    {
+      "path": "web/assets/music/MUSIC-CREDITS.txt",
+      "bytes": 761,
+      "sha256": "e4ca5ceafe10740547d956f1b3327faf2035fa0e1ebd056d047cbf7a88873b1a"
+    },
+    {
+      "path": "web/assets/music/chapter-01.mp3",
+      "bytes": 384956,
+      "sha256": "4b239c61ef08c51184af17a821c8c729fee66010917231c9811b584d0bab1b92"
+    },
+    {
+      "path": "web/assets/music/chapter-02.mp3",
+      "bytes": 366812,
+      "sha256": "5e1cd00bc22adc779b3bd64154a1a4cc0997136b553ced9276f7508673ebd6e1"
+    },
+    {
+      "path": "web/assets/music/chapter-03.mp3",
+      "bytes": 427724,
+      "sha256": "35c9aa2a1678b98bd5342de93096cafb54db68b6b6674394b970657e55ea1136"
+    },
+    {
+      "path": "web/assets/music/chapter-04.mp3",
+      "bytes": 350396,
+      "sha256": "eef9caf541d49d7a2bd9f8b0a139ccd6181d6dbffbaf27ea782b9ea0c332c849"
+    },
+    {
+      "path": "web/assets/music/chapter-05.mp3",
+      "bytes": 372860,
+      "sha256": "622e7c3459834aa907a8f5565bb097626af034848131ff8848af140fffb67d7c"
+    },
+    {
+      "path": "web/assets/music/chapter-06.mp3",
+      "bytes": 330092,
+      "sha256": "9305822997106b681c167606ff9f295899d0552db4daa3454e0babb560738087"
+    },
+    {
+      "path": "web/assets/music/chapter-07.mp3",
+      "bytes": 398348,
+      "sha256": "73f696484dcff00436c382cdc509996a82c13896d4626b0fdae7dbeb5c01f218"
+    },
+    {
+      "path": "web/assets/music/chapter-08.mp3",
+      "bytes": 412604,
+      "sha256": "a075c8698491e72546cd8edd0ace6dafc00083af8aae8ce98d700d530b09f1b8"
+    },
+    {
+      "path": "web/assets/music/chapter-09.mp3",
+      "bytes": 334844,
+      "sha256": "74d81fffc8964c1a2645e7632e62ef0337027bc949277fb30c0f7c3d1c8c0ed2"
+    },
+    {
+      "path": "web/assets/music/chapter-10.mp3",
+      "bytes": 361196,
+      "sha256": "42efbd20a08e3417408d322ea2a00889b85f230e73ca0c5212433f770e062312"
+    },
+    {
+      "path": "web/assets/music/heart-circuit.mp3",
+      "bytes": 321020,
+      "sha256": "3a837b8095fcae629211e9ef5aa411ab519f9dfc0ae0bff8663b04a96d87f5d5"
+    },
+    {
+      "path": "web/assets/music/manifest.json",
+      "bytes": 9842,
+      "sha256": "b7a70174c9d99d91956bb5c775a01d91c5f80868d2a3cc5baab101c261ea0e8b"
+    },
+    {
+      "path": "web/assets/music/night-corners.mp3",
+      "bytes": 1281088,
+      "sha256": "d653d0ca6b896719b83688477b9e6995cb7dd507c7d19d4f924610c6d3968b33"
     },
     {
       "path": "web/assets/r10/eclipse.webp",
@@ -167,19 +623,34 @@
       "sha256": "02161a08c67cfa03e3e2f847b3fd4fe1ac33296466a3d11a74f6eb512a00b087"
     },
     {
+      "path": "web/build-manifest.json",
+      "bytes": 7170,
+      "sha256": "84c20da34deaa12b3da87fc89307a24d9bd755d0dbcd9f943a3ef6774046bbc0"
+    },
+    {
       "path": "web/build.py",
-      "bytes": 1699,
-      "sha256": "731ed96e9bb7c6f48b0a83c7d1a6eca9cbb53b245843829c8aa8b103e76aea67"
+      "bytes": 2258,
+      "sha256": "375db41c9218fc1fe8c0f13c067469d24a1c9292cec7a1736fbd2a99663883bd"
     },
     {
       "path": "web/index.template.html",
-      "bytes": 23470,
-      "sha256": "9bd495c0e861757d1a2c75930ceadb20abaa2493005c976821b2afedccee3cc1"
+      "bytes": 69662,
+      "sha256": "633bb9caa172d975f45951e10f7ec6c83cd8450f58f0b68cdafb32893fd98b10"
+    },
+    {
+      "path": "web/mobile.css",
+      "bytes": 16494,
+      "sha256": "a8bc6725fce304a480d93c72708cd7f4671048604b165f3c71540506d1a58f04"
+    },
+    {
+      "path": "web/sources.json",
+      "bytes": 1158,
+      "sha256": "7d641e1e39409170e57ec93f3882a72b24e65b95688f6bf5246ca2aefab3f2a9"
     },
     {
       "path": "web/src/app.js",
-      "bytes": 69303,
-      "sha256": "efad9c6150dcbd277e19cb95f85889c418704318ce778ec3bc0790881ad81879"
+      "bytes": 152292,
+      "sha256": "ed0bb3e8a62001cd07fa0faada6dd0dc0173844e63b0f6f4354a739821e4c3dc"
     },
     {
       "path": "web/src/assets.js",
@@ -187,24 +658,104 @@
       "sha256": "d8f05d148cc04f13510e30610b4fbe7302ff49cfc726363e965659cd5e0715b0"
     },
     {
+      "path": "web/src/commerce.js",
+      "bytes": 8148,
+      "sha256": "4612b8dc19a96ee2c309a1c3966f088c4c6143817e6dc8d5b962753b0935813e"
+    },
+    {
       "path": "web/src/companion-bridge.js",
-      "bytes": 11158,
-      "sha256": "5bc69abe163599956c475baea5c13afaf1b5032c7e6fafadde0544deddd43b78"
+      "bytes": 11255,
+      "sha256": "08b7a55cac267b6d45271fd65e95d583a78162f32e3f09ede938b0eb852fb5c7"
     },
     {
       "path": "web/src/content.js",
-      "bytes": 32534,
-      "sha256": "9f12f54a5513cff0a372ca05eae5177cb23929deffab2369dff1a5055e617cb0"
+      "bytes": 48475,
+      "sha256": "b71638d0f25fc831a05d2019a8a5c18e7ca54c8ba14ac37b03f1001d95423ebd"
     },
     {
       "path": "web/src/day-night.js",
-      "bytes": 10386,
-      "sha256": "aa9a423b155ce85435a8d08cbd15014a5c7341ad8ffca542df028fd14be426db"
+      "bytes": 10483,
+      "sha256": "10c05412c95751f2671d737491f84ca36db9e39694da1e3a3b27db69b15b30a7"
+    },
+    {
+      "path": "web/src/dream-score.js",
+      "bytes": 6941,
+      "sha256": "d898b56cc9acdf7ff406146095e5058ef9a819d7b2a0ee20bbb43ed8b39ee5f1"
+    },
+    {
+      "path": "web/src/durable-storage.js",
+      "bytes": 1669,
+      "sha256": "331cc2b0d1b90c66b08b4807b0ee72277bf93a7520f5d4c63b835feac9e724e2"
+    },
+    {
+      "path": "web/src/encounter-alien.js",
+      "bytes": 11706,
+      "sha256": "1a453864ac47a70c32d6572bf1708175ffa92bb3658a7123f16f697bae2b9f5e"
+    },
+    {
+      "path": "web/src/encounter-art.js",
+      "bytes": 6410,
+      "sha256": "f98c08d4bd1297b9374f4bdb4744ea79d6052070b75e82f911160dbdf1bf2b14"
+    },
+    {
+      "path": "web/src/encounter-chain.js",
+      "bytes": 8398,
+      "sha256": "5d1a42df94205b62672b272746b57a329a24d0afebb2d4f6e3439063bbb6c72e"
+    },
+    {
+      "path": "web/src/encounter-heart.js",
+      "bytes": 9478,
+      "sha256": "c06bd9a202294c4c3431a55030e160f1fbbca16dd36b1bea5368a4d637f88d0e"
+    },
+    {
+      "path": "web/src/encounter-orbit.js",
+      "bytes": 9117,
+      "sha256": "dcf366fd32f3587b2c05bd7b3c7ad21cec947959856ea340d44ff19736550786"
+    },
+    {
+      "path": "web/src/encounter-projectile-core.js",
+      "bytes": 7245,
+      "sha256": "fc6e649744f30e3e9a442cf50b0813b4f29e2a93e4e2c8af81fa4c4dc62ad778"
+    },
+    {
+      "path": "web/src/encounter-radial.js",
+      "bytes": 10606,
+      "sha256": "3092dc62cf0e578cd2acf4963ca6b0bbff5ddd45f150bcc078917e2033ccb3f1"
+    },
+    {
+      "path": "web/src/encounter-robot.js",
+      "bytes": 11559,
+      "sha256": "a8082c4342b065faaf0060aea7a7b55e01ab3350694db9eb0c55c8c09994d720"
+    },
+    {
+      "path": "web/src/encounter-sun.js",
+      "bytes": 1744,
+      "sha256": "a052ef126de434f24861820dbbe5db44a93f1254fafa1388f23d4fbcfea16576"
+    },
+    {
+      "path": "web/src/encounter-wave.js",
+      "bytes": 7740,
+      "sha256": "70bae0c339d1947fbe1d003edee5e3224368162c05e59a6e7d70766201bdb1ab"
     },
     {
       "path": "web/src/engine.js",
-      "bytes": 46263,
-      "sha256": "c7ef6601488e788297ccbb6352f7783e7518135323e487c9e88d91519a3bf044"
+      "bytes": 90851,
+      "sha256": "d72ff142bab26910105ab3aff95d9c72ba0491acbf579f04eab23652a493b110"
+    },
+    {
+      "path": "web/src/face-counter.js",
+      "bytes": 10614,
+      "sha256": "e4a62a552849c04e5aca68058f59a73bb7d75c5f400bbaa7e6d0be311bf2439c"
+    },
+    {
+      "path": "web/src/game-sfx.js",
+      "bytes": 3208,
+      "sha256": "e29b46f43353f78602713b39db0b8b55240c3fead80e88ab3f541b3cf254dd3d"
+    },
+    {
+      "path": "web/src/immersive-art.js",
+      "bytes": 23717,
+      "sha256": "f9c53d2052be7eed88ad02efbf912db43bad236bb0e4d91d991771b8263d9a5e"
     },
     {
       "path": "web/src/journey-audio.js",
@@ -212,9 +763,54 @@
       "sha256": "752215a4f09d60ddb4ccbdd98a916c7dce6f7712f54497418aa6bfb220a60322"
     },
     {
+      "path": "web/src/licensed-score.js",
+      "bytes": 8033,
+      "sha256": "7e68397328e7ff336f871d260bbe1bf2a42a53fef692bc617e7e11497d0051c5"
+    },
+    {
+      "path": "web/src/mobile-presentation.js",
+      "bytes": 16959,
+      "sha256": "2980e334b6ace63cbbbc46fbcb1a95270ce7c7895d44c32300234562d435a4a4"
+    },
+    {
+      "path": "web/src/native-kernels.js",
+      "bytes": 417641,
+      "sha256": "baa40f9a41391aa0756285e853753343e817b07f3cecb397db4e38f42a8ab50e"
+    },
+    {
+      "path": "web/src/native-palette.js",
+      "bytes": 24477,
+      "sha256": "9c6b60761f26689a48adeeaf1f60a8d9f8abc9ad71767c79dc4475f3b1088670"
+    },
+    {
+      "path": "web/src/native-restoration-run.js",
+      "bytes": 22397,
+      "sha256": "ccbd0daea796154ad11d8adf7934b3bf35013fca038eaaf206457017802fef46"
+    },
+    {
+      "path": "web/src/native-scene.js",
+      "bytes": 10502,
+      "sha256": "3415eb93c8e1fa23098cac510b93a8f6d713446e84630ea7593bac03d08a8784"
+    },
+    {
+      "path": "web/src/native-stability.js",
+      "bytes": 1542,
+      "sha256": "f3c9af851eededfff95199843a90e40221e58f193bcd075ca5926841f31056d3"
+    },
+    {
+      "path": "web/src/observed-encounter.js",
+      "bytes": 5122,
+      "sha256": "23907a7c634df36f4823ee135401b858e1faf844ff2b63cbc5acf41265acc72e"
+    },
+    {
       "path": "web/src/origin-records.js",
       "bytes": 10724,
       "sha256": "16624140ddf337132e5e98f1c9e8b4cd6e81a898b6697d41435826164568278d"
+    },
+    {
+      "path": "web/src/presentation-runtime.js",
+      "bytes": 7667,
+      "sha256": "2d62b54acc817201a03ff560cf1bcc4d37e861304c0b298d53a417f966579a10"
     },
     {
       "path": "web/src/progression.js",
@@ -222,14 +818,79 @@
       "sha256": "3d8e2aa557a2892f71b9cf30e52fb209a67eaf5209ac5a458eda871ba6b5008c"
     },
     {
+      "path": "web/src/release-policy.js",
+      "bytes": 2626,
+      "sha256": "eeb8f0c04471da5382be1f80d51c20466a345d3d24ba27771bed1281a7beebfc"
+    },
+    {
       "path": "web/src/render.js",
-      "bytes": 92067,
-      "sha256": "c8da9a1e399b3ead9049a848d2a94e20b1750ce02422378613a162202cfd8034"
+      "bytes": 101849,
+      "sha256": "6a310f5176a3f9b8bd59ec1ea7f7b964a2e73e74f8a15061f57cb4faca54625f"
+    },
+    {
+      "path": "web/src/restoration-audio-lifecycle.js",
+      "bytes": 3530,
+      "sha256": "fb9ff206fcb527768d6cd3325311af56e1a292f96232ec44c772f6db0a5b7eb9"
+    },
+    {
+      "path": "web/src/restoration-audio-policy.js",
+      "bytes": 5198,
+      "sha256": "87268067c7c7de12d7f5522bffc52263100b4efe8f2a0bffa5b411be65a867a5"
+    },
+    {
+      "path": "web/src/restoration-catalog.js",
+      "bytes": 45767,
+      "sha256": "d8211bbfb2d4e7d61917cd72e4938d3880939f64f186cb22ddfcf95a67a30b92"
+    },
+    {
+      "path": "web/src/restoration-mastery.js",
+      "bytes": 3369,
+      "sha256": "a583d6584d833034d589adae9efe5eaf58eb72f6829f7ec1815c19fbe8d810dd"
+    },
+    {
+      "path": "web/src/restoration-stage-policy.js",
+      "bytes": 5302,
+      "sha256": "f4e9c31c9963dba3e08ef08bdee59ce28275fa4f7ac77098f36858dee8115e86"
+    },
+    {
+      "path": "web/src/restoration-story-graph.js",
+      "bytes": 63263,
+      "sha256": "bad75d9ce3036e9d4a6182a008db6f21b31e5a908218bd242c57c9aec84c34d0"
+    },
+    {
+      "path": "web/src/restoration-ui.js",
+      "bytes": 43962,
+      "sha256": "590bd43b8c0971643c9f1eb5580954ee033a783aecf1a9ff42fa0da335ed27cf"
+    },
+    {
+      "path": "web/src/restoration-world.js",
+      "bytes": 88166,
+      "sha256": "fcf458838da3f5152971be53b1afd4373edcd68c1355cbb50f16ec5fc3b67a2b"
+    },
+    {
+      "path": "web/src/square-art.js",
+      "bytes": 53461,
+      "sha256": "e4c8f6b7e9316554ec619567a8dd68a230dea7538e92fea4c821048aaad8723b"
     },
     {
       "path": "web/src/square-reply.js",
       "bytes": 10999,
       "sha256": "ecc728336c6447e17b5ca406d5c3d27d0a7e1f4cbaebcb95df16dbb276168620"
+    },
+    {
+      "path": "web/src/square-score.js",
+      "bytes": 11861,
+      "sha256": "6bea9c1865b4a444e3e84788e7a4c6ef446af98b5072bfa623a3b48518482a88"
+    },
+    {
+      "path": "web/src/square-world.js",
+      "bytes": 15465,
+      "sha256": "d94300b1e60638cd74a5edc6fc8de2ffaa7e55acabc96475accd077fdd902f76"
+    },
+    {
+      "path": "web/src/state-clone.js",
+      "bytes": 2992,
+      "sha256": "a73cd8aaad0a74eb60c38e697feab4d16b6374cae6220bc5e0a497c1e107c046"
     },
     {
       "path": "web/src/tilt.js",
@@ -243,8 +904,8 @@
     },
     {
       "path": "web/tests/host.cjs",
-      "bytes": 7982,
-      "sha256": "0fcc2abcc58680ee9ec6c9288ae51d9c099a21a34f4c4c18b5ac1f767d9380a0"
+      "bytes": 9363,
+      "sha256": "4c920e93f45bd634c670c307f343cf264bb5cddb28679bd614b4eb8e51395039"
     },
     {
       "path": "web/tests/r29-day-night.test.cjs",
@@ -255,6 +916,126 @@
       "path": "web/tests/r31-day-night-ending.test.cjs",
       "bytes": 3387,
       "sha256": "6e96f8c443181f3a04780a67d726dc6cc3cae6816dca65947f05d8e8b9302171"
+    },
+    {
+      "path": "web/tests/r32-arcade-ui.test.cjs",
+      "bytes": 5178,
+      "sha256": "2f0843e4ec6ce323da09f03cfb9dd78d6cf16522049f4d3cb6d554924442fec0"
+    },
+    {
+      "path": "web/tests/r34-ui.test.cjs",
+      "bytes": 6996,
+      "sha256": "f939ecae0f75e97c37e0c109c04d6e1fbaf5d0504a4ed73848832e5a27895413"
+    },
+    {
+      "path": "web/tests/r37-experience.test.cjs",
+      "bytes": 7489,
+      "sha256": "c5f882bd4bdf2689936d6fe421143dea4d38a579fd6f10378bbbe1f1360bc879"
+    },
+    {
+      "path": "web/tests/r40-event-fixtures.cjs",
+      "bytes": 2411,
+      "sha256": "9cdd4519d92a2113d92c1677678c6363d545b797889ed52768596267f2a17a46"
+    },
+    {
+      "path": "web/tests/r77-native-entry-integration.test.cjs",
+      "bytes": 659,
+      "sha256": "141d51a0b9e6f60bd39675f3e5389bd070e8195a0c7e9f9e69194c2036943d1e"
+    },
+    {
+      "path": "web/tests/r78-mask-presentation.test.cjs",
+      "bytes": 4653,
+      "sha256": "28ff3a3bac46d26a7f596e9e4430d38ca3e7f8f58a9eab0913f1f34db066067c"
+    },
+    {
+      "path": "web/tests/r79-save-migration.test.cjs",
+      "bytes": 5984,
+      "sha256": "fb0db3e875a796149e2d0634d5865d2f25709b747ba915b3e100ea6bf2a9a10a"
+    },
+    {
+      "path": "web/tests/r80-inline-flow.test.cjs",
+      "bytes": 2800,
+      "sha256": "9e966d10cdebeb8dedcf50381aaf40281014932b9e19847bd11cdce9b5510703"
+    },
+    {
+      "path": "web/tests/r80-native-integrity.json",
+      "bytes": 567,
+      "sha256": "0b7c82ff8c50764b4087502945d08558b62dec96e262b80e001af95efc6b59a5"
+    },
+    {
+      "path": "web/tests/r80-presentation.test.cjs",
+      "bytes": 4476,
+      "sha256": "15e1b1fb06f56653c61a3a48975e90a62fa8fe3055d36f36481c51c5c7cc948e"
+    },
+    {
+      "path": "web/tests/r80-release-policy.test.cjs",
+      "bytes": 1844,
+      "sha256": "3629c4e2ebe2344a1ef79a806d19957121b0201ce698fdb861383c51c5c13ef4"
+    },
+    {
+      "path": "web/tests/r81-immersive.test.cjs",
+      "bytes": 1968,
+      "sha256": "3fd0dd37a14cc2c97512bf2766a6031b129a25b80ff5027b05c3a72b218cdbc7"
+    },
+    {
+      "path": "web/tests/r82-runtime.test.cjs",
+      "bytes": 6128,
+      "sha256": "d8543fbc7f163087acfd85ab8bbd20302bbd8ae4c88db897deddbb3109471ed1"
+    },
+    {
+      "path": "web/tests/r83-corrections.test.cjs",
+      "bytes": 4568,
+      "sha256": "50c82d77b283f431528f0ba6d6ed98422ef84fd5ad97ec2781ab86fea77a10bc"
+    },
+    {
+      "path": "web/tests/r84-performance-story.test.cjs",
+      "bytes": 5668,
+      "sha256": "05bd4ab77a0205f183b8f7e67f3565d2373fc5782cf93114891bef6b8b932fb8"
+    },
+    {
+      "path": "web/tests/r85-camera-companion.test.cjs",
+      "bytes": 4263,
+      "sha256": "e696272e90ea21927789f679eb1b2e1b7d786582a10198458951350787324c6a"
+    },
+    {
+      "path": "web/tests/r86-floating-fixture.json",
+      "bytes": 38312,
+      "sha256": "fd93b6b4de1c78528b923b61e664ecb5e62135699b95bf284a7d19fb64b5ed0b"
+    },
+    {
+      "path": "web/tests/r86-morph-fixture.json",
+      "bytes": 56252,
+      "sha256": "2a05c69cf5bb3bbbc6b131112dbecbf143e8041038ca06927c08aa8ea5cf9847"
+    },
+    {
+      "path": "web/tests/r86-parry-fixture.json",
+      "bytes": 24769,
+      "sha256": "4d608e8904d6440bb6b3077d0da6eb7a27d392be4368f376ebe582dba3696d74"
+    },
+    {
+      "path": "web/tests/r86-partition-fixtures.json",
+      "bytes": 203263,
+      "sha256": "bf9bb93d2a1dd372e73eb5f612d314ee6175d10f3aef4c514c8682463bbda83e"
+    },
+    {
+      "path": "web/tests/r86-runtime-renderer.test.cjs",
+      "bytes": 7065,
+      "sha256": "50cc38b43f4c5fce3541d96b9bff83ed7173e02c3b4f7b558339d0630cec411a"
+    },
+    {
+      "path": "web/tests/r87-audio-inputs.test.cjs",
+      "bytes": 6069,
+      "sha256": "e17fd6e0b6f70943f727ea87068b2b677f7d525e409543150b40eab9f3d1a712"
+    },
+    {
+      "path": "web/tests/r87-durable-storage.test.cjs",
+      "bytes": 3089,
+      "sha256": "4b53166cdac97742deb5eda17c8d65818150a9d2d3ee7d0a6117399583bd0485"
+    },
+    {
+      "path": "web/tests/r87-normal-boss-inputs.json",
+      "bytes": 8748,
+      "sha256": "02e4fe5296441df12668d501a32c9d0b254feebfad7575699d1f9d73c15c03ae"
     },
     {
       "path": "web/tests/tilt.test.cjs",

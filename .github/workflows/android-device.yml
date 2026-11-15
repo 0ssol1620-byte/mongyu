@@ -1,0 +1,77 @@
+name: Android device QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/r87-original-audit-android]
+    paths-ignore: ['docs/**', 'evidence/**', 'README.md']
+permissions:
+  contents: read
+jobs:
+  device:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/cache/restore@v4
+        id: web-cache
+        with:
+          path: ci/web-tests-passed
+          key: web-node22-${{ hashFiles('web/**', 'scripts/test.py', 'scripts/test-build-portability.py', 'scripts/verify-snapshot.py') }}
+      - name: Check exact web payload
+        run: |
+          if [ '${{ steps.web-cache.outputs.cache-hit }}' = 'true' ]; then
+            python3 web/build.py
+            python3 scripts/verify-snapshot.py
+          else
+            python3 scripts/test.py
+          fi
+          mkdir -p ci/web-tests-passed
+          cp web/build-manifest.json ci/web-tests-passed/
+      - uses: actions/cache/save@v4
+        if: steps.web-cache.outputs.cache-hit != 'true'
+        with:
+          path: ci/web-tests-passed
+          key: ${{ steps.web-cache.outputs.cache-primary-key }}
+      - name: Prepare SDK and QA packages
+        run: |
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          python3 scripts/prepare-android-r80.py
+          python3 scripts/build-device-qa.py
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -no-snapshot -no-audio -gpu swiftshader_indirect -no-boot-anim -camera-back none -camera-front none -memory 3072 -cores 4
+          script: node tools/verify-android-device.cjs ci/baseline.apk ci/updated.apk
+      - name: Device evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-device-evidence
+          path: ci/device/
+      - name: Tested unsigned payload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-unsigned-payload
+          path: android/outputs/MONGYU_R87_TEST_DEBUG_UNSIGNED.apk

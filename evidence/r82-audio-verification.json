@@ -1,0 +1,89 @@
+{
+  "scope": "full FFmpeg decode and pinned-byte check; not human listening or handset speaker validation",
+  "tracks": [
+    {
+      "id": "night-corners",
+      "bytes": 1281088,
+      "sha256": "d653d0ca6b896719b83688477b9e6995cb7dd507c7d19d4f924610c6d3968b33",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-01",
+      "bytes": 384956,
+      "sha256": "4b239c61ef08c51184af17a821c8c729fee66010917231c9811b584d0bab1b92",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-02",
+      "bytes": 366812,
+      "sha256": "5e1cd00bc22adc779b3bd64154a1a4cc0997136b553ced9276f7508673ebd6e1",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-03",
+      "bytes": 427724,
+      "sha256": "35c9aa2a1678b98bd5342de93096cafb54db68b6b6674394b970657e55ea1136",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-04",
+      "bytes": 350396,
+      "sha256": "eef9caf541d49d7a2bd9f8b0a139ccd6181d6dbffbaf27ea782b9ea0c332c849",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-05",
+      "bytes": 372860,
+      "sha256": "622e7c3459834aa907a8f5565bb097626af034848131ff8848af140fffb67d7c",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-06",
+      "bytes": 330092,
+      "sha256": "9305822997106b681c167606ff9f295899d0552db4daa3454e0babb560738087",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-07",
+      "bytes": 398348,
+      "sha256": "73f696484dcff00436c382cdc509996a82c13896d4626b0fdae7dbeb5c01f218",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-08",
+      "bytes": 412604,
+      "sha256": "a075c8698491e72546cd8edd0ace6dafc00083af8aae8ce98d700d530b09f1b8",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-09",
+      "bytes": 334844,
+      "sha256": "74d81fffc8964c1a2645e7632e62ef0337027bc949277fb30c0f7c3d1c8c0ed2",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "chapter-10",
+      "bytes": 361196,
+      "sha256": "42efbd20a08e3417408d322ea2a00889b85f230e73ca0c5212433f770e062312",
+      "decode": "passed",
+      "originalNOMRecording": false
+    },
+    {
+      "id": "heart-circuit",
+      "bytes": 321020,
+      "sha256": "3a837b8095fcae629211e9ef5aa411ab519f9dfc0ae0bff8663b04a96d87f5d5",
+      "decode": "passed",
+      "originalNOMRecording": false
+    }
+  ]
+}

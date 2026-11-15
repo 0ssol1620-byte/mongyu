@@ -1,0 +1,62 @@
+{
+  "release": "R86",
+  "web": {
+    "tests": 140,
+    "pass": 139,
+    "fail": 0,
+    "skip": 1,
+    "note": "external adapter unavailable"
+  },
+  "androidCallbackVm": {
+    "pass": 5,
+    "fail": 0
+  },
+  "runtime": {
+    "slots": 100,
+    "nativeRuns": 148,
+    "errors": [],
+    "clears": 49
+  },
+  "patterns": {
+    "records": 256,
+    "errors": 0,
+    "scope": "explicit recovered row provider fixtures, not campaign clears"
+  },
+  "controlledBossExits": 10,
+  "browser": {
+    "errors": [],
+    "offline": true,
+    "rendererScenarios": 19,
+    "fullViewportLayouts": 3
+  },
+  "sustained": {
+    "framesMs": {
+      "samples": 600,
+      "p50": 15.700000000186265,
+      "p95": 33.10000000055879,
+      "p99": 59.700000000186265,
+      "max": 127.19999999925494
+    },
+    "simulationMs": {
+      "samples": 143,
+      "p50": 11.5,
+      "p95": 22,
+      "p99": 47.200000000186265,
+      "max": 57.5
+    },
+    "longTasks": 7,
+    "staticAttributeChanges": {},
+    "cpuThrottle": 4,
+    "sameSimulationTraceAsBaseline": false,
+    "physicalAndroidDeviceTest": false
+  },
+  "apk": {
+    "sha256": "1cac00a97ea40542d285f3f7bfbb993748a226b868bff48900f32ae2c68f9a58",
+    "htmlSha256": "8b38ea71e8e759711b80711ad03a8b7a60a424f40ae47dea7552f49fd154d240",
+    "versionCode": 86,
+    "applicationId": "org.quadrift.mongyu.preview.r82"
+  },
+  "fullOriginalEquivalence": false,
+  "full100SlotNormalInputCampaignClear": false,
+  "originalPickupZoomRelation": "unverified"
+}

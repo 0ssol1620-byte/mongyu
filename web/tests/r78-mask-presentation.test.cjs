@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const web=path.resolve(__dirname,'..');
 function load(inline){
- const context=vm.createContext({structuredClone}),html=inline?fs.readFileSync(path.join(web,'MONGYU_R81.html'),'utf8'):null;
+ const context=vm.createContext({structuredClone}),html=inline?fs.readFileSync(path.join(web,'MONGYU_R87.html'),'utf8'):null;
  const scripts=html?[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]):[];
  for(const name of ['native-kernels.js','native-restoration-run.js','restoration-catalog.js','square-art.js']){
   const source=fs.readFileSync(path.join(web,'src',name),'utf8'),normalized=s=>s.replaceAll('\r\n','\n').trim();
@@ -33,8 +33,9 @@ for(const inline of [false,true]){
   assert.equal(geo.nativeMaskId,35);assert.equal(geo.nativePaths.length,0);assert.equal(geo.track.points.length,0);
   assert.deepEqual(plain(geo.nativeMaskCells.map(c=>[c.x+8,c.y+8])),want);
   const draws=[],context={save(){},restore(){},fillRect(...rect){draws.push({rect,color:this.fillStyle});}};
-  A.support(context,geo,{p:{wall:'#ff00ff'}});assert.equal(draws.length,want.length*3);
-  assert.deepEqual(draws.filter((_,i)=>i%3===0).map(d=>d.rect),want.map(([x,y])=>[x-8,y-8,16,16]));
+  A.support(context,geo,{p:{wall:'#ff00ff'}});assert.equal(draws.length,want.length);
+  assert.deepEqual(draws.map(d=>[d.rect[0]+d.rect[2]/2,d.rect[1]+d.rect[3]/2]),want);
+  assert.ok(draws.every(d=>d.rect[2]>0&&d.rect[2]<=16&&d.rect[3]>0&&d.rect[3]<=16));
   for(const c of geo.nativeMaskCells){assert.ok(c.x>=0&&c.y>=0&&c.x+c.width<=384&&c.y+c.height<=384);}
  });
 }

@@ -1,0 +1,448 @@
+{
+  "scope": "source/VM/browser/compiled artifact verification; no physical handset test",
+  "webTests": {
+    "total": 120,
+    "pass": 119,
+    "fail": 0,
+    "skip": 1
+  },
+  "nativeWrapperTests": {
+    "pass": 5,
+    "fail": 0
+  },
+  "motion": {
+    "errors": [],
+    "bootLegacyControlsHidden": true,
+    "normalBootReady": true,
+    "turns": [
+      {
+        "update": 88,
+        "from": {
+          "x": 358,
+          "y": 360,
+          "face": 0
+        },
+        "to": {
+          "x": 360,
+          "y": 328,
+          "face": 1
+        },
+        "samples": [
+          {
+            "x": 358,
+            "y": 360,
+            "angle": 0,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 357.75,
+            "angle": -0.19634954084936207,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 353.5,
+            "angle": -0.39269908169872414,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 349.25,
+            "angle": -0.5890486225480862,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 345,
+            "angle": -0.7853981633974483,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 340.75,
+            "angle": -0.9817477042468103,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 336.5,
+            "angle": -1.1780972450961724,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 332.25,
+            "angle": -1.3744467859455345,
+            "height": 0
+          },
+          {
+            "x": 360,
+            "y": 328,
+            "angle": -1.5707963267948966,
+            "height": 0
+          }
+        ],
+        "maximumDisplayDisplacementPerSample": 4.25
+      },
+      {
+        "update": 129,
+        "from": {
+          "x": 360,
+          "y": 24,
+          "face": 1
+        },
+        "to": {
+          "x": 328,
+          "y": 24,
+          "face": 2
+        },
+        "samples": [
+          {
+            "x": 360,
+            "y": 24,
+            "angle": -1.5707963267948966,
+            "height": 0
+          },
+          {
+            "x": 356,
+            "y": 24,
+            "angle": -1.7671458676442586,
+            "height": 0
+          },
+          {
+            "x": 352,
+            "y": 24,
+            "angle": -1.9634954084936207,
+            "height": 0
+          },
+          {
+            "x": 348,
+            "y": 24,
+            "angle": -2.159844949342983,
+            "height": 0
+          },
+          {
+            "x": 344,
+            "y": 24,
+            "angle": -2.356194490192345,
+            "height": 0
+          },
+          {
+            "x": 340,
+            "y": 24,
+            "angle": -2.552544031041707,
+            "height": 0
+          },
+          {
+            "x": 336,
+            "y": 24,
+            "angle": -2.7488935718910694,
+            "height": 0
+          },
+          {
+            "x": 332,
+            "y": 24,
+            "angle": -2.9452431127404313,
+            "height": 0
+          },
+          {
+            "x": 328,
+            "y": 24,
+            "angle": -3.141592653589793,
+            "height": 0
+          }
+        ],
+        "maximumDisplayDisplacementPerSample": 4
+      }
+    ],
+    "speedMs": 75
+  },
+  "browser": {
+    "target": "http://127.0.0.1:4173/web/MONGYU_R83.html",
+    "errors": [],
+    "metrics": {
+      "samples": 120,
+      "cpuThrottle": 4,
+      "protocol": "ordinary RAF/tick plus one explicitly timed draw per frame; includes warm-up and simulation work",
+      "renderMedianMs": 0.900000000372529,
+      "renderP95Ms": 2.5,
+      "frameMedianMs": 15.599999999627471,
+      "frameP95Ms": 81.5,
+      "state": "play",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scale": 1.0833333333333333,
+        "offsetX": 0,
+        "offsetY": 162,
+        "dpr": 1.5
+      },
+      "music": "사탕 미로"
+    },
+    "layouts": [
+      {
+        "width": 844,
+        "height": 390,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 844,
+          "height": 390
+        }
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 568
+        }
+      },
+      {
+        "width": 800,
+        "height": 1280,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 800,
+          "height": 1280
+        }
+      }
+    ],
+    "offline": true,
+    "sound": {
+      "tracks": [
+        {
+          "id": "night-corners",
+          "bytes": 1281088,
+          "roles": [
+            "title",
+            "menu",
+            "skin",
+            "story1",
+            "story2",
+            "story3"
+          ]
+        },
+        {
+          "id": "chapter-01",
+          "bytes": 384956,
+          "roles": [
+            "stage01"
+          ]
+        },
+        {
+          "id": "chapter-02",
+          "bytes": 366812,
+          "roles": [
+            "stage02"
+          ]
+        },
+        {
+          "id": "chapter-03",
+          "bytes": 427724,
+          "roles": [
+            "stage03"
+          ]
+        },
+        {
+          "id": "chapter-04",
+          "bytes": 350396,
+          "roles": [
+            "stage04"
+          ]
+        },
+        {
+          "id": "chapter-05",
+          "bytes": 372860,
+          "roles": [
+            "stage05"
+          ]
+        },
+        {
+          "id": "chapter-06",
+          "bytes": 330092,
+          "roles": [
+            "stage06"
+          ]
+        },
+        {
+          "id": "chapter-07",
+          "bytes": 398348,
+          "roles": [
+            "stage07"
+          ]
+        },
+        {
+          "id": "chapter-08",
+          "bytes": 412604,
+          "roles": [
+            "stage08"
+          ]
+        },
+        {
+          "id": "chapter-09",
+          "bytes": 334844,
+          "roles": [
+            "stage09"
+          ]
+        },
+        {
+          "id": "chapter-10",
+          "bytes": 361196,
+          "roles": [
+            "stage10"
+          ]
+        },
+        {
+          "id": "heart-circuit",
+          "bytes": 321020,
+          "roles": [
+            "boss"
+          ]
+        }
+      ],
+      "coverage": {
+        "source": "licensed-substitute-recordings",
+        "originalAudioRestored": false,
+        "nativeMusicRoleCount": 17,
+        "availableRecordingCount": 12,
+        "availableStageRecordingCount": 10,
+        "dedicatedRoleCount": 17,
+        "assignments": [
+          {
+            "role": "title",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "menu",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "skin",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "story1",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "story2",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "story3",
+            "trackIds": [
+              "night-corners"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage01",
+            "trackIds": [
+              "chapter-01"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage02",
+            "trackIds": [
+              "chapter-02"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage03",
+            "trackIds": [
+              "chapter-03"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage04",
+            "trackIds": [
+              "chapter-04"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage05",
+            "trackIds": [
+              "chapter-05"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage06",
+            "trackIds": [
+              "chapter-06"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage07",
+            "trackIds": [
+              "chapter-07"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage08",
+            "trackIds": [
+              "chapter-08"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage09",
+            "trackIds": [
+              "chapter-09"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "stage10",
+            "trackIds": [
+              "chapter-10"
+            ],
+            "assignment": "dedicated-role"
+          },
+          {
+            "role": "boss",
+            "trackIds": [
+              "heart-circuit"
+            ],
+            "assignment": "dedicated-role"
+          }
+        ]
+      }
+    }
+  },
+  "sameSigningCertificateAsR82": true,
+  "applicationIdUnchanged": true,
+  "htmlSha256": "62bfabe7aebd920cf7b260e9dd36279a4cae05afc499dc89088da89970c09a2a",
+  "finalRenderingChecks": {
+    "total": 30,
+    "pass": 29,
+    "fail": 0,
+    "skip": 1
+  }
+}

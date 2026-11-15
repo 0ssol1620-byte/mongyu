@@ -2,8 +2,10 @@ package org.quadrift.hddevelopment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Insets;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowInsets;
@@ -16,7 +18,13 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.RenderProcessGoneDetail;
+import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Button;
+import android.view.Gravity;
 import android.window.OnBackInvokedDispatcher;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,15 +33,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Offline-only host. No JavaScript-to-native bridge and no external intent navigation. */
+/** Offline-only host with a bounded private save journal and no external navigation. */
 public final class MainActivity extends Activity {
     private static final String GAME_URL = "https://appassets.androidplatform.net/index.html";
     private WebView web;
+    private int rendererFailures;
     private int safeLeft, safeTop, safeRight, safeBottom;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        rendererFailures = state == null ? 0 : state.getInt("rendererFailures", 0);
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.rgb(10, 12, 18));
         web = new WebView(this);
@@ -67,9 +77,24 @@ public final class MainActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         settings.setSupportMultipleWindows(false);
         settings.setMediaPlaybackRequiresUserGesture(true);
+        // Only packaged, non-navigable HTML executes here. This capability can
+        // access bounded game-save keys, never files, intents or the network.
+        web.addJavascriptInterface(new LocalStore(getSharedPreferences("mongyu.offline.v1", MODE_PRIVATE)), "_MongyuStore");
         CookieManager.getInstance().setAcceptCookie(false);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
         web.setWebViewClient(new WebViewClient() {
+            @Override public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+                // A dead renderer must never take the Activity down with it.
+                // Keep the origin's saved collection; do not clear WebView data.
+                if (web == view) web = null;
+                if (view.getParent() instanceof FrameLayout) ((FrameLayout)view.getParent()).removeView(view);
+                view.destroy();
+                if (!isFinishing() && !isDestroyed()) {
+                    if (rendererFailures++ == 0) recreate();
+                    else showRecovery(); // Bound automatic retries; the player chooses the next one.
+                }
+                return true;
+            }
             @Override public void onPageFinished(WebView view, String url) {
                 if (GAME_URL.equals(url)) publishSafeInsets();
             }
@@ -95,12 +120,69 @@ public final class MainActivity extends Activity {
         web.loadUrl(GAME_URL);
     }
 
+    public static final class LocalStore {
+        private final SharedPreferences data;
+        LocalStore(SharedPreferences data) { this.data = data; }
+        private static boolean owned(String key) {
+            return key != null && key.length() <= 160 && key.matches("^(mongyu[.-]|quad-rift)[A-Za-z0-9._-]*$");
+        }
+        @JavascriptInterface public String read(String key) {
+            return owned(key) ? data.getString(key, null) : null;
+        }
+        @JavascriptInterface public boolean write(String key, String value) {
+            if (!owned(key) || value == null || value.length() > 262144) return false;
+            Map<String, ?> existing = data.getAll();
+            if (!existing.containsKey(key) && existing.size() >= 96) return false;
+            long total = value.length() + 1;
+            for (Map.Entry<String, ?> entry : existing.entrySet())
+                if (!entry.getKey().equals(key) && entry.getValue() instanceof String) total += ((String)entry.getValue()).length();
+            return total <= 2097152 && data.edit().putString(key, "v" + value).commit();
+        }
+        @JavascriptInterface public boolean remove(String key) {
+            return owned(key) && (data.contains(key) || data.getAll().size() < 96)
+                && data.edit().putString(key, "d").commit();
+        }
+    }
+
+    private void showRecovery() {
+        float density = getResources().getDisplayMetrics().density;
+        LinearLayout panel = new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setGravity(Gravity.CENTER);
+        panel.setBackgroundColor(Color.rgb(10, 12, 18));
+        panel.setPadding((int)(24*density), 0, (int)(24*density), 0);
+        TextView message = new TextView(this);
+        message.setText("잠시 숨을 고를게요");
+        message.setTextColor(Color.rgb(255, 248, 222));
+        message.setTextSize(21);
+        panel.addView(message);
+        Button retry = new Button(this);
+        retry.setText("다시 열기");
+        retry.setAllCaps(false);
+        retry.setTextColor(Color.rgb(24, 18, 29));
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(Color.rgb(239, 212, 172));
+        shape.setCornerRadius(32*density);
+        retry.setBackground(shape);
+        LinearLayout.LayoutParams button = new LinearLayout.LayoutParams((int)(168*density), (int)(54*density));
+        button.topMargin = (int)(28*density);
+        panel.addView(retry, button);
+        retry.setOnClickListener(v -> { rendererFailures = 0; recreate(); });
+        setContentView(panel);
+        enterImmersive();
+    }
+
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putInt("rendererFailures", rendererFailures);
+        super.onSaveInstanceState(state);
+    }
+
     private void publishSafeInsets() {
         if (web == null) return;
         float density = getResources().getDisplayMetrics().density;
         String[] sides = {"left", "top", "right", "bottom"};
         int[] values = {safeLeft, safeTop, safeRight, safeBottom};
-        StringBuilder script = new StringBuilder("(() => {const s=document.documentElement.style;");
+        StringBuilder script = new StringBuilder("(() => {const e=document.documentElement;if(!e)return;const s=e.style;");
         for (int i=0;i<4;i++) script.append("s.setProperty('--native-safe-").append(sides[i])
             .append("','").append((int)Math.ceil(values[i]/density)).append("px');");
         script.append("})()");

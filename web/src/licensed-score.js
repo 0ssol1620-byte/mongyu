@@ -43,8 +43,8 @@ function createPlayer(context,options={}){
    if(!valid()){if(deck.epoch===epoch||!deck.pending&&!deck.started)halt(deck);return}
    deck.pending=false;deck.started=true;status='playing';error='';scheduled++;
    if(offset>0&&Math.abs(deck.media.currentTime-offset)>1)try{deck.media.currentTime=offset}catch(e){}
-   gain(deck,LEVEL,old?.started?CROSSFADE:.15);
-   if(old&&old!==deck){positions.set(old.track.id,Number(old.media.currentTime)||0);if(old.started&&!old.media.paused){retiring=old;gain(old,0,CROSSFADE);fadeUntil=context.currentTime+CROSSFADE;transitions++}else halt(old)}
+   const fade=old?.track?.id===track.id?(track.loopFade??CROSSFADE):CROSSFADE;gain(deck,LEVEL,old?.started?fade:.15);
+   if(old&&old!==deck){positions.set(old.track.id,Number(old.media.currentTime)||0);if(old.started&&!old.media.paused){retiring=old;gain(old,0,fade);fadeUntil=context.currentTime+fade;transitions++}else halt(old)}
   }).catch(e=>{if(valid())fail(e,e?.name==='NotAllowedError'?'blocked':'unsupported')})}catch(e){if(valid())fail(e,e?.name==='NotAllowedError'?'blocked':'unsupported')}
  }
  function update(values={}){
@@ -64,7 +64,7 @@ function createPlayer(context,options={}){
   if(entryChanged&&!(values.preserveTrackOnEntry===true&&current?.track.id===desired.id)){for(const deck of decks)halt(deck);retiring=null;begin(desired,{restart:true})}
   else if(!current||current.track.id!==desired.id){if(current?.pending)halt(current);if(retiring){halt(retiring);retiring=null}begin(desired,{restart:values.restartOnResume===true})}
   else if(!current.pending&&(!current.started||current.media.paused||current.media.ended)){begin(desired,{restart:values.restartOnResume===true})}
-  else if(!current.pending&&!retiring&&Number.isFinite(current.media.duration)&&current.media.duration>CROSSFADE*4&&current.media.currentTime>=current.media.duration-CROSSFADE){begin(desired,{restart:true})}
+  else if(!current.pending&&!retiring&&Number.isFinite(current.media.duration)&&current.media.duration>CROSSFADE*4&&current.media.currentTime>=current.media.duration-(current.track.loopFade??CROSSFADE)){begin(desired,{restart:true})}
   return inspect();
  }
  function inspect(){

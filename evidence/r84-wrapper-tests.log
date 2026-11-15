@@ -1,0 +1,13 @@
+✔ Android staged payload is exactly current R84 and matches its pinned digest (56.249197ms)
+✔ R84 native back cancels held input, freezes current run, preserves storage and needs explicit resume (674.157546ms)
+✔ R84 native pause cancels held input, freezes current run, preserves storage and needs explicit resume (576.914139ms)
+✔ native callbacks are harmless before the HTML initializes (6.958843ms)
+✔ R84 wardrobe consumes Android back and keeps equipped style without erasing progress (133.80213ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1576.060482

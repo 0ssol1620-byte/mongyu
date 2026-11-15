@@ -56,6 +56,7 @@ function mount(host){
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
  let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null;
  let mastery=M?.load(storage)||{ok:true,save:null},completionSequence=0;
+ const journalButtons=[];
  const sessionId=Date.now().toString(36),completedRuns=new WeakSet(),aftermathRuns=new WeakSet(),progressCache=new Map(),buttons=[];
  const labels={story:'이야기',character:'동행',condition:'기억의 조건',boss:'대결',ending:'마지막 이야기'};
  function summary(){return summaryCache||(summaryCache=C.status(save))}
@@ -105,7 +106,7 @@ function mount(host){
   const isCall=activeSlot.rule.type==='call'&&!free;
   // Local-call interruption remains the explicitly authored scene bridge.
   const Run=native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
-  const run=new Run({slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
+  const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
   activeRun=run;callContext=isCall?{run,triggered:false,answered:false,pending:false,awarded:false}:null;
   host.startRun(run,event);return true;
  }
@@ -186,11 +187,13 @@ function mount(host){
  function showScene(event){
   if(!scene)return;
   const slot=scene.slot||selected,isIntro=scene.kind==='intro',isInterlude=scene.kind==='interlude',isCall=scene.kind==='call';
+  const storyTone=root.MongyuMobile?.worldPalette?.((slot.chapter||1)-1)?.[0];if(storyTone)$('restorationScene').style.setProperty?.('--story-world',storyTone);
   $('restorationScene').dataset.kind=scene.kind;$('restorationScene').dataset.effect=scene.vignette?.effect||'';
   $('restorationSceneLight').hidden=true;host.openDialog('restorationScene',event);
   text('restorationSceneLabel',String(slot.number).padStart(3,'0')+' · '+(scene.intro?.name||scene.vignette?.name||slot.title));
   const step=scene.graph?G.getStep(slot,scene.index):null,other=slot.number===100?'붉은 형상':({22:'솔',47:'담',69:'여울',87:'여울'}[slot.number]||'');
-  const speaker=step?.speakerLane===0?'길':step?.speakerLane===1?other:step?.speakerLane===2?'길 · '+other:'';
+  const speaker=step&&['reflection','thought'].includes(step.kind)?'길 · 독백':step?.speakerLane===0?'길':step?.speakerLane===1?other:step?.speakerLane===2?'길 · '+other:'';
+  $('restorationScene').dataset.presentation=step&&['dialogue','thought','reflection','hesitation'].includes(step.kind)?'speech':'narration';$('restorationScene').dataset.speaker=String(step?.speakerLane??'self');$('restorationScene').querySelector?.('.scene-balloon')?.style?.setProperty?.('--speaker-x',step?.speakerLane===0?'25%':step?.speakerLane===1?'75%':'50%');
   text('restorationSceneSpeaker',isCall?'꿈속 전화':speaker);$('restorationSceneSpeaker').hidden=!isCall&&!speaker;
   text('restorationScenePage',(scene.index+1)+' / '+scene.pages.length);
   const bossRule=slot.rule.type==='boss'?R.BOSS_RULES[R.BOSS_SLOTS.indexOf(slot.number)]:null;
@@ -284,7 +287,12 @@ function mount(host){
    const next=C.getSlot(summary().nextSlot);text('restorationResultNext',qualified&&next?'다음 · '+next.number+' '+next.title:'');$('restorationResultNext').hidden=!qualified||!next;
   }
  }
- function syncTitle(title){$('restorationOpen').hidden=!title;$('modeRestoration').hidden=false;$('modeSquare').hidden=false;if(title){text('titleContinue',summary().collected?'꿈 이어가기':'꿈속으로');text('restorationOpen','꿈 지도  ·  '+summary().collected+' / 100')}}
+ function openJournal(event){
+  host.openDialog('storyJournal',event);journalButtons.length=0;const list=$('storyJournalList');list.replaceChildren();
+  for(const sequence of G.sequences){const slot=C.getSlot(sequence.slot),collected=save.collected.includes(slot.id),unlocked=collected||C.unlocked(save,slot.id);const b=host.document.createElement('button');b.id='story-page-'+slot.number;b.setAttribute('id',b.id);b.disabled=!unlocked;b.textContent=String(slot.number).padStart(3,'0')+' · '+(unlocked?slot.title:'아직 만나지 못한 이야기');b.onclick=e=>start(e,slot.id);list.appendChild(b);if(unlocked)journalButtons.push(b.id);}
+  $('storyJournalClose').focus({preventScroll:true});
+ }
+ function syncTitle(title){$('restorationOpen').hidden=!title;if($('storyOpen'))$('storyOpen').hidden=!title;$('modeRestoration').hidden=false;$('modeSquare').hidden=false;if(title){text('titleContinue',summary().collected?'꿈 이어가기':'꿈속으로');text('restorationOpen','꿈 지도  ·  '+summary().collected+' / 100')}}
  function retry(event){if(activeRun?.deathAnimation&&!activeRun.deathAnimation.completed)return false;
   if(!activeSlot)return continueJourney(event);
   selected=activeSlot;settingValue=activeRun?.options.settingValue??activeConfig?.settingValue;settingTouched=!!activeConfig?.settingTouched;
@@ -296,6 +304,7 @@ function mount(host){
  $('restorationGrid').addEventListener('keydown',event=>{const n=Number(event.target?.id?.replace('restoration-slot-',''));if(!n)return;const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-5,ArrowDown:5,PageUp:-10,PageDown:10}[event.code],target=event.code==='Home'?1:event.code==='End'?100:step?n+step:null;if(target!==null){event.preventDefault();select(Math.max(1,Math.min(100,target)),true)}});
  $('restorationPagePrev').onclick=()=>select(Math.max(1,selected.number-10));$('restorationPageNext').onclick=()=>select(Math.min(100,selected.number+10));$('restorationRouteNext').onclick=()=>summary().nextSlot&&select(summary().nextSlot,true);
  $('restorationSetting').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'fast':true,e);$('restorationSettingOff').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'slow':false,e);
+ if($('storyOpen'))$('storyOpen').onclick=openJournal;if($('storyJournalClose'))$('storyJournalClose').onclick=host.closeDialog;
  $('restorationOpen').onclick=open;$('restorationClose').onclick=host.closeDialog;$('restorationStart').onclick=e=>start(e);$('restorationSceneNext').onclick=nextScene;$('restorationSceneSkip').onclick=skipScene;
  $('restorationSceneAction').onclick=()=>{if(scene&&!scene.graph&&scene.index>0){scene.index--;showScene()}};
  $('modeRestoration').onclick=open;$('modeSquare').onclick=host.startLegacy;$('pauseRestoration').onclick=open;$('squareCollection').onclick=open;$('squareNext').onclick=e=>start(e,summary().nextSlot);$('restorationFree').onclick=startFree;
@@ -324,7 +333,7 @@ function mount(host){
  render();
  return {settingChanged:(run,receipt)=>{if(run!==activeRun||!receipt.accepted||receipt.name!==activeSlot?.rule.setting)return false;if(activeConfig){activeConfig.settingValue=receipt.value;activeConfig.settingTouched=true;}if(selected.id===activeSlot.id){settingValue=receipt.value;settingTouched=true;render()}return true},tick,open,start,retry,continueJourney,complete,onRunStatus,syncTitle,select,render,sceneNext:nextScene,aftermathFor,aftermathRenderFor,finishAftermath,cancelAftermath,suspendAftermath,
   view:()=>({aftermath:aftermathFor(host.activeRun()),save:C.normalizeSave(save),status:summary(),selected:selected.id,page:page(),qualified,activeSlot:activeSlot?.id,storageOK,readOnly,scene:scene?{index:scene.index,pages:scene.pages.length,kind:scene.kind,effect:scene.vignette?.effect,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow,terminalCursor:scene.sequence?.terminalCursor,sourceStringIds:scene.graph?G.getStep(selected,scene.index)?.sourceStringIds:undefined,stepKind:scene.graph?G.getStep(selected,scene.index)?.kind:undefined}:null,free,settingTouched,settingValue,mastery:localRecord(free?'freeplay':selected.id),call:callContext?{triggered:callContext.triggered,pending:callContext.pending,awarded:callContext.awarded}:null}),
-  dialogControls:{get restorationCollection(){return ['restorationClose','restorationPagePrev','restorationPageNext','restorationRouteNext',buttons[selected.number-1].id,...($('restorationClock').hidden?[]:['restorationPeriod']),'restorationSetting','restorationSettingOff','restorationStart','restorationFree']},restorationScene:['restorationSceneAction','restorationSceneNext','restorationSceneSkip']}};
+  dialogControls:{get storyJournal(){return ['storyJournalClose',...journalButtons]},get restorationCollection(){return ['restorationClose','restorationPagePrev','restorationPageNext','restorationRouteNext',buttons[selected.number-1].id,...($('restorationClock').hidden?[]:['restorationPeriod']),'restorationSetting','restorationSettingOff','restorationStart','restorationFree']},restorationScene:['restorationSceneAction','restorationSceneNext','restorationSceneSkip']}};
 }
 root.MongyuRestorationUI={mount,VIGNETTES,INTRO,sceneStage};if(typeof module!=='undefined')module.exports=root.MongyuRestorationUI;
 })(globalThis);

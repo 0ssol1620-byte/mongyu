@@ -1,0 +1,2446 @@
+{
+  "release": "R86",
+  "fullOriginalEquivalence": false,
+  "fullCampaignNormalInputClear": false,
+  "androidDevicePlayed": false,
+  "originalMediaIncluded": false,
+  "originalFieldPickupZoomRelation": "unverified",
+  "candidateProvenance": "One unauthenticated KTF candidate functional model; numeric behavior is not an authenticated complete original.",
+  "sourceEvidence": [
+    {
+      "url": "https://www.gamemeca.com/view.php?gid=65877",
+      "supports": "100 slots and ten bosses; author interview"
+    },
+    {
+      "url": "https://www.gamemeca.com/view.php?gid=66187",
+      "supports": "skins were sold as items; does not establish field pickup zoom"
+    },
+    {
+      "url": "https://www.gamedeveloper.com/game-platforms/-i-nom-3-i-an-advanced-mobile-game-created-with-love",
+      "supports": "creator account of morphing square worlds and love story"
+    }
+  ],
+  "featureStatus": {
+    "camera": "invented proximity zoom removed; width-based view; actual split/floating/morph presentation retained",
+    "nativeVisuals": "actual semantic cells, boss outlines, clips, particles and capture endpoints now consumed",
+    "art": "project-original vector art and ten palettes; not all original 100 skin images",
+    "audio": "12 project-original recordings and generated SFX; original recordings not included",
+    "story": "adapted text, not verbatim original dialogue",
+    "purchasesAds": "disabled, not a store launch",
+    "phone": "explicit local adaptation for two entries, not telephone interception",
+    "device": "signed APK and source/browser contracts verified; no physical device playtest"
+  },
+  "routeCounts": {
+    "authored-scene": 26,
+    "native-candidate": 72,
+    "authored-local-call": 2
+  },
+  "rows": [
+    {
+      "slot": 1,
+      "title": "낯선 곳의 첫 달리기",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 2,
+      "title": "네 벽의 첫걸음",
+      "kind": "tutorial",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 401,
+          "postCountdownUpdates": 372,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 3,
+      "title": "300점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 327,
+          "postCountdownUpdates": 298,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 187,
+          "postCountdownUpdates": 158,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 4,
+      "title": "쌓인 600점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 252,
+          "postCountdownUpdates": 223,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 213,
+          "postCountdownUpdates": 184,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 5,
+      "title": "네모로 된 세계",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 6,
+      "title": "190–210점의 충돌",
+      "kind": "damage-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 192,
+          "postCountdownUpdates": 163,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 224,
+          "postCountdownUpdates": 195,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 7,
+      "title": "400점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 412,
+          "postCountdownUpdates": 383,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 282,
+          "postCountdownUpdates": 253,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 8,
+      "title": "작은 햇살",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 359,
+          "postCountdownUpdates": 330,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 9,
+      "title": "490–510점의 끝",
+      "kind": "death-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 156,
+          "postCountdownUpdates": 127,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 226,
+          "postCountdownUpdates": 197,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 10,
+      "title": "500점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 173,
+          "postCountdownUpdates": 144,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 11,
+      "title": "같은 충돌 3회",
+      "kind": "repeated-damage",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 180,
+          "postCountdownUpdates": 151,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 149,
+          "postCountdownUpdates": 120,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 12,
+      "title": "600점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 181,
+          "postCountdownUpdates": 152,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 373,
+          "postCountdownUpdates": 344,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 13,
+      "title": "아름다워도 아픈",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 14,
+      "title": "쌓인 1,500점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 367,
+          "postCountdownUpdates": 338,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 15,
+      "title": "700점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 170,
+          "postCountdownUpdates": 141,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 195,
+          "postCountdownUpdates": 166,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 16,
+      "title": "떠오르는 옛 연인",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 17,
+      "title": "속도 바꾸기",
+      "kind": "setting",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 383,
+          "postCountdownUpdates": 354,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 345,
+          "postCountdownUpdates": 316,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 18,
+      "title": "800점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 363,
+          "postCountdownUpdates": 334,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 371,
+          "postCountdownUpdates": 342,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 19,
+      "title": "쌓인 3,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 274,
+          "postCountdownUpdates": 245,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 151,
+          "postCountdownUpdates": 122,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 20,
+      "title": "거인의 발걸음",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 396,
+          "postCountdownUpdates": 367,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 21,
+      "title": "900점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 259,
+          "postCountdownUpdates": 230,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 22,
+      "title": "뒤따르는 솔",
+      "kind": "character",
+      "candidateCategory": 2,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 23,
+      "title": "진동의 박자",
+      "kind": "setting",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 280,
+          "postCountdownUpdates": 251,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 223,
+          "postCountdownUpdates": 194,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 24,
+      "title": "그 사람의 안부",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 25,
+      "title": "상처 없이 250점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 144,
+          "postCountdownUpdates": 115,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 175,
+          "postCountdownUpdates": 146,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 26,
+      "title": "공중 차기 1회",
+      "kind": "kick",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 170,
+          "postCountdownUpdates": 141,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 147,
+          "postCountdownUpdates": 118,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 27,
+      "title": "1000점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 202,
+          "postCountdownUpdates": 173,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 239,
+          "postCountdownUpdates": 210,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 28,
+      "title": "잠깐의 공중 산책",
+      "kind": "interlude",
+      "candidateCategory": 4,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 29,
+      "title": "쌓인 5,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 192,
+          "postCountdownUpdates": 163,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 327,
+          "postCountdownUpdates": 298,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 30,
+      "title": "1000점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 305,
+          "postCountdownUpdates": 276,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 195,
+          "postCountdownUpdates": 166,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 31,
+      "title": "외계인",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 32,
+      "title": "소리 바꾸기",
+      "kind": "setting",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 270,
+          "postCountdownUpdates": 241,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 280,
+          "postCountdownUpdates": 251,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 33,
+      "title": "벽의 변화 4번",
+      "kind": "map-change",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 252,
+          "postCountdownUpdates": 223,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 192,
+          "postCountdownUpdates": 163,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 34,
+      "title": "솔을 보다가",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 35,
+      "title": "상처 없이 300점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 160,
+          "postCountdownUpdates": 131,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 161,
+          "postCountdownUpdates": 132,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 36,
+      "title": "오후 · 190–210점의 충돌",
+      "kind": "damage-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 338,
+          "postCountdownUpdates": 309,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 249,
+          "postCountdownUpdates": 220,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 37,
+      "title": "공중 차기 1회",
+      "kind": "kick",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 204,
+          "postCountdownUpdates": 175,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 38,
+      "title": "돌아오는 사각",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 253,
+          "postCountdownUpdates": 224,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 39,
+      "title": "연애도 하고 싶은 길",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 40,
+      "title": "쌓인 7,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 318,
+          "postCountdownUpdates": 289,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 159,
+          "postCountdownUpdates": 130,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 41,
+      "title": "달아난 벨소리",
+      "kind": "interlude",
+      "candidateCategory": 4,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 42,
+      "title": "1000점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 195,
+          "postCountdownUpdates": 166,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 269,
+          "postCountdownUpdates": 240,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 43,
+      "title": "오후 · 490–510점의 끝",
+      "kind": "death-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 238,
+          "postCountdownUpdates": 209,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 183,
+          "postCountdownUpdates": 154,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 44,
+      "title": "1000점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 130,
+          "postCountdownUpdates": 101,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 127,
+          "postCountdownUpdates": 98,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 45,
+      "title": "매달린 사슬",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 268,
+          "postCountdownUpdates": 239,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 382,
+          "postCountdownUpdates": 353,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 46,
+      "title": "쌓인 8,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 194,
+          "postCountdownUpdates": 165,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 326,
+          "postCountdownUpdates": 297,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 47,
+      "title": "담의 등에 업혀",
+      "kind": "character",
+      "candidateCategory": 2,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 48,
+      "title": "두 번 울리는 벨",
+      "kind": "call",
+      "candidateCategory": 0,
+      "primaryRoute": "authored-local-call",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 204,
+          "postCountdownUpdates": 175,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 235,
+          "postCountdownUpdates": 206,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 49,
+      "title": "친절을 받은 마음",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 50,
+      "title": "벽의 변화 4번",
+      "kind": "map-change",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 173,
+          "postCountdownUpdates": 144,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 51,
+      "title": "쌓인 10,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 307,
+          "postCountdownUpdates": 278,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 393,
+          "postCountdownUpdates": 364,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 52,
+      "title": "다음 만남을 바라며",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 53,
+      "title": "상처 없이 300점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 252,
+          "postCountdownUpdates": 223,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 264,
+          "postCountdownUpdates": 235,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 54,
+      "title": "오후 · 같은 충돌 3회",
+      "kind": "repeated-damage",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 227,
+          "postCountdownUpdates": 198,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 149,
+          "postCountdownUpdates": 120,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 55,
+      "title": "보내지 못한 연락",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 56,
+      "title": "숨 한 번",
+      "kind": "interlude",
+      "candidateCategory": 4,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 57,
+      "title": "1100점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 289,
+          "postCountdownUpdates": 260,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 370,
+          "postCountdownUpdates": 341,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 58,
+      "title": "돌아가는 가지",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 202,
+          "postCountdownUpdates": 173,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 163,
+          "postCountdownUpdates": 134,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 59,
+      "title": "990–1010점의 끝",
+      "kind": "death-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 214,
+          "postCountdownUpdates": 185,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 205,
+          "postCountdownUpdates": 176,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 60,
+      "title": "쌓인 12,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 269,
+          "postCountdownUpdates": 240,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 114,
+          "postCountdownUpdates": 85,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 61,
+      "title": "1100점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 209,
+          "postCountdownUpdates": 180,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 260,
+          "postCountdownUpdates": 231,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 62,
+      "title": "닿지 않은 연락",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 63,
+      "title": "공중 차기 1회",
+      "kind": "kick",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 149,
+          "postCountdownUpdates": 120,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 172,
+          "postCountdownUpdates": 143,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 64,
+      "title": "쌓인 13,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 123,
+          "postCountdownUpdates": 94,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 195,
+          "postCountdownUpdates": 166,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 65,
+      "title": "두 번째 쉼",
+      "kind": "interlude",
+      "candidateCategory": 4,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 66,
+      "title": "밀려오는 물결",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 152,
+          "postCountdownUpdates": 123,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 182,
+          "postCountdownUpdates": 153,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 67,
+      "title": "벽의 변화 5번",
+      "kind": "map-change",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 162,
+          "postCountdownUpdates": 133,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 147,
+          "postCountdownUpdates": 118,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 68,
+      "title": "1100점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 160,
+          "postCountdownUpdates": 131,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 69,
+      "title": "여울의 걸음",
+      "kind": "character",
+      "candidateCategory": 2,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 70,
+      "title": "오전 · 같은 충돌 3회",
+      "kind": "repeated-damage",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 153,
+          "postCountdownUpdates": 124,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 140,
+          "postCountdownUpdates": 111,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 71,
+      "title": "상처 없이 500점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 72,
+      "title": "1100점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 196,
+          "postCountdownUpdates": 167,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 141,
+          "postCountdownUpdates": 112,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 73,
+      "title": "새로운 연애",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 74,
+      "title": "오후 · 속도 바꾸기",
+      "kind": "setting",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 192,
+          "postCountdownUpdates": 163,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 310,
+          "postCountdownUpdates": 281,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 75,
+      "title": "쌓인 15,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 235,
+          "postCountdownUpdates": 206,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 173,
+          "postCountdownUpdates": 144,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 76,
+      "title": "벽의 변화 5번",
+      "kind": "map-change",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 216,
+          "postCountdownUpdates": 187,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 161,
+          "postCountdownUpdates": 132,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 77,
+      "title": "교차하는 두 팔",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 175,
+          "postCountdownUpdates": 146,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 207,
+          "postCountdownUpdates": 178,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 78,
+      "title": "오후 · 진동의 박자",
+      "kind": "setting",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 174,
+          "postCountdownUpdates": 145,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 359,
+          "postCountdownUpdates": 330,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 79,
+      "title": "오후 · 공중 차기 1회",
+      "kind": "kick",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 221,
+          "postCountdownUpdates": 192,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 249,
+          "postCountdownUpdates": 220,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 80,
+      "title": "아직 잊지 못한 사람",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 81,
+      "title": "마지막 쉼",
+      "kind": "interlude",
+      "candidateCategory": 4,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 82,
+      "title": "1200점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 186,
+          "postCountdownUpdates": 157,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 239,
+          "postCountdownUpdates": 210,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 83,
+      "title": "오전 · 990–1010점의 끝",
+      "kind": "death-range",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 366,
+          "postCountdownUpdates": 337,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 282,
+          "postCountdownUpdates": 253,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 84,
+      "title": "이별을 말하기로",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 85,
+      "title": "1200점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 238,
+          "postCountdownUpdates": 209,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 371,
+          "postCountdownUpdates": 342,
+          "maps": 1,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 86,
+      "title": "상처 없이 500점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 138,
+          "postCountdownUpdates": 109,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 250,
+          "postCountdownUpdates": 221,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 87,
+      "title": "다시 혼자",
+      "kind": "character",
+      "candidateCategory": 2,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 88,
+      "title": "1200점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 161,
+          "postCountdownUpdates": 132,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 151,
+          "postCountdownUpdates": 122,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 89,
+      "title": "오후 · 두 번 울리는 벨",
+      "kind": "call",
+      "candidateCategory": 0,
+      "primaryRoute": "authored-local-call",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 402,
+          "postCountdownUpdates": 373,
+          "maps": 1,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 165,
+          "postCountdownUpdates": 136,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 90,
+      "title": "마지막 반사",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 390,
+          "postCountdownUpdates": 361,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 239,
+          "postCountdownUpdates": 210,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 91,
+      "title": "상처 없이 500점",
+      "kind": "flawless-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 153,
+          "postCountdownUpdates": 124,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 147,
+          "postCountdownUpdates": 118,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 92,
+      "title": "거듭되는 그리움",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 93,
+      "title": "쌓인 20,000점",
+      "kind": "cumulative-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 198,
+          "postCountdownUpdates": 169,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 183,
+          "postCountdownUpdates": 154,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 94,
+      "title": "1500점의 길",
+      "kind": "run-score",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 255,
+          "postCountdownUpdates": 226,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 268,
+          "postCountdownUpdates": 239,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 95,
+      "title": "오전 · 공중 차기 2회",
+      "kind": "kick",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 130,
+          "postCountdownUpdates": 101,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 131,
+          "postCountdownUpdates": 102,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 96,
+      "title": "언젠가 다시 만날까",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 97,
+      "title": "정오에 멈춘 걸음",
+      "kind": "clock-death",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 1,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 192,
+          "postCountdownUpdates": 163,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 98,
+      "title": "자정에 멈춘 걸음",
+      "kind": "clock-death",
+      "candidateCategory": 0,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 215,
+          "postCountdownUpdates": 186,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        },
+        {
+          "seed": 19,
+          "updates": 260,
+          "postCountdownUpdates": 231,
+          "maps": 0,
+          "state": "clear",
+          "supported": true,
+          "isolatedClear": true
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 99,
+      "title": "닫힌 모서리",
+      "kind": "boss",
+      "candidateCategory": 3,
+      "primaryRoute": "native-candidate",
+      "engineRuns": [
+        {
+          "seed": 7,
+          "updates": 420,
+          "postCountdownUpdates": 391,
+          "maps": 0,
+          "state": "play",
+          "supported": true,
+          "isolatedClear": false
+        },
+        {
+          "seed": 19,
+          "updates": 227,
+          "postCountdownUpdates": 198,
+          "maps": 0,
+          "state": "fail",
+          "supported": true,
+          "isolatedClear": false
+        }
+      ],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    },
+    {
+      "slot": 100,
+      "title": "돌아오지 않는 사랑",
+      "kind": "story",
+      "candidateCategory": 1,
+      "primaryRoute": "authored-scene",
+      "engineRuns": [],
+      "originalEquivalence": "unverified",
+      "fullPrimaryCampaignClear": "unverified"
+    }
+  ]
+}

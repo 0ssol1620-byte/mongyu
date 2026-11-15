@@ -1,0 +1,13 @@
+✔ Android staged payload is exactly current R87 and matches its pinned digest (69.22502ms)
+✔ R87 native back cancels held input, freezes current run, preserves storage and needs explicit resume (2440.090624ms)
+✔ R87 native pause cancels held input, freezes current run, preserves storage and needs explicit resume (1908.922228ms)
+✔ native callbacks are harmless before the HTML initializes (2.770531ms)
+✔ R87 wardrobe consumes Android back and keeps equipped style without erasing progress (444.861263ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5338.959753

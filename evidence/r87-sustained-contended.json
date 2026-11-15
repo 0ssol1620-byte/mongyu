@@ -1,0 +1,95 @@
+{
+  "release": "R87",
+  "errors": [],
+  "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+  "deviceValidation": false,
+  "framesMs": {
+    "samples": 600,
+    "p50": 16,
+    "p95": 41.80000000074506,
+    "p99": 70.89999999850988,
+    "max": 114
+  },
+  "simulationMs": {
+    "samples": 152,
+    "p50": 10.399999998509884,
+    "p95": 28.800000000745058,
+    "p99": 43.099999997764826,
+    "max": 52.69999999925494
+  },
+  "longTasks": [
+    {
+      "start": 2986.699999999255,
+      "ms": 62
+    },
+    {
+      "start": 3893,
+      "ms": 87
+    },
+    {
+      "start": 3981.800000000745,
+      "ms": 71
+    },
+    {
+      "start": 4337,
+      "ms": 58
+    },
+    {
+      "start": 4399.099999997765,
+      "ms": 65
+    },
+    {
+      "start": 5017.800000000745,
+      "ms": 90
+    },
+    {
+      "start": 7073.39999999851,
+      "ms": 72
+    },
+    {
+      "start": 7353.599999997765,
+      "ms": 59
+    },
+    {
+      "start": 7428.699999999255,
+      "ms": 71
+    },
+    {
+      "start": 7530.89999999851,
+      "ms": 78
+    },
+    {
+      "start": 7609.89999999851,
+      "ms": 77
+    },
+    {
+      "start": 7692.39999999851,
+      "ms": 51
+    },
+    {
+      "start": 7743.599999997765,
+      "ms": 58
+    },
+    {
+      "start": 7950.300000000745,
+      "ms": 78
+    },
+    {
+      "start": 11167,
+      "ms": 93
+    },
+    {
+      "start": 11850.199999999255,
+      "ms": 131
+    },
+    {
+      "start": 12466.800000000745,
+      "ms": 52
+    }
+  ],
+  "staticAttributeChanges": {},
+  "updates": 153,
+  "time": 11.47499999999998,
+  "state": "play",
+  "hearts": 3
+}

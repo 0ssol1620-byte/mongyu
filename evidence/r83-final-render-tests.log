@@ -1,0 +1,38 @@
+✔ source: regular presentation preserves mask ID and both grid coordinates (611.076936ms)
+✔ source: default mask provider matches explicitly supplied provider (202.34886ms)
+✔ source: collision mask is visible in world coordinates without phantom column edges (235.803711ms)
+✔ embedded HTML: regular presentation preserves mask ID and both grid coordinates (636.703855ms)
+✔ embedded HTML: default mask provider matches explicitly supplied provider (611.040666ms)
+✔ embedded HTML: collision mask is visible in world coordinates without phantom column edges (402.45208ms)
+﹣ external audit adapter (not distributed in this checkout): preserves unbound mask callback (0.251815ms) # SKIP
+✔ an empty mask layer never falls back to ordinary support geometry (6.197642ms)
+✔ exact distributable: wardrobe equips, persists and restores without awarding locked outfits (613.818731ms)
+✔ exact distributable: story, unlock, playable stage, foreground hitch and background lifecycle (1077.755163ms)
+✔ exact distributable: blocked storage remains playable and cosmetic save failure is disclosed (225.140881ms)
+✔ exact distributable: twelve embedded soundtracks have a dedicated original menu theme (267.825867ms)
+✔ cosmetics validate progress, corrupt saves, unknown ids and locked selection (1.107303ms)
+✔ presentation clock freezes in pause and bounds a foreground hitch (0.213854ms)
+✔ all outfits, wall tangents, and poses draw without mutating geometry or RNG (11.687026ms)
+✔ reduced motion produces identical actor drawing across different wall times (1.203798ms)
+✔ portrait, short landscape and tablet title canvases remain finite (2.552723ms)
+✔ long native rooms use readable follow framing on all walls; masks and bosses keep whole arenas (0.448207ms)
+✔ R80 renders do not modify native collision, stage or input implementations (9.499986ms)
+✔ play HUD is a compact score, never the objective paragraph (1.158021ms)
+✔ exact R81 distribution removes tutorial text after first accepted tap and retains pause (596.214717ms)
+✔ browser fullscreen requires a trusted coarse-pointer gesture and denial cannot break the run (5.427219ms)
+✔ knees bend forward in actor-local space in every run and jump frame (15.534471ms)
+✔ stance feet stay planted against actual forward distance rather than an unrelated wall clock (0.449613ms)
+✔ all four corner turns have continuous endpoints, a contact path and bounded angular increments (3.21965ms)
+✔ teleports and impacts are never smoothed through geometry (1.451471ms)
+✔ default avatar is plain and the tile layer follows native points on all four walls (0.751736ms)
+✔ boot markup hides legacy controls until the final initialized screen is ready (2.056908ms)
+✔ airborne turns blend the ground path and inward height without snapping at the wall (0.594337ms)
+✔ normal UI starts at the native fast setting; explicit slow setting remains available to missions (764.634359ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 6855.78013

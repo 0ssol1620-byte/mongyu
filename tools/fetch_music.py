@@ -7,6 +7,9 @@ for item in manifest['tracks']:
  if target.exists():
   assert hashlib.sha256(target.read_bytes()).hexdigest()==item['sha256'],target
   continue
+ if item['id'].startswith('chapter-') or item['id']=='heart-circuit':
+  subprocess.run([sys.executable,str(root/'tools/compose_chapter_scores.py')],check=True)
+  continue
  if item['id']=='night-corners':
   subprocess.run([sys.executable,str(root/'tools/compose_night_score.py')],check=True)
   continue
