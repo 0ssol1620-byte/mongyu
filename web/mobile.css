@@ -115,3 +115,41 @@ html[data-edition=mongyu] #modesOpen,html[data-edition=mongyu] #pauseModes,html[
 #runGoal { margin-top:5px; line-height:1.4; font-size:11px; color:#edddfc; }
 #runGoalProgress { display:block; width:100%; height:5px; margin-top:3px; accent-color:#eabcff; }
 #restorationRecordBadge:not([hidden]) { display:inline-block; padding:4px 9px; border-radius:20px; background:#ebc5f229; color:#f7d4ff; font-size:12px; font-weight:700; }
+
+/* Folded Light shares its paper, ink and warm highlights with the lobby. */
+html[data-dream-edition=true]{--ui-ink:#21172f;--ui-paper:#fff1df;--ui-acid:#fac5a1;--ui-muted:#d1bcd4;--ui-rule:#d3a9de35}
+html[data-dream-edition=true],html[data-dream-edition=true] body{background:#201831}
+html[data-dream-edition=true] .title-kicker{display:none}
+html[data-dream-edition=true] body[data-square=true] .title-screen h1{font-size:clamp(54px,15vw,82px);font-weight:720;letter-spacing:-.06em;padding-left:0}
+html[data-dream-edition=true] body[data-square=true] .title-heading p{letter-spacing:.07em;color:#e0bdd7;font-size:13px}
+html[data-dream-edition=true] body[data-square=true] #titleContinue{background:#fac5a1;color:#291a37;border-color:#ffe5c9;box-shadow:0 9px 24px #110e22ad}
+html[data-dream-edition=true] body[data-square=true] #restorationOpen{color:#ead3e7}
+html[data-dream-edition=true] .title-links button{color:#d0b9d4}
+html[data-dream-edition=true] .overlay{background:#1b132bea}
+html[data-dream-edition=true] .overlay .box{background:#2b203c}
+html[data-dream-edition=true] #restorationScene[data-kind=opening]{background:radial-gradient(ellipse at 48% 65%,#493457,#221831 60%,#1b142a);--story-world:#201831}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneLabel,
+html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneSkip{color:#e4cada}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{background:#ffedd5;color:#2a1c37;width:min(360px,100%);box-shadow:0 6px 22px #100d1b44}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{background:#ffedd5}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneNext{background:#fac5a1;color:#281a36}
+html[data-dream-edition=true] #wardrobeLooks canvas{width:min(68px,100%);height:auto;display:block}
+#runnerSpeech{position:absolute;z-index:3;top:0;left:0;margin:0;padding:8px 11px;border-radius:12px;background:#ffedd5;color:#302039;font-size:12px;line-height:1.35;white-space:nowrap;font-weight:720;pointer-events:none;box-shadow:0 4px 12px #180f253d}
+#runnerSpeech:after{content:'';position:absolute;width:8px;height:8px;left:calc(50% - 4px);bottom:-3px;transform:rotate(45deg);background:#ffedd5}
+@media(max-height:500px){html[data-dream-edition=true] body[data-square=true] .title-screen h1{font-size:clamp(46px,8vh,56px)}}
+html[data-dream-edition=true] #bootSplash{background:#201831;color:#fff1df}
+html[data-dream-edition=true] .top #options{background:#281d3a;color:#ffe9d5;border-color:#d3a9de42}
+html[data-dream-edition=true] #restorationScene[data-kind=opening]{
+ grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;
+}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{grid-area:2/1;align-self:center;z-index:1;transform:translateY(-clamp(60px,12vh,113px))}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{bottom:-7px}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/1;transform:translateY(22px)}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] nav{grid-area:3/1}
+@media(min-aspect-ratio:115/100){
+ html[data-dream-edition=true] #restorationScene[data-kind=opening]{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+ html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{transform:none}
+ html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{top:47%;bottom:auto}
+ html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/2;transform:none}
+ html[data-dream-edition=true] #restorationScene[data-kind=opening] nav{grid-column:1/-1}
+}

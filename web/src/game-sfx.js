@@ -1,4 +1,4 @@
-/* R82 original tactile effects. Cached PCM; no samples, network or game RNG. */
+/* Offline PCM effects and a deterministic synth fallback. */
 (function(root){'use strict';
 const configs=Object.freeze({
  jump:[.15,260,640,.008,.3],land:[.09,160,65,.45,.1],
@@ -14,8 +14,18 @@ const configs=Object.freeze({
  'arcade-perfect':[.14,720,1080,.01,.55]
 });
 const caches=new WeakMap();
+function sample(kind){return root.MONGYU_EMBEDDED_EFFECTS?.[kind]}
 function buffer(context,kind){
- const spec=configs[kind];if(!spec)return null;let cache=caches.get(context);if(!cache){cache=new Map();caches.set(context,cache)}if(cache.has(kind))return cache.get(kind);
+ const spec=configs[kind],clip=sample(kind);if(!spec&&!clip)return null;
+ let cache=caches.get(context);if(!cache){cache=new Map();caches.set(context,cache)}if(cache.has(kind))return cache.get(kind);
+ if(clip){
+  const raw=root.atob(clip.src),count=raw.length/2,b=context.createBuffer(1,count,clip.rate),data=b.getChannelData(0);
+  for(let i=0;i<count;i++){
+   const word=raw.charCodeAt(i*2)|raw.charCodeAt(i*2+1)<<8;
+   data[i]=(word>=32768?word-65536:word)/32768;
+  }
+  cache.set(kind,b);return b;
+ }
  const [duration,from,to,air,chime]=spec,rate=context.sampleRate||44100,n=Math.ceil(duration*rate),b=context.createBuffer(1,n,rate),data=b.getChannelData(0);let phase=0,noise=0;
  for(let i=0;i<n;i++){
   const t=i/rate,u=i/(n-1),freq=from*Math.pow(to/from,u),env=Math.min(1,t/.004)*Math.pow(1-u,2.3);
@@ -40,5 +50,5 @@ function observe(run){
  if(run.lastResult?.effects?.some(e=>e.kind==='audio-cue-request'&&e.role==='start-countdown'))events.push('start');
  return events;
 }
-const api=Object.freeze({configs,buffer,voice,observe});root.MongyuSFX=api;if(typeof module!=='undefined')module.exports=api;
+const api=Object.freeze({configs,buffer,voice,observe,sample});root.MongyuSFX=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

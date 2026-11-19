@@ -1,5 +1,6 @@
 /* 몽유's authored opening route. Positions are arc lengths along the running surface. */
 (function(root){'use strict';
+const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
 const COURSE='folded-light',FINISH=1180,RADIUS=44,FLOOR=340,WALL=310,ARC=Math.PI*RADIUS/2;
 const WALL_START=FLOOR+ARC,CEILING_START=WALL_START+WALL+ARC;
 const SECTIONS=[
@@ -190,21 +191,54 @@ function waves(run,w,h){
  }
  const paths=[low,high];run.waveField={width:w,height:h,paths};return paths;
 }
+function backdrop(c,owner,w,h,palette,skyX,skyY,drift){
+ const aperture=Math.min(w,h);
+ c.fillStyle=palette.back;c.fillRect(0,0,w,h);
+ ellipse(c,skyX,skyY,aperture*.41,aperture*.44,palette.far+'1a');
+ ellipse(c,skyX,skyY,aperture*.36,aperture*.375,palette.far+'4a');
+ ellipse(c,skyX-aperture*.062,skyY+aperture*.043,aperture*.30,aperture*.32,palette.back);
+ const [low,high]=waves(owner,w,h);
+ c.save();c.translate(0,drift);c.lineWidth=1;
+ c.strokeStyle=palette.far+'36';c.stroke(low);
+ c.strokeStyle=palette.far+'70';c.stroke(high);c.restore();
+}
+const lobby={};
+function drawLobby(c,opts){
+ const {width:w,height:h}=opts.viewport,wide=w>h*1.15,t=opts.reduced?0:opts.time||0;
+ const x=wide?w*.72:w*.5,y=wide?h*.61:h*.61,r=Math.min(w*(wide?.19:.34),h*.24);
+ c.save();backdrop(c,lobby,w,h,SECTIONS[0],x+r*.13,y-r*.63,Math.sin(t*.22)*5);
+ c.translate(x,y);
+ const floor=[{x:-r*1.6,y:r*.16},{x:r*.63,y:r*.16},{x:r*.92,y:r*.08},{x:r*1.12,y:-r*.23},{x:r*1.28,y:-r*.63}];
+ path(c,floor);c.strokeStyle='#100e1e';c.lineJoin='round';c.lineWidth=16;c.stroke();
+ c.translate(0,-5);
+ path(c,floor);c.strokeStyle='#a06eaf';c.lineWidth=4;c.stroke();
+ path(c,floor);c.strokeStyle='#ffc8a4';c.lineWidth=1.4;c.stroke();
+ const dust=opts.reduced?0:Math.sin(t*1.6)*5;
+ for(let i=0;i<10;i++){
+  const py=-r*(.55+(i*13%83)*.016),px=r*((i*47%139)*.018-1.24);
+  ellipse(c,px,py+(i%2?dust:-dust)*.65,1+(i%3)*.35,1+(i%3)*.35,i%3===0?'#ffd4a8aa':'#c692bb85');
+ }
+ c.save();c.translate(r*.64,-r*.58+dust*.65);c.rotate(Math.PI/4+(opts.reduced?0:Math.sin(t*.4)*.18));
+ c.strokeStyle='#ffe4b5';c.lineWidth=1.2;c.strokeRect(-8,-8,16,16);
+ c.fillStyle='#f7b98e';c.fillRect(-4,-4,8,8);c.restore();
+ root.MongyuMobile.sprite(c,{x:-r*.16,y:r*.16-1.5,bodyHeight:r*.87,pose:'stand'},{poseTime:t,onDark:true},!!opts.reduced);
+ c.restore();
+}
+function dialogue(run){
+ if(!dreamEdition||run.practice||run.state!=='play'||run.flight!==null)return '';
+ if(run.distance>=12&&run.distance<=93&&run.inputCount===0)return '저 빛을 따라가 볼까?';
+ if(run.distance>=WALL_START-14&&run.distance<=WALL_START+60)return '벽도 길이 되는구나.';
+ if(run.index===6&&run.distance<=FINISH-6)return '찾았다, 빛의 문!';
+ return '';
+}
 function draw(c,run,opts){
  const {width:w,height:h}=opts.viewport,palette=SECTIONS[run.mapChanges],foot=surface(run.distance),reduced=opts.reduced;
  const actor=offset(foot,run.height+1.5),time=run.time,scale=clamp(Math.min(w/318,h/275),.63,2.5);
  const lead=surface(run.distance+(reduced?20:32)),target=offset(lead,35);
  const focusX=w*.48,focusY=h*.43;
  const cx=focusX-target.x*scale,cy=focusY-target.y*scale;
- c.save();c.fillStyle=palette.back;c.fillRect(0,0,w,h);
- const aperture=Math.min(w,h),skyX=w*.51-(target.x-110)*scale*.09,skyY=h*.37-(target.y+100)*scale*.07;
- ellipse(c,skyX,skyY,aperture*.41,aperture*.44,palette.far+'1a');
- ellipse(c,skyX,skyY,aperture*.36,aperture*.375,palette.far+'4a');
- ellipse(c,skyX-aperture*.062,skyY+aperture*.043,aperture*.30,aperture*.32,palette.back);
- const [low,high]=waves(run,w,h);
- c.save();c.translate(0,-target.y*scale*.12);c.lineWidth=1;
- c.strokeStyle=palette.far+'36';c.stroke(low);
- c.strokeStyle=palette.far+'70';c.stroke(high);c.restore();
+ c.save();
+ backdrop(c,run,w,h,palette,w*.51-(target.x-110)*scale*.09,h*.37-(target.y+100)*scale*.07,-target.y*scale*.12);
  c.translate(cx,cy);c.scale(scale,scale);
  c.save();c.translate(target.x*.18,target.y*.17);c.fillStyle=palette.far+'9c';c.fill(starField());c.restore();
  const visible=Math.min(PATH_POINTS.length,Math.ceil((run.distance+620)/48)*4);
@@ -245,7 +279,11 @@ function draw(c,run,opts){
   for(let i=0;i<6;i++){const a=i*Math.PI/3;ellipse(c,actor.x+Math.cos(a)*(12+age*22),actor.y+Math.sin(a)*(12+age*22),1.6,1.6,'#ffeca5')}
  }
  c.restore();
+ const line=dialogue(run);
+ if(!line)return null;
+ const head=offset(foot,run.height+44);
+ return {text:line,x:clamp(cx+head.x*scale,92,Math.max(92,w-92)),y:clamp(cy+head.y*scale-10,88,Math.max(88,h-106))};
 }
-const api=Object.freeze({OpeningRun,validResult,draw,surface,SECTIONS,OBSTACLES,FINISH});
+const api=Object.freeze({OpeningRun,validResult,draw,drawLobby,surface,SECTIONS,OBSTACLES,FINISH});
 root.MongyuOpening=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

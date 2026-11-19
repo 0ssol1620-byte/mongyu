@@ -149,7 +149,10 @@ function draw(c,run,opt,geo){
  if(!scene.split&&!scene.transition){
   const visible=scene.groups.some(g=>g.actors.some(a=>a.role==='current-actor'));
   if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);
-  if(visible||scene.groups.length===0)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
+  if(visible||scene.groups.length===0){
+   const player=root.MONGYU_PLAYABLE_RELEASE==='R98'&&scene.phase==='countdown'?{...geo.player,pose:'stand'}:geo.player;
+   M.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
+  }
   if(scene.phase==='notification'){
    const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=p[1];c.fillText('…',x,y-2);c.restore();
   }

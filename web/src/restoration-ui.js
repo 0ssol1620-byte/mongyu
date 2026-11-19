@@ -53,7 +53,8 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
- const openingEnabled=root.MONGYU_PLAYABLE_RELEASE==='R97'&&!!root.MongyuOpening;
+ const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
+ const openingEnabled=(dreamEdition||root.MONGYU_PLAYABLE_RELEASE==='R97')&&!!root.MongyuOpening;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
  let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0,openingNeedsJump=false;
@@ -141,7 +142,7 @@ function mount(host){
   const config=options.config||configFor(selected),intro=INTRO[selected.number];
   launchAfterOpening=options.playAfterStory===true&&selected.number===1;
   if(launchAfterOpening&&openingEnabled&&!save.collected.includes(selected.id)){
-   scene={kind:'opening',pages:['벽 너머로 빛 하나가 굴러갔다. 길은 접혔지만, 달리기는 계속됐다.'],index:0,elapsed:0,beatAt:0};sceneLast=null;showScene(event);return true;
+   scene={kind:'opening',pages:[dreamEdition?'빛이 벽 너머로 갔어. 따라가 보자.':'벽 너머로 빛 하나가 굴러갔다. 길은 접혔지만, 달리기는 계속됐다.'],index:0,elapsed:0,beatAt:0};sceneLast=null;showScene(event);return true;
   }
   const sequence=G?.getSequence(selected);
   if(sequence){scene={kind:sequence.kind,graph:G.createState(selected),sequence,index:0,pages:sequence.steps,elapsed:0,beatAt:0};sceneLast=null;showScene(event);return true}
@@ -182,7 +183,7 @@ function mount(host){
   const effect=scene.vignette?.effect||'',reduced=host.reduced?.(),phase=Math.min(1,(scene.elapsed-scene.beatAt)/.6);
   const lift=effect==='levitate'&&scene.index<2?(scene.index===0?(reduced?35:35*phase):70):0;
   canvas.dataset.character=id;canvas.dataset.reaction=reaction();canvas.dataset.effect=effect;canvas.setAttribute('aria-label',(C.characters.find(x=>x.id===id)?.name||'길')+' · '+(scene.vignette?.name||scene.intro?.name||'이야기'));
-  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0,ink:root.MongyuStagecraft?.inkFor(root.MongyuMobile.worldPalette((slot.chapter||1)-1)[0],root.MongyuMobile.look().body)||'#18121d'};
+  const stage=scene.graph?G.stageForStep(slot,scene.index):sceneStage(slot,scene.index,scene.kind,dreamEdition&&scene.kind==='opening'?'':reaction()),fx={p:A.palettes[(slot.chapter-1)%A.palettes.length],t:0,gain:0,ink:root.MongyuStagecraft?.inkFor(root.MongyuMobile.worldPalette((slot.chapter||1)-1)[0],root.MongyuMobile.look().body)||'#18121d'};
   canvas.dataset.actors=stage.actors.map(a=>a.id).join(',');canvas.dataset.beat=stage.beat;
   canvas.dataset.roles=stage.actors.map(a=>a.sourceRole).join(',');
   canvas.dataset.speakerLane=String(stage.speakerLane??'');canvas.dataset.markerCode=String(stage.markerCode??'');canvas.dataset.renderCode=String(stage.nativeRenderCode??'');
@@ -194,17 +195,26 @@ function mount(host){
   canvas.setAttribute('aria-label',stage.actors.map(a=>actorName(a)+(a.activeSpeaker?' 말하는 중':a.reaction?' '+({'!':'놀람','?':'의문','…':'말없음'}[a.reaction]||a.reaction):'')).join(', ')+(stage.beat==='departure'?' — 홀로 남은 길':''));
   if(scene.graph){const labels=stage.actors.filter(a=>a.marker).map(a=>a.marker.label);if(labels.length)canvas.setAttribute('aria-label',canvas.getAttribute('aria-label')+' · '+labels.join(', '));}
   c.clearRect(0,0,720,height);c.save();
-  if(root.MongyuMobile){c.strokeStyle='#dcc6a666';c.lineWidth=1.5;c.beginPath();c.ellipse(360,baseline+8,300,10,0,0,Math.PI*2);c.stroke()}else{c.fillStyle='#f6f3e9';for(let x=45;x<680;x+=18)c.fillRect(x,baseline+7,14,6);}
+  if(dreamEdition&&scene.kind==='opening'){
+   c.beginPath();c.moveTo(53,baseline+2);c.lineTo(565,baseline+2);c.lineTo(621,baseline-12);c.lineTo(675,baseline-74);
+   c.lineWidth=11;c.strokeStyle='#171124';c.stroke();c.lineWidth=2;c.strokeStyle='#d899c2';c.stroke();
+   c.save();c.translate(530,baseline-111);c.rotate(Math.PI/4);c.strokeStyle='#ffdeac';c.strokeRect(-12,-12,24,24);c.fillStyle='#f9ac88';c.fillRect(-6,-6,12,12);c.restore();
+  }else if(root.MongyuMobile){c.strokeStyle='#dcc6a666';c.lineWidth=1.5;c.beginPath();c.ellipse(360,baseline+8,300,10,0,0,Math.PI*2);c.stroke()}else{c.fillStyle='#f6f3e9';for(let x=45;x<680;x+=18)c.fillRect(x,baseline+7,14,6);}
   for(const actor of stage.actors){
    const x=actor.x,dog=actor.id==='dog-only',red=actor.id==='red-form',h=red?bodyHeight*.18:dog?bodyHeight*.4:bodyHeight;
    c.save();if(actor.facing===-1||effect==='look-back'&&scene.index<2){c.translate(x*2,0);c.scale(-1,1)}
    if(actor.pose)drawNarrativePose(c,x,baseline,h,actor.pose,scene.elapsed,!!reduced,fx.ink);
    else if(actor.id==='elder-alone')sceneElder(c,x,baseline,bodyHeight,fx.ink);
    else if(red){c.fillStyle='#ed4776';for(const [dx,dy,w,h]of [[-20,-12,40,12],[-12,-20,24,8],[-4,-27,12,7]])c.fillRect(x+dx,baseline+dy,w,h)}
+   else if(dreamEdition&&root.MongyuMobile){
+    const q={x,y:baseline-lift,bodyHeight:h,height:lift,pose:'stand'};
+    if(dog)root.MongyuMobile.dog(c,q,{poseTime:scene.elapsed,ink:fx.ink},!!reduced);
+    else root.MongyuMobile.sprite(c,q,{poseTime:scene.elapsed,ink:scene.kind==='opening'?'#fff2df':fx.ink},!!reduced,actor.id);
+   }
    else A.characters(c,{characterId:dog?'dog':actor.id,player:dog?null:{x,y:baseline-lift,tangent:{x:1,y:0},height:lift,bodyHeight:h},companion:dog?{x,y:baseline,tangent:{x:1,y:0},bodyHeight:h}:null},fx,true);
    c.restore();
    if(actor.marker)drawNativeMarker(c,actor.marker,x+42,Math.max(28,baseline-h-15),short?22:30,fx.ink);
-   if(actor.activeSpeaker&&scene.graph){const by=Math.max(22,baseline-h-20);c.strokeStyle=fx.ink;c.lineWidth=2;c.beginPath();c.ellipse(x,by,30,15,0,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(x-6,by+14);c.lineTo(x-12,by+24);c.lineTo(x+4,by+15);c.stroke();c.fillStyle=fx.ink;for(const dx of [-10,0,10])c.fillRect(x+dx-2,by-2,4,4)}
+   if(actor.activeSpeaker&&scene.graph&&!dreamEdition){const by=Math.max(22,baseline-h-20);c.strokeStyle=fx.ink;c.lineWidth=2;c.beginPath();c.ellipse(x,by,30,15,0,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(x-6,by+14);c.lineTo(x-12,by+24);c.lineTo(x+4,by+15);c.stroke();c.fillStyle=fx.ink;for(const dx of [-10,0,10])c.fillRect(x+dx-2,by-2,4,4)}
    c.fillStyle=fx.ink;c.font='900 '+(short?26:38)+'px sans-serif';c.textAlign='center';c.fillText(actor.reaction,x+10,Math.max(28,baseline-h-(red?35:lift+12)));
   }
   if(effect==='ringtone'){c.font='700 24px sans-serif';c.textAlign='right';c.fillText(scene.index===2?'…':'따르릉',650,Math.max(40,baseline-bodyHeight/2));}
@@ -217,9 +227,9 @@ function mount(host){
   $('restorationScene').dataset.kind=scene.kind;$('restorationScene').dataset.effect=scene.vignette?.effect||'';
   $('restorationSceneLight').hidden=true;host.openDialog('restorationScene',event);
   text('restorationSceneLabel',String(slot.number).padStart(3,'0')+' · '+(scene.intro?.name||scene.vignette?.name||slot.title));
-  const step=scene.graph?G.getStep(slot,scene.index):null,other=slot.number===100?'붉은 형상':({22:'솔',47:'담',69:'여울',87:'여울'}[slot.number]||'');
-  const speaker=step&&['reflection','thought'].includes(step.kind)?'길 · 독백':step?.speakerLane===0?'길':step?.speakerLane===1?other:step?.speakerLane===2?'길 · '+other:'';
-  $('restorationScene').dataset.presentation=step&&['dialogue','thought','reflection','hesitation'].includes(step.kind)?'speech':'narration';$('restorationScene').dataset.speaker=String(step?.speakerLane??'self');$('restorationScene').querySelector?.('.scene-balloon')?.style?.setProperty?.('--speaker-x',step?.speakerLane===0?'25%':step?.speakerLane===1?'75%':'50%');
+  const openingVoice=dreamEdition&&scene.kind==='opening',step=scene.graph?G.getStep(slot,scene.index):null,other=slot.number===100?'붉은 형상':({22:'솔',47:'담',69:'여울',87:'여울'}[slot.number]||'');
+  const speaker=openingVoice?'길':step&&['reflection','thought'].includes(step.kind)?'길 · 독백':step?.speakerLane===0?'길':step?.speakerLane===1?other:step?.speakerLane===2?'길 · '+other:'';
+  $('restorationScene').dataset.presentation=openingVoice||step&&['dialogue','thought','reflection','hesitation'].includes(step.kind)?'speech':'narration';$('restorationScene').dataset.speaker=String(step?.speakerLane??'self');$('restorationScene').querySelector?.('.scene-balloon')?.style?.setProperty?.('--speaker-x',step?.speakerLane===0?'25%':step?.speakerLane===1?'75%':'50%');
   text('restorationSceneSpeaker',isCall?'꿈속 전화':speaker);$('restorationSceneSpeaker').hidden=!isCall&&!speaker;
   text('restorationScenePage',scene.kind==='opening'?'':(scene.index+1)+' / '+scene.pages.length);
   const bossRule=slot.rule.type==='boss'?R.BOSS_RULES[R.BOSS_SLOTS.indexOf(slot.number)]:null;
@@ -229,7 +239,7 @@ function mount(host){
   $('restorationSceneNext').hidden=false;$('restorationSceneNext').disabled=isCall&&scene.rings<2;
   $('restorationSceneAction').hidden=!!scene.graph||scene.index===0||isInterlude||isIntro||isCall;text('restorationSceneAction','앞 장면');
   text('restorationSceneSkip',isIntro?'세계 모음':isCall?'받지 않고 달리기':'나중에 보기');drawSceneCast();
-  host.audioEntry?.({kind:'scene',owner:scene,sceneKind:scene.kind,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow},event);
+  host.audioEntry?.({kind:'scene',owner:scene,sceneKind:scene.kind,spoken:openingVoice||!!speaker,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow},event);
   ($('restorationSceneNext').disabled?$('restorationSceneSkip'):$('restorationSceneNext')).focus({preventScroll:true});
  }
  function finishEvent(proof,gesture){

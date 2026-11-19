@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "tracks": [
+    {
+      "id": "night-corners",
+      "role": "title",
+      "musicRoles": [
+        "title",
+        "story3"
+      ],
+      "file": "r98/dreams-become-real.mp3",
+      "mime": "audio/mpeg",
+      "title": "Dreams Become Real",
+      "artist": "Kevin MacLeod",
+      "album": "incompetech",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "downloadUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "masterSha256": "a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0",
+      "masterBytes": 13124519,
+      "bytes": 481004,
+      "sha256": "199db5a5aefcd7896ab1e8cdaae51b18c7138f7f59d7c7461ea6f206cbc04c65",
+      "bpm": 60,
+      "duration": 48,
+      "beatAligned": false,
+      "loopFade": 1.2,
+      "instrument": "Piano, Synths",
+      "edit": {
+        "startSeconds": 8,
+        "durationSeconds": 48,
+        "processing": "highpass=f=38,loudnorm=I=-19:TP=-2:LRA=9,afade=t=in:st=0:d=0.16,afade=t=out:st=47.6:d=0.4; 32kHz stereo MP3 at 80kb/s."
+      },
+      "changes": "Excerpt with bass filtering, level adjustment, fades, and MP3 encoding."
+    },
+    {
+      "id": "menu-score",
+      "role": "menu",
+      "musicRoles": [
+        "menu",
+        "skin"
+      ],
+      "file": "r98/music-for-manatees.mp3",
+      "mime": "audio/mpeg",
+      "title": "Music for Manatees",
+      "artist": "Kevin MacLeod",
+      "album": "incompetech",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400009",
+      "downloadUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Music%20for%20Manatees.mp3",
+      "masterSha256": "83813e1fbeab933a4fe3895e4f64d0a11ddf7c7f357cbc68b36c503bb9aaf664",
+      "masterBytes": 42244303,
+      "bytes": 420884,
+      "sha256": "727def72305e359e233e23596fb843756d9f0d52bfd50fc090513377eb23f3d1",
+      "bpm": null,
+      "duration": 42,
+      "beatAligned": false,
+      "loopFade": 1.2,
+      "instrument": "Piano, Electric Piano, Strings, Synth",
+      "edit": {
+        "startSeconds": 12,
+        "durationSeconds": 42,
+        "processing": "highpass=f=38,loudnorm=I=-19:TP=-2:LRA=9,afade=t=in:st=0:d=0.16,afade=t=out:st=41.6:d=0.4; 32kHz stereo MP3 at 80kb/s."
+      },
+      "changes": "Excerpt with bass filtering, level adjustment, fades, and MP3 encoding."
+    },
+    {
+      "id": "opening-floor",
+      "role": "stage08",
+      "musicRoles": [
+        "stage08"
+      ],
+      "file": "r98/floating-cities.mp3",
+      "mime": "audio/mpeg",
+      "title": "Floating Cities",
+      "artist": "Kevin MacLeod",
+      "album": "incompetech",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600018",
+      "downloadUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Floating%20Cities.mp3",
+      "masterSha256": "e7365652410d1fbc8a14d87537855d625c1a5fa8b7de8c626f47c13256ef2ddd",
+      "masterBytes": 5892113,
+      "bytes": 311084,
+      "sha256": "0580c6a41d54746a81fbc56d09fa61a7f551065fd6bc8bd798d1046c9ba91881",
+      "bpm": 120,
+      "duration": 31,
+      "beatAligned": false,
+      "loopFade": 1.2,
+      "instrument": "Synths, Percussion",
+      "edit": {
+        "startSeconds": 10,
+        "durationSeconds": 31,
+        "processing": "highpass=f=38,loudnorm=I=-19:TP=-2:LRA=9,afade=t=in:st=0:d=0.16,afade=t=out:st=30.6:d=0.4; 32kHz stereo MP3 at 80kb/s."
+      },
+      "changes": "Excerpt with bass filtering, level adjustment, fades, and MP3 encoding."
+    },
+    {
+      "id": "opening-wall",
+      "role": "stage07",
+      "musicRoles": [
+        "stage07"
+      ],
+      "file": "r98/dream-culture.mp3",
+      "mime": "audio/mpeg",
+      "title": "Dream Culture",
+      "artist": "Kevin MacLeod",
+      "album": "incompetech",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300046",
+      "downloadUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dream%20Culture.mp3",
+      "masterSha256": "f12cbb52bd4b92bd6cf8a343645567c119627e9cbf98108a3eb6ac2cc275ee46",
+      "masterBytes": 8576659,
+      "bytes": 320804,
+      "sha256": "a64f2cf479a929f555a7c292039a33786e4d58db3baef52ecc93d1de801e3ad6",
+      "bpm": 70,
+      "duration": 32,
+      "beatAligned": false,
+      "loopFade": 1.2,
+      "instrument": "Piano, Percussion",
+      "edit": {
+        "startSeconds": 6,
+        "durationSeconds": 32,
+        "processing": "highpass=f=38,loudnorm=I=-19:TP=-2:LRA=9,afade=t=in:st=0:d=0.16,afade=t=out:st=31.6:d=0.4; 32kHz stereo MP3 at 80kb/s."
+      },
+      "changes": "Excerpt with bass filtering, level adjustment, fades, and MP3 encoding."
+    },
+    {
+      "id": "opening-ceiling",
+      "role": "stage02",
+      "musicRoles": [
+        "stage02"
+      ],
+      "file": "r98/frost-waltz.mp3",
+      "mime": "audio/mpeg",
+      "title": "Frost Waltz",
+      "artist": "Kevin MacLeod",
+      "album": "incompetech",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100516",
+      "downloadUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Frost%20Waltz.mp3",
+      "masterSha256": "560f932189551c8a009a671da25d8b51cf2067df85fcac35731ea6ac0c7d6cd3",
+      "masterBytes": 5526812,
+      "bytes": 301004,
+      "sha256": "faeb4cd4d8e8731cd8a3e75e1119bd3ebbc70e38cae0aefa30b7cfd3af0daae8",
+      "bpm": 99,
+      "duration": 30,
+      "beatAligned": false,
+      "loopFade": 1.2,
+      "instrument": "Celesta, Glockenspiel, Basses, Cellos, Violas, Violins, French Horns",
+      "edit": {
+        "startSeconds": 2,
+        "durationSeconds": 30,
+        "processing": "highpass=f=38,loudnorm=I=-19:TP=-2:LRA=9,afade=t=in:st=0:d=0.16,afade=t=out:st=29.6:d=0.4; 32kHz stereo MP3 at 80kb/s."
+      },
+      "changes": "Excerpt with bass filtering, level adjustment, fades, and MP3 encoding."
+    }
+  ]
+}

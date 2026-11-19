@@ -9,6 +9,7 @@ const looks=Object.freeze([
  ['dusk','저녁별',40,'#dfb9cf','#edcd88','star'],['frost','서리',60,'#d6e8f5','#92d4e6','comet'],
  ['eclipse','일식',80,'#ad9dba','#f5bc65','star'],['dawn','새벽',100,'#fff1c7','#ffd47d','star']
 ].map(([id,name,at,body,accent,detail])=>Object.freeze({id,name,at,body,accent,detail})));
+const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
 let selected='moon',saved=true,progress=()=>0,lastWall=null,motion=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function count(n){return Number.isSafeInteger(n)?clamp(n,0,100):0}
@@ -83,7 +84,8 @@ function airborneFoot(progress,index){
 function gait(time=0,q={},reduced=false){
  const idle=!!q.pose||reduced&&!Number.isFinite(q.strideDistance),wall=q.nativeState===12,height=Math.max(0,q.height||0),air=!!q.climbing||height>.05||wall,airMix=wall||q.climbing?1:ease(height/6),phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/42:time*2.4,local=((phase%1)+1)%1,step=local%.5;
  const x=9.45-42*Math.min(step,.45),flight=step>.45?.7*Math.sin(Math.PI*(step-.45)/.05):0,runPelvis=1.12+Math.sqrt(21.2**2-x*x)+flight,turn=(!air&&q.turning)?Math.sin(Math.PI*(q.turnProgress||0)):0;
- const pelvis=(idle?22.3:(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn)-(q.carrier?1:0),bob=idle?0:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?0:-.65,-pelvis],shoulder=[q.carrier?5:3,(q.carrier?-30.5:-31.5)+bob];
+ const relaxed=idle&&dreamEdition,breath=relaxed&&!reduced?Math.sin(time*2.55):0,look=relaxed&&!reduced?Math.sin(time*1.7):0;
+ const pelvis=(idle?(relaxed?22.25+breath*.16:22.3):(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn)-(q.carrier?1:0),bob=idle?breath*.56:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?look*.31:-.65,-pelvis],shoulder=[q.carrier?5:relaxed?1+look*.43:3,(q.carrier?-30.5:-31.5)+bob];
  const samples=[0,.5].map(offset=>runFoot(((phase+offset)%1+1)%1));
  const feet=samples.map((sample,i)=>{
   if(idle)return [i?3:-3,-1];
@@ -94,10 +96,10 @@ function gait(time=0,q={},reduced=false){
  });
  const legs=feet.map(foot=>!air&&!q.pose&&q.nativeState===0?plantedLeg(hip,foot,q):legPose(hip,foot));
  const footAngles=samples.map((sample,i)=>idle||wall||q.climbing||q.turning||(!air&&Math.hypot(legs[i][2][0]-feet[i][0],legs[i][2][1]-feet[i][1])>1)?0:sample.angle*(1-airMix));
- const u=clamp(q.jumpProgress??.5,0,1),reach=Math.sin(Math.PI*u),fall=ease((u-.55)/.45),hands=q.pose?[[-10,q.pose==='raise-arms'?-46:-25],[14,q.pose==='raise-arms'?-46:-25]]:idle?[[-4,-21],[7,-22]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:[[-10+3*reach,-29-8*reach+6*fall],[12+3*reach,-33-7*reach+10*fall]];
+ const u=clamp(q.jumpProgress??.5,0,1),reach=Math.sin(Math.PI*u),fall=ease((u-.55)/.45),hands=relaxed&&q.pose==='stand'?[[-3+look*.65,-18],[8-look*.58,-19]]:q.pose?[[-10,q.pose==='raise-arms'?-46:-25],[14,q.pose==='raise-arms'?-46:-25]]:idle?[[-4,-21],[7,-22]]:q.nativeState===11?[[-17,-34],[18,-34]]:wall?[[-9,-38],[12,-43]]:q.climbing?[[-7,-45],[13,-43]]:[[-10+3*reach,-29-8*reach+6*fall],[12+3*reach,-33-7*reach+10*fall]];
  const running=[0,1].map(i=>{const swing=Math.cos(phase*TAU+i*Math.PI),angle=-.88*swing,flex=1.15-.65*swing,elbow=[shoulder[0]+8.5*Math.sin(angle),shoulder[1]+8.5*Math.cos(angle)],wrist=[elbow[0]+7.5*Math.sin(angle+flex),elbow[1]+7.5*Math.cos(angle+flex)];return [shoulder,elbow,wrist]}),posed=hands.map(hand=>{const dx=hand[0]-shoulder[0],dy=hand[1]-shoulder[1],k=Math.min(1,15.99/(Math.hypot(dx,dy)||1)),wrist=[shoulder[0]+dx*k,shoulder[1]+dy*k];return [shoulder,joint(shoulder,wrist,8.5,7.5,wrist[0]<shoulder[0]?-1:1),wrist]});
  const arms=idle||wall||q.climbing||q.nativeState===11?posed:air?running.map((a,i)=>blendArm(a,posed[i],airMix)):running;
- return {hip,shoulder,legs,arms,air,bob,footAngles};
+ return {hip,shoulder,legs,arms,air,bob,footAngles,look};
 }
 // Forward motion and the surface normal are independent. Reversing mirrors
 // the runner along its surface; rotating by PI alone would bury its body.
@@ -122,10 +124,39 @@ function limbContour(bones,widths,foot=false){
  const left=centres.map((p,i)=>[p[0]+normals[i][0]*widths[i],p[1]+normals[i][1]*widths[i]]),right=centres.map((p,i)=>[p[0]-normals[i][0]*widths[i],p[1]-normals[i][1]*widths[i]]).reverse();
  return foot?[...left,[d[0]+2.3,d[1]-.3],[d[0]+2.8,d[1]+.8],[d[0]-.6,d[1]+1],...right]:[...left,...right];
 }
+function lanternWalker(c,q,pose,style,ink,t,reduced){
+ const {hip,shoulder,legs,arms,bob,footAngles,look}=pose;
+ const trim=style.detail==='plain'?'#f9ac88':style.accent;
+ const shade=ink==='#18121d'?'#443449':'#a896b6';
+ const visor=ink==='#18121d'?'#fcdec0':'#31233e';
+ const hoodX=shoulder[0]+look*.72,hoodY=-36+bob;
+ const trail=reduced?0:q.pose?Math.sin(t*3.1)*.8:Math.sin((q.strideDistance??t*68)*.14)*1.7;
+ const flow=q.pose?4:10+Math.min(4,(q.height||0)*.09);
+ paintLeg(c,legs[0],[1.55,1.5,1.0,1.05,.55],shade,footAngles[0]);
+ paintLeg(c,legs[1],[1.85,1.68,1.09,1.10,.58],ink,footAngles[1]);
+ contour(c,limbContour(arms[0],[1.45,1.29,.78,.76,.46]),shade);
+ contour(c,[[shoulder[0]+1,-34+bob],[shoulder[0]-4,-32+bob],[-flow-4,-32+bob+trail],[-flow-9,-27+bob+trail],[-flow,-29+bob+trail],[shoulder[0]+2,-30+bob]],trim);
+ contour(c,[[shoulder[0]-5,shoulder[1]-2],[shoulder[0]+3,shoulder[1]-2],[shoulder[0]+5,shoulder[1]+2],[hip[0]+4.5,hip[1]+2],[hip[0]+.5,hip[1]+3.5],[hip[0]-5.5,hip[1]+1.6],[hip[0]-4,shoulder[1]+4]],ink);
+ line(c,[[shoulder[0]-2,shoulder[1]+1],[hip[0]+3.3,hip[1]-1.9]],trim,1.15);
+ contour(c,limbContour(arms[1],[1.65,1.26,.87,.76,.55]),ink);
+ const wrist=arms[1][2];
+ oval(c,wrist[0],wrist[1],.79,.81,trim);
+ c.save();c.translate(hoodX,hoodY);c.rotate(reduced?0:look*.085);c.scale(.94,.94);
+ // Folded hood, recessed visor and a single pin of light.
+ c.beginPath();c.moveTo(-8.3,-5.3);c.quadraticCurveTo(-3.9,-11.5,2.8,-8.7);
+ c.quadraticCurveTo(8.2,-7.4,8.5,-3);c.lineTo(7.1,1.5);
+ c.quadraticCurveTo(2.1,4.8,-2.3,3.1);c.lineTo(-5.7,4.1);
+ c.quadraticCurveTo(-7.9,1.4,-6.6,-2.2);c.closePath();c.fillStyle=ink;c.fill();
+ contour(c,[[.6,-5.35],[5.2,-5.25],[7.4,-3.5],[5.8,-.7],[1.2,-.15],[-.35,-1.5]],visor);
+ const blink=!reduced&&q.pose&&(t%4.3)>4.18;
+ oval(c,4.7,-2.9,.79,blink?.27:.84,trim);
+ c.restore();
+}
 function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,character==='elder'?{...q,carrier:true}:q,reduced),{hip,shoulder,legs,arms}=pose;
  const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
  c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
+ if(dreamEdition&&character==='walker'){lanternWalker(c,q,pose,style,ink,t,reduced);c.restore();return true}
  // Both legs are real filled contours; contact QA inspects their raster pixels.
  paintLeg(c,legs[0],[1.25,1.35,.95,1.05,.55],ink,pose.footAngles[0]);
  paintLeg(c,legs[1],[1.4,1.5,1.05,1.1,.58],ink,pose.footAngles[1]);
@@ -162,9 +193,9 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
 }
 
 function dog(c,q,fx={},reduced=false){
- if(!q)return;const phase=Number.isFinite(q.strideDistance)?q.strideDistance/(70/3):reduced?0:(fx.poseTime??fx.t??0)*100/(70/3),air=(q.height||0)>1;
+ if(!q)return;const stand=dreamEdition&&!!q.pose,phase=stand?0:Number.isFinite(q.strideDistance)?q.strideDistance/(70/3):reduced?0:(fx.poseTime??fx.t??0)*100/(70/3),air=(q.height||0)>1;
  const ink=fx.ink||look().body;c.save();c.translate(q.x,q.y);const basis=actorBasis(q);c.rotate(basis.angle);c.scale((q.bodyHeight||23)/23,(q.bodyHeight||23)/23*basis.sign);
- for(let i=0;i<4;i++){const front=i>=2,x=front?7:-9,u=((phase+(i%2)*.5+(front?.12:0))%1+1)%1,foot=air?[x+(i%2?4:-4),-4]:u<.6?[x+7-14*u/.6,0]:[x-7+14*(u-.6)/.4,-6*Math.sin(Math.PI*(u-.6)/.4)];contour(c,limbContour([[x,-10],[x+(front?-2:2),-5],foot],[1.4,1.25,.9,.75,.5]),ink)}
+ for(let i=0;i<4;i++){const front=i>=2,x=front?7:-9,u=((phase+(i%2)*.5+(front?.12:0))%1+1)%1,foot=stand?[x+(i%2?3:-3),0]:air?[x+(i%2?4:-4),-4]:u<.6?[x+7-14*u/.6,0]:[x-7+14*(u-.6)/.4,-6*Math.sin(Math.PI*(u-.6)/.4)];contour(c,limbContour([[x,-10],[x+(front?-2:2),-5],foot],[1.4,1.25,.9,.75,.5]),ink)}
  contour(c,[[-13,-14],[-8,-17],[5,-16],[10,-21],[15,-22],[17,-18],[21,-16],[20,-14],[14,-13],[10,-9],[-8,-9],[-13,-11]],ink);
  contour(c,[[9,-20],[8,-25],[14,-22],[13,-18]],ink);contour(c,[[-11,-12],[-16,-15],[-20,-21],[-17,-20],[-14,-16],[-10,-15]],ink);c.restore();
 }
@@ -221,7 +252,7 @@ function camera(viewport,geo,opt={},run){
  return {width,height,scale,baseScale,zoom,offsetX,offsetY,left:-offsetX/scale,right:(width-offsetX)/scale,top:-offsetY/scale,bottom:(height-offsetY)/scale,follow:true,framing:'viewport-cover',target:{x:targetX,y:targetY}};
 }
 
-function title(c,opt={}){const w=opt.viewport.width,h=opt.viewport.height,wide=w>h*1.15,t=opt.reduced?0:opt.time||0;
+function title(c,opt={}){if(dreamEdition&&root.MongyuOpening)return root.MongyuOpening.drawLobby(c,opt);const w=opt.viewport.width,h=opt.viewport.height,wide=w>h*1.15,t=opt.reduced?0:opt.time||0;
  c.save();atmosphere(c,0,0,w,h,t,0,opt.reduced?0:1);c.save();c.globalAlpha=.16;fieldDraw(c,0,0,w,h,{stage:2,poseTime:t,gain:opt.reduced?0:.5});c.restore();const x=wide?w*.65:w*.5,y=wide?h*.45:h*.47,r=Math.min(w*(wide?.21:.38),h*.245);
  // Four suspended corners, an eclipse, and a looping traveller: the game's motif.
  c.translate(x,y);const halo=c.createRadialGradient(0,0,r*.15,0,0,r*1.7);halo.addColorStop(0,'#d4b18d24');halo.addColorStop(1,'#d4b18d00');c.fillStyle=halo;c.fillRect(-r*1.7,-r*1.7,r*3.4,r*3.4);
@@ -255,7 +286,12 @@ function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=h
  function render(){const n=count(progress()),equipped=look();$('wardrobeCount').textContent=n+' / 100개의 기억';$('wardrobeStatus').textContent=saved?'기억을 모으면 새로운 옷이 열려요.':'이번 실행에만 옷을 보관할 수 있어요.';
   for(const item of looks){const b=$('look-'+item.id),owned=available(item.id,n);b.disabled=!owned;b.setAttribute('aria-pressed',String(equipped.id===item.id));b.setAttribute('aria-label',item.name+(owned?equipped.id===item.id?' · 입는 중':' · 입기':' · 기억 '+item.at+'개 필요'));b.querySelector('small').textContent=owned?equipped.id===item.id?'입는 중':'입기':'기억 '+item.at+'개'}
  }
- for(const item of looks){const b=d.createElement('button');b.id='look-'+item.id;b.setAttribute('id',b.id);b.innerHTML=icon(item)+'<span>'+item.name+'</span><small></small>';b.onclick=()=>{if(!available(item.id,progress()))return;selected=item.id;try{const value=JSON.stringify({schema:1,selected});host.storage.setItem(KEY,value);saved=host.storage.getItem(KEY)===value}catch(_){saved=false}render();host.redraw()};$('wardrobeLooks').appendChild(b)}
+ for(const item of looks){const b=d.createElement('button');b.id='look-'+item.id;b.setAttribute('id',b.id);if(dreamEdition){
+  const portrait=d.createElement('canvas');portrait.width=80;portrait.height=80;portrait.setAttribute('aria-hidden','true');
+  const c=portrait.getContext('2d');oval(c,40,40,34,34,'#302547');
+  sprite(c,{x:39,y:66,bodyHeight:51,pose:'stand'},{onDark:true},true,'walker',item);
+  const name=d.createElement('span');name.textContent=item.name;b.append(portrait,name,d.createElement('small'));
+ }else b.innerHTML=icon(item)+'<span>'+item.name+'</span><small></small>';b.onclick=()=>{if(!available(item.id,progress()))return;selected=item.id;try{const value=JSON.stringify({schema:1,selected});host.storage.setItem(KEY,value);saved=host.storage.getItem(KEY)===value}catch(_){saved=false}render();host.redraw()};$('wardrobeLooks').appendChild(b)}
  $('wardrobeClose').onclick=host.close;
  $('shopOpen').textContent='옷장';$('shopOpen').onclick=e=>{host.open(e);render();$('wardrobeClose').focus({preventScroll:true})};
  render();return {render,view:()=>({selected:look().id,saved,collected:count(progress())})};
