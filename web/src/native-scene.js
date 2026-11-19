@@ -3,7 +3,7 @@
  * No input, collision, engine state or RNG is written here.
  */
 (function(root){'use strict';
-const readableNotices=['R99','R100','R101'].includes(root.MONGYU_PLAYABLE_RELEASE);
+const readableNotices=['R99','R100','R101','R102'].includes(root.MONGYU_PLAYABLE_RELEASE);
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap(),fieldClocks=new WeakMap();
 function geometry(run){
  const s=run.nativeFrame,pool=s.game.pool,cur=pool.objects[pool.currentIndex],a=s.game.actor,A=run.kernels.Assembly;

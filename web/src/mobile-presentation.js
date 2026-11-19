@@ -9,6 +9,7 @@ const looks=Object.freeze([
  ['dusk','저녁별',40,'#dfb9cf','#edcd88','star'],['frost','서리',60,'#d6e8f5','#92d4e6','comet'],
  ['eclipse','일식',80,'#ad9dba','#f5bc65','star'],['dawn','새벽',100,'#fff1c7','#ffd47d','star']
 ].map(([id,name,at,body,accent,detail])=>Object.freeze({id,name,at,body,accent,detail})));
+const stageEdition=root.MONGYU_STAGE_EDITION===true;
 const dreamEdition=root.MONGYU_DREAM_EDITION===true;
 let selected='moon',saved=true,progress=()=>0,lastWall=null,motion=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -85,10 +86,11 @@ function gait(time=0,q={},reduced=false){
  const idle=!!q.pose||reduced&&!Number.isFinite(q.strideDistance),wall=q.nativeState===12,height=Math.max(0,q.height||0),air=!!q.climbing||height>.05||wall,airMix=wall||q.climbing?1:ease(height/6),phase=idle?0:Number.isFinite(q.strideDistance)?q.strideDistance/42:time*2.4,local=((phase%1)+1)%1,step=local%.5;
  const x=9.45-42*Math.min(step,.45),flight=step>.45?.7*Math.sin(Math.PI*(step-.45)/.05):0,runPelvis=1.12+Math.sqrt(21.2**2-x*x)+flight,turn=(!air&&q.turning)?Math.sin(Math.PI*(q.turnProgress||0)):0;
  const relaxed=idle&&dreamEdition,breath=relaxed&&!reduced?Math.sin(time*2.55):0,look=relaxed&&!reduced?Math.sin(time*1.7):0;
- const pelvis=(idle?(relaxed?22.25+breath*.16:22.3):(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn)-(q.carrier?1:0),bob=idle?breath*.56:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?look*.31:-.65,-pelvis],shoulder=[q.carrier?5:relaxed?1+look*.43:3,(q.carrier?-30.5:-31.5)+bob];
+ const standingHeight=stageEdition?22.65:22.25;
+ const pelvis=(idle?(relaxed?standingHeight+breath*.16:22.3):(runPelvis+(21.5-runPelvis)*airMix)*(1-turn)+21.5*turn)-(q.carrier?1:0),bob=idle?breath*.56:(21.1-runPelvis)*.6*(1-airMix)-.15*airMix,hip=[idle?look*.31:-.65,-pelvis],shoulder=[q.carrier?5:relaxed?1+look*.43:3,(q.carrier?-30.5:-31.5)+bob];
  const samples=[0,.5].map(offset=>runFoot(((phase+offset)%1+1)%1));
  const feet=samples.map((sample,i)=>{
-  if(idle)return [i?3:-3,-1];
+  if(idle)return [i?(stageEdition?3.6:3):-3,-1];
   if(wall){const u=clamp((q.poseFrame??q.nativeFrame??0)/6,0,1);return i?[7+5*Math.sin(u*Math.PI),-8-6*Math.sin(u*Math.PI)]:[-9+5*u,-3-7*Math.sin(u*Math.PI)]}
   if(q.climbing)return i?[9,-16]:[-7,-3];
   if(air){const u=clamp(q.jumpProgress??.5,0,1),kick=clamp((q.kick||0)*2,0,1)*Math.sin(Math.PI*clamp(u/.7,0,1)),target=airborneFoot(u,i);if(i){target[0]+=14*kick;target[1]-=8*kick}return sample.point.map((v,k)=>v+(target[k]-v)*airMix)}
@@ -152,10 +154,41 @@ function lanternWalker(c,q,pose,style,ink,t,reduced){
  oval(c,4.7,-2.9,.79,blink?.27:.84,trim);
  c.restore();
 }
+function prismWalker(c,q,pose,style,ink,t,reduced){
+ const {hip,shoulder,legs,arms,bob,footAngles,look}=pose;
+ const accent=style.detail==='plain'?'#ffb889':style.accent;
+ const shaded=ink==='#18121d'?'#65506b':'#af97b6';
+ const shadow=ink==='#18121d'?'#f1caaf':'#301e3c';
+ const [sx,sy]=shoulder,[hx,hy]=hip;
+ const headX=sx+look*.68,headY=sy-2.5;
+ paintLeg(c,legs[0],[1.45,1.27,.83,.83,.49],shaded,footAngles[0]);
+ paintLeg(c,legs[1],[1.74,1.44,.97,.95,.49],ink,footAngles[1]);
+ contour(c,limbContour(arms[0],[1.20,1.05,.76,.69,.44]),shaded);
+ const flutter=reduced?0:Math.sin(q.pose?t*2.3:(q.strideDistance??t*70)*.13)*.9;
+ const tail=sx-(q.pose?7:10);
+ angular(c,[[sx-2,sy-1],[tail,sy+1-flutter],[tail-4,sy+4+flutter],[tail+2,sy+5],[sx,sy+2]],accent);
+ // A short asymmetric coat joins the shoulders and hips in one continuous outline.
+ c.beginPath();c.moveTo(sx+1.6,sy-2);c.quadraticCurveTo(sx+5,sy-.5,sx+3.8,sy+3);
+ c.lineTo(hx+3.6,hy+2);c.lineTo(hx-3.7,hy+2.7);c.lineTo(hx-5.4,hy+.8);
+ c.quadraticCurveTo(sx-3.5,sy+4,sx-4.1,sy+1);c.quadraticCurveTo(sx-3.5,sy-1.9,sx+1.6,sy-2);
+ c.fillStyle=ink;c.fill();
+ line(c,[[sx-1.8,sy+.2],[hx+.6,hy-1.1]],shaded,.78);
+ contour(c,limbContour(arms[1],[1.28,1.13,.82,.73,.56]),ink);
+ const wrist=arms[1][2];
+ line(c,[[wrist[0]-.48,wrist[1]+.16],[wrist[0]+.44,wrist[1]-.26]],accent,.8);
+ c.save();c.translate(headX,headY+bob*.13);c.rotate(look*.075);
+ // Faceted porcelain mask with a single lit slit.
+ angular(c,[[-4.7,-3.5],[-3.2,-8],[-.7,-10],[4.6,-8.4],[7.1,-4.6],[6,-1.8],[2.35,.45],[-2.4,-.2]],ink);
+ angular(c,[[.75,-7.1],[4.6,-6.5],[6.44,-4.45],[4.85,-2.8],[1.8,-3.72]],shadow);
+ const blink=q.pose&&!reduced&&t%4.3>4.16;
+ if(!blink)line(c,[[3.5,-5.25],[5.15,-4.74]],accent,.84);
+ c.restore();
+}
 function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,character==='elder'?{...q,carrier:true}:q,reduced),{hip,shoulder,legs,arms}=pose;
  const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
  c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
+ if(stageEdition&&character==='walker'){prismWalker(c,q,pose,style,ink,t,reduced);c.restore();return true}
  if(dreamEdition&&character==='walker'){lanternWalker(c,q,pose,style,ink,t,reduced);c.restore();return true}
  // Both legs are real filled contours; contact QA inspects their raster pixels.
  paintLeg(c,legs[0],[1.25,1.35,.95,1.05,.55],ink,pose.footAngles[0]);

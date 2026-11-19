@@ -60,7 +60,7 @@ async function verifyDreamRoute(page){
   speakers.push(await page.locator('#runnerSpeech').textContent());
   const viewport=await page.evaluate(()=>{const r=document.getElementById('game').getBoundingClientRect();return {width:r.width,height:r.height,x:r.x,y:r.y,screenWidth:innerWidth,screenHeight:innerHeight}});
   assert.equal(viewport.width,viewport.screenWidth);assert.equal(viewport.x,0);assert.equal(viewport.y,0);
-  for(let i=0;i<6;i++){
+  const jumpObstacle=async i=>{
    await page.waitForFunction(index=>{
     const r=QUAD_RIFT_APP.activeRun();return r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[index].at-47;
    },i,{timeout:3500});
@@ -68,7 +68,25 @@ async function verifyDreamRoute(page){
    assert.equal(before.state,'play',JSON.stringify(before));assert.equal(before.index,i);
    if(!tracks.at(-1)||tracks.at(-1).id!==before.track)tracks.push({id:before.track,playing:before.playing});
    await page.touchscreen.tap(viewport.width*.5,viewport.height*.25);
+  };
+  let lateCollision;
+  if(await page.evaluate(()=>MONGYU_STAGE_EDITION)){
+   for(let i=0;i<5;i++)await jumpObstacle(i);
+   await page.locator('#squareResult').waitFor();
+   lateCollision=await page.evaluate(()=>{
+    const r=QUAD_RIFT_APP.activeRun(),panel=document.querySelector('#squareResult .box');
+    const style=getComputedStyle(panel);
+    const commands=[...panel.querySelectorAll('.result-actions button:not([hidden]):not([data-primary=true])')];
+    return {index:r.crash.index,count:document.getElementById('openingResultCount').textContent,
+     shards:document.querySelectorAll('#openingResultShards [data-lit=true]').length,
+     card:style.backgroundImage!=='none'||style.borderRadius!=='0px',
+     aligned:commands.length===3&&new Set(commands.map(b=>b.getBoundingClientRect().top)).size===1};
+   });
+   assert.deepEqual(lateCollision,{index:5,count:'빛 5 / 6',shards:5,card:false,aligned:true});
+   await page.tap('#squareRetry');
+   await page.waitForFunction(()=>QUAD_RIFT_APP.activeRun().state==='play');
   }
+  for(let i=0;i<6;i++)await jumpObstacle(i);
   await page.locator('#squareNext').waitFor({timeout:6000});
   assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.activeRun().result.openingProof.passed),6);
   await page.tap('#squareNext');
@@ -76,7 +94,7 @@ async function verifyDreamRoute(page){
   await page.reload();
   assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.restoration.view().status.collected),2);
   assert.deepEqual(errors,[]);
-  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,dreamRoute,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
+  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,dreamRoute,lateCollision,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
   if(process.argv[3])fs.writeFileSync(process.argv[3],JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report));
  }finally{await browser.close()}

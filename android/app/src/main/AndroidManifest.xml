@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.quadrift.mongyu.preview.r82" android:versionCode="101" android:versionName="0.101.0-preview">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.quadrift.mongyu.preview.r82" android:versionCode="102" android:versionName="0.102.0-preview">
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36" />
-    <application android:allowBackup="false" android:usesCleartextTraffic="false" android:label="몽유 R101" android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme" android:supportsRtl="true" android:debuggable="true">
+    <application android:allowBackup="false" android:usesCleartextTraffic="false" android:label="몽유 R102" android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme" android:supportsRtl="true" android:debuggable="true">
         <activity android:name="org.quadrift.hddevelopment.MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize" android:enableOnBackInvokedCallback="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

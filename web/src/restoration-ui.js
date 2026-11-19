@@ -53,6 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
+ const stageEdition=root.MONGYU_STAGE_EDITION===true;
  const routeEdition=root.MONGYU_ROUTE_EDITION===true;
  const dreamEdition=root.MONGYU_DREAM_EDITION===true;
  const openingEnabled=(dreamEdition||root.MONGYU_PLAYABLE_RELEASE==='R97')&&!!root.MongyuOpening;
@@ -335,6 +336,10 @@ function mount(host){
   if(after)text('restorationAftermathStatus',after.phase==='release'?after.releaseText:after.text);
   host.document.body.dataset.restoration=String(active);$('squareCollection').hidden=!active;$('pauseRestoration').hidden=!active;
   const isResult=['clear','fail'].includes(v.state);
+  if(stageEdition){
+   $('squareResult').dataset.outcome=isResult?v.state:'';
+   $('openingResultProgress').hidden=!(isResult&&v.opening);
+  }
   if($('squarePractice'))$('squarePractice').hidden=!(isResult&&v.opening&&!v.opening.practice&&v.state==='fail');
   const nextSlot=save.pendingUnlock&&activeSlot?.number<100?activeSlot.number+1:summary().nextSlot;
   $('squareNext').hidden=!active||v.freePlay||!isResult||!qualified||!nextSlot;
@@ -374,7 +379,7 @@ function mount(host){
  function showOpeningResult(v,nextSlot){
   const {section,passed,total,clean,practice,crash}=v.opening,cleared=v.state==='clear';
   const record=openingRecordText();
-  text('squareHeading',practice?'구간 연습 완료':cleared?'빛의 문을 열었다':section+'에서 멈췄다');
+  text('squareHeading',practice?'구간 연습 완료':cleared?'빛의 문을 열었다':stageEdition?'충돌 · '+section:section+'에서 멈췄다');
   text('restorationResultWorld','002 · 접힌 빛');
   $('restorationResultScore').hidden=true;$('squareRestart').hidden=true;$('squareRetry').hidden=false;
   text('squareRetry',practice?'처음부터 도전':'다시 달리기');
@@ -382,8 +387,21 @@ function mount(host){
   const primary=$('squareNext').hidden?'squareRetry':'squareNext';
   $('squareResult').dataset.primaryAction=primary;
   for(const id of ['squareNext','squareCollection','squareRetry','squareRestart','squareHome','squarePractice'])$(id).dataset.primary=String(id===primary);
-  text('restorationRecordBadge',!practice&&newBest?'새 점수 기록':'');
+  text('restorationRecordBadge',!practice&&newBest?(stageEdition?'새 기록':'새 점수 기록'):'');
   $('restorationRecordBadge').hidden=practice||!newBest;
+  if(stageEdition){
+   const shards=$('openingResultShards');
+   shards.replaceChildren(...Array.from({length:total},(_,i)=>{
+    const shard=host.document.createElement('i');shard.dataset.lit=String(i<passed);return shard;
+   }));
+   text('openingResultCount','빛 '+passed+' / '+total);
+   const hint=cleared?'':crash?.early?'장애물에 조금 더 가까워진 뒤 탭':'장애물에 닿기 직전에 탭';
+   text('squareSummary',[hint,!storageOK||readOnly?'기록은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
+   text('restorationResultMastery',newBest||practice?'':record);
+   $('restorationResultMastery').hidden=newBest||practice||!record||cleared;
+   $('restorationResultNext').hidden=true;
+   return;
+  }
   const detail=practice?'이 구간의 장애물 2개를 넘었어요.':cleared?'문 너머에서 물소리가 들려요.':v.result.reason+'. '+(crash.early?'다음엔 장애물에 조금 더 가까워졌을 때 탭하세요.':'다음엔 장애물에 닿기 전에 탭하세요.');
   text('squareSummary',detail+'\n'+(practice?'연습은 꿈 지도 기록에 반영되지 않아요.':'빛 '+passed+' / '+total+' · 여유 있게 넘은 장애물 '+clean+'개')+(!storageOK||readOnly?'\n진행은 이번 실행에만 남습니다.':''));
   text('restorationResultMastery',record);

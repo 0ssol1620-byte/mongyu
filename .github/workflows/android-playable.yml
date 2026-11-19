@@ -2,7 +2,7 @@ name: Standalone Android QA
 on:
   workflow_dispatch:
   push:
-    branches: [codex/r101-dream-route]
+    branches: [codex/r102-stage-results]
     paths-ignore: ['docs/**', 'evidence/**', 'README.md']
 permissions:
   contents: read
@@ -33,9 +33,9 @@ jobs:
         with:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
-      - name: Build actual R100 and current R101 with disposable certificate
+      - name: Build actual R101 and current R102 with disposable certificate
         run: |
-          git fetch --no-tags --depth=1 origin 558b07bdfddbbd5c17c9ad0cb1b3765ca66ba495
+          git fetch --no-tags --depth=1 origin 10114d24f8572903a6245632d572338a5241accf
           export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
           python3 scripts/build-playable-qa.py
@@ -52,16 +52,16 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -no-snapshot -no-audio -gpu swiftshader_indirect -no-boot-anim -camera-back none -camera-front none -memory 3072 -cores 4
-          script: node tools/verify-r101-android.cjs ci/baseline.apk ci/updated.apk
+          script: node tools/verify-r102-android.cjs ci/baseline.apk ci/updated.apk
       - name: Device evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: r101-device-evidence
+          name: r102-device-evidence
           path: ci/device/
       - name: Tested standalone unsigned APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r101-verified-unsigned
-          path: android/outputs/MONGYU_R101_TEST_DEBUG_UNSIGNED.apk
+          name: r102-verified-unsigned
+          path: android/outputs/MONGYU_R102_TEST_DEBUG_UNSIGNED.apk

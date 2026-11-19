@@ -1,5 +1,6 @@
 /* 몽유's authored opening route. Positions are arc lengths along the running surface. */
 (function(root){'use strict';
+const stageEdition=root.MONGYU_STAGE_EDITION===true;
 const dreamEdition=root.MONGYU_DREAM_EDITION===true;
 const spectralEdition=root.MONGYU_SPECTRAL_EDITION===true;
 const COURSE='folded-light',FINISH=1180,RADIUS=44,FLOOR=340,WALL=310,ARC=Math.PI*RADIUS/2;
@@ -312,7 +313,10 @@ function draw(c,run,opts){
  root.MongyuMobile.sprite(c,{...actor,bodyHeight:44,renderAngle:foot.a,strideDistance:run.distance,
   nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/FLIGHT},{poseTime:time,onDark:true},reduced);
  if(run.crash){
-  c.beginPath();c.arc(actor.x,actor.y,13,0,Math.PI*2);c.strokeStyle='#ff835d';c.lineWidth=2;c.stroke();
+  const obstacle=OBSTACLE_ART[run.crash.index],impact=stageEdition&&obstacle?offset(obstacle.p,OBSTACLES[run.crash.index].height*.6):actor;
+  c.beginPath();c.arc(impact.x,impact.y,stageEdition?18:13,0,Math.PI*2);
+  c.strokeStyle=stageEdition?'#ffdfac':'#ff835d';c.lineWidth=stageEdition?1.35:2;c.stroke();
+  if(stageEdition){c.beginPath();c.arc(impact.x,impact.y,22,0,Math.PI*2);c.strokeStyle='#f9a39770';c.lineWidth=.8;c.stroke();}
  }
  if(!reduced&&time-run.crossedAt<.32){
   const age=(time-run.crossedAt)/.32;c.globalAlpha=1-age;
