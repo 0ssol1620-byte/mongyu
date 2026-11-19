@@ -9,7 +9,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs');
   page.on('pageerror',e=>errors.push(e.message));
   const url=process.argv[2]||'http://127.0.0.1:4173/';
   await page.goto(url);
-  assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.candidateVersion),'r99');
+  assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.candidateVersion),process.env.MONGYU_TEST_RELEASE||'r99');
   await page.tap('#titleContinue');
   const prologue=await page.locator('#restorationSceneText').textContent();
   assert.match(prologue,/빛이 벽 너머/);

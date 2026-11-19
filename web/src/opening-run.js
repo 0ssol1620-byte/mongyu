@@ -1,6 +1,7 @@
 /* 몽유's authored opening route. Positions are arc lengths along the running surface. */
 (function(root){'use strict';
 const dreamEdition=root.MONGYU_DREAM_EDITION===true;
+const spectralEdition=root.MONGYU_SPECTRAL_EDITION===true;
 const COURSE='folded-light',FINISH=1180,RADIUS=44,FLOOR=340,WALL=310,ARC=Math.PI*RADIUS/2;
 const WALL_START=FLOOR+ARC,CEILING_START=WALL_START+WALL+ARC;
 const SECTIONS=[
@@ -202,16 +203,50 @@ function backdrop(c,owner,w,h,palette,skyX,skyY,drift){
  c.strokeStyle=palette.far+'36';c.stroke(low);
  c.strokeStyle=palette.far+'70';c.stroke(high);c.restore();
 }
+let spectralPaths;
+function spectralContours(c,time,scale,intensity,reduced,ambient=false){
+ if(!spectralPaths){
+  spectralPaths=[.68,.83,1].map(radius=>{
+   const stroke=new Path2D();
+   for(let i=0;i<=96;i++){
+    const a=i*Math.PI/48,r=radius*(1+.088*Math.sin(3*a+.68)+.04*Math.sin(7*a-1.4)+.021*Math.cos(13*a));
+    const x=r*Math.cos(a),y=r*Math.sin(a)*1.16;
+    if(i===0)stroke.moveTo(x,y);else stroke.lineTo(x,y);
+   }
+   stroke.closePath();return stroke;
+  });
+ }
+ const strength={calm:.32,balanced:.76,intense:1}[intensity]??.76;
+ const drift=reduced?0:Math.sin(time*.48),breath=reduced?0:Math.sin(time*.75);
+ const colors=['#46eaf1','#f979df','#ac8cfa'];
+ c.save();c.rotate(drift*.019);c.scale(scale*(1+breath*.014),scale*(1+breath*.014));
+ c.lineWidth=(ambient ? .65 : .95)/scale;
+ for(let i=0;i<spectralPaths.length;i++){
+  c.save();c.translate((i-1)*(.023+drift*.006),(i-1)*-.011);
+  c.strokeStyle=colors[i];c.globalAlpha=strength*(ambient ? .13 : .37);
+  c.stroke(spectralPaths[i]);c.restore();
+ }
+ c.restore();
+}
 const lobby={};
 function drawLobby(c,opts){
  const {width:w,height:h}=opts.viewport,wide=w>h*1.15,t=opts.reduced?0:opts.time||0;
  const x=wide?w*.72:w*.5,y=wide?h*.61:h*.61,r=Math.min(w*(wide?.19:.34),h*.24);
- c.save();backdrop(c,lobby,w,h,SECTIONS[0],x+r*.13,y-r*.63,Math.sin(t*.22)*5);
+ c.save();
+ if(spectralEdition){
+  c.clearRect(0,0,w,h);
+  c.save();c.translate(x,wide?h*.52:h*.49);
+  spectralContours(c,t,r*1.18,opts.dreamIntensity,opts.reduced);
+  c.restore();
+ }else backdrop(c,lobby,w,h,SECTIONS[0],x+r*.13,y-r*.63,Math.sin(t*.22)*5);
  c.translate(x,y);
  const floor=[{x:-r*1.6,y:r*.16},{x:r*.63,y:r*.16},{x:r*.92,y:r*.08},{x:r*1.12,y:-r*.23},{x:r*1.28,y:-r*.63}];
  path(c,floor);c.strokeStyle='#100e1e';c.lineJoin='round';c.lineWidth=16;c.stroke();
  c.translate(0,-5);
- path(c,floor);c.strokeStyle='#a06eaf';c.lineWidth=4;c.stroke();
+ if(spectralEdition){
+  c.save();c.translate(0,3);path(c,floor);c.lineWidth=1.1;c.strokeStyle='#d568d5';c.stroke();c.restore();
+ }
+ path(c,floor);c.strokeStyle=spectralEdition?'#76bdd7':'#a06eaf';c.lineWidth=4;c.stroke();
  path(c,floor);c.strokeStyle='#ffc8a4';c.lineWidth=1.4;c.stroke();
  const dust=opts.reduced?0:Math.sin(t*1.6)*5;
  for(let i=0;i<10;i++){
@@ -239,6 +274,11 @@ function draw(c,run,opts){
  const cx=focusX-target.x*scale,cy=focusY-target.y*scale;
  c.save();
  backdrop(c,run,w,h,palette,w*.51-(target.x-110)*scale*.09,h*.37-(target.y+100)*scale*.07,-target.y*scale*.12);
+ if(spectralEdition){
+  c.save();c.translate(w*.52-target.x*scale*.04,h*.47-target.y*scale*.06);
+  spectralContours(c,time,Math.min(w,h)*.43,opts.dreamIntensity,reduced,true);
+  c.restore();
+ }
  c.translate(cx,cy);c.scale(scale,scale);
  c.save();c.translate(target.x*.18,target.y*.17);c.fillStyle=palette.far+'9c';c.fill(starField());c.restore();
  const visible=Math.min(PATH_POINTS.length,Math.ceil((run.distance+620)/48)*4);

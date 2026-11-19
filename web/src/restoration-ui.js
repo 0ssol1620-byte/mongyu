@@ -78,6 +78,7 @@ function mount(host){
  function focusSlot(){buttons[selected.number-1]?.focus({preventScroll:true})}
  function select(id,focus=false){const slot=C.getSlot(id);if(!slot)return false;if(slot.id!==selected.id){settingValue=false;settingTouched=false;award=''}selected=slot;render();if(focus)focusSlot();return true}
  function render(){
+  if(root.MONGYU_SPECTRAL_EDITION)text('restorationTitle','꿈 지도');
   const s=summary(),currentPage=page();text('restorationProgress',s.collected+' / 100');text('restorationPage',(currentPage+1)+' / 10');
   for(const entry of C.collection(save)){
    const b=buttons[entry.number-1];if(!b)continue;
@@ -238,7 +239,7 @@ function mount(host){
   text('restorationSceneNext',isIntro?'준비됐어 · 시작':isCall?'꿈속 전화 받기':scene.index===scene.pages.length-1?(launchAfterOpening?'첫 달리기 시작':'기억에 남기기'):'계속');
   $('restorationSceneNext').hidden=false;$('restorationSceneNext').disabled=isCall&&scene.rings<2;
   $('restorationSceneAction').hidden=!!scene.graph||scene.index===0||isInterlude||isIntro||isCall;text('restorationSceneAction','앞 장면');
-  text('restorationSceneSkip',isIntro?'세계 모음':isCall?'받지 않고 달리기':'나중에 보기');drawSceneCast();
+  text('restorationSceneSkip',isIntro?(root.MONGYU_SPECTRAL_EDITION?'꿈 지도':'세계 모음'):isCall?'받지 않고 달리기':'나중에 보기');drawSceneCast();
   host.audioEntry?.({kind:'scene',owner:scene,sceneKind:scene.kind,spoken:openingVoice||!!speaker,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow},event);
   ($('restorationSceneNext').disabled?$('restorationSceneSkip'):$('restorationSceneNext')).focus({preventScroll:true});
  }
@@ -402,6 +403,7 @@ function mount(host){
  $('restorationOpen').onclick=open;$('restorationClose').onclick=host.closeDialog;$('restorationStart').onclick=e=>start(e);$('restorationSceneNext').onclick=nextScene;$('restorationSceneSkip').onclick=skipScene;
  $('restorationSceneAction').onclick=()=>{if(scene&&!scene.graph&&scene.index>0){scene.index--;showScene()}};
  if($('squarePractice'))$('squarePractice').onclick=practiceOpening;
+ if(root.MONGYU_SPECTRAL_EDITION)text('pauseRestoration','꿈 지도');
  $('modeRestoration').onclick=open;$('modeSquare').onclick=host.startLegacy;$('pauseRestoration').onclick=open;$('squareCollection').onclick=open;$('squareNext').onclick=nextMemory;$('restorationFree').onclick=startFree;
  function beginCall(event){if(!callContext||callContext.triggered||callContext.run.state!=='play'||callContext.run.time<.2||!callContext.run.localCall())return false;callContext.triggered=true;scene={kind:'call',slot:activeSlot,index:0,pages:['길 한가운데서 전화가 울립니다.'],elapsed:0,rings:0,beats:0,beatAt:0};sceneLast=null;showScene(event);return true}
  $('restorationCall').onclick=beginCall;

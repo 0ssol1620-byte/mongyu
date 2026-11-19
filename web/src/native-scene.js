@@ -3,6 +3,7 @@
  * No input, collision, engine state or RNG is written here.
  */
 (function(root){'use strict';
+const readableNotices=['R99','R100'].includes(root.MONGYU_PLAYABLE_RELEASE);
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap(),fieldClocks=new WeakMap();
 function geometry(run){
  const s=run.nativeFrame,pool=s.game.pool,cur=pool.objects[pool.currentIndex],a=s.game.actor,A=run.kernels.Assembly;
@@ -180,7 +181,7 @@ function draw(c,run,opt,geo){
    const player=root.MONGYU_DREAM_EDITION===true&&scene.phase==='countdown'?{...geo.player,pose:'stand'}:geo.player;
    M.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
   }
-  if(root.MONGYU_PLAYABLE_RELEASE!=='R99'&&scene.phase==='notification'){
+  if(!readableNotices&&scene.phase==='notification'){
    const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=p[1];c.fillText('…',x,y-2);c.restore();
   }
  }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
@@ -194,7 +195,7 @@ function draw(c,run,opt,geo){
   c.fillText(String(Math.ceil(scene.countdown/10)),0,-6);
   c.font='600 11px system-ui';c.fillText('곧 달리기 시작',0,18);c.restore();
  }
- return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:root.MONGYU_PLAYABLE_RELEASE==='R99'?speech(run,scene,player,cam,M):null};
+ return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:readableNotices?speech(run,scene,player,cam,M):null};
 }
 const api={snapshot,geometry,overview,point,tileBounds,scenePalette,cellStyle,tile,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

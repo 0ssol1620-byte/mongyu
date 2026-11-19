@@ -2,7 +2,7 @@ name: iPhone browser QA
 on:
   workflow_dispatch:
   push:
-    branches: [codex/r99-safari]
+    branches: [codex/r100-psychedelic-ui]
     paths-ignore: ['docs/**', 'evidence/**', 'README.md']
 permissions:
   contents: read
@@ -19,6 +19,8 @@ jobs:
       - run: npx playwright install --with-deps webkit
       - run: python3 scripts/build-pages.py ci/pages
       - name: Verify Safari engine, touches, dialogue and storage
+        env:
+          MONGYU_TEST_RELEASE: r100
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 --directory ci/pages &
           server=$!
@@ -26,5 +28,5 @@ jobs:
           node tools/verify-r99-safari.cjs http://127.0.0.1:4173/ ci/webkit-report.json
       - uses: actions/upload-artifact@v4
         with:
-          name: r99-safari-evidence
+          name: r100-safari-evidence
           path: ci/webkit-report.json

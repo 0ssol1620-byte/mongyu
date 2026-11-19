@@ -570,6 +570,10 @@ function updateCollection(){
  const solved=settings.campaign.riddles.includes(ch.riddleId);$('chapterRiddle').textContent=solved?'수수께끼 해결 ✓':'장의 수수께끼';
 }
 function sync(){
+ if(globalThis.MONGYU_SPECTRAL_EDITION){
+  document.body.dataset.dreamIntensity=settings.dreamIntensity;
+  document.body.dataset.dreamMotion=settings.reduced?'reduced':'full';
+ }
  syncVolumeControls();
  const epilogue=finaleEpilogue(),epilogueNode=$('finaleEpilogue');if(epilogueNode){epilogueNode.hidden=!epilogue.length||collectionOpen||!!dialog;epilogueNode.textContent=epilogue.join(' ')}
  syncBridgeInvitation();fit();if($('replyOpen'))$('replyOpen').hidden=game.state!=='title'||collectionOpen||!!dialog;const s=game.state,tut=game.mode==='tutorial',result=s==='fail'||s==='clear';updateCollection();
