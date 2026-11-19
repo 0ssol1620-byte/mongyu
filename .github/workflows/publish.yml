@@ -1,0 +1,20 @@
+name: Publish R95 Android preview
+on:
+  push:
+    branches: [codex/r95-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sha256sum -c MONGYU_R95_SHA256SUMS.txt
+      - name: Publish verified signed APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r95-preview --prerelease --target a1f0c3e66364a614b0e7fc9c619f50072a9dbffb
+          --title '몽유 R95 · 플레이 검수판' --notes-file RELEASE_NOTES.md
+          MONGYU_R95_ANDROID.apk MONGYU_R95_SHA256SUMS.txt
