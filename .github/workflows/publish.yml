@@ -1,0 +1,20 @@
+name: Publish R96 Android test preview
+on:
+  push:
+    branches: [codex/r96-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sha256sum -c MONGYU_R96_SHA256SUMS.txt
+      - name: Publish test APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r96-preview --prerelease --target 77306b64ee8bcc34aaf099aaaa369a97e694d81f
+          --title '몽유 R96 · 첫 점프 검증판' --notes-file RELEASE_NOTES.md
+          MONGYU_R96_ANDROID.apk MONGYU_R96_PLAY_TEST_UNSIGNED.aab MONGYU_R96_SHA256SUMS.txt
