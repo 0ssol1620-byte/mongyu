@@ -729,7 +729,7 @@ function tick(now){
  if(!activeSquareRun){syncBridgeInvitation();syncArcade();syncR34()}
  syncImmersive();
  const run=activeSquareRun;
- const still=run?.nativeRuntime&&run.state!=='play'||!run&&settings.reduced&&game.state==='title';
+ const still=(run?.nativeRuntime||run?.openingCourse)&&run.state!=='play'||!run&&settings.reduced&&game.state==='title';
  const key=still?[run?.state,viewport.width,viewport.height,settings.reduced,settings.dreamIntensity].join('|'):'';
  if(!document.hidden&&(!still||run!==lastStillRun||run?.nativeFrame!==lastStillFrame||key!==lastStillKey))draw();
  lastStillRun=still?run:null;lastStillFrame=still?run?.nativeFrame:null;lastStillKey=key;

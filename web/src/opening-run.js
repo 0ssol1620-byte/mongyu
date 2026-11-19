@@ -138,20 +138,58 @@ function validResult(slot,r){
 
 const PATH_POINTS=Array.from({length:133},(_,i)=>surface(-244+i*12));
 function ellipse(c,x,y,rx,ry,ink){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=ink;c.fill()}
-function path(c,points,limit=points.length){
+function path(c,points){
  c.beginPath();c.moveTo(points[0].x,points[0].y);
- for(let i=1;i<limit;i++)c.lineTo(points[i].x,points[i].y);
+ for(let i=1;i<points.length;i++)c.lineTo(points[i].x,points[i].y);
 }
 const GLOW_TRACK=PATH_POINTS.map(p=>offset(p,-2));
 const SHELF=PATH_POINTS.map(p=>offset(p,-16));
 const RAIL=PATH_POINTS.map(p=>offset(p,-6));
-const MARKS=Array.from({length:54},(_,i)=>surface(-55+i*24));
+const MARKS=Array.from({length:54},(_,i)=>{
+ const p=surface(-55+i*24);
+ return [offset(p,-5),offset(p,-12)];
+});
+const trackPaths=new Map();
+function rails(visible){
+ if(trackPaths.has(visible))return trackPaths.get(visible);
+ const paths=[SHELF,RAIL,GLOW_TRACK].map(points=>{
+  const shape=new Path2D();
+  shape.moveTo(points[0].x,points[0].y);
+  for(let i=1;i<visible;i++)shape.lineTo(points[i].x,points[i].y);
+  return shape;
+ });
+ const ticks=new Path2D();
+ for(let i=0;i<MARKS.length&&i*24<visible*12-220;i++){
+  const [start,end]=MARKS[i];ticks.moveTo(start.x,start.y);ticks.lineTo(end.x,end.y);
+ }
+ paths.push(ticks);trackPaths.set(visible,paths);return paths;
+}
 const OBSTACLE_ART=OBSTACLES.map(o=>{
  const p=surface(o.at);
  const points=[[ -o.width,0],[-o.width*.67,o.height*.45],[-2,o.height],[4,o.height],[o.width*.73,o.height*.56],[o.width,0]];
  return {p,points:points.map(([x,y])=>({x:p.x+x*Math.cos(p.a)+y*Math.sin(p.a),y:p.y+x*Math.sin(p.a)-y*Math.cos(p.a)})),shard:offset(p,o.height+26)};
 });
-const LANDMARKS=Array.from({length:42},(_,i)=>({x:(i*181)%650-140,y:(i*97)%680-530,r:1+(i%4)*.48}));
+let stars=null;
+function starField(){
+ if(stars)return stars;
+ stars=new Path2D();
+ for(let i=0;i<42;i++){
+  const x=(i*181)%650-140,y=(i*97)%680-530,r=1+(i%4)*.48;
+  stars.moveTo(x+r,y);stars.arc(x,y,r,0,Math.PI*2);
+ }
+ return stars;
+}
+function waves(run,w,h){
+ if(run.waveField?.width===w&&run.waveField.height===h)return run.waveField.paths;
+ const low=new Path2D(),high=new Path2D();
+ for(let i=0;i<13;i++){
+  const y=h*(.38+i*.059),shape=i%4===0?high:low;
+  shape.moveTo(-30,y+20);
+  shape.bezierCurveTo(w*.18,y-74,w*.45,y+120,w*.74,y+20);
+  shape.quadraticCurveTo(w*.88,y-21,w+30,y-47);
+ }
+ const paths=[low,high];run.waveField={width:w,height:h,paths};return paths;
+}
 function draw(c,run,opts){
  const {width:w,height:h}=opts.viewport,palette=SECTIONS[run.mapChanges],foot=surface(run.distance),reduced=opts.reduced;
  const actor=offset(foot,run.height+1.5),time=run.time,scale=clamp(Math.min(w/318,h/275),.63,2.5);
@@ -163,22 +201,18 @@ function draw(c,run,opts){
  ellipse(c,skyX,skyY,aperture*.41,aperture*.44,palette.far+'1a');
  ellipse(c,skyX,skyY,aperture*.36,aperture*.375,palette.far+'4a');
  ellipse(c,skyX-aperture*.062,skyY+aperture*.043,aperture*.30,aperture*.32,palette.back);
- c.lineWidth=1;
- for(let i=0;i<13;i++){
-  const y=h*(.38+i*.059)-target.y*scale*.12;
-  c.beginPath();c.moveTo(-30,y+20);
-  c.bezierCurveTo(w*.18,y-74,w*.45,y+120,w*.74,y+20);
-  c.quadraticCurveTo(w*.88,y-21,w+30,y-47);
-  c.strokeStyle=palette.far+(i%4===0?'70':'36');c.stroke();
- }
+ const [low,high]=waves(run,w,h);
+ c.save();c.translate(0,-target.y*scale*.12);c.lineWidth=1;
+ c.strokeStyle=palette.far+'36';c.stroke(low);
+ c.strokeStyle=palette.far+'70';c.stroke(high);c.restore();
  c.translate(cx,cy);c.scale(scale,scale);
- for(const star of LANDMARKS)ellipse(c,star.x+target.x*.18,star.y+target.y*.17,star.r,star.r,palette.far+'9c');
- const visible=Math.min(PATH_POINTS.length,Math.ceil((run.distance+620)/12));
- path(c,SHELF,visible);c.lineWidth=27;c.lineJoin='round';c.strokeStyle='#130f23';c.stroke();
- path(c,RAIL,visible);c.lineWidth=4;c.strokeStyle=palette.far;c.stroke();
- path(c,GLOW_TRACK,visible);c.lineWidth=2;c.strokeStyle=palette.track;c.stroke();
- c.strokeStyle='#fdf0dc55';c.lineWidth=.7;c.beginPath();
- for(let i=0;i<MARKS.length&&-55+i*24<run.distance+365;i++){const p=MARKS[i],start=offset(p,-5),end=offset(p,-12);c.moveTo(start.x,start.y);c.lineTo(end.x,end.y)}c.stroke();
+ c.save();c.translate(target.x*.18,target.y*.17);c.fillStyle=palette.far+'9c';c.fill(starField());c.restore();
+ const visible=Math.min(PATH_POINTS.length,Math.ceil((run.distance+620)/48)*4);
+ const [shelf,rail,glow,ticks]=rails(visible);
+ c.lineWidth=27;c.lineJoin='round';c.strokeStyle='#130f23';c.stroke(shelf);
+ c.lineWidth=4;c.strokeStyle=palette.far;c.stroke(rail);
+ c.lineWidth=2;c.strokeStyle=palette.track;c.stroke(glow);
+ c.strokeStyle='#fdf0dc55';c.lineWidth=.7;c.stroke(ticks);
  for(let i=0;i<OBSTACLE_ART.length;i++){
   const o=OBSTACLE_ART[i],picked=i<run.index,alpha=clamp((345-Math.abs(OBSTACLES[i].at-run.distance))/65,0,1);
   if(alpha===0)continue;

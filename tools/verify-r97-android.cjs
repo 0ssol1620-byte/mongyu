@@ -75,16 +75,27 @@ async function dismissLauncherAnr(){
  },{once:true,capture:true})`);
  await tap('squareRetry');
  const retryMs=await evaluate('window.retryLatency');assert.ok(retryMs<500);
- const sectors=[],recordings=[];
+ const sectors=[],recordings=[],touches=[];
+ const point={x:coverage.width*.5,y:coverage.height*.3};
  for(let i=0;i<6;i++){
-  await evaluate(`new Promise(resolve=>{
-   const watch=()=>{const r=QUAD_RIFT_APP.activeRun();if(r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[${i}].at-42)return resolve();requestAnimationFrame(watch)};
+  const before=await evaluate(`new Promise(resolve=>{
+   const watch=()=>{
+    const r=QUAD_RIFT_APP.activeRun();
+    if(r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[${i}].at-54)return resolve({state:r.state,at:r.distance,jumps:r.jumps});
+    requestAnimationFrame(watch);
+   };
    requestAnimationFrame(watch);
   })`);
-  assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().state'),'play');
-  await tap('game');
-  await waitFor(()=>evaluate(`QUAD_RIFT_APP.activeRun().index>${i}||QUAD_RIFT_APP.activeRun().state!=='play'`),'obstacle '+(i+1),2500);
-  assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().index'),i+1);
+  assert.equal(before.state,'play');
+  await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});
+  await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  const after=await waitFor(()=>evaluate(`(()=>{
+   const r=QUAD_RIFT_APP.activeRun();
+   return (r.index>${i}||r.state!=='play')&&{index:r.index,at:r.distance,jumps:r.jumps,lastJump:r.lastJump,crash:r.crash,state:r.state};
+  })()`),'obstacle '+(i+1),2500);
+  touches.push({obstacle:i+1,before,after});
+  assert.equal(after.index,i+1,JSON.stringify(touches.at(-1)));
+  assert.equal(after.jumps,before.jumps+1);
   sectors.push(await evaluate('QUAD_RIFT_APP.activeRun().mapChanges'));
   recordings.push(await evaluate('QUAD_RIFT_APP.musicView().trackId'));
  }
@@ -96,7 +107,7 @@ async function dismissLauncherAnr(){
  await tap('squareNext');
  assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().slot.number'),3);
  assert.equal(await evaluate('QUAD_RIFT_APP.restoration.view().status.collected'),2);
- report.checks.push({name:'standalone opening with full-screen surface, idle collision, quick retry, six genuine taps and next memory',coverage,retryMs,sectors,recordings,passed:true});
+ report.checks.push({name:'standalone opening with full-screen surface, idle collision, quick retry, six genuine taps and next memory',coverage,retryMs,sectors,recordings,touches,passed:true});
  await tap('pause');const time=await evaluate('QUAD_RIFT_APP.activeRun().time');await delay(500);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().time'),time);await tap('resumePlay');adb('shell','input','keyevent','4');await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun().state==="pause"'),'native back');adb('shell','input','keyevent','3');adb('shell','am','start','-W','-n',activity);await delay(400);assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().state'),'pause');report.checks.push({name:'pause, native back and background freeze play until explicit resume',passed:true});
  await tap('pauseHome');await tap('shopOpen');await tap('look-ink');await tap('wardrobeClose');const collected=await evaluate('QUAD_RIFT_APP.restoration.view().status.collected');assert.ok(collected>=1);
  adb('shell','am','force-stop',pkg);adb('shell','am','start','-W','-n',activity);await connect();assert.equal(await evaluate('QUAD_RIFT_APP.mobileWardrobe.view().selected'),'ink');assert.equal(await evaluate('QUAD_RIFT_APP.restoration.view().status.collected'),collected);assert.equal(await evaluate('_MongyuStore.read("mongyu.r96.qa")'),'vr97-update-canary');report.checks.push({name:'cold relaunch retains legitimate story progress, outfit and R96 keys',collected,passed:true});

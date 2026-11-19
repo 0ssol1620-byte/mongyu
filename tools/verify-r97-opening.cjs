@@ -74,7 +74,9 @@ async function run(){
   await visible('squareResult');
   const wall=await snapshot();
   assert.equal(wall.crash.index,2);assert.equal(wall.crash.section,1);
-  const recordsBefore=await read(()=>localStorage.getItem(MongyuRestorationMastery.KEY));
+  const savedMastery=()=>read(()=>MongyuNativeRestoration.isolatedStorage(localStorage).getItem(MongyuRestorationMastery.KEY));
+  const recordsBefore=await savedMastery();
+  assert.equal(JSON.parse(recordsBefore).records['r97-opening'].attemptCount,2);
   await tap('squarePractice');
   assert.equal((await snapshot()).map,1);
   await jump(2);await jump(3);
@@ -82,7 +84,7 @@ async function run(){
   const practice=await snapshot();
   assert.equal(practice.collected,1);
   assert.equal(practice.attempt,wall.attempt+1);
-  assert.equal(await read(()=>localStorage.getItem(MongyuRestorationMastery.KEY)),recordsBefore);
+  assert.equal(await savedMastery(),recordsBefore);
   assert.equal(await page.locator('#squareNext').isVisible(),false);
   assert.equal(await page.locator('#squareRetry').textContent(),'처음부터 도전');
   await screenshot('practice-complete');
