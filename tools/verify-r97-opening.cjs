@@ -20,7 +20,7 @@ async function run(){
   const jump=async index=>{
    await page.waitForFunction(i=>{
     const r=QUAD_RIFT_APP.activeRun();
-    return r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[i].at-40;
+    return r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[i].at-44;
    },index,{timeout:5000});
    const before=await snapshot();
    assert.equal(before.state,'play');
@@ -28,7 +28,7 @@ async function run(){
    assert.equal((await snapshot()).jumps,before.jumps+1);
    await page.waitForFunction(i=>QUAD_RIFT_APP.activeRun().index>i||QUAD_RIFT_APP.activeRun().state==='fail',index,{timeout:3500});
    const after=await snapshot();
-   assert.equal(after.index,index+1);
+   assert.equal(after.index,index+1,JSON.stringify({index,before,after}));
    stops.push({obstacle:index+1,sector:after.map,practice:!!after.practice,clearedAt:after.time});
   };
   const measureRetry=()=>read(()=>{
@@ -47,6 +47,7 @@ async function run(){
         if(index!==origin.index||position!==origin.position)return resolve(performance.now()-start);
        }
       }
+      if(performance.now()-start>1800)return resolve({state:r.state,slot:r.slot.number,time:r.time,quick:r.options.quickRetry});
       requestAnimationFrame(watch);
      }
      requestAnimationFrame(watch);
@@ -68,7 +69,7 @@ async function run(){
   await measureRetry();
   await tap('squareRetry');
   const immediateRetryMs=await read(()=>window.retryTime);
-  assert.ok(immediateRetryMs<250,immediateRetryMs+' ms');
+  assert.ok(immediateRetryMs<250,JSON.stringify(immediateRetryMs)+' after retry tap');
   await jump(0);await jump(1);
   await visible('squareResult');
   const wall=await snapshot();
@@ -103,7 +104,7 @@ async function run(){
   await measureRetry();
   await tap('squareRetry');
   const stage3RetryMs=await read(()=>window.retryTime);
-  assert.ok(stage3RetryMs<950,stage3RetryMs+' ms after retry tap');
+  assert.ok(stage3RetryMs<950,JSON.stringify(stage3RetryMs)+' after retry tap');
 
   await tap('pause');
   const paused=await snapshot();await page.waitForTimeout(300);

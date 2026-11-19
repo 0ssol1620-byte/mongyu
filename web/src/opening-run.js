@@ -22,6 +22,10 @@ function surface(s){
 }
 function offset(p,h){return {x:p.x+Math.sin(p.a)*h,y:p.y-Math.cos(p.a)*h}}
 function sectionAt(s){return s>=CEILING_START?2:s>=WALL_START?1:0}
+function obstacleHeight(o,gap){
+ const relative=Math.max(0,Math.abs(gap)-FOOT)/o.width;
+ return o.height*clamp((1-relative)/.72,0,1);
+}
 
 class OpeningRun{
  constructor(options){
@@ -77,7 +81,7 @@ class OpeningRun{
   const obstacle=OBSTACLES[this.index];
   if(obstacle){
    const gap=this.distance-obstacle.at,reach=obstacle.width+FOOT;
-   if(Math.abs(gap)<=reach&&this.height<obstacle.height){
+   if(this.height<obstacleHeight(obstacle,gap)){
     this.hits++;this.crash={index:this.index,section:sector,at:this.distance,early:obstacle.at-this.lastJump>55&&obstacle.at-this.lastJump<98};
     this.events.push('hit');
     if(this.practice){this.recoverAt=this.time+.45;return}
@@ -85,7 +89,7 @@ class OpeningRun{
    }
    if(gap>reach){
     this.index++;this.crossedAt=this.time;
-    const clean=this.height>=obstacle.height+10;
+    const clean=this.height>=obstacle.height+6;
     if(clean)this.clean++;
     this.score+=100+(clean?CLEAN_BONUS:0);
     this.events.push(clean?'perfect':'pass');
