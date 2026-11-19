@@ -1,0 +1,20 @@
+name: Publish R97 Android test preview
+on:
+  push:
+    branches: [codex/r97-preview-artifacts]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sha256sum -c MONGYU_R97_SHA256SUMS.txt
+      - name: Publish test APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create r97-preview --prerelease --target 1dcadd83a75169438029c0d3e2d355ca90dadcf4
+          --title '몽유 R97 · 접힌 빛' --notes-file RELEASE_NOTES.md
+          MONGYU_R97_ANDROID.apk MONGYU_R97_SHA256SUMS.txt
