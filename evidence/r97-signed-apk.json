@@ -25,5 +25,8 @@
   "storeRelease": false,
   "androidQaRun": 44451328285,
   "testedUnsignedSha256": "efa7cba41f0b37df309d343ecb8db59ae22f077ef6919e7ba8779d1619188851",
-  "testedPayloadMatchesSigned": true
+  "testedPayloadMatchesSigned": true,
+  "downloadUrl": "https://raw.githubusercontent.com/0ssol1620-byte/mongyu/1aa0ccb7f8619e7f7bcd35bcb64995639341e6da/MONGYU_R97_ANDROID.apk",
+  "downloadReturnedHttp": 200,
+  "downloadMatchesSignedBytes": true
 }
