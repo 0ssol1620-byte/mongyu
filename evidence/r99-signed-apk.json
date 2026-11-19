@@ -1,0 +1,32 @@
+{
+  "release": "R99",
+  "apk": "MONGYU_R99_ANDROID.apk",
+  "bytes": 14750236,
+  "sha256": "6018125138051b53f52dcae82dbd6e1338f78d11471b6c4b07a8c09e386b4655",
+  "applicationId": "org.quadrift.mongyu.preview.r82",
+  "versionCode": 99,
+  "minAndroid": "8.0 (API 26)",
+  "targetSdk": 36,
+  "signed": true,
+  "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=MONGYU Preview, O=MONGYU\nSigner #1 certificate SHA-256 digest: 77897ae16ffcedcc3ebb530486065b8533fbeace11b92193795d1430035b4c8f\nSigner #1 certificate SHA-1 digest: 0eda45e7d5995134a8bb68f3fedf11d507ebf8be\nSigner #1 certificate MD5 digest: 5f34116200c2a0d70e7970d9ca34eada\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: a2da20fc8fb1e85b5b56faa2c0727f9e05c43cdade35f9d28001dba853427f41\nSigner #1 public key SHA-1 digest: 3981bcf20a012dc4f5c154c1f452eda3a54653b7\nSigner #1 public key MD5 digest: 0d3dffc1c4d262233afbaa28579e46ba\n",
+  "zipAlignmentVerified": true,
+  "zipIntegrityVerified": true,
+  "permissions": [],
+  "commercialOriginalPayloadIncluded": false,
+  "requiresUserOriginalFile": false,
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 20665337,
+      "sha256": "251a3fa6a8b8dc25934119e51d4747e955449961eec27a70746f24629535ef62"
+    }
+  ],
+  "finalSignedDirectDeviceInstall": false,
+  "storeRelease": false,
+  "androidQaRun": 44526794067,
+  "testedUnsignedSha256": "774d17da4ed995a07f388512c252513f10b375252f42e26e419ef2cff018dff8",
+  "testedPayloadMatchesSigned": true,
+  "downloadUrl": "https://raw.githubusercontent.com/0ssol1620-byte/mongyu/aee2107c1d3844e85cd23b67a02b064e3ed23792/MONGYU_R99_ANDROID.apk",
+  "downloadReturnedHttp": 200,
+  "downloadMatchesSignedBytes": true
+}
