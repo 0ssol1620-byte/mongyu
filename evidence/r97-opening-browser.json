@@ -1,0 +1,88 @@
+{
+  "scope": "390×844 Chromium with real touchscreen events; observations from one scripted session",
+  "idle": {
+    "at": 141.31666666666675,
+    "section": 0,
+    "earned": false
+  },
+  "immediateRetryMs": 12.100000001490116,
+  "stage3RetryMs": 684.5999999996275,
+  "stage3": "이번 123 / 목표 300점\n조건을 채우지 못했습니다. 같은 길에 다시 도전할 수 있어요.",
+  "stops": [
+    {
+      "obstacle": 1,
+      "sector": 0,
+      "practice": false,
+      "clearedAt": 1.441666666666664
+    },
+    {
+      "obstacle": 2,
+      "sector": 0,
+      "practice": false,
+      "clearedAt": 2.4916666666666605
+    },
+    {
+      "obstacle": 3,
+      "sector": 1,
+      "practice": true,
+      "clearedAt": 1.4749999999999972
+    },
+    {
+      "obstacle": 4,
+      "sector": 1,
+      "practice": true,
+      "clearedAt": 2.6916666666666598
+    },
+    {
+      "obstacle": 1,
+      "sector": 0,
+      "practice": false,
+      "clearedAt": 1.466666666666664
+    },
+    {
+      "obstacle": 2,
+      "sector": 0,
+      "practice": false,
+      "clearedAt": 2.483333333333327
+    },
+    {
+      "obstacle": 3,
+      "sector": 1,
+      "practice": false,
+      "clearedAt": 4.516666666666681
+    },
+    {
+      "obstacle": 4,
+      "sector": 1,
+      "practice": false,
+      "clearedAt": 5.466666666666728
+    },
+    {
+      "obstacle": 5,
+      "sector": 2,
+      "practice": false,
+      "clearedAt": 7.750000000000175
+    },
+    {
+      "obstacle": 6,
+      "sector": 2,
+      "practice": false,
+      "clearedAt": 8.88333333333347
+    }
+  ],
+  "practice": {
+    "section": 1,
+    "earned": false,
+    "recordsUnchanged": true
+  },
+  "clear": {
+    "course": "folded-light",
+    "passed": 6,
+    "clean": 6,
+    "distance": 1180,
+    "time": 9.675000000000091
+  },
+  "nextSlot": 3,
+  "progressSurvivesReload": true,
+  "errors": []
+}

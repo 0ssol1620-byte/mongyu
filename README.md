@@ -1,16 +1,16 @@
-# 몽유 · R96 테스트 후보
+# 몽유 · R97 테스트판
 
-R96에서는 첫 달리기 중 점프한 뒤 첫 달리기 기억을 획득합니다. **‘꿈속으로’ → ‘첫 달리기 시작’**으로 들어갑니다. 기존 앱 위에 업데이트할 수 있으며 오프라인에서 플레이할 수 있습니다.
+**‘꿈속으로’ → ‘첫 달리기 시작’**을 누르면 파일 선택 없이 플레이할 수 있습니다. 첫 코스 ‘접힌 빛’에서는 달리는 동안 화면을 눌러 바닥, 벽, 천장의 장애물을 넘고 빛 여섯 개를 모읍니다. 충돌한 구간부터 연습하거나 바로 다시 달릴 수 있습니다.
 
-첫 연습의 반복 충돌 문제, 점수 목표와 남은 기회 표시, 기억 획득 후 다음 달리기와 최고 기록 저장을 수정했습니다. 장애물·발판·캐릭터의 대비를 다듬고 불필요한 화면 처리도 줄였습니다.
+[R97 Android 테스트 APK](https://github.com/0ssol1620-byte/mongyu/releases/download/r97-preview/MONGYU_R97_ANDROID.apk) · [플레이 연구와 적용 기준](docs/MONGYU_PLAY_RESEARCH_KO.md) · [출시·손익 판단 기준](docs/R95_PLAY_STORE_READINESS_KO.md)
 
-[R96 테스트 APK](https://github.com/0ssol1620-byte/mongyu/releases/download/r96-preview/MONGYU_R96_ANDROID.apk) · [Play 테스트 및 손익 판단](docs/R95_PLAY_STORE_READINESS_KO.md)
+Android 8.0 이상에서 오프라인으로 플레이할 수 있습니다. 기존 몽유 테스트 앱 위에 업데이트할 수 있습니다.
 
 ```sh
 python3 scripts/test.py
 ANDROID_SDK_ROOT=/path/to/sdk python3 android/build-unsigned.py
 ```
 
-Python 3.10+, Node.js 22+, JDK 17, Android SDK/platform/build-tools 36이 필요합니다. `scripts/test.py`는 기존 게임 검사를 실행하고 R96 오프라인 HTML·Android 자산을 만듭니다. 브라우저 확인은 Playwright·Chromium, 저장소 루트를 제공하는 4173번 서버와 `node tools/verify-r96-opening.cjs`를 사용합니다. Android 8.0 이상용 미리보기입니다.
+Python 3.10+, Node.js 22+, JDK 17, Android SDK/platform/build-tools 36이 필요합니다. `scripts/test.py`는 게임 검사를 실행하고 R97 오프라인 HTML과 Android 자산을 만듭니다. 터치 흐름을 확인하려면 저장소 루트를 4173번 포트에서 제공한 뒤 Playwright와 Chromium으로 `node tools/verify-r97-opening.cjs`를 실행합니다.
 
-BGM: Eric Skiff / Resistor Anthems, CC BY 4.0. 곡별 출처·편집·해시·라이선스는 앱 설정의 음악 정보와 `web/assets/music`에 포함합니다.
+음악은 Eric Skiff의 Resistor Anthems(CC BY 4.0)를 사용합니다. 곡별 출처와 편집 내역은 앱 설정의 음악 정보와 `web/assets/music`에 있습니다.
