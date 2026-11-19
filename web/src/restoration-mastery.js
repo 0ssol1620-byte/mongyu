@@ -3,12 +3,12 @@
 const KEY='mongyu.r40.mastery.v1',LIMIT=65536,MAX=1000000;
 const empty=()=>({schema:1,records:{},receipts:[]});
 const object=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
-const validKey=k=>k==='freeplay'||typeof k==='string'&&/^r38-(00[1-9]|0[1-9][0-9]|100)$/.test(k);
+const validKey=k=>k==='freeplay'||k==='r97-opening'||typeof k==='string'&&/^r38-(00[1-9]|0[1-9][0-9]|100)$/.test(k);
 const integer=(n,max=MAX)=>Number.isSafeInteger(n)&&n>=0&&n<=max;
 const stamp=s=>typeof s==='string'&&s.length>0&&s.length<=96&&/^[A-Za-z0-9:._-]+$/.test(s);
 function parse(raw){
  if(typeof raw!=='string'||raw.length>LIMIT)return null;
- try{const s=JSON.parse(raw);if(!object(s)||s.schema!==1||!object(s.records)||Object.keys(s.records).length>101||!Array.isArray(s.receipts)||s.receipts.length>32||!s.receipts.every(stamp)||new Set(s.receipts).size!==s.receipts.length)return null;
+ try{const s=JSON.parse(raw);if(!object(s)||s.schema!==1||!object(s.records)||Object.keys(s.records).length>102||!Array.isArray(s.receipts)||s.receipts.length>32||!s.receipts.every(stamp)||new Set(s.receipts).size!==s.receipts.length)return null;
   const out=empty();for(const [key,v] of Object.entries(s.records)){
    if(!validKey(key)||!object(v)||!integer(v.bestScore,2000000)||!integer(v.bestChain,100000)||!integer(v.attemptCount)||!integer(v.clearCount)||v.clearCount>v.attemptCount||v.attemptCount<1)return null;
    out.records[key]={bestScore:v.bestScore,bestChain:v.bestChain,attemptCount:v.attemptCount,clearCount:v.clearCount};
@@ -23,7 +23,7 @@ function get(save,key){const v=save?.records?.[key];return v?{...v}:{bestScore:0
 function resultChain(result){
  return result?.runVersion===77&&result.nativeRuntime===true?0:result?.bestCombo;
 }
-function validResult(key,r){return validKey(key)&&object(r)&&r.mode==='restoration'&&r.completed===true&&['clear','fail'].includes(r.state)&&integer(r.score,2000000)&&integer(resultChain(r),100000)&&typeof r.time==='number'&&Number.isFinite(r.time)&&r.time>0&&r.time<=36000&&(key==='freeplay'?r.freePlay===true:r.freePlay!==true&&r.practice!==true&&r.slotId===key)}
+function validResult(key,r){return validKey(key)&&object(r)&&r.mode==='restoration'&&r.completed===true&&['clear','fail'].includes(r.state)&&integer(r.score,2000000)&&integer(resultChain(r),100000)&&typeof r.time==='number'&&Number.isFinite(r.time)&&r.time>0&&r.time<=36000&&(key==='freeplay'?r.freePlay===true:r.freePlay!==true&&r.practice!==true&&(key==='r97-opening'?r.runVersion===97&&r.slotId==='r38-002':r.slotId===key))}
 function record(storage,key,result,receipt){
  const current=load(storage);if(!current.ok)return current;
  if(!stamp(receipt)||!validResult(key,result))return {...current,ok:false,reason:'invalid-result'};

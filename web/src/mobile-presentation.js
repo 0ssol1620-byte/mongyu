@@ -241,6 +241,7 @@ function requestImmersive(event,doc=root.document){
 }
 function hud(v){return Math.max(0,Math.floor(v.score||0))+'  '+('●'.repeat(Math.max(0,Math.min(5,v.hearts||0))))}
 function hint(v,run){
+ if(run.openingCourse)return v.cue?.text||'';
  if(v.native?.awaitingBossConfirmation)return '탭하여 다음으로';
  if(v.nativeRuntime&&v.scoreFinalization&&v.qualified&&v.state==='play')return '목표 달성 · 계속 달립니다.';
  if(v.cue?.text&&v.cue.phase==='confirm')return v.cue.text;

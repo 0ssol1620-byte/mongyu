@@ -1,0 +1,48 @@
+{
+  "scope": "One fresh Chromium 390x844 R96 flow. Playwright taps only through ordinary UI: idle opening, assisted repeat taps, idle third memory, and retry. Browser click to first changed runner position via requestAnimationFrame. Excludes app load and leading story page tap. This is neither a touch-to-display measurement nor a player study.",
+  "idle": {
+    "time": 20.549999999999894,
+    "actions": 0,
+    "jumps": 0,
+    "heading": "첫 점프 연습"
+  },
+  "lessonTaps": 32,
+  "stage3": {
+    "slot": 3,
+    "time": 14.174999999999955,
+    "score": 123,
+    "heading": "꿈이 접혔다",
+    "summary": "남은 기회를 모두 썼어요.\n조건을 채우지 못했습니다. 같은 길에 다시 도전할 수 있어요.",
+    "target": 300
+  },
+  "starts": [
+    {
+      "entry": "restorationSceneNext",
+      "slot": 2,
+      "ms": 2338,
+      "stepMs": 75
+    },
+    {
+      "entry": "squareRetry",
+      "slot": 2,
+      "ms": 2319,
+      "stepMs": 75
+    },
+    {
+      "entry": "squareNext",
+      "slot": 3,
+      "ms": 2380,
+      "stepMs": 75
+    },
+    {
+      "entry": "squareRetry",
+      "slot": 3,
+      "ms": 2315,
+      "stepMs": 75
+    }
+  ],
+  "errors": [],
+  "build": "R96",
+  "measurementNote": "The longer story-next sample started one page earlier and observed the same run, so it was excluded. Simulation time is distinct from wall time.",
+  "htmlSha256": "9f2a5ad2c777158ea83c9a18ecc16471854b372394c117d989cdf6fd9950332b"
+}

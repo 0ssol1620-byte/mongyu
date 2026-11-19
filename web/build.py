@@ -1,7 +1,7 @@
 """Build the offline R80 game. Assets are pinned, credits are bundled."""
 from pathlib import Path
 import base64, hashlib, json, argparse
-parser=argparse.ArgumentParser();parser.add_argument('--release',choices=['R92','R94','R95','R96'],default='R92');release=parser.parse_args().release
+parser=argparse.ArgumentParser();parser.add_argument('--release',choices=['R92','R94','R95','R96','R97'],default='R92');release=parser.parse_args().release
 p=Path(__file__).resolve().parent
 def digest(data): return hashlib.sha256(data).hexdigest()
 def asset(folder,item):
@@ -20,6 +20,8 @@ assert files[-1]=='app.js' and len(files)==len(set(files))
 sources=['globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
 source_hashes={}
 for f in files:
+    if f=='opening-run.js' and release!='R97':
+        continue
     data=(p/'src'/f).read_bytes().replace(b'\r\n',b'\n');source_hashes[f]=digest(data);sources.append(data.decode('utf-8'))
 template=(p/'index.template.html').read_text(encoding='utf-8')
 assert template.count('<!--SCRIPTS-->')==1 and template.count('/*MOBILE_CSS*/')==1
@@ -28,6 +30,6 @@ assert "connect-src 'none'" in out and "default-src 'none'" in out
 assert not any(x in out for x in ['NOM3_ASSETS','Nom3Study','menu-7.png','nom1-0.png'])
 if release!='R92':out=out.replace('<title>몽유 · MONGYU R86</title>',f'<title>몽유 · MONGYU {release}</title>')
 data=out.encode('utf-8');(p/f'MONGYU_{release}.html').write_bytes(data)
-report={'release':release,'bytes':len(data),'sha256':digest(data),'sourceCount':len(files),'sources':source_hashes,'audio':[{k:t[k] for k in ['id','sha256','bytes','license']} for t in manifest['tracks']]}
+report={'release':release,'bytes':len(data),'sha256':digest(data),'sourceCount':len(source_hashes),'sources':source_hashes,'audio':[{k:t[k] for k in ['id','sha256','bytes','license']} for t in manifest['tracks']]}
 (p/'build-manifest.json').write_bytes((json.dumps(report,indent=2)+'\n').encode('utf-8'))
 print(json.dumps({k:v for k,v in report.items() if k!='sources'}))

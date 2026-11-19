@@ -5,6 +5,7 @@
 const Policy=root.MongyuRestorationAudioPolicy||(typeof require==='function'?require('./restoration-audio-policy.js'):null);
 function sceneRole(scene){
  if(!scene)return null;
+ if(scene.sceneKind==='opening')return 'story1';
  if(scene.nativeState===150)return 'story1';
  if(scene.nativeState===151&&Number.isInteger(scene.nativeRow)&&scene.nativeRow>=0&&scene.nativeRow<=4)return scene.nativeRow===4?'story3':'story2';
  if([152,153,154].includes(scene.nativeState)||scene.sceneKind==='intro')return 'skin';

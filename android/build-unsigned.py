@@ -18,7 +18,7 @@ SDK = Path(os.environ['ANDROID_SDK_ROOT']).resolve()
 BT = SDK / 'build-tools/36.0.0'
 ANDROID = SDK / 'platforms/android-36/android.jar'
 BUILD = ROOT / 'build'
-OUTPUT = ROOT / 'outputs/MONGYU_R96_TEST_DEBUG_UNSIGNED.apk'
+OUTPUT = ROOT / 'outputs/MONGYU_R97_TEST_DEBUG_UNSIGNED.apk'
 EXPECTED = (ROOT / 'expected-asset.sha256').read_text(encoding='utf-8').strip()
 
 def run(*args):

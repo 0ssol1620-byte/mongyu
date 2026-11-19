@@ -9,6 +9,7 @@ const profiles=Object.freeze(Object.fromEntries([
  ['boss','심장 회로','boss','heart-circuit',9,'pulse']
 ].map(([id,title,musicRole,recordingId,stageIndex,field])=>[id,Object.freeze({id,title,musicRole,recordingId,stageIndex,field})])));
 function describe(run){
+ if(run?.openingCourse)return [profiles.memory,profiles.mirror,profiles.stream][run.mapChanges]||profiles.memory;
  const s=run?.nativeFrame;if(!s)return profiles[run?.boss?'boss':'memory'];
  const stage=s.game?.stage||{},controller=s.game?.controller||{},view=s.game?.view||{},pool=s.game?.pool,current=pool?.objects?.[pool.currentIndex],mask=stage.behaviorCode===3;
  if(run.boss||stage.behaviorCode===99){const group=[0,1,2,3,0,2,1,3,2,0][s.boss?.J]??0;return {...profiles.boss,recordingId:['heart-circuit','boss-glass','boss-motor','boss-orbit'][group],bossGroup:group}}
