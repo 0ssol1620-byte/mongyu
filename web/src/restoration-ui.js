@@ -55,7 +55,7 @@ function mount(host){
  const native=root.MongyuNativeRestoration;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
- let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0;
+ let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0,openingNeedsJump=false;
  let mastery=M?.load(storage)||{ok:true,save:null},completionSequence=0;
  const journalButtons=[];
  const sessionId=Date.now().toString(36),completedRuns=new WeakSet(),aftermathRuns=new WeakSet(),progressCache=new Map(),buttons=[];
@@ -115,11 +115,11 @@ function mount(host){
  function chooseSetting(value,event){settingValue=value;settingTouched=true;host.prepareTrialSetting?.(selected.rule.setting,value,event);render()}
  function configFor(slot){return {period:$('restorationPeriod').value||'auto',characterId:slot.rule.characterId||save.characterId,setting:slot.rule.setting,settingValue:settingTouched?settingValue:slot.rule.setting==='speed'?'slow':slot.rule.setting==='vibration',settingTouched,freePlay:false}}
  function launch(event,config){
-  scene=null;sceneLast=null;newBest=0;free=!!config.freePlay;activeConfig={...config};qualified=false;
+  scene=null;sceneLast=null;newBest=0;openingNeedsJump=false;free=!!config.freePlay;activeConfig={...config};qualified=false;
   const isCall=activeSlot.rule.type==='call'&&!free;
   // Local-call interruption remains the explicitly authored scene bridge.
   const Run=native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
-  const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,openingAssist:activeSlot.number===2&&!free,frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
+  const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,openingAssist:activeSlot.number===2&&!free,requireOpeningJump:activeSlot.number===2&&!free&&!save.collected.includes(activeSlot.id),frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
   activeRun=run;callContext=isCall?{run,triggered:false,answered:false,pending:false,awarded:false}:null;
   host.startRun(run,event);return true;
  }
@@ -267,6 +267,12 @@ function mount(host){
   if(!activeSlot||run.mode!=='restoration'||!run.result||completedRuns.has(run))return;completedRuns.add(run);
   if(callContext?.run===run){award=callContext.awarded?'전화를 받고 달리기로 돌아왔습니다.':'전화를 받지 못했습니다. 다시 시도할 수 있어요.';return}
   const result={...run.result};
+  if(run.options.requireOpeningJump&&result.state==='clear'&&(!run.inputCount||!result.jumps)){
+   openingNeedsJump=true;
+   award='장애물에 닿기 전에 화면을 눌러 첫 점프를 해 보세요.';
+   qualified=false;
+   return;
+  }
   if(M){
    const key=result.freePlay?'freeplay':activeSlot.id;
    const previousBest=localRecord(key).bestScore;
@@ -300,8 +306,9 @@ function mount(host){
   if(v.deathAnimation&&!v.deathAnimation.completed)text('hudCue','달리기를 마무리합니다.');else if(v.scoreFinalization&&v.qualified&&v.state==='play')text('hudCue','목표 달성 · 계속 달립니다.');
   if(isFree)text('squareHud','자유 달리기 · '+((v.wave||0)+1)+'번째 길\n'+v.score+'점  '+('●'.repeat(Math.max(0,v.hearts))));
   if(['clear','fail'].includes(v.state)){
-   text('squareHeading',isFree?'이번 자유 달리기':qualified?'기억 획득':v.state==='clear'?'이번 달리기':'꿈이 접혔다');
+   text('squareHeading',openingNeedsJump?'첫 점프 연습':isFree?'이번 자유 달리기':qualified?'기억 획득':v.state==='clear'?'이번 달리기':'꿈이 접혔다');
    text('restorationResultWorld',isFree?'자유 달리기':activeSlot.number+' · '+v.roomTitle);
+   $('restorationResultScore').hidden=openingNeedsJump;
    text('restorationScoreValue',String(v.score));
    $('squareRetry').hidden=false;$('squareRestart').hidden=true;
    text('squareRetry','다시 달리기');
@@ -311,7 +318,7 @@ function mount(host){
    $('squareResult').dataset.primaryAction=primary;
    for(const id of ['squareNext','squareCollection','squareRetry','squareRestart','squareHome'])$(id).dataset.primary=String(id===primary);
    const detail=['기억을 찾았습니다.','찾은 기억을 다시 만났습니다.','자유 달리기 기록'].includes(award)?'':award;
-   const reason=qualified?'':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
+   const reason=qualified||openingNeedsJump?'':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
    text('restorationRecordBadge',newBest?'새 최고 기록':'');
    $('restorationRecordBadge').hidden=!newBest;
    text('squareSummary',[reason,detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));

@@ -2,7 +2,7 @@ name: Standalone Android QA
 on:
   workflow_dispatch:
   push:
-    branches: [codex/r95-gameplay-polish]
+    branches: [codex/r95-play-store-readiness]
     paths-ignore: ['docs/**', 'evidence/**', 'README.md']
 permissions:
   contents: read
@@ -25,9 +25,9 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - name: Validate standalone game
         run: python3 scripts/test.py
-      - name: Build actual R94 and current R95 with disposable certificate
+      - name: Build actual R95 and current R96 with disposable certificate
         run: |
-          git fetch --no-tags --depth=1 origin 9c8aa2f73deb8e768a7a2d22d857debd0539f8da
+          git fetch --no-tags --depth=1 origin a1f0c3e66364a614b0e7fc9c619f50072a9dbffb
           export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
           python3 scripts/build-playable-qa.py
@@ -44,16 +44,16 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -no-snapshot -no-audio -gpu swiftshader_indirect -no-boot-anim -camera-back none -camera-front none -memory 3072 -cores 4
-          script: node tools/verify-r95-android.cjs ci/baseline.apk ci/updated.apk
+          script: node tools/verify-r96-android.cjs ci/baseline.apk ci/updated.apk
       - name: Device evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: r95-device-evidence
+          name: r96-device-evidence
           path: ci/device/
       - name: Tested standalone unsigned APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: r95-verified-unsigned
-          path: android/outputs/MONGYU_R95_TEST_DEBUG_UNSIGNED.apk
+          name: r96-verified-unsigned
+          path: android/outputs/MONGYU_R96_TEST_DEBUG_UNSIGNED.apk

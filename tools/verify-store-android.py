@@ -35,7 +35,7 @@ def wait_for_label(label, *, tap=False):
             time.sleep(0.8)
             continue
         matched = next((node for node in nodes if node.get('package') == PACKAGE
-                        and label in (node.get('text'), node.get('content-desc'))), None)
+                        and label in tuple((value or '').rstrip(' ›→↗') for value in (node.get('text'), node.get('content-desc')))), None)
         if matched is not None:
             if tap:
                 press(matched)
@@ -58,6 +58,9 @@ def main(apk):
     wait_for_label('계속', tap=True)
     wait_for_label('첫 달리기 시작', tap=True)
     wait_for_label('일시정지 · 메뉴')
+    wait_for_label('첫 점프 연습')
+    wait_for_label('다시 달리기', tap=True)
+    wait_for_label('일시정지 · 메뉴')
     pid = adb('shell', 'pidof', PACKAGE)
     sockets = adb('shell', 'cat', '/proc/net/unix')
     if not pid or 'webview_devtools_remote_' + pid in sockets:
@@ -66,6 +69,7 @@ def main(apk):
         subprocess.run(['adb', 'exec-out', 'screencap', '-p'], stdout=screenshot, check=True, timeout=20)
     report = {'package': PACKAGE, 'source': 'bundle-derived APK with temporary QA key',
               'testedLabels': ['꿈속으로', '계속', '첫 달리기 시작', '일시정지 · 메뉴'],
+              'idleLessonRequiresJump': True,
               'androidApi': int(adb('shell', 'getprop', 'ro.build.version.sdk')),
               'webViewDebugSocket': False, 'physicalDevice': False, 'passed': True}
     (OUTPUT / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')

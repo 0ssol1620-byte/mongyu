@@ -39,7 +39,7 @@ def build(args):
     expected = json.loads((ROOT / 'expected-playable-assets.json').read_text())
     html = assets / 'index.html'
     if expected['files'] != [{'path': 'index.html', 'bytes': html.stat().st_size, 'sha256': digest(html)}]:
-        raise SystemExit('Regenerate the standalone R95 assets before building the bundle.')
+        raise SystemExit('Regenerate the standalone R96 assets before building the bundle.')
     if [p for p in assets.rglob('*') if p.is_file()] != [html]:
         raise SystemExit('Unexpected packaged assets. Regenerate the standalone build.')
 

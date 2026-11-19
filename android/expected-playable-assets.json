@@ -1,12 +1,12 @@
 {
-  "release": "R95",
+  "release": "R96",
   "requiresUserOriginalFile": false,
   "commercialOriginalPayloadIncluded": false,
   "files": [
     {
       "path": "index.html",
-      "bytes": 20055524,
-      "sha256": "e1dd163f967658a1560cc19dbfd1e0c30f0d7a2a957c6e755a39e71d90d73b1c"
+      "bytes": 20056178,
+      "sha256": "9f2a5ad2c777158ea83c9a18ecc16471854b372394c117d989cdf6fd9950332b"
     }
   ]
 }
