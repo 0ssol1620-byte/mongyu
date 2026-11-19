@@ -55,7 +55,7 @@ function mount(host){
  const native=root.MongyuNativeRestoration;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
- let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null;
+ let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0;
  let mastery=M?.load(storage)||{ok:true,save:null},completionSequence=0;
  const journalButtons=[];
  const sessionId=Date.now().toString(36),completedRuns=new WeakSet(),aftermathRuns=new WeakSet(),progressCache=new Map(),buttons=[];
@@ -96,15 +96,26 @@ function mount(host){
   text('restorationNotice',readOnly?'기존 기록은 보존합니다. 지금 진행은 이번 실행에만 남습니다.':!storageOK?'저장할 수 없어 이번 실행에만 남습니다.':award||'');
   const palette=root.MongyuSquareArt?.palettes,tone=palette?.[(selected.chapter-1)%palette.length]?.hot; if(tone)host.document.body.style.setProperty?.('--world-color',tone);
  }
+ function revealPending(){
+  if(!save.pendingUnlock)return false;
+  persist(C.reveal(save,save.pendingUnlock.id));
+  selected=C.getSlot(save.selected)||selected;
+  award='기억을 찾았습니다.';
+  return true;
+ }
+ function nextMemory(event){
+  revealPending();
+  const next=summary().nextSlot;
+  return next?start(event,next):open(event);
+ }
  function open(event){host.audioGesture?.(event);
-  // Authored immediate board reveal; native twelve-update timing is not asserted.
-  if(save.pendingUnlock){const pending=save.pendingUnlock;persist(C.reveal(save,pending.id));selected=C.getSlot(save.selected)||selected;award='기억을 찾았습니다.'}
+  revealPending();
   host.openDialog('restorationCollection',event);host.audioEntry?.({kind:'board',owner:++audioBoardEntry},event);render();focusSlot();return true
  }
  function chooseSetting(value,event){settingValue=value;settingTouched=true;host.prepareTrialSetting?.(selected.rule.setting,value,event);render()}
  function configFor(slot){return {period:$('restorationPeriod').value||'auto',characterId:slot.rule.characterId||save.characterId,setting:slot.rule.setting,settingValue:settingTouched?settingValue:slot.rule.setting==='speed'?'slow':slot.rule.setting==='vibration',settingTouched,freePlay:false}}
  function launch(event,config){
-  scene=null;sceneLast=null;free=!!config.freePlay;activeConfig={...config};qualified=false;
+  scene=null;sceneLast=null;newBest=0;free=!!config.freePlay;activeConfig={...config};qualified=false;
   const isCall=activeSlot.rule.type==='call'&&!free;
   // Local-call interruption remains the explicitly authored scene bridge.
   const Run=native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
@@ -115,10 +126,11 @@ function mount(host){
  function start(event,id,options={}){host.audioGesture?.(event);
   if(save.pendingUnlock)return open(event);
   if(id&&selected.id!==C.getSlot(id)?.id)select(id);
-  if(!options.retry&&id&&selected.rule.period){open(event);return true}
+  if(!options.retry&&id&&(selected.rule.period||selected.rule.setting)){open(event);return true}
   if(!C.unlocked(save,selected.id)&&!summary().finished)return false;
   award='';qualified=false;free=false;activeSlot=selected;persist({...save,selected:selected.id});
   const config=options.config||configFor(selected),intro=INTRO[selected.number];
+  launchAfterOpening=options.playAfterStory===true&&selected.number===1;
   const sequence=G?.getSequence(selected);
   if(sequence){scene={kind:sequence.kind,graph:G.createState(selected),sequence,index:0,pages:sequence.steps,elapsed:0,beatAt:0};sceneLast=null;showScene(event);return true}
   if(selected.traversal||selected.rule.type==='call'){
@@ -201,20 +213,27 @@ function mount(host){
   const bossRule=slot.rule.type==='boss'?R.BOSS_RULES[R.BOSS_SLOTS.indexOf(slot.number)]:null;
   text('restorationSceneText',step?(step.alternateText!==undefined?'길: '+step.text+'\n'+other+': '+step.alternateText:step.text||step.action):scene.pages[scene.index]);
   $('restorationSceneText').style.whiteSpace='pre-line';$('restorationSceneText').dataset.kind=step?.kind||'';text('restorationSceneRule',isIntro?(bossRule?.instruction||slot.instruction):'');$('restorationSceneRule').hidden=!isIntro;
-  text('restorationSceneNext',isIntro?'준비됐어 · 시작':isCall?'꿈속 전화 받기':scene.index===scene.pages.length-1?'기억에 남기기':'계속');
+  text('restorationSceneNext',isIntro?'준비됐어 · 시작':isCall?'꿈속 전화 받기':scene.index===scene.pages.length-1?(launchAfterOpening?'첫 달리기 시작':'기억에 남기기'):'계속');
   $('restorationSceneNext').hidden=false;$('restorationSceneNext').disabled=isCall&&scene.rings<2;
   $('restorationSceneAction').hidden=!!scene.graph||scene.index===0||isInterlude||isIntro||isCall;text('restorationSceneAction','앞 장면');
   text('restorationSceneSkip',isIntro?'세계 모음':isCall?'받지 않고 달리기':'나중에 보기');drawSceneCast();
   host.audioEntry?.({kind:'scene',owner:scene,sceneKind:scene.kind,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow},event);
   ($('restorationSceneNext').disabled?$('restorationSceneSkip'):$('restorationSceneNext')).focus({preventScroll:true});
  }
- function finishEvent(event){
-  const before=save.collected.length;persist(C.commitEvent(save,{slotId:selected.id,...event}));award=save.pendingUnlock||save.collected.length>before?'기억을 찾았습니다.':'아직 조건이 완성되지 않았습니다.';scene=null;
-  const next=summary().nextSlot;if(next)selected=C.getSlot(next);open();return true;
+ function finishEvent(proof,gesture){
+  const before=save.collected.length,shouldLaunch=launchAfterOpening;
+  launchAfterOpening=false;
+  persist(C.commitEvent(save,{slotId:selected.id,...proof}));
+  award=save.pendingUnlock||save.collected.length>before?'기억을 찾았습니다.':'아직 조건이 완성되지 않았습니다.';
+  scene=null;
+  if(shouldLaunch&&(save.pendingUnlock||save.collected.length>before))return nextMemory(gesture);
+  const next=summary().nextSlot;
+  if(next)selected=C.getSlot(next);
+  return open(gesture);
  }
  function nextScene(event){host.audioGesture?.(event);
   if(!scene)return false;
-  if(scene.graph){scene.graph=G.advance(scene.graph);const proof=G.completionProof(scene.graph);if(proof)return finishEvent(proof);scene.index=scene.graph.cursor;showScene(event);return true}
+  if(scene.graph){scene.graph=G.advance(scene.graph);const proof=G.completionProof(scene.graph);if(proof)return finishEvent(proof,event);scene.index=scene.graph.cursor;showScene(event);return true}
   if(scene.kind==='intro')return launch(event,scene.config);
   if(scene.kind==='call'){
    if(scene.rings<2||!callContext)return false;
@@ -228,8 +247,8 @@ function mount(host){
   if(scene.index<scene.pages.length-1){scene.index++;showScene(event);return true}
   return finishEvent({type:'story-read',pageCount:scene.pages.length});
  }
- function skipScene(event){host.audioGesture?.(event);if(scene?.graph)scene.graph=G.cancel(scene.graph);if(scene?.kind==='intro'){scene=null;return open()}if(scene?.kind==='call'){scene=null;callContext.answered=false;callContext.pending=false;return host.resumeRun?.(event)}scene=null;return open()}
- function continueJourney(event){const s=summary(),last=C.getSlot(save.selected),slot=last&&!save.collected.includes(last.id)&&C.unlocked(save,last.id)?last:C.getSlot(s.nextSlot)||last||C.slots[0];return start(event,slot.id)}
+ function skipScene(event){host.audioGesture?.(event);launchAfterOpening=false;if(scene?.graph)scene.graph=G.cancel(scene.graph);if(scene?.kind==='intro'){scene=null;return open()}if(scene?.kind==='call'){scene=null;callContext.answered=false;callContext.pending=false;return host.resumeRun?.(event)}scene=null;return open()}
+ function continueJourney(event){const s=summary(),last=C.getSlot(save.selected),slot=last&&!save.collected.includes(last.id)&&C.unlocked(save,last.id)?last:C.getSlot(s.nextSlot)||last||C.slots[0];return start(event,slot.id,{playAfterStory:true})}
  function aftermathSpec(run){
   if(run?.encounter?.kind==='sun')return {kind:'sun',release:2,duration:5,text:'이런 녀석도 있었군.',releaseText:'흰 햇살이 사라집니다.'};
   if(run?.encounter)return {kind:'encounter',release:2.4,duration:4.4,text:{alien:'멍. 이제 가자.',chain:'사슬이 풀렸다.',radial:'돌던 빛이 잠잠해졌다.',wave:'물결이 잦아들었다.',robot:'박자가 끊겼네.' ,orbit:'회오리가 잦아든 자리에 허전함이 남았다.',heart:'길은 자신이 줄곧 옛 연인의 안을 달렸음을 깨달았다.'}[run.encounter.kind],releaseText:run.encounter.kind==='alien'?'흰 사각이 사라집니다.':run.encounter.kind==='heart'?'노란 경계가 사라집니다.':'마지막 사각이 흩어집니다.'};
@@ -248,7 +267,12 @@ function mount(host){
   if(!activeSlot||run.mode!=='restoration'||!run.result||completedRuns.has(run))return;completedRuns.add(run);
   if(callContext?.run===run){award=callContext.awarded?'전화를 받고 달리기로 돌아왔습니다.':'전화를 받지 못했습니다. 다시 시도할 수 있어요.';return}
   const result={...run.result};
-  if(M){mastery=M.record(storage,run.options.freePlay?'freeplay':activeSlot.id,result,sessionId+':'+(++completionSequence));}
+  if(M){
+   const key=result.freePlay?'freeplay':activeSlot.id;
+   const previousBest=localRecord(key).bestScore;
+   mastery=M.record(storage,key,result,sessionId+':'+(++completionSequence));
+   newBest=mastery.ok&&result.score>previousBest?result.score-previousBest:0;
+  }
   if(run.options.freePlay||result.freePlay){qualified=false;award='자유 달리기 기록';return}
   if(activeSlot.rule.type==='setting'&&!run.nativeRuntime){
    const proof=run.settingProof();delete result.settingCredit;
@@ -265,7 +289,9 @@ function mount(host){
   const active=v?.mode==='restoration',after=aftermathFor(host.activeRun());$('restorationAftermath').hidden=!after;
   if(after)text('restorationAftermathStatus',after.phase==='release'?after.releaseText:after.text);
   host.document.body.dataset.restoration=String(active);$('squareCollection').hidden=!active;$('pauseRestoration').hidden=!active;
-  $('squareNext').hidden=!active||v.freePlay||!['clear','fail'].includes(v.state)||!qualified||!summary().nextSlot;
+  const isResult=['clear','fail'].includes(v.state);
+  const nextSlot=save.pendingUnlock&&activeSlot?.number<100?activeSlot.number+1:summary().nextSlot;
+  $('squareNext').hidden=!active||v.freePlay||!isResult||!qualified||!nextSlot;
   $('restorationCall').hidden=!active||v.state!=='play'||activeSlot?.rule.type!=='call'||callContext?.triggered||(activeRun?.time||0)<.2;
   $('restorationResultScore').hidden=!active;$('restorationResultWorld').hidden=!active;
   if(!active){$('restorationResultMastery').hidden=true;$('restorationResultNext').hidden=true;$('squareRestart').hidden=false;return}
@@ -278,16 +304,19 @@ function mount(host){
    text('restorationResultWorld',isFree?'자유 달리기':activeSlot.number+' · '+v.roomTitle);
    text('restorationScoreValue',String(v.score));
    $('squareRetry').hidden=false;$('squareRestart').hidden=true;
-   text('squareRetry','같은 길 다시');
+   text('squareRetry','다시 달리기');
+   text('squareNext','다음 기억으로');
    const primary=!$('squareNext').hidden?'squareNext':qualified?'squareCollection':'squareRetry';
    $('squareResult').dataset.primaryAction=primary;
    for(const id of ['squareNext','squareCollection','squareRetry','squareRestart','squareHome'])$(id).dataset.primary=String(id===primary);
    const detail=['기억을 찾았습니다.','찾은 기억을 다시 만났습니다.','자유 달리기 기록'].includes(award)?'':award;
-   const reason=v.state==='clear'&&v.boss?.ruleId==='boundary-strike'&&v.boss.hp===0?'닫힌 모서리가 열렸다.':v.result?.reason;
+   const reason=qualified?'':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
+   text('restorationRecordBadge',newBest?'최고 기록 +'+newBest+'점':'');
+   $('restorationRecordBadge').hidden=!newBest;
    text('squareSummary',[reason,detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
    text('restorationResultMastery',recordText(isFree?'freeplay':activeSlot.id)+(!mastery.ok?'\n기록을 저장할 수 없어 이번 실행에만 남습니다.':''));
    $('restorationResultMastery').hidden=!$('restorationResultMastery').textContent;
-   const next=C.getSlot(summary().nextSlot);text('restorationResultNext',qualified&&next?'다음 · '+next.number+' '+next.title:'');$('restorationResultNext').hidden=!qualified||!next;
+   const next=C.getSlot(nextSlot);text('restorationResultNext',qualified&&next?'다음 · '+next.number+' '+next.title:'');$('restorationResultNext').hidden=!qualified||!next;
   }
  }
  function openJournal(event){
@@ -310,7 +339,7 @@ function mount(host){
  if($('storyOpen'))$('storyOpen').onclick=openJournal;if($('storyJournalClose'))$('storyJournalClose').onclick=host.closeDialog;
  $('restorationOpen').onclick=open;$('restorationClose').onclick=host.closeDialog;$('restorationStart').onclick=e=>start(e);$('restorationSceneNext').onclick=nextScene;$('restorationSceneSkip').onclick=skipScene;
  $('restorationSceneAction').onclick=()=>{if(scene&&!scene.graph&&scene.index>0){scene.index--;showScene()}};
- $('modeRestoration').onclick=open;$('modeSquare').onclick=host.startLegacy;$('pauseRestoration').onclick=open;$('squareCollection').onclick=open;$('squareNext').onclick=e=>start(e,summary().nextSlot);$('restorationFree').onclick=startFree;
+ $('modeRestoration').onclick=open;$('modeSquare').onclick=host.startLegacy;$('pauseRestoration').onclick=open;$('squareCollection').onclick=open;$('squareNext').onclick=nextMemory;$('restorationFree').onclick=startFree;
  function beginCall(event){if(!callContext||callContext.triggered||callContext.run.state!=='play'||callContext.run.time<.2||!callContext.run.localCall())return false;callContext.triggered=true;scene={kind:'call',slot:activeSlot,index:0,pages:['길 한가운데서 전화가 울립니다.'],elapsed:0,rings:0,beats:0,beatAt:0};sceneLast=null;showScene(event);return true}
  $('restorationCall').onclick=beginCall;
  $('restorationAftermathNext').onclick=finishAftermath;

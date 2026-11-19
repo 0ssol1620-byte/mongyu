@@ -47,27 +47,46 @@ function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
  const color=cellStyle(cmd,scene,p);c.globalAlpha=(cmd.alpha??255)/255;c.fillStyle=color.base;
  if(cmd.role==='cell-decoration'){
   const q=point(cmd.screenX,cmd.screenY,scene),frame=reduced?3:((cmd.frame||0)%4+4)%4,angle=[-Math.PI/8,Math.PI/4,Math.PI/8,0][frame],size=frame===3?12.8:16/(Math.abs(Math.sin(angle))+Math.abs(Math.cos(angle)));
-  c.save();c.translate(q.x+dx,q.y+dy);c.rotate(angle);if(cmd.kind===2)c.fillStyle=color.accent;c.fillRect(-size/2,-size/2,size,size);c.restore();return;
+  c.save();c.translate(q.x+dx,q.y+dy);c.rotate(angle);
+  c.fillStyle='#241a34';c.fillRect(-size/2,-size/2,size,size);
+  c.fillStyle=cmd.kind===2?'#fff0c1':'#ffbc8f';
+  const inset=size*.24;
+  c.fillRect(-size/2+inset,-size/2+inset,size-2*inset,size-2*inset);
+  c.restore();return;
  }
- const r=tileBounds(cmd,scene);c.fillRect(r.x+dx+.5,r.y+dy+.5,15,15);
+ const r=tileBounds(cmd,scene),x=r.x+dx,y=r.y+dy;
+ c.fillRect(x+.35,y+.35,15.3,15.3);
+ c.fillStyle=color.accent;
+ const side=((cmd.orientation||0)%4+4)%4;
+ if(side===0)c.fillRect(x+1,y+14,14,1.3);
+ if(side===1)c.fillRect(x+14,y+1,1.3,14);
+ if(side===2)c.fillRect(x+1,y+1,14,1.3);
+ if(side===3)c.fillRect(x+1,y+1,1.3,14);
 }
 
-const backgroundCache=new WeakMap();
+const backgroundCache={normal:null,reduced:null};
 function background(c,viewport,scene,p,reduced){
  const palette=root.MongyuNativePalette,w=viewport.width,h=viewport.height,commands=scene.backgrounds||[];
  c.fillStyle=p[0];c.fillRect(0,0,w,h);if(!palette||!commands.length)return;
- let pair=backgroundCache.get(scene);if(!pair){pair={};backgroundCache.set(scene,pair)}
- const key=reduced?'reduced':'normal';let surface=pair[key];
- if(!surface&&typeof root.OffscreenCanvas==='function'){
-  surface=new root.OffscreenCanvas(240,240);const b=surface.getContext('2d',{alpha:false});b.fillStyle=p[0];b.fillRect(0,0,240,240);
+ const key=reduced?'reduced':'normal';
+ let cached=backgroundCache[key];
+ if(typeof root.OffscreenCanvas==='function'&&cached?.scene!==scene){
+  const signature=scene.palette+':'+commands.map(cmd=>cmd.role==='background-fill'?cmd.rgb:[cmd.x-scene.origin.x,cmd.y-scene.origin.y,cmd.width,cmd.height,cmd.colorRole?.packedPaletteOffset,cmd.colorRole?.nibble].join(',')).join('|');
+  if(cached?.signature===signature)cached.scene=scene;
+  else {
+  const surface=cached?.surface||new root.OffscreenCanvas(240,240);
+  const b=surface.getContext('2d',{alpha:false});b.fillStyle=p[0];b.fillRect(0,0,240,240);
   for(const command of commands){
    if(command.role==='background-fill'){b.fillStyle=reduced?p[0]:palette.color(scene.palette,{rgb:command.rgb});b.fillRect(0,0,240,240)}
    else if(command.role==='background-cell'){
     const role={...command.colorRole};if(reduced){const x=Math.floor((command.x-scene.origin.x)/30),y=Math.floor((command.y-scene.origin.y)/30),fold0=y*8+x,fold=fold0>31?63-fold0:fold0;role.packedPaletteOffset=112+Math.trunc(fold/2);role.nibble=fold%2?'high':'low'}
     b.fillStyle=palette.color(scene.palette,role,reduced);b.fillRect(command.x-scene.origin.x,command.y-scene.origin.y,command.width,command.height);
    }
-  }pair[key]=surface;
+  }
+  cached={scene,signature,surface};backgroundCache[key]=cached;
+  }
  }
+ const surface=cached?.surface;
  // Keep the native square mosaic; extend it to cover tall phones and tablets.
  const size=Math.min(w,h);if(surface){c.imageSmoothingEnabled=false;for(let x=0;x<w;x+=size)for(let y=0;y<h;y+=size)c.drawImage(surface,x,y,size,size);return}
  // Non-browser drawing harnesses have no offscreen canvas.
@@ -117,7 +136,7 @@ function draw(c,run,opt,geo){
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
  const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
  const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
- c.save();c.clearRect(0,0,cam.width,cam.height);background(c,opt.viewport,scene,p,reduced);if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
+ c.save();background(c,opt.viewport,scene,p,reduced);c.fillStyle='#20183645';c.fillRect(0,0,cam.width,cam.height);if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
   for(const cell of group.cells)tile(c,cell,scene,p,0,0,reduced);c.globalAlpha=1;
@@ -136,7 +155,14 @@ function draw(c,run,opt,geo){
  }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
  c.restore();
  if(geo.boss&&geo.boss.maxHp>0){c.save();const w=Math.min(140,cam.width*.35),x=(cam.width-w)/2,y=64;c.fillStyle=p[1];c.fillRect(x,y,w,4);c.fillStyle=p[3];c.fillRect(x,y,w*clamp(geo.boss.hp/geo.boss.maxHp,0,1),4);c.restore()}
- if(scene.countdown>0){c.save();c.textAlign='center';c.textBaseline='middle';c.font='600 48px sans-serif';c.fillStyle=p[1];c.fillText(String(Math.ceil(scene.countdown/10)),cam.width/2,cam.height*.3);if(profile){c.font='500 16px sans-serif';c.fillText(profile.title,cam.width/2,cam.height*.3-48)}c.restore()}
+ if(scene.countdown>0){
+  const x=cam.width/2,y=cam.height*.29;
+  c.save();c.translate(x,y);c.fillStyle='#20182ded';
+  if(typeof c.roundRect==='function'){c.beginPath();c.roundRect(-68,-34,136,68,18);c.fill()}else c.fillRect(-68,-34,136,68);
+  c.textAlign='center';c.textBaseline='middle';c.font='750 27px system-ui';c.fillStyle='#fff0d6';
+  c.fillText(String(Math.ceil(scene.countdown/10)),0,-6);
+  c.font='600 11px system-ui';c.fillText('곧 달리기 시작',0,18);c.restore();
+ }
  return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1};
 }
 const api={snapshot,geometry,overview,point,tileBounds,scenePalette,cellStyle,tile,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;

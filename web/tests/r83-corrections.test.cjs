@@ -36,6 +36,6 @@ test('airborne turns blend the ground path and inward height without snapping at
  assert.ok(Math.hypot(first.x-p.x,first.y-p.y)<1e-8);assert.ok(Math.hypot(last.x-q.x,last.y-q.y)<1e-8);assert.ok(mid.renderAngle>0&&mid.renderAngle<Math.PI/2);assert.ok(Math.abs(mid.height-11)<1e-8);
 });
 test('normal UI starts at the native fast setting; explicit slow setting remains available to missions',()=>{
- const {host}=require('./host.cjs'),h=host({inline:true,square:true,restoration:true,native:true});h.click('titleContinue');h.click('restorationSceneNext');h.click('restorationSceneNext');h.click('restorationStart');const run=h.app.activeRun();assert.equal(run.settings.speed,'fast');assert.equal(run.stepMs,75);
+ const {host}=require('./host.cjs'),h=host({inline:true,square:true,restoration:true,native:true});h.click('titleContinue');h.click('restorationSceneNext');h.click('restorationSceneNext');const run=h.app.activeRun();assert.equal(run.settings.speed,'fast');assert.equal(run.stepMs,75);
  const N=h.ctx.MongyuNativeRestoration,C=h.ctx.MongyuRestorationCatalog,slow=new N.RestorationRun({slot:C.getSlot(2),settings:{speed:'fast'},setting:'speed',settingValue:'slow'});assert.equal(slow.settings.speed,'slow');assert.equal(slow.stepMs,115);
 });
