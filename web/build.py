@@ -17,11 +17,9 @@ assert all((p/'assets/music'/f).is_file() for f in ['CC-BY-4.0.txt','MUSIC-CREDI
 music={t['id']:{**t,'src':asset(p/'assets/music',t)} for t in manifest['tracks']}
 files=json.loads((p/'sources.json').read_text(encoding='utf-8'))
 assert files[-1]=='app.js' and len(files)==len(set(files))
-sources=['globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
+sources=[f'globalThis.MONGYU_PLAYABLE_RELEASE={json.dumps(release)};', 'globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
 source_hashes={}
 for f in files:
-    if f=='opening-run.js' and release!='R97':
-        continue
     data=(p/'src'/f).read_bytes().replace(b'\r\n',b'\n');source_hashes[f]=digest(data);sources.append(data.decode('utf-8'))
 template=(p/'index.template.html').read_text(encoding='utf-8')
 assert template.count('<!--SCRIPTS-->')==1 and template.count('/*MOBILE_CSS*/')==1

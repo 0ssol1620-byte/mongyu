@@ -53,6 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
+ const openingEnabled=root.MONGYU_PLAYABLE_RELEASE==='R97'&&!!root.MongyuOpening;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
  let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0,openingNeedsJump=false;
@@ -68,6 +69,11 @@ function mount(host){
  function page(){return Math.floor((selected.number-1)/10)}
  function localRecord(key){return M?.get(mastery.save,key)||{bestScore:0,bestChain:0,attemptCount:0,clearCount:0}}
  function recordText(key){const v=localRecord(key);return v.attemptCount?['최고 '+v.bestScore+'점',v.bestChain?'연속 '+v.bestChain:'','완주 '+v.clearCount+'회'].filter(Boolean).join(' · '):''}
+ function openingRecordText(){
+  const record=localRecord('r97-opening');
+  if(record.bestChain===0)return '';
+  return record.bestChain===6?'최고 완주 · 여유 있게 '+(record.bestScore%100/10)+' / 6':'한 번에 모은 빛 '+record.bestChain+' / 6';
+ }
  function focusSlot(){buttons[selected.number-1]?.focus({preventScroll:true})}
  function select(id,focus=false){const slot=C.getSlot(id);if(!slot)return false;if(slot.id!==selected.id){settingValue=false;settingTouched=false;award=''}selected=slot;render();if(focus)focusSlot();return true}
  function render(){
@@ -80,10 +86,9 @@ function mount(host){
    b.dataset.collected=String(entry.collected);b.dataset.locked=String(!entry.unlocked);b.tabIndex=chosen?0:-1;b.setAttribute('aria-pressed',String(chosen));b.setAttribute('aria-label',entry.number+'. '+entry.title+'. '+(entry.number===100&&entry.unlocked?(entry.collected?'감상한 마지막 이야기':'획득한 마지막 이야기'):entry.collected?'찾은 기억':entry.unlocked?'열린 기억':'잠긴 기억'));
   }
   $('restorationPagePrev').disabled=currentPage===0;$('restorationPageNext').disabled=currentPage===9;$('restorationRouteNext').disabled=!s.nextSlot;
-  const opening=selected.number===2&&root.MongyuOpening;
+  const opening=selected.number===2&&openingEnabled;
   text('restorationSlotTitle',String(selected.number).padStart(3,'0')+' · '+(opening?'접힌 빛':selected.title));text('restorationKind',labels[selected.kind]||'기억');text('restorationInstruction',opening?'바닥, 벽, 천장에서 장애물을 넘어 빛 여섯 개를 모으세요.':selected.instruction);
-  const best=localRecord('r97-opening').bestChain;
-  const masteryText=opening?(best?'한 번에 모은 빛 '+best+' / 6':''):recordText(selected.id);
+  const masteryText=opening?openingRecordText():recordText(selected.id);
   text('restorationMastery',masteryText);$('restorationMastery').hidden=!masteryText;
   $('restorationSettingNotice').hidden=selected.rule.type!=='setting';
   text('restorationSettingNotice',selected.rule.setting==='sound'?'시작 소리를 고를 수 있어요. 시작 후 설정에서 소리를 한 번 바꾸면 됩니다. 켜기: 음악 40%, 효과음 45%. 끝나면 원래 설정으로 돌아갑니다.':selected.rule.setting==='vibration'?'시작 후 설정에서 시각 진동을 한 번 바꾸면 됩니다. 점프·착지·충돌의 시각 신호이며 화면은 흔들리지 않습니다.':'시작 속도를 고를 수 있어요. 시작 후 설정에서 속도를 한 번 바꾸면 됩니다.');
@@ -121,8 +126,8 @@ function mount(host){
   scene=null;sceneLast=null;newBest=0;openingNeedsJump=false;free=!!config.freePlay;activeConfig={...config};qualified=false;
   const isCall=activeSlot.rule.type==='call'&&!free;
   // Local-call interruption remains the explicitly authored scene bridge.
-  const opening=activeSlot.number===2&&!free&&root.MongyuOpening;
-  const Run=opening?opening.OpeningRun:native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
+  const opening=activeSlot.number===2&&!free&&openingEnabled;
+  const Run=opening?root.MongyuOpening.OpeningRun:native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
   const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,openingAssist:!opening&&activeSlot.number===2&&!free,requireOpeningJump:!opening&&activeSlot.number===2&&!free&&!save.collected.includes(activeSlot.id),frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
   activeRun=run;callContext=isCall?{run,triggered:false,answered:false,pending:false,awarded:false}:null;
   host.startRun(run,event);return true;
@@ -135,7 +140,7 @@ function mount(host){
   award='';qualified=false;free=false;activeSlot=selected;persist({...save,selected:selected.id});
   const config=options.config||configFor(selected),intro=INTRO[selected.number];
   launchAfterOpening=options.playAfterStory===true&&selected.number===1;
-  if(launchAfterOpening&&root.MongyuOpening&&!save.collected.includes(selected.id)){
+  if(launchAfterOpening&&openingEnabled&&!save.collected.includes(selected.id)){
    scene={kind:'opening',pages:['벽 너머로 빛 하나가 굴러갔다. 길은 접혔지만, 달리기는 계속됐다.'],index:0,elapsed:0,beatAt:0};sceneLast=null;showScene(event);return true;
   }
   const sequence=G?.getSequence(selected);
@@ -332,7 +337,7 @@ function mount(host){
    for(const id of ['squareNext','squareCollection','squareRetry','squareRestart','squareHome'])$(id).dataset.primary=String(id===primary);
    const detail=['기억을 찾았습니다.','찾은 기억을 다시 만났습니다.','자유 달리기 기록'].includes(award)?'':award;
    const currentGoal=v.scoreFinalization&&v.scoreObjective?.target>0&&v.scoreObjective;
-   const reason=qualified||openingNeedsJump?'':currentGoal&&root.MongyuOpening?'이번 '+currentGoal.current+' / 목표 '+currentGoal.target+'점':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
+   const reason=qualified||openingNeedsJump?'':currentGoal&&openingEnabled?'이번 '+currentGoal.current+' / 목표 '+currentGoal.target+'점':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
    text('restorationRecordBadge',newBest?'새 최고 기록':'');
    $('restorationRecordBadge').hidden=!newBest;
    text('squareSummary',[reason,detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
@@ -343,7 +348,7 @@ function mount(host){
  }
  function showOpeningResult(v,nextSlot){
   const {section,passed,total,clean,practice,crash}=v.opening,cleared=v.state==='clear';
-  const best=localRecord('r97-opening').bestChain;
+  const record=openingRecordText();
   text('squareHeading',practice?'구간 연습 완료':cleared?'빛의 문을 열었다':section+'에서 멈췄다');
   text('restorationResultWorld','002 · 접힌 빛');
   $('restorationResultScore').hidden=true;$('squareRestart').hidden=true;$('squareRetry').hidden=false;
@@ -356,8 +361,8 @@ function mount(host){
   $('restorationRecordBadge').hidden=practice||!newBest;
   const detail=practice?'이 구간의 장애물 2개를 넘었어요.':cleared?'문 너머에서 물소리가 들려요.':v.result.reason+'. '+(crash.early?'다음엔 장애물에 조금 더 가까워졌을 때 탭하세요.':'다음엔 장애물에 닿기 전에 탭하세요.');
   text('squareSummary',detail+'\n'+(practice?'연습은 꿈 지도 기록에 반영되지 않아요.':'빛 '+passed+' / '+total+' · 여유 있게 넘은 장애물 '+clean+'개')+(!storageOK||readOnly?'\n진행은 이번 실행에만 남습니다.':''));
-  text('restorationResultMastery','한 번에 모은 빛 '+best+' / '+total);
-  $('restorationResultMastery').hidden=practice||best===0;
+  text('restorationResultMastery',record);
+  $('restorationResultMastery').hidden=practice||!record;
   const next=qualified&&C.getSlot(nextSlot);
   text('restorationResultNext',next?'다음 · '+next.title:'');$('restorationResultNext').hidden=!next;
  }
@@ -375,7 +380,7 @@ function mount(host){
   if(!activeSlot)return continueJourney(event);
   revealPending();
   selected=activeSlot;settingValue=activeRun?.options.settingValue??activeConfig?.settingValue;settingTouched=!!activeConfig?.settingTouched;
-  const config={...activeConfig,practice:false,section:0,quickRetry:!!root.MongyuOpening,period:activeRun?.options.period||activeConfig?.period,characterId:activeRun?.options.characterId||activeConfig?.characterId,settingValue,settingTouched};
+  const config={...activeConfig,practice:false,section:0,quickRetry:openingEnabled,period:activeRun?.options.period||activeConfig?.period,characterId:activeRun?.options.characterId||activeConfig?.characterId,settingValue,settingTouched};
   if(config.freePlay){qualified=false;award='';return launch(event,config)}return start(event,activeSlot.id,{retry:true,config});
  }
  function startFree(event){if(!summary().finished)return false;selected=C.slots.find(slot=>slot.physical&&slot.rule.type==='tutorial')||C.slots.find(slot=>slot.physical);activeSlot=selected;award='';return launch(event,{...configFor(selected),freePlay:true,seed:Date.now()>>>0})}

@@ -11,7 +11,7 @@ const OBSTACLES=[
  [158,12,17],[283,13,23],[532,12,18],[646,14,23],[926,13,21],[1062,15,25]
 ].map(([at,width,height],index)=>Object.freeze({at,width,height,section:Math.floor(index/2)}));
 Object.freeze(SECTIONS);Object.freeze(OBSTACLES);
-const SPEED=122,FLIGHT=.66,PEAK=46,FOOT=5,BUFFER=.09;
+const SPEED=122,FLIGHT=.66,PEAK=46,FOOT=5,BUFFER=.09,CLEAN_BONUS=10;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 function surface(s){
  if(s<=FLOOR)return {x:s,y:0,a:0};
@@ -87,7 +87,7 @@ class OpeningRun{
     this.index++;this.crossedAt=this.time;
     const clean=this.height>=obstacle.height+10;
     if(clean)this.clean++;
-    this.score+=100+(clean?25:0);
+    this.score+=100+(clean?CLEAN_BONUS:0);
     this.events.push(clean?'perfect':'pass');
    }
   }
@@ -126,7 +126,7 @@ function validResult(slot,r){
   !Number.isInteger(r.jumps)||r.jumps<p.passed||r.jumps>30||
   !Number.isFinite(p.distance)||p.distance<0||p.distance>FINISH||
   Math.abs(Math.min(FINISH,r.time*SPEED)-p.distance)>SPEED/60||
-  r.mapChanges!==sectionAt(p.distance)||r.score!==p.passed*100+p.clean*25)return false;
+  r.mapChanges!==sectionAt(p.distance)||r.score!==p.passed*100+p.clean*CLEAN_BONUS)return false;
  if(r.state==='clear')return r.time>=FINISH/SPEED-.001&&p.passed===OBSTACLES.length&&p.distance===FINISH&&r.hits===0;
  const obstacle=OBSTACLES[p.passed];
  return !!obstacle&&Math.abs(obstacle.at-p.distance)<=obstacle.width+FOOT&&r.hits===1;
