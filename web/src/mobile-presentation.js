@@ -131,9 +131,15 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  paintLeg(c,legs[1],[1.4,1.5,1.05,1.1,.58],ink,pose.footAngles[1]);
  contour(c,limbContour(arms[0],[1.05,.95,.68,.6,.36]),ink);
  const bob=pose.bob,lean=character==='elder'?2:0;
- c.beginPath();c.moveTo(hip[0]-1.8,hip[1]+1);c.bezierCurveTo(-2.1,hip[1]-3,-1.2,shoulder[1]+3,shoulder[0]-1.4,shoulder[1]-1.3);
+ if(character==='walker'&&!q.pose){
+  const drift=Number.isFinite(q.strideDistance)?Math.sin(q.strideDistance/7):Math.sin(t*4);
+  const tail=reduced?0:drift*1.4;
+  const ribbon=style.detail==='scarf'?style.accent:ink==='#fff8de'?'#ffc08f':'#742861';
+  contour(c,[[4,-35+bob],[-2,-33+bob],[-8,-33+bob+tail],[-14,-29+bob+tail],[-8,-29+bob+tail],[-2,-31+bob],[5,-32+bob]],ribbon);
+ }
+ c.beginPath();c.moveTo(hip[0]-2.3,hip[1]+1);c.bezierCurveTo(-2.1,hip[1]-3,-1.2,shoulder[1]+3,shoulder[0]-1.4,shoulder[1]-1.3);
  c.quadraticCurveTo(3+lean,-32+bob,3.2+lean,-36+bob);c.lineTo(5.1+lean,-35.8+bob);
- c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2,shoulder[1]-.5);c.bezierCurveTo(6.5,shoulder[1]+3,3,hip[1]-3,hip[0]+2.3,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
+ c.quadraticCurveTo(4.5+lean,-32.7+bob,shoulder[0]+2.8,shoulder[1]-.5);c.bezierCurveTo(7.4,shoulder[1]+3,3.8,hip[1]-3,hip[0]+2.9,hip[1]+1);c.closePath();c.fillStyle=ink;c.fill();
  contour(c,limbContour(arms[1],[1.25,1.1,.8,.72,.48]),ink);
  // Independently drawn angular profile: no ball head or separate joint discs.
  // The commercial atlas is research only, never a shipped texture or traced outline.
@@ -148,6 +154,7 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
   line(c,[[-4,-27+bob],[2,-24+bob],[3,-20+bob]],ink,1.6);
   line(c,[[-5,-27+bob],[-7,-23+bob],[-3,-20+bob]],ink,1.4);
  }
+ if(character==='walker'&&!q.pose)line(c,[[3.2,-34+bob],[5,-34.5+bob]],ink==='#fff8de'?'#693b72':'#f0a97f',1.7);
  if(style.detail==='leaf')contour(c,[[2,-43],[5,-45],[7,-43.5],[4,-42]],style.accent);
  if(style.detail==='star')oval(c,1,-43,1,1,style.accent);
  if(style.detail==='comet')contour(c,[[1,-40],[-4,-42],[-9,-40.5],[-4,-43.5]],style.accent);

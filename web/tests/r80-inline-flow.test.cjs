@@ -8,7 +8,7 @@ test('exact distributable: wardrobe equips, persists and restores without awardi
 });
 test('exact distributable: story, unlock, playable stage, foreground hitch and background lifecycle',()=>{
  const h=boot();h.click('titleContinue');assert.equal(h.app.getState().dialog,'restorationScene');h.click('restorationSceneNext');h.click('restorationSceneNext');assert.equal(h.app.restoration.view().status.collected,1);
- h.click('restorationStart');const r=h.app.activeRun();assert.equal(r.state,'play');h.tick(0);h.tick(1000);assert.equal(r.state,'play');assert.ok(r.time>0&&r.time<=.101);h.tick(1100);assert.ok(r.time>.1);
+ const r=h.app.activeRun();assert.equal(r.state,'play');h.tick(0);h.tick(1000);assert.equal(r.state,'play');assert.ok(r.time>0&&r.time<=.101);h.tick(1100);assert.ok(r.time>.1);
  h.doc.hidden=true;h.docEvent('visibilitychange');const t=r.time;h.tick(5000);assert.equal(r.state,'pause');assert.equal(r.time,t);h.doc.hidden=false;h.click('resumePlay',{isTrusted:true});h.tick(5100);assert.equal(r.state,'play');assert.ok(r.time>t);
  h.click('pause');assert.equal(r.state,'pause');h.click('pauseHome');h.click('shopOpen');assert.equal(h.e['look-dew'].disabled,false);
 });

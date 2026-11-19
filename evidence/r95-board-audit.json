@@ -1,0 +1,30 @@
+{
+  "freshStorage": true,
+  "input": "real touch",
+  "cases": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "mapPages": 10,
+      "mapEntries": 100,
+      "storyLocked": 20,
+      "looks": 12,
+      "locked": 10,
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "mapPages": 10,
+      "mapEntries": 100,
+      "storyLocked": 20,
+      "looks": 12,
+      "locked": 10,
+      "errors": []
+    }
+  ]
+}

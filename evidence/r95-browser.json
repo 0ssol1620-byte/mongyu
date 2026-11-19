@@ -1,0 +1,1229 @@
+{
+  "scope": "R95 standalone HTML without original files; offline after load, four viewport sizes, real navigation and media playback. Only legitimate story completion grants the first memory. No injected progress. Not physical handset or complete campaign proof.",
+  "reports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844
+      },
+      "surfaces": [
+        {
+          "name": "title",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈속으로"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  0 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "wardrobe",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "wardrobeClose",
+              "text": "×"
+            },
+            {
+              "id": "look-moon",
+              "text": "길입는 중"
+            },
+            {
+              "id": "look-ink",
+              "text": "달빛입기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "title-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "first-story",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationSceneNext",
+              "text": "계속"
+            },
+            {
+              "id": "restorationSceneSkip",
+              "text": "나중에 보기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "play",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "pause",
+              "text": "Ⅱ"
+            }
+          ],
+          "screen": "play"
+        },
+        {
+          "name": "pause",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "resumePlay",
+              "text": "계속 달리기"
+            },
+            {
+              "id": "retryPlay",
+              "text": "이 세계 다시"
+            },
+            {
+              "id": "pauseRestoration",
+              "text": "세계 모음"
+            },
+            {
+              "id": "pauseOptions",
+              "text": "설정"
+            },
+            {
+              "id": "pauseHome",
+              "text": "처음으로"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "run-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationRunSpeed",
+              "text": "속도 · 빠르게"
+            },
+            {
+              "id": "restorationRunVibration",
+              "text": "시각 진동 · 켜짐"
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "home",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "reload",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        }
+      ],
+      "storyTrack": "story-moon",
+      "mapTrack": "chapter-02",
+      "blocked": {
+        "results": [
+          [
+            "openModes",
+            false
+          ],
+          [
+            "startArcade",
+            false
+          ],
+          [
+            "openR34",
+            false
+          ],
+          [
+            "startR34",
+            false
+          ],
+          [
+            "openMemories",
+            false
+          ],
+          [
+            "startOrigin",
+            false
+          ],
+          [
+            "startHero",
+            false
+          ],
+          [
+            "openCollection",
+            false
+          ],
+          [
+            "startSelected",
+            false
+          ],
+          [
+            "startSquare",
+            false
+          ]
+        ],
+        "unchanged": true
+      },
+      "levels": [
+        "intense",
+        "calm",
+        "balanced"
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 568
+      },
+      "surfaces": [
+        {
+          "name": "title",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈속으로"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  0 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "wardrobe",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "wardrobeClose",
+              "text": "×"
+            },
+            {
+              "id": "look-moon",
+              "text": "길입는 중"
+            },
+            {
+              "id": "look-ink",
+              "text": "달빛입기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "title-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "first-story",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationSceneNext",
+              "text": "계속"
+            },
+            {
+              "id": "restorationSceneSkip",
+              "text": "나중에 보기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "play",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "pause",
+              "text": "Ⅱ"
+            }
+          ],
+          "screen": "play"
+        },
+        {
+          "name": "pause",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "resumePlay",
+              "text": "계속 달리기"
+            },
+            {
+              "id": "retryPlay",
+              "text": "이 세계 다시"
+            },
+            {
+              "id": "pauseRestoration",
+              "text": "세계 모음"
+            },
+            {
+              "id": "pauseOptions",
+              "text": "설정"
+            },
+            {
+              "id": "pauseHome",
+              "text": "처음으로"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "run-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationRunSpeed",
+              "text": "속도 · 빠르게"
+            },
+            {
+              "id": "restorationRunVibration",
+              "text": "시각 진동 · 켜짐"
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "home",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "reload",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        }
+      ],
+      "storyTrack": "story-moon",
+      "mapTrack": "chapter-02",
+      "blocked": {
+        "results": [
+          [
+            "openModes",
+            false
+          ],
+          [
+            "startArcade",
+            false
+          ],
+          [
+            "openR34",
+            false
+          ],
+          [
+            "startR34",
+            false
+          ],
+          [
+            "openMemories",
+            false
+          ],
+          [
+            "startOrigin",
+            false
+          ],
+          [
+            "startHero",
+            false
+          ],
+          [
+            "openCollection",
+            false
+          ],
+          [
+            "startSelected",
+            false
+          ],
+          [
+            "startSquare",
+            false
+          ]
+        ],
+        "unchanged": true
+      },
+      "levels": [
+        "intense",
+        "calm",
+        "balanced"
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 844,
+        "height": 390
+      },
+      "surfaces": [
+        {
+          "name": "title",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈속으로"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  0 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "wardrobe",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "wardrobeClose",
+              "text": "×"
+            },
+            {
+              "id": "look-moon",
+              "text": "길입는 중"
+            },
+            {
+              "id": "look-ink",
+              "text": "달빛입기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "title-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "first-story",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationSceneNext",
+              "text": "계속"
+            },
+            {
+              "id": "restorationSceneSkip",
+              "text": "나중에 보기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "play",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "pause",
+              "text": "Ⅱ"
+            }
+          ],
+          "screen": "play"
+        },
+        {
+          "name": "pause",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "resumePlay",
+              "text": "계속 달리기"
+            },
+            {
+              "id": "retryPlay",
+              "text": "이 세계 다시"
+            },
+            {
+              "id": "pauseRestoration",
+              "text": "세계 모음"
+            },
+            {
+              "id": "pauseOptions",
+              "text": "설정"
+            },
+            {
+              "id": "pauseHome",
+              "text": "처음으로"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "run-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationRunSpeed",
+              "text": "속도 · 빠르게"
+            },
+            {
+              "id": "restorationRunVibration",
+              "text": "시각 진동 · 켜짐"
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "home",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "reload",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        }
+      ],
+      "storyTrack": "story-moon",
+      "mapTrack": "chapter-02",
+      "blocked": {
+        "results": [
+          [
+            "openModes",
+            false
+          ],
+          [
+            "startArcade",
+            false
+          ],
+          [
+            "openR34",
+            false
+          ],
+          [
+            "startR34",
+            false
+          ],
+          [
+            "openMemories",
+            false
+          ],
+          [
+            "startOrigin",
+            false
+          ],
+          [
+            "startHero",
+            false
+          ],
+          [
+            "openCollection",
+            false
+          ],
+          [
+            "startSelected",
+            false
+          ],
+          [
+            "startSquare",
+            false
+          ]
+        ],
+        "unchanged": true
+      },
+      "levels": [
+        "intense",
+        "calm",
+        "balanced"
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 800,
+        "height": 1280
+      },
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 1280
+      },
+      "surfaces": [
+        {
+          "name": "title",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈속으로"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  0 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "wardrobe",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "wardrobeClose",
+              "text": "×"
+            },
+            {
+              "id": "look-moon",
+              "text": "길입는 중"
+            },
+            {
+              "id": "look-ink",
+              "text": "달빛입기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "title-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "first-story",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationSceneNext",
+              "text": "계속"
+            },
+            {
+              "id": "restorationSceneSkip",
+              "text": "나중에 보기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "play",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "pause",
+              "text": "Ⅱ"
+            }
+          ],
+          "screen": "play"
+        },
+        {
+          "name": "pause",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "resumePlay",
+              "text": "계속 달리기"
+            },
+            {
+              "id": "retryPlay",
+              "text": "이 세계 다시"
+            },
+            {
+              "id": "pauseRestoration",
+              "text": "세계 모음"
+            },
+            {
+              "id": "pauseOptions",
+              "text": "설정"
+            },
+            {
+              "id": "pauseHome",
+              "text": "처음으로"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "run-settings",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "restorationRunSpeed",
+              "text": "속도 · 빠르게"
+            },
+            {
+              "id": "restorationRunVibration",
+              "text": "시각 진동 · 켜짐"
+            },
+            {
+              "id": "mute",
+              "text": "소리 켜짐"
+            },
+            {
+              "id": "dreamIntensity",
+              "text": "꿈의 강도 · 균형"
+            },
+            {
+              "id": "motion",
+              "text": "움직임 기본"
+            },
+            {
+              "id": "settingsHome",
+              "text": "처음으로"
+            },
+            {
+              "id": "musicCreditsToggle",
+              "text": "음악 출처와 이용 조건"
+            },
+            {
+              "id": "close",
+              "text": "돌아가기"
+            }
+          ],
+          "screen": "pause"
+        },
+        {
+          "name": "home",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        },
+        {
+          "name": "reload",
+          "visibleRetired": [],
+          "buttons": [
+            {
+              "id": "options",
+              "text": ""
+            },
+            {
+              "id": "titleContinue",
+              "text": "꿈 이어가기"
+            },
+            {
+              "id": "restorationOpen",
+              "text": "꿈 지도  ·  1 / 100"
+            },
+            {
+              "id": "shopOpen",
+              "text": "옷장"
+            },
+            {
+              "id": "storyOpen",
+              "text": "이야기"
+            }
+          ],
+          "screen": "title"
+        }
+      ],
+      "storyTrack": "story-moon",
+      "mapTrack": "chapter-02",
+      "blocked": {
+        "results": [
+          [
+            "openModes",
+            false
+          ],
+          [
+            "startArcade",
+            false
+          ],
+          [
+            "openR34",
+            false
+          ],
+          [
+            "startR34",
+            false
+          ],
+          [
+            "openMemories",
+            false
+          ],
+          [
+            "startOrigin",
+            false
+          ],
+          [
+            "startHero",
+            false
+          ],
+          [
+            "openCollection",
+            false
+          ],
+          [
+            "startSelected",
+            false
+          ],
+          [
+            "startSquare",
+            false
+          ]
+        ],
+        "unchanged": true
+      },
+      "levels": [
+        "intense",
+        "calm",
+        "balanced"
+      ],
+      "errors": []
+    }
+  ]
+}

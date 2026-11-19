@@ -8,6 +8,6 @@ test('shipping edition has one campaign and blocks prototype entry before any mu
  assert.equal(JSON.stringify(h.app.getState()),before);assert.equal(h.data.get('quad-rift-hd-r4'),bytes);assert.deepEqual(Object.keys(h.ctx.MONGYU_EMBEDDED_IMAGES),[]);
 });
 test('campaign settings, wardrobe and home cannot restore the retired menu during a real run',()=>{
- const h=boot();h.click('titleContinue');h.click('restorationSceneNext');h.click('restorationSceneNext');h.click('restorationStart');h.click('pause');const r=h.app.activeRun(),before=r.exportSave?.();hidden(h);
+ const h=boot();h.click('titleContinue');h.click('restorationSceneNext');h.click('restorationSceneNext');h.click('pause');const r=h.app.activeRun(),before=r.exportSave?.();hidden(h);
  h.click('pauseOptions');hidden(h);h.click('dreamIntensity');h.click('close');assert.equal(r.state,'pause');assert.equal(h.app.activeRun(),r);hidden(h);h.click('pauseHome');hidden(h);h.click('shopOpen');assert.equal(h.app.getState().dialog,'wardrobePanel');h.click('wardrobeClose');hidden(h);
 });
