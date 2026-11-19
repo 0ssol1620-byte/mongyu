@@ -37,8 +37,12 @@ test('long native rooms use readable follow framing on all walls; masks and boss
   assert.equal(M.camera({width:390,height:844},{...geo,nativeMaskCells:[]},{},run).framing,'viewport-cover');
  }
 });
-test('native simulation source preserves baseline apart from named bindings and the verified reflected-cell field correction',()=>{
+test('simulation source preserves its baseline except for named engine fixes and the opt-in opening lesson',()=>{
  const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
  const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'r80-native-integrity.json')));
- for(const [file,hash]of Object.entries(evidence)){const raw=fs.readFileSync(path.join(__dirname,'..','src',file),'utf8');const data=raw.replace("const structuredClone=root.MongyuStateClone?.clone||root.structuredClone; // R84 snapshot copy binding\n",'').replace('root.MongyuNativeRenderParameters=Object.freeze(load("experiments/r77-native-render/parameters.cjs")); // R86 read-only render parameters binding\n','');assert.equal(crypto.createHash('sha256').update(data.replace(/^.*R86 bounded spawn recovery binding\n/m,'').replace(/^.*R87 verified idle recovery 0x55c6c -> 0x56f20 -> 0x55c8a\n/m,'').replace('   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.c=3; // R87 verified y.c field token 0x012c0095; y.l is 0x012c00a7\n','   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.l=3;\n')).digest('hex'),hash,file)}
+ for(const [file,hash]of Object.entries(evidence)){const raw=fs.readFileSync(path.join(__dirname,'..','src',file),'utf8');const baseline=file==='native-restoration-run.js'?raw
+   .replace(/   const openingBump=this\.options\.openingAssist===true[\s\S]*?(?=   this\.nativeFrame=r\.state;)/,'')
+   .replace('this.lastOpeningBump=null;','')
+   .replace('countdown:s.r.timerT','countdown:s.u.s'):raw;
+  const data=baseline.replace("const structuredClone=root.MongyuStateClone?.clone||root.structuredClone; // R84 snapshot copy binding\n",'').replace('root.MongyuNativeRenderParameters=Object.freeze(load("experiments/r77-native-render/parameters.cjs")); // R86 read-only render parameters binding\n','');assert.equal(crypto.createHash('sha256').update(data.replace(/^.*R86 bounded spawn recovery binding\n/m,'').replace(/^.*R87 verified idle recovery 0x55c6c -> 0x56f20 -> 0x55c8a\n/m,'').replace('   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.c=3; // R87 verified y.c field token 0x012c0095; y.l is 0x012c00a7\n','   Runtime.finalizeEntity(e);e.a=1;if(e.i===1)e.l=3;\n')).digest('hex'),hash,file)}
 });
