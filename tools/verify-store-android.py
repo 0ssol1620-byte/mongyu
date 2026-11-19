@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Smoke test the bundle-derived APK through the Android accessibility tree."""
+from http.client import HTTPConnection, HTTPException
 from pathlib import Path
 import json
 import re
@@ -62,16 +63,32 @@ def main(apk):
     wait_for_label('다시 달리기', tap=True)
     wait_for_label('일시정지 · 메뉴')
     pid = adb('shell', 'pidof', PACKAGE)
-    sockets = adb('shell', 'cat', '/proc/net/unix')
-    if not pid or 'webview_devtools_remote_' + pid in sockets:
-        raise RuntimeError('The game process is missing or exposes a debugger.')
+    if not pid or adb('shell', 'getprop', 'ro.build.type') != 'user':
+        raise RuntimeError('Expected a running game on a Play Store user image.')
+    flags = adb('shell', 'dumpsys', 'package', PACKAGE)
+    if re.search(r'\bDEBUGGABLE\b', flags):
+        raise RuntimeError('The installed package is debuggable.')
+    port = adb('forward', 'tcp:0', 'localabstract:webview_devtools_remote_' + pid)
+    try:
+        connection = HTTPConnection('127.0.0.1', int(port), timeout=3)
+        try:
+            connection.request('GET', '/json/list')
+            exposed = connection.getresponse().status == 200
+        except (OSError, HTTPException):
+            exposed = False
+        finally:
+            connection.close()
+    finally:
+        adb('forward', '--remove', 'tcp:' + port)
+    if exposed:
+        raise RuntimeError('The game WebView exposes a DevTools endpoint.')
     with (OUTPUT / 'first-run.png').open('wb') as screenshot:
         subprocess.run(['adb', 'exec-out', 'screencap', '-p'], stdout=screenshot, check=True, timeout=20)
     report = {'package': PACKAGE, 'source': 'bundle-derived APK with temporary QA key',
               'testedLabels': ['꿈속으로', '계속', '첫 달리기 시작', '일시정지 · 메뉴'],
               'idleLessonRequiresJump': True,
               'androidApi': int(adb('shell', 'getprop', 'ro.build.version.sdk')),
-              'webViewDebugSocket': False, 'physicalDevice': False, 'passed': True}
+              'androidBuildType': 'user', 'webViewDevToolsAccessible': False, 'physicalDevice': False, 'passed': True}
     (OUTPUT / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     print(json.dumps(report, ensure_ascii=False))
 
