@@ -1,0 +1,8 @@
+{
+  "scope": "Fresh R96 browser profile. Idle timer then real touchscreen taps, no state injection.",
+  "idleEarned": false,
+  "retryReachedNextStage": true,
+  "jumps": 12,
+  "taps": 32,
+  "errors": []
+}

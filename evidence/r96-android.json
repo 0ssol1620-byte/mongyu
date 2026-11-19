@@ -1,0 +1,47 @@
+{
+  "scope": "API35 emulator; actual R95 to R96 standalone upgrade with one ephemeral QA key. No original game file, progress injection or file import. Not physical handset certification.",
+  "checks": [
+    {
+      "name": "R95 baseline saved a selected outfit",
+      "passed": true
+    },
+    {
+      "name": "R96 update retains the existing wardrobe and opens without a file prompt",
+      "passed": true
+    },
+    {
+      "name": "no supplied game file: story, campaign start, full-screen movement, touch and music",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      },
+      "music": {
+        "artist": "Eric Skiff",
+        "backend": "licensed-media",
+        "trackId": "chapter-02"
+      },
+      "passed": true
+    },
+    {
+      "name": "pause, native back and background freeze play until explicit resume",
+      "passed": true
+    },
+    {
+      "name": "cold relaunch retains legitimate story progress, outfit and R95 keys",
+      "collected": 1,
+      "passed": true
+    },
+    {
+      "name": "renderer recovery returns to playable title without losing private records",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/44438717281",
+  "testedCommit": "0049845b397a5596a5d408202c1f84734b0ed4e6"
+}

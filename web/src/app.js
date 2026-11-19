@@ -77,7 +77,11 @@ function syncNativeSquare(force=false){
  if(cache.hearts!==v.hearts){$('runLives').setAttribute('aria-label','남은 기회 '+v.hearts+'번');cache.hearts=v.hearts;}
  $('runGoal').hidden=!tracked;
  $('runLesson').hidden=!earningTutorial;
- if(earningTutorial)text('runLesson',Number.isFinite(run.lastOpeningBump)&&run.time-run.lastOpeningBump<2?'장애물보다 조금 먼저 탭':'첫 달리기');
+ if(earningTutorial){
+  const needsFirstJump=run.options.requireOpeningJump&&(!run.inputCount||!run.jumps);
+  const recentBump=Number.isFinite(run.lastOpeningBump)&&run.time-run.lastOpeningBump<2;
+  text('runLesson',recentBump?'장애물보다 조금 먼저 탭':needsFirstJump?'첫 점프 · 화면 탭':'첫 달리기');
+ }
  if(tracked&&cache.goalKey!==current+':'+objective.target){
   cache.goalKey=current+':'+objective.target;
   text('runGoalLabel',current>=objective.target?'목표 달성':current+' / '+objective.target+'점');

@@ -1,0 +1,16 @@
+{
+  "build": "R95",
+  "bundleSha256": "f2fc4677e9892cb45ca081272a568448a4f3a84db4084e8859f73523a11220f0",
+  "bundleBytes": 14320492,
+  "bundletoolVersion": "1.18.3",
+  "aapt2Version": "8.13.2-14304508",
+  "bundleValidated": true,
+  "apkGeneratedFromBundle": true,
+  "temporaryApkCertificateVerified": true,
+  "package": "org.quadrift.mongyu.preview.r82",
+  "assetSha256": "e1dd163f967658a1560cc19dbfd1e0c30f0d7a2a957c6e755a39e71d90d73b1c",
+  "deviceRun": false,
+  "bundleSigned": false,
+  "uploadedToPlay": false,
+  "debuggable": false
+}

@@ -26,3 +26,7 @@ ci/
 
 # Original-player assets are generated from web/original.
 android/app/src/main/assets/
+
+# Store app bundle output
+*.aab
+*.apks

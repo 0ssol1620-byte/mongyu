@@ -1,7 +1,7 @@
 """Build the offline R80 game. Assets are pinned, credits are bundled."""
 from pathlib import Path
 import base64, hashlib, json, argparse
-parser=argparse.ArgumentParser();parser.add_argument('--release',choices=['R92','R94','R95'],default='R92');release=parser.parse_args().release
+parser=argparse.ArgumentParser();parser.add_argument('--release',choices=['R92','R94','R95','R96'],default='R92');release=parser.parse_args().release
 p=Path(__file__).resolve().parent
 def digest(data): return hashlib.sha256(data).hexdigest()
 def asset(folder,item):

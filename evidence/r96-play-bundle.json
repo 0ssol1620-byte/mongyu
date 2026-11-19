@@ -1,0 +1,24 @@
+{
+  "package": "org.quadrift.mongyu.preview.r82",
+  "source": "bundle-derived APK with temporary QA key",
+  "testedLabels": [
+    "꿈속으로",
+    "계속",
+    "첫 달리기 시작",
+    "일시정지 · 메뉴"
+  ],
+  "idleLessonRequiresJump": true,
+  "androidApi": 35,
+  "androidBuildType": "user",
+  "webViewDevToolsAccessible": false,
+  "physicalDevice": false,
+  "passed": true,
+  "bundle": "MONGYU_R96_PLAY_TEST_UNSIGNED.aab",
+  "bytes": 14320635,
+  "sha256": "19ae2312cfc499326f33cb0e8510bfaa87247d3c0a9101a3ad0c16cb0e2149b9",
+  "assetSha256": "9f2a5ad2c777158ea83c9a18ecc16471854b372394c117d989cdf6fd9950332b",
+  "runUrl": "https://github.com/0ssol1620-byte/mongyu/actions/runs/44439148492",
+  "testedCommit": "ef8775b818dd661e226328dbbb79d4e3d03d984e",
+  "bundleSigned": false,
+  "uploadedToPlay": false
+}

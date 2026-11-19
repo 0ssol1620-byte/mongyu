@@ -1,0 +1,64 @@
+name: Play bundle smoke test
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/r95-play-store-readiness]
+    paths:
+      - android/build-store-bundle.py
+      - tools/verify-store-android.py
+      - .github/workflows/android-store-candidate.yml
+      - android/app/src/main/**
+      - web/**
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Prepare pinned bundle tools
+        run: |
+          mkdir -p ci/store-tools
+          curl --fail --location --retry 2 -o ci/store-tools/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar
+          curl --fail --location --retry 2 -o ci/store-tools/aapt2.jar https://dl.google.com/dl/android/maven2/com/android/tools/build/aapt2/8.13.2-14304508/aapt2-8.13.2-14304508-linux.jar
+          unzip -p ci/store-tools/aapt2.jar aapt2 > ci/store-tools/aapt2
+          chmod +x ci/store-tools/aapt2
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Build unsigned bundle and disposable APK
+        run: |
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          python3 scripts/build-playable.py
+          python3 android/build-store-bundle.py --aapt2 ci/store-tools/aapt2 --bundletool ci/store-tools/bundletool.jar --output ci/candidate.aab
+          keytool -genkeypair -keystore "$RUNNER_TEMP/mongyu-qa.jks" -alias qa -storepass qa-test-only -keypass qa-test-only -keyalg RSA -validity 2 -dname 'CN=Disposable Bundle QA'
+          java -jar ci/store-tools/bundletool.jar build-apks --bundle=ci/candidate.aab --output=ci/candidate.apks --mode=universal --ks="$RUNNER_TEMP/mongyu-qa.jks" --ks-pass=pass:qa-test-only --ks-key-alias=qa --key-pass=pass:qa-test-only
+          unzip -p ci/candidate.apks universal.apk > ci/store-qa.apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis_playstore
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -no-snapshot -no-audio -gpu swiftshader_indirect -no-boot-anim -camera-back none -camera-front none -memory 3072 -cores 4
+          script: python3 tools/verify-store-android.py ci/store-qa.apk
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: verified-unsigned-play-candidate
+          path: |
+            ci/candidate.aab
+            ci/store-device/
