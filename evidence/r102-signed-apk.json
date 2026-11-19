@@ -1,0 +1,29 @@
+{
+  "release": "R102",
+  "apk": "MONGYU_R102_ANDROID.apk",
+  "bytes": 14795292,
+  "sha256": "4f86f97a4f628ab17c28c7eeeac587279a2aa2a7b53796af5c166f50198d1c78",
+  "applicationId": "org.quadrift.mongyu.preview.r82",
+  "versionCode": 102,
+  "minAndroid": "8.0 (API 26)",
+  "targetSdk": 36,
+  "signed": true,
+  "signatureVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=MONGYU Preview, O=MONGYU\nSigner #1 certificate SHA-256 digest: 77897ae16ffcedcc3ebb530486065b8533fbeace11b92193795d1430035b4c8f\nSigner #1 certificate SHA-1 digest: 0eda45e7d5995134a8bb68f3fedf11d507ebf8be\nSigner #1 certificate MD5 digest: 5f34116200c2a0d70e7970d9ca34eada\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: a2da20fc8fb1e85b5b56faa2c0727f9e05c43cdade35f9d28001dba853427f41\nSigner #1 public key SHA-1 digest: 3981bcf20a012dc4f5c154c1f452eda3a54653b7\nSigner #1 public key MD5 digest: 0d3dffc1c4d262233afbaa28579e46ba\n",
+  "zipAlignmentVerified": true,
+  "zipIntegrityVerified": true,
+  "permissions": [],
+  "commercialOriginalPayloadIncluded": false,
+  "requiresUserOriginalFile": false,
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 20750491,
+      "sha256": "2ac8d332891d30cdd96d7234dc0d60864dad6c7d97b206a577f176efde61374e"
+    }
+  ],
+  "finalSignedDirectDeviceInstall": false,
+  "storeRelease": false,
+  "androidQaRun": 44535910426,
+  "testedUnsignedSha256": "f1cb9207e02c43d98aeef97ce00f6bf77ae094466b19c03f3882d43c66e8c15a",
+  "testedPayloadMatchesSigned": true
+}
