@@ -1,0 +1,46 @@
+{
+  "scope": "Chromium touch events with portrait and landscape captures. Reduced-motion frame equality and first course clear.",
+  "checks": [
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "screens": [
+        "lobby",
+        "map",
+        "wardrobe",
+        "journal",
+        "settings",
+        "story",
+        "pause",
+        "result"
+      ],
+      "intensityModes": 3,
+      "frozenLobbyUnderReducedMotion": true,
+      "firstCourseCleared": true,
+      "nextSlot": 3
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "screens": [
+        "lobby",
+        "map",
+        "wardrobe",
+        "journal",
+        "settings",
+        "story",
+        "pause",
+        "result"
+      ],
+      "intensityModes": 3,
+      "frozenLobbyUnderReducedMotion": true,
+      "firstCourseCleared": true,
+      "nextSlot": 3
+    }
+  ],
+  "errors": []
+}

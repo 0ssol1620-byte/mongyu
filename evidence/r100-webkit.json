@@ -1,0 +1,34 @@
+{
+  "url": "http://127.0.0.1:4173/",
+  "scope": "Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.",
+  "viewport": {
+    "width": 390,
+    "height": 664,
+    "x": 0,
+    "y": 0,
+    "screenWidth": 390,
+    "screenHeight": 664
+  },
+  "speakers": [
+    "빛이 벽 너머로 갔어. 따라가 보자.",
+    "저 빛을 따라가 볼까?"
+  ],
+  "tracks": [
+    {
+      "id": "opening-floor",
+      "playing": true
+    },
+    {
+      "id": "opening-wall",
+      "playing": true
+    },
+    {
+      "id": "opening-ceiling",
+      "playing": true
+    }
+  ],
+  "clearedObstacles": 6,
+  "nextStage": 3,
+  "saveSurvivesReload": true,
+  "errors": []
+}
