@@ -20,13 +20,16 @@ function load(storage){
  catch(e){return {ok:false,save:empty(),readOnly:true,reason:'read-failed'}}
 }
 function get(save,key){const v=save?.records?.[key];return v?{...v}:{bestScore:0,bestChain:0,attemptCount:0,clearCount:0}}
-function validResult(key,r){return validKey(key)&&object(r)&&r.mode==='restoration'&&r.completed===true&&['clear','fail'].includes(r.state)&&integer(r.score,2000000)&&integer(r.bestCombo,100000)&&typeof r.time==='number'&&Number.isFinite(r.time)&&r.time>0&&r.time<=36000&&(key==='freeplay'?r.freePlay===true:r.freePlay!==true&&r.practice!==true&&r.slotId===key)}
+function resultChain(result){
+ return result?.runVersion===77&&result.nativeRuntime===true?0:result?.bestCombo;
+}
+function validResult(key,r){return validKey(key)&&object(r)&&r.mode==='restoration'&&r.completed===true&&['clear','fail'].includes(r.state)&&integer(r.score,2000000)&&integer(resultChain(r),100000)&&typeof r.time==='number'&&Number.isFinite(r.time)&&r.time>0&&r.time<=36000&&(key==='freeplay'?r.freePlay===true:r.freePlay!==true&&r.practice!==true&&r.slotId===key)}
 function record(storage,key,result,receipt){
  const current=load(storage);if(!current.ok)return current;
  if(!stamp(receipt)||!validResult(key,result))return {...current,ok:false,reason:'invalid-result'};
  if(current.save.receipts.includes(receipt))return {...current,duplicate:true};
  const save={schema:1,records:{...current.save.records},receipts:current.save.receipts.slice()},old=get(save,key);
- save.records[key]={bestScore:Math.max(old.bestScore,result.score),bestChain:Math.max(old.bestChain,result.bestCombo),attemptCount:Math.min(MAX,old.attemptCount+1),clearCount:Math.min(MAX,old.clearCount+(result.state==='clear'?1:0))};
+ save.records[key]={bestScore:Math.max(old.bestScore,result.score),bestChain:Math.max(old.bestChain,resultChain(result)),attemptCount:Math.min(MAX,old.attemptCount+1),clearCount:Math.min(MAX,old.clearCount+(result.state==='clear'?1:0))};
  save.receipts=[...save.receipts,receipt].slice(-32);
  const text=JSON.stringify(save);if(text.length>LIMIT)return {...current,ok:false,reason:'size'};
  try{storage.setItem(KEY,text);if(storage.getItem(KEY)!==text)return {...current,ok:false,reason:'verify-failed'};return {ok:true,save,readOnly:false,reason:''};}

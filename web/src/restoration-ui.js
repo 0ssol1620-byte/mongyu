@@ -67,7 +67,7 @@ function mount(host){
  function ticketKind(slot){return {story:'S',boss:'B',character:'E',call:'?',interlude:'?'}[slot.rule.type]||''}
  function page(){return Math.floor((selected.number-1)/10)}
  function localRecord(key){return M?.get(mastery.save,key)||{bestScore:0,bestChain:0,attemptCount:0,clearCount:0}}
- function recordText(key){const v=localRecord(key);return v.attemptCount?'최고 '+v.bestScore+'점 · 연속 '+v.bestChain+' · 완주 '+v.clearCount+'회':''}
+ function recordText(key){const v=localRecord(key);return v.attemptCount?['최고 '+v.bestScore+'점',v.bestChain?'연속 '+v.bestChain:'','완주 '+v.clearCount+'회'].filter(Boolean).join(' · '):''}
  function focusSlot(){buttons[selected.number-1]?.focus({preventScroll:true})}
  function select(id,focus=false){const slot=C.getSlot(id);if(!slot)return false;if(slot.id!==selected.id){settingValue=false;settingTouched=false;award=''}selected=slot;render();if(focus)focusSlot();return true}
  function render(){
@@ -327,6 +327,7 @@ function mount(host){
  function syncTitle(title){$('restorationOpen').hidden=!title;if($('storyOpen'))$('storyOpen').hidden=!title;$('modeRestoration').hidden=false;$('modeSquare').hidden=false;if(title){text('titleContinue',summary().collected?'꿈 이어가기':'꿈속으로');text('restorationOpen','꿈 지도  ·  '+summary().collected+' / 100')}}
  function retry(event){if(activeRun?.deathAnimation&&!activeRun.deathAnimation.completed)return false;
   if(!activeSlot)return continueJourney(event);
+  revealPending();
   selected=activeSlot;settingValue=activeRun?.options.settingValue??activeConfig?.settingValue;settingTouched=!!activeConfig?.settingTouched;
   const config={...activeConfig,period:activeRun?.options.period||activeConfig?.period,characterId:activeRun?.options.characterId||activeConfig?.characterId,settingValue,settingTouched};
   if(config.freePlay){qualified=false;award='';return launch(event,config)}return start(event,activeSlot.id,{retry:true,config});
