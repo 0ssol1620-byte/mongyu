@@ -1,0 +1,64 @@
+{
+  "scope": "Chromium touch flow in the shipped R98 HTML, including actual media and sample start calls.",
+  "errors": [],
+  "idle": {
+    "feet": [
+      [
+        -3,
+        -1
+      ],
+      [
+        3,
+        -1
+      ]
+    ],
+    "laterFeet": [
+      [
+        -3,
+        -1
+      ],
+      [
+        3,
+        -1
+      ]
+    ],
+    "shoulderMoves": true,
+    "reduced": true
+  },
+  "menuTracks": [
+    "Dreams Become Real",
+    "Music for Manatees"
+  ],
+  "speechPanel": {
+    "tail": "block",
+    "gap": 30.464965277777765
+  },
+  "fieldDialogue": "저 빛을 따라가 볼까?",
+  "recordings": [
+    "opening-floor",
+    "opening-floor",
+    "opening-wall",
+    "opening-wall",
+    "opening-ceiling",
+    "opening-ceiling"
+  ],
+  "sampleStarts": {
+    "jump": 6,
+    "land": 6,
+    "square-corner": 2,
+    "hit": 1,
+    "pass": 0,
+    "chain": 6,
+    "deflect": 0,
+    "start": 0,
+    "scene-line": 1,
+    "result-clear": 1
+  },
+  "clear": {
+    "course": "folded-light",
+    "passed": 6,
+    "clean": 6,
+    "distance": 1180
+  },
+  "savedProgress": true
+}

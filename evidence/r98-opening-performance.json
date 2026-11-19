@@ -1,0 +1,39 @@
+{
+  "scope": "Chromium 390×844, requested DPR 2.75, new opening only. rAF frame intervals, not touch-to-pixel latency or physical handset measurements.",
+  "results": [
+    {
+      "cpu": 1,
+      "frames": 572,
+      "state": "clear",
+      "passes": 6,
+      "p50FrameMs": 16.7,
+      "p95FrameMs": 16.8,
+      "over50Ms": 1,
+      "tracks": [
+        "opening-floor",
+        "opening-floor",
+        "opening-wall",
+        "opening-wall",
+        "opening-ceiling",
+        "opening-ceiling"
+      ]
+    },
+    {
+      "cpu": 3,
+      "frames": 507,
+      "state": "clear",
+      "passes": 6,
+      "p50FrameMs": 16.7,
+      "p95FrameMs": 33.3,
+      "over50Ms": 7,
+      "tracks": [
+        "opening-floor",
+        "opening-floor",
+        "opening-wall",
+        "opening-wall",
+        "opening-ceiling",
+        "opening-ceiling"
+      ]
+    }
+  ]
+}
