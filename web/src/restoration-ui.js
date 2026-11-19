@@ -53,7 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
- const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
+ const dreamEdition=root.MONGYU_DREAM_EDITION===true;
  const openingEnabled=(dreamEdition||root.MONGYU_PLAYABLE_RELEASE==='R97')&&!!root.MongyuOpening;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];

@@ -11,7 +11,7 @@ const profiles=Object.freeze(Object.fromEntries([
 function describe(run){
  if(run?.openingCourse){
   const profile=[profiles.memory,profiles.mirror,profiles.stream][run.mapChanges]||profiles.memory;
-  if(root.MONGYU_PLAYABLE_RELEASE==='R98')return {...profile,recordingId:(['opening-floor','opening-wall','opening-ceiling'][run.mapChanges]||'opening-floor')};
+  if(root.MONGYU_DREAM_EDITION===true)return {...profile,recordingId:(['opening-floor','opening-wall','opening-ceiling'][run.mapChanges]||'opening-floor')};
   return profile;
  }
  const s=run?.nativeFrame;if(!s)return profiles[run?.boss?'boss':'memory'];

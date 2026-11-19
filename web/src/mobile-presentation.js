@@ -9,7 +9,7 @@ const looks=Object.freeze([
  ['dusk','저녁별',40,'#dfb9cf','#edcd88','star'],['frost','서리',60,'#d6e8f5','#92d4e6','comet'],
  ['eclipse','일식',80,'#ad9dba','#f5bc65','star'],['dawn','새벽',100,'#fff1c7','#ffd47d','star']
 ].map(([id,name,at,body,accent,detail])=>Object.freeze({id,name,at,body,accent,detail})));
-const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
+const dreamEdition=root.MONGYU_DREAM_EDITION===true;
 let selected='moon',saved=true,progress=()=>0,lastWall=null,motion=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function count(n){return Number.isSafeInteger(n)?clamp(n,0,100):0}

@@ -1,0 +1,30 @@
+name: iPhone browser QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/r99-safari]
+    paths-ignore: ['docs/**', 'evidence/**', 'README.md']
+permissions:
+  contents: read
+jobs:
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps webkit
+      - run: python3 scripts/build-pages.py ci/pages
+      - name: Verify Safari engine, touches, dialogue and storage
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory ci/pages &
+          server=$!
+          trap 'kill "$server"' EXIT
+          node tools/verify-r99-safari.cjs http://127.0.0.1:4173/ ci/webkit-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r99-safari-evidence
+          path: ci/webkit-report.json

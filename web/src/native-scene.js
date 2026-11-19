@@ -132,6 +132,33 @@ function fieldClock(run,opt){
  const time=Number.isFinite(opt.presentationTime)?opt.presentationTime:(run.time||0)+Math.max(0,Math.min(run.stepMs||75,run.remainder||0))/1000;
  fieldClocks.set(run,{attempt:run.attempt,time});return time;
 }
+const notices=new WeakMap();
+function noticeText(code){
+ if(code===256)return '최고 기록과 같아졌어!';
+ if(code===257)return '목표를 채웠어!';
+ if(code>=0&&code<30)return '새 길이 열렸어.';
+ if(code>=45&&code<75)return '길이 또 바뀌었어.';
+ if(code>=75&&code<90)return '이 길 끝엔 뭐가 있을까?';
+ return '';
+}
+function speech(run,scene,player,cam,M){
+ if(run.state!=='play'||scene.split||scene.transition||[13,16].includes(player.nativeState))return null;
+ const latest=notices.get(run),remaining=scene.phase==='notification'?scene.notification:0;
+ let notice=latest?.attempt===run.attempt?latest:null;
+ if(remaining>0&&(!notice||notice.code!==scene.notificationCode||remaining>notice.remaining)){
+  const text=noticeText(scene.notificationCode);
+  notice={attempt:run.attempt,code:scene.notificationCode,text,until:run.time+1.65,remaining};
+  notices.set(run,notice);
+ }
+ if(!notice)return null;
+ notice.remaining=remaining;
+ if(!notice.text||run.time>=notice.until)return null;
+ const basis=M.actorBasis(player),height=player.bodyHeight||42.5;
+ const x=(player.x+basis.nx*height*.5)*cam.scale+cam.offsetX;
+ const top=Math.min(player.y,player.y+basis.ny*height);
+ return {text:notice.text,x:clamp(x,94,Math.max(94,cam.width-94)),
+  y:clamp(top*cam.scale+cam.offsetY-12,90,Math.max(90,cam.height-80))};
+}
 function draw(c,run,opt,geo){
  const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=scenePalette(scene.palette),special=scene.split||geo.boss;
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
@@ -150,10 +177,10 @@ function draw(c,run,opt,geo){
   const visible=scene.groups.some(g=>g.actors.some(a=>a.role==='current-actor'));
   if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);
   if(visible||scene.groups.length===0){
-   const player=root.MONGYU_PLAYABLE_RELEASE==='R98'&&scene.phase==='countdown'?{...geo.player,pose:'stand'}:geo.player;
+   const player=root.MONGYU_DREAM_EDITION===true&&scene.phase==='countdown'?{...geo.player,pose:'stand'}:geo.player;
    M.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
   }
-  if(scene.phase==='notification'){
+  if(root.MONGYU_PLAYABLE_RELEASE!=='R99'&&scene.phase==='notification'){
    const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=p[1];c.fillText('…',x,y-2);c.restore();
   }
  }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
@@ -167,7 +194,7 @@ function draw(c,run,opt,geo){
   c.fillText(String(Math.ceil(scene.countdown/10)),0,-6);
   c.font='600 11px system-ui';c.fillText('곧 달리기 시작',0,18);c.restore();
  }
- return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1};
+ return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:root.MONGYU_PLAYABLE_RELEASE==='R99'?speech(run,scene,player,cam,M):null};
 }
 const api={snapshot,geometry,overview,point,tileBounds,scenePalette,cellStyle,tile,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

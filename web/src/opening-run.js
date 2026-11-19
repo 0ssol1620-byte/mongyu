@@ -1,6 +1,6 @@
 /* 몽유's authored opening route. Positions are arc lengths along the running surface. */
 (function(root){'use strict';
-const dreamEdition=root.MONGYU_PLAYABLE_RELEASE==='R98';
+const dreamEdition=root.MONGYU_DREAM_EDITION===true;
 const COURSE='folded-light',FINISH=1180,RADIUS=44,FLOOR=340,WALL=310,ARC=Math.PI*RADIUS/2;
 const WALL_START=FLOOR+ARC,CEILING_START=WALL_START+WALL+ARC;
 const SECTIONS=[
