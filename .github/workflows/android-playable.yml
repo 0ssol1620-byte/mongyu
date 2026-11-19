@@ -7,6 +7,16 @@ on:
 permissions:
   contents: read
 jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate standalone game
+        run: python3 scripts/test.py
   playable:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -23,8 +33,6 @@ jobs:
         with:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
-      - name: Validate standalone game
-        run: python3 scripts/test.py
       - name: Build actual R96 and current R97 with disposable certificate
         run: |
           git fetch --no-tags --depth=1 origin 77306b64ee8bcc34aaf099aaaa369a97e694d81f

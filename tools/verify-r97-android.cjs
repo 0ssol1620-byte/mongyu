@@ -75,33 +75,36 @@ async function dismissLauncherAnr(){
  },{once:true,capture:true})`);
  await tap('squareRetry');
  const retryMs=await evaluate('window.retryLatency');assert.ok(retryMs<500);
- const sectors=[],recordings=[],touches=[];
+ const touches=[];
  const point={x:coverage.width*.5,y:coverage.height*.3};
  for(let i=0;i<6;i++){
   const before=await evaluate(`new Promise(resolve=>{
    const watch=()=>{
     const r=QUAD_RIFT_APP.activeRun();
-    if(r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[${i}].at-54)return resolve({state:r.state,at:r.distance,jumps:r.jumps});
+    if(r.state!=='play'||r.distance>=MongyuOpening.OBSTACLES[${i}].at-55){
+     return resolve({state:r.state,at:r.distance,index:r.index,jumps:r.jumps,lastJump:r.lastJump,
+      sector:r.mapChanges,track:QUAD_RIFT_APP.musicView().trackId,crash:r.crash});
+    }
     requestAnimationFrame(watch);
    };
    requestAnimationFrame(watch);
   })`);
-  assert.equal(before.state,'play');
+  touches.push({obstacle:i+1,...before});
+  assert.equal(before.state,'play',JSON.stringify(touches));
+  assert.equal(before.index,i,JSON.stringify(touches));
+  assert.equal(before.jumps,i,JSON.stringify(touches));
   await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});
   await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-  const after=await waitFor(()=>evaluate(`(()=>{
-   const r=QUAD_RIFT_APP.activeRun();
-   return (r.index>${i}||r.state!=='play')&&{index:r.index,at:r.distance,jumps:r.jumps,lastJump:r.lastJump,crash:r.crash,state:r.state};
-  })()`),'obstacle '+(i+1),2500);
-  touches.push({obstacle:i+1,before,after});
-  assert.equal(after.index,i+1,JSON.stringify(touches.at(-1)));
-  assert.equal(after.jumps,before.jumps+1);
-  sectors.push(await evaluate('QUAD_RIFT_APP.activeRun().mapChanges'));
-  recordings.push(await evaluate('QUAD_RIFT_APP.musicView().trackId'));
  }
+ const sectors=touches.map(t=>t.sector),recordings=touches.map(t=>t.track);
  assert.deepEqual(sectors,[0,0,1,1,2,2]);
  assert.ok(new Set(recordings.filter(Boolean)).size>=2,'section soundtracks');
- await waitFor(()=>evaluate('QUAD_RIFT_APP.activeRun().state==="clear"'),'light gate');
+ const terminal=await waitFor(()=>evaluate(`(()=>{
+  const r=QUAD_RIFT_APP.activeRun();
+  return r.state!=='play'&&{state:r.state,index:r.index,jumps:r.jumps,at:r.distance,lastJump:r.lastJump,crash:r.crash};
+ })()`),'light gate');
+ assert.equal(terminal.state,'clear',JSON.stringify({touches,terminal}));
+ assert.equal(terminal.jumps,6);
  await screenshot('opening-clear');
  assert.equal(await evaluate('QUAD_RIFT_APP.activeRun().result.openingProof.passed'),6);
  await tap('squareNext');
