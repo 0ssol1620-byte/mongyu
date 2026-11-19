@@ -1,0 +1,371 @@
+{
+  "scope": "Deterministic input sampling of native stages, up to 52 ticks per stage. Not a full playthrough.",
+  "checked": [
+    {
+      "slot": 3,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 4,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 6,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 7,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 8,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 9,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 10,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 11,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 12,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 14,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 15,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 17,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 18,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 19,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 20,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 21,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 23,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 25,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 26,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 27,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 29,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 30,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 31,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 32,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 33,
+      "checkedFrames": 52,
+      "removedOverhangs": 49
+    },
+    {
+      "slot": 35,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 36,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 37,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 38,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 40,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 42,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 43,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 44,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 45,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 46,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 48,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 50,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 51,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 53,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 54,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 57,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 58,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 59,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 60,
+      "checkedFrames": 52,
+      "removedOverhangs": 416
+    },
+    {
+      "slot": 61,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 63,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 64,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 66,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 67,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 68,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 70,
+      "checkedFrames": 52,
+      "removedOverhangs": 39
+    },
+    {
+      "slot": 71,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 72,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 74,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 75,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 76,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 77,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 78,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 79,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 82,
+      "checkedFrames": 52,
+      "removedOverhangs": 208
+    },
+    {
+      "slot": 83,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 85,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 86,
+      "checkedFrames": 52,
+      "removedOverhangs": 42
+    },
+    {
+      "slot": 88,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 89,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 90,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 91,
+      "checkedFrames": 52,
+      "removedOverhangs": 61
+    },
+    {
+      "slot": 93,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 94,
+      "checkedFrames": 52,
+      "removedOverhangs": 2
+    },
+    {
+      "slot": 95,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 97,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    },
+    {
+      "slot": 98,
+      "checkedFrames": 52,
+      "removedOverhangs": 62
+    },
+    {
+      "slot": 99,
+      "checkedFrames": 52,
+      "removedOverhangs": 0
+    }
+  ],
+  "unsupported": []
+}

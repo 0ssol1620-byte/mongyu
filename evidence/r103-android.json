@@ -1,0 +1,201 @@
+{
+  "scope": "API35 emulator; actual R102 to R103 standalone upgrade with one ephemeral QA key. No original game file, progress injection or file import. Not physical handset certification.",
+  "checks": [
+    {
+      "name": "R102 baseline saved a selected outfit",
+      "passed": true
+    },
+    {
+      "name": "R103 update retains the existing wardrobe and opens without a file prompt",
+      "passed": true
+    },
+    {
+      "name": "Dream route exposes ten tappable destinations, handles a locked stage and jumps back to the next memory",
+      "passed": true
+    },
+    {
+      "name": "Collision result keeps the stage visible with six shard slots, a compact retry marker and three top-edge commands",
+      "passed": true
+    },
+    {
+      "name": "standalone opening with full-screen surface, idle collision, quick retry, six genuine taps and next memory",
+      "coverage": {
+        "x": 0,
+        "y": 0,
+        "width": 412.19049072265625,
+        "height": 915.047607421875,
+        "screenWidth": 412,
+        "screenHeight": 915
+      },
+      "retryMs": 20.80000000000291,
+      "sectors": [
+        0,
+        0,
+        1,
+        1,
+        2,
+        2
+      ],
+      "recordings": [
+        "opening-floor",
+        "opening-floor",
+        "opening-wall",
+        "opening-wall",
+        "opening-ceiling",
+        "opening-ceiling"
+      ],
+      "touches": [
+        {
+          "obstacle": 1,
+          "state": "play",
+          "at": 98.61666666666659,
+          "index": 0,
+          "jumps": 0,
+          "lastJump": null,
+          "sector": 0,
+          "track": "opening-floor"
+        },
+        {
+          "obstacle": 2,
+          "state": "play",
+          "at": 225.70000000000118,
+          "index": 1,
+          "jumps": 1,
+          "lastJump": 123.01666666666657,
+          "sector": 0,
+          "track": "opening-floor"
+        },
+        {
+          "obstacle": 3,
+          "state": "play",
+          "at": 472.74999999999835,
+          "index": 2,
+          "jumps": 2,
+          "lastJump": 250.1000000000015,
+          "sector": 1,
+          "track": "opening-wall"
+        },
+        {
+          "obstacle": 4,
+          "state": "play",
+          "at": 583.5666666666634,
+          "index": 3,
+          "jumps": 3,
+          "lastJump": 499.1833333333313,
+          "sector": 1,
+          "track": "opening-wall"
+        },
+        {
+          "obstacle": 5,
+          "state": "play",
+          "at": 873.3166666666591,
+          "index": 4,
+          "jumps": 4,
+          "lastJump": 602.8833333333298,
+          "sector": 2,
+          "track": "opening-ceiling"
+        },
+        {
+          "obstacle": 6,
+          "state": "play",
+          "at": 1004.4666666666571,
+          "index": 5,
+          "jumps": 5,
+          "lastJump": 888.5666666666589,
+          "sector": 2,
+          "track": "opening-ceiling"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "pause, native back and background freeze play until explicit resume",
+      "passed": true
+    },
+    {
+      "name": "cold relaunch retains legitimate story progress, outfit and R102 keys",
+      "collected": 2,
+      "passed": true
+    },
+    {
+      "name": "renderer recovery returns to playable title without losing private records",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "touchAttempts": [
+    {
+      "lead": 64,
+      "touches": [
+        {
+          "obstacle": 1,
+          "state": "play",
+          "at": 98.61666666666659,
+          "index": 0,
+          "jumps": 0,
+          "lastJump": null,
+          "sector": 0,
+          "track": "opening-floor"
+        },
+        {
+          "obstacle": 2,
+          "state": "play",
+          "at": 225.70000000000118,
+          "index": 1,
+          "jumps": 1,
+          "lastJump": 123.01666666666657,
+          "sector": 0,
+          "track": "opening-floor"
+        },
+        {
+          "obstacle": 3,
+          "state": "play",
+          "at": 472.74999999999835,
+          "index": 2,
+          "jumps": 2,
+          "lastJump": 250.1000000000015,
+          "sector": 1,
+          "track": "opening-wall"
+        },
+        {
+          "obstacle": 4,
+          "state": "play",
+          "at": 583.5666666666634,
+          "index": 3,
+          "jumps": 3,
+          "lastJump": 499.1833333333313,
+          "sector": 1,
+          "track": "opening-wall"
+        },
+        {
+          "obstacle": 5,
+          "state": "play",
+          "at": 873.3166666666591,
+          "index": 4,
+          "jumps": 4,
+          "lastJump": 602.8833333333298,
+          "sector": 2,
+          "track": "opening-ceiling"
+        },
+        {
+          "obstacle": 6,
+          "state": "play",
+          "at": 1004.4666666666571,
+          "index": 5,
+          "jumps": 5,
+          "lastJump": 888.5666666666589,
+          "sector": 2,
+          "track": "opening-ceiling"
+        }
+      ],
+      "terminal": {
+        "state": "clear",
+        "index": 6,
+        "jumps": 6,
+        "at": 1180,
+        "lastJump": 1023.7833333333235
+      }
+    }
+  ],
+  "passed": true
+}
