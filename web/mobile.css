@@ -142,14 +142,14 @@ html[data-dream-edition=true] .top #options{background:#281d3a;color:#ffe9d5;bor
 html[data-dream-edition=true] #restorationScene[data-kind=opening]{
  grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;
 }
-html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{grid-area:2/1;align-self:center;z-index:1;transform:translateY(-clamp(60px,12vh,113px))}
-html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{bottom:-7px}
-html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/1;transform:translateY(22px)}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{grid-area:2/1;align-self:center;z-index:1;overflow:visible;transform:translateY(-clamp(121px,22vh,194px))}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{content:"";display:block;bottom:-7px;left:calc(50% - 9px)}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/1;transform:translateY(48px)}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] nav{grid-area:3/1}
 @media(min-aspect-ratio:115/100){
  html[data-dream-edition=true] #restorationScene[data-kind=opening]{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
  html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{transform:none}
- html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{top:47%;bottom:auto}
+ html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{top:47%;left:auto;right:-7px;bottom:auto}
  html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/2;transform:none}
  html[data-dream-edition=true] #restorationScene[data-kind=opening] nav{grid-column:1/-1}
 }
