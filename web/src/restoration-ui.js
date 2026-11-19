@@ -53,6 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
+ const routeEdition=root.MONGYU_ROUTE_EDITION===true;
  const dreamEdition=root.MONGYU_DREAM_EDITION===true;
  const openingEnabled=(dreamEdition||root.MONGYU_PLAYABLE_RELEASE==='R97')&&!!root.MongyuOpening;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
@@ -80,29 +81,42 @@ function mount(host){
  function render(){
   if(root.MONGYU_SPECTRAL_EDITION)text('restorationTitle','꿈 지도');
   const s=summary(),currentPage=page();text('restorationProgress',s.collected+' / 100');text('restorationPage',(currentPage+1)+' / 10');
-  for(const entry of C.collection(save)){
+  const entries=C.collection(save);
+  for(const entry of entries){
    const b=buttons[entry.number-1];if(!b)continue;
    const skin=skinJournal?.get(entry.number,entry.collected);if(skin!==null&&skin!==undefined&&b.dataset.skinPalette!==String(skin)){root.MongyuMapSkins.draw(b.skinPlate.getContext('2d'),skin);b.dataset.skinPalette=String(skin)}b.skinPlate.hidden=skin===null||skin===undefined;
    const chosen=entry.id===selected.id;b.hidden=Math.floor((entry.number-1)/10)!==currentPage;b.numberPlate.textContent=String(entry.number).padStart(3,'0');
    b.statePlate.textContent=entry.number===100&&entry.unlocked?(entry.collected?'감상 완료':'획득'):entry.collected?'찾음':entry.unlocked?'열림':'잠김';b.markPlate.textContent=entry.collected?'✓':entry.unlocked?(ticketKind(entry)||'→'):'×';
+   if(routeEdition){b.dataset.frontier=String(entry.number===s.nextSlot);b.dataset.kind=entry.kind;}
    b.dataset.collected=String(entry.collected);b.dataset.locked=String(!entry.unlocked);b.tabIndex=chosen?0:-1;b.setAttribute('aria-pressed',String(chosen));b.setAttribute('aria-label',entry.number+'. '+entry.title+'. '+(entry.number===100&&entry.unlocked?(entry.collected?'감상한 마지막 이야기':'획득한 마지막 이야기'):entry.collected?'찾은 기억':entry.unlocked?'열린 기억':'잠긴 기억'));
   }
   $('restorationPagePrev').disabled=currentPage===0;$('restorationPageNext').disabled=currentPage===9;$('restorationRouteNext').disabled=!s.nextSlot;
+  if(routeEdition)$('restorationRouteNext').hidden=!s.nextSlot||selected.number===s.nextSlot;
   const opening=selected.number===2&&openingEnabled;
-  text('restorationSlotTitle',String(selected.number).padStart(3,'0')+' · '+(opening?'접힌 빛':selected.title));text('restorationKind',labels[selected.kind]||'기억');text('restorationInstruction',opening?'바닥, 벽, 천장에서 장애물을 넘어 빛 여섯 개를 모으세요.':selected.instruction);
+  text('restorationSlotTitle',(routeEdition?'':String(selected.number).padStart(3,'0')+' · ')+(opening?'접힌 빛':selected.title));text('restorationKind',labels[selected.kind]||'기억');text('restorationInstruction',opening?'바닥, 벽, 천장에서 장애물을 넘어 빛 여섯 개를 모으세요.':selected.instruction);
+  if(routeEdition){
+   $('restorationKind').hidden=true;
+   $('restorationInstruction').hidden=selected.number===1;
+  }
   const masteryText=opening?openingRecordText():recordText(selected.id);
   text('restorationMastery',masteryText);$('restorationMastery').hidden=!masteryText;
   $('restorationSettingNotice').hidden=selected.rule.type!=='setting';
   text('restorationSettingNotice',selected.rule.setting==='sound'?'시작 소리를 고를 수 있어요. 시작 후 설정에서 소리를 한 번 바꾸면 됩니다. 켜기: 음악 40%, 효과음 45%. 끝나면 원래 설정으로 돌아갑니다.':selected.rule.setting==='vibration'?'시작 후 설정에서 시각 진동을 한 번 바꾸면 됩니다. 점프·착지·충돌의 시각 신호이며 화면은 흔들리지 않습니다.':'시작 속도를 고를 수 있어요. 시작 후 설정에서 속도를 한 번 바꾸면 됩니다.');
   const objective=scoreProgress();text('restorationObjective',objective.target?'이 기억 '+objective.current+' / '+objective.target+'점':'');$('restorationObjective').hidden=!objective.target;
-  text('restorationLock',selected.number===100&&s.endingAcquired&&!s.endingViewed?'마지막 이야기를 얻었습니다. 끝까지 감상하면 자유 달리기가 열립니다.':C.lockReason(save,selected.id)||'지금 들어갈 수 있어요.');
+  const lock=selected.number===100&&s.endingAcquired&&!s.endingViewed?'마지막 이야기를 얻었습니다. 끝까지 감상하면 자유 달리기가 열립니다.':C.lockReason(save,selected.id);
+  text('restorationLock',lock||(routeEdition?'':'지금 들어갈 수 있어요.'));
+  if(routeEdition)$('restorationLock').hidden=!lock;
   const open=C.unlocked(save,selected.id)||s.finished,obtained=save.collected.includes(selected.id),isSetting=selected.rule.type==='setting';
   $('restorationStart').disabled=!open;$('restorationSetting').hidden=!isSetting;$('restorationSettingOff').hidden=!isSetting;
   const fast=selected.rule.setting==='speed',initialValue=settingTouched?settingValue:fast?'slow':selected.rule.setting==='vibration';text('restorationSetting',fast?'빠르게':'켜기');text('restorationSettingOff',fast?'느리게':'끄기');
   $('restorationSetting').setAttribute('aria-pressed',String(fast?initialValue==='fast':initialValue===true));
   $('restorationSettingOff').setAttribute('aria-pressed',String(fast?initialValue==='slow':initialValue===false));
-  text('restorationStart',selected.number===100&&s.endingAcquired?(s.endingViewed?'엔딩 다시 보기':'엔딩 보기'):obtained?'다시 들어가기':selected.traversal?'이 꿈 시작':'기억 만나기');
+  text('restorationStart',selected.number===100&&s.endingAcquired?(s.endingViewed?'엔딩 다시 보기':'엔딩 보기'):routeEdition?(!open?'잠긴 기억':selected.traversal?(obtained?'다시 달리기':'달리기'):'이야기 보기'):obtained?'다시 들어가기':selected.traversal?'이 꿈 시작':'기억 만나기');
   $('restorationClock').hidden=!selected.rule.period;$('restorationFree').disabled=!s.finished;text('restorationFree',s.finished?'자유롭게 달리기':'자유 달리기 · 엔딩 감상 후');
+  if(routeEdition){
+   $('restorationFree').hidden=!s.finished;
+   routeMap?.update({page:currentPage,entries:entries.slice(currentPage*10,currentPage*10+10),selected:selected.id,frontier:C.getSlot(s.nextSlot)?.id});
+  }
   text('restorationNotice',readOnly?'기존 기록은 보존합니다. 지금 진행은 이번 실행에만 남습니다.':!storageOK?'저장할 수 없어 이번 실행에만 남습니다.':award||'');
   const palette=root.MongyuSquareArt?.palettes,tone=palette?.[(selected.chapter-1)%palette.length]?.hot; if(tone)host.document.body.style.setProperty?.('--world-color',tone);
  }
@@ -386,7 +400,7 @@ function mount(host){
   for(const sequence of G.sequences){const slot=C.getSlot(sequence.slot),collected=save.collected.includes(slot.id),unlocked=collected||C.unlocked(save,slot.id);const b=host.document.createElement('button');b.id='story-page-'+slot.number;b.setAttribute('id',b.id);b.disabled=!unlocked;b.textContent=String(slot.number).padStart(3,'0')+' · '+(unlocked?slot.title:'아직 만나지 못한 이야기');b.onclick=e=>start(e,slot.id);list.appendChild(b);if(unlocked)journalButtons.push(b.id);}
   $('storyJournalClose').focus({preventScroll:true});
  }
- function syncTitle(title){$('restorationOpen').hidden=!title;if($('storyOpen'))$('storyOpen').hidden=!title;$('modeRestoration').hidden=false;$('modeSquare').hidden=false;if(title){text('titleContinue',summary().collected?'꿈 이어가기':'꿈속으로');text('restorationOpen','꿈 지도  ·  '+summary().collected+' / 100')}}
+ function syncTitle(title){$('restorationOpen').hidden=!title;if($('storyOpen'))$('storyOpen').hidden=!title;$('modeRestoration').hidden=false;$('modeSquare').hidden=false;if(title){text('titleContinue',summary().collected?'꿈 이어가기':'꿈속으로');text('restorationOpen',routeEdition?'꿈 지도':'꿈 지도  ·  '+summary().collected+' / 100')}}
  function retry(event){if(activeRun?.deathAnimation&&!activeRun.deathAnimation.completed)return false;
   if(!activeSlot)return continueJourney(event);
   revealPending();
@@ -396,7 +410,19 @@ function mount(host){
  }
  function startFree(event){if(!summary().finished)return false;selected=C.slots.find(slot=>slot.physical&&slot.rule.type==='tutorial')||C.slots.find(slot=>slot.physical);activeSlot=selected;award='';return launch(event,{...configFor(selected),freePlay:true,seed:Date.now()>>>0})}
  for(const slot of C.slots){const b=host.document.createElement('button');b.id='restoration-slot-'+slot.number;b.setAttribute('id',b.id);b.numberPlate=host.document.createElement('span');b.numberPlate.className='world-number';const kind=host.document.createElement('span');kind.className='world-kind';kind.textContent=ticketKind(slot);b.statePlate=host.document.createElement('span');b.statePlate.className='world-state';b.markPlate=host.document.createElement('span');b.markPlate.className='world-mark';b.markPlate.setAttribute('aria-hidden','true');b.skinPlate=host.document.createElement('canvas');b.skinPlate.width=b.skinPlate.height=32;b.skinPlate.className='map-skin-preview';b.skinPlate.setAttribute('aria-hidden','true');b.skinPlate.hidden=true;b.append(b.skinPlate,b.numberPlate,kind,b.statePlate,b.markPlate);b.onclick=()=>select(slot.id);$('restorationGrid').appendChild(b);buttons.push(b)}
- $('restorationGrid').addEventListener('keydown',event=>{const n=Number(event.target?.id?.replace('restoration-slot-',''));if(!n)return;const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-5,ArrowDown:5,PageUp:-10,PageDown:10}[event.code],target=event.code==='Home'?1:event.code==='End'?100:step?n+step:null;if(target!==null){event.preventDefault();select(Math.max(1,Math.min(100,target)),true)}});
+ const routeMap=routeEdition?root.MongyuDreamRouteArt?.mount($('restorationGrid'),buttons,host.document):null;
+ if(routeMap){
+  $('restorationTitle').after($('restorationProgress'));
+  text('restorationClose','×');
+  $('restorationClose').setAttribute('aria-label','꿈 지도 닫기');
+  text('restorationRouteNext','다음 기억 위치');
+ }
+ $('restorationGrid').addEventListener('keydown',event=>{
+  const n=Number(event.target?.id?.replace('restoration-slot-',''));if(!n)return;
+  const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-5,ArrowDown:5,PageUp:-10,PageDown:10}[event.code];
+  const target=event.code==='Home'?1:event.code==='End'?100:routeMap&&event.code.startsWith('Arrow')?routeMap.target(n,event.code):step?n+step:null;
+  if(target!==null){event.preventDefault();if(target!==n)select(Math.max(1,Math.min(100,target)),true)}
+ });
  $('restorationPagePrev').onclick=()=>select(Math.max(1,selected.number-10));$('restorationPageNext').onclick=()=>select(Math.min(100,selected.number+10));$('restorationRouteNext').onclick=()=>summary().nextSlot&&select(summary().nextSlot,true);
  $('restorationSetting').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'fast':true,e);$('restorationSettingOff').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'slow':false,e);
  if($('storyOpen'))$('storyOpen').onclick=openJournal;if($('storyJournalClose'))$('storyJournalClose').onclick=host.closeDialog;

@@ -14,5 +14,5 @@ out = args.destination.resolve()
 out.mkdir(parents=True, exist_ok=True)
 
 subprocess.run([sys.executable, 'scripts/build-playable.py'], cwd=ROOT, check=True)
-shutil.copyfile(ROOT / 'web/MONGYU_R100.html', out / 'index.html')
+shutil.copyfile(ROOT / 'web/MONGYU_R101.html', out / 'index.html')
 (out / '.nojekyll').touch()

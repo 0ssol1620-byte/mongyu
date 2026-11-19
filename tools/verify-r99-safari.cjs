@@ -1,6 +1,45 @@
 /* End-to-end WebKit check in an iPhone viewport. No simulation-state injection. */
 const {webkit,devices}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs');
+async function verifyDreamRoute(page){
+ const route='#restorationGrid';
+ await page.tap('#restorationOpen');
+ await page.waitForFunction(()=>document.querySelector('.dream-route-art').width>300);
+ const initial=page.viewportSize();
+ const layouts=[];
+ for(const viewport of [initial,{width:320,height:568},{width:667,height:375},initial]){
+  await page.setViewportSize(viewport);
+  const memo=await page.evaluate(async()=>{
+   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+   const map=document.querySelector('#restorationGrid'),bounds=map.getBoundingClientRect();
+   const buttons=[...map.querySelectorAll('button:not([hidden])')];
+   const rects=buttons.map(button=>button.getBoundingClientRect());
+   return {
+    width:innerWidth,height:innerHeight,count:buttons.length,
+    fits:rects.every(r=>r.width>=44&&r.height>=44&&r.left>=bounds.left&&r.right<=bounds.right&&r.top>=bounds.top&&r.bottom<=bounds.bottom),
+    overlaps:rects.some((a,i)=>rects.slice(i+1).some(b=>a.left<b.right&&b.left<a.right&&a.top<b.bottom&&b.top<a.bottom)),
+    tappable:rects.every((r,i)=>buttons[i].contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)))
+   };
+  });
+  assert.equal(memo.count,10);assert.ok(memo.fits&&memo.tappable&&!memo.overlaps,JSON.stringify(memo));
+  layouts.push(memo);
+ }
+ await page.tap('#restoration-slot-3');
+ assert.equal(await page.locator('#restorationStart').isDisabled(),true);
+ assert.match(await page.locator('#restorationLock').textContent(),/앞선/);
+ await page.tap('#restorationPageNext');
+ assert.equal(await page.locator(route+' button:not([hidden])').count(),10);
+ assert.equal(await page.locator('#restoration-slot-13').getAttribute('aria-pressed'),'true');
+ await page.tap('#restorationRouteNext');
+ assert.equal(await page.locator('#restoration-slot-1').getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('#restorationStart').textContent(),'이야기 보기');
+ await page.keyboard.press('ArrowRight');
+ assert.equal(await page.locator('#restoration-slot-2').getAttribute('aria-pressed'),'true');
+ await page.tap('#restorationRouteNext');
+ await page.tap('#restorationClose');
+ return layouts.slice(0,-1);
+}
+
 (async()=>{
  const browser=await webkit.launch();
  try{
@@ -10,6 +49,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs');
   const url=process.argv[2]||'http://127.0.0.1:4173/';
   await page.goto(url);
   assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.candidateVersion),process.env.MONGYU_TEST_RELEASE||'r99');
+  const dreamRoute=await page.evaluate(()=>MONGYU_ROUTE_EDITION)?await verifyDreamRoute(page):undefined;
   await page.tap('#titleContinue');
   const prologue=await page.locator('#restorationSceneText').textContent();
   assert.match(prologue,/빛이 벽 너머/);
@@ -36,7 +76,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs');
   await page.reload();
   assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.restoration.view().status.collected),2);
   assert.deepEqual(errors,[]);
-  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
+  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,dreamRoute,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
   if(process.argv[3])fs.writeFileSync(process.argv[3],JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report));
  }finally{await browser.close()}
