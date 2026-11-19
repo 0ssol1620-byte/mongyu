@@ -131,6 +131,7 @@ html[data-dream-edition=true] #restorationScene[data-kind=opening]{background:ra
 html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneLabel,
 html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneSkip{color:#e4cada}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{background:#ffedd5;color:#2a1c37;width:min(360px,100%);box-shadow:0 6px 22px #100d1b44}
+html[data-dream-edition=true] #restorationScene[data-presentation=speech] .scene-balloon:after{display:block}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{background:#ffedd5}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneNext{background:#fac5a1;color:#281a36}
 html[data-dream-edition=true] #wardrobeLooks canvas{width:min(68px,100%);height:auto;display:block}
@@ -142,7 +143,7 @@ html[data-dream-edition=true] .top #options{background:#281d3a;color:#ffe9d5;bor
 html[data-dream-edition=true] #restorationScene[data-kind=opening]{
  grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;
 }
-html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{grid-area:2/1;align-self:center;z-index:1;overflow:visible;transform:translateY(-clamp(121px,22vh,194px))}
+html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon{grid-area:2/1;align-self:center;z-index:1;overflow:visible;transform:translateY(calc(-50% - 22px))}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] .scene-balloon:after{content:"";display:block;bottom:-7px;left:calc(50% - 9px)}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] #restorationSceneCast{grid-area:2/1;transform:translateY(48px)}
 html[data-dream-edition=true] #restorationScene[data-kind=opening] nav{grid-area:3/1}

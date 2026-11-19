@@ -40,6 +40,14 @@ async function verify(){
   await page.tap('#titleContinue');
   assert.equal(await page.locator('#restorationScene').getAttribute('data-presentation'),'speech');
   assert.equal(await page.locator('#restorationSceneSpeaker').textContent(),'길');
+  const speechPanel=await read(()=>{
+   const bubble=document.querySelector('#restorationScene .scene-balloon'),cast=document.getElementById('restorationSceneCast');
+   const box=cast.getBoundingClientRect(),scale=Math.min(box.width/cast.width,box.height/cast.height);
+   const head=box.top+(box.height-cast.height*scale)/2+(cast.height-30-210*1.02)*scale;
+   return {tail:getComputedStyle(bubble,'::after').display,gap:head-bubble.getBoundingClientRect().bottom};
+  });
+  assert.equal(speechPanel.tail,'block');assert.ok(speechPanel.gap>8&&speechPanel.gap<68,speechPanel.gap+'px');
+  report.speechPanel=speechPanel;
   await shot('story');
   await page.tap('#restorationSceneNext');
   await page.waitForFunction(()=>!document.getElementById('runnerSpeech').hidden,null,{timeout:1500});
