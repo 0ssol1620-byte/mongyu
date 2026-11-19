@@ -69,7 +69,7 @@ async function verifyDreamRoute(page){
    if(!tracks.at(-1)||tracks.at(-1).id!==before.track)tracks.push({id:before.track,playing:before.playing});
    await page.touchscreen.tap(viewport.width*.5,viewport.height*.25);
   };
-  let lateCollision;
+  let lateCollision,resultLayout;
   if(await page.evaluate(()=>MONGYU_STAGE_EDITION)){
    for(let i=0;i<5;i++)await jumpObstacle(i);
    await page.locator('#squareResult').waitFor();
@@ -83,6 +83,21 @@ async function verifyDreamRoute(page){
      aligned:commands.length===3&&new Set(commands.map(b=>b.getBoundingClientRect().top)).size===1};
    });
    assert.deepEqual(lateCollision,{index:5,count:'빛 5 / 6',shards:5,card:false,aligned:true});
+   if(await page.evaluate(()=>MONGYU_STAGE_HUD)){
+    resultLayout=await page.evaluate(()=>{
+     const root=document.getElementById('squareResult'),label=root.querySelector('.result-identity').getBoundingClientRect();
+     const rects=[...root.querySelectorAll('button:not([hidden])')].map(button=>{
+      const r=button.getBoundingClientRect();
+      return {id:button.id,y:r.y,w:r.width,h:r.height,
+       hit:button.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))};
+     });
+     return {width:innerWidth,height:innerHeight,labelY:label.y,rects};
+    });
+    assert.ok(resultLayout.labelY<resultLayout.height*.27);
+    assert.ok(resultLayout.rects.every(r=>r.hit&&r.w>=44&&r.h>=44));
+    assert.ok(resultLayout.rects.filter(r=>r.id!=='squareRetry').every(r=>r.y+r.h<resultLayout.height*.24));
+    assert.ok(resultLayout.rects.find(r=>r.id==='squareRetry').w<resultLayout.width*.55);
+   }
    await page.tap('#squareRetry');
    await page.waitForFunction(()=>QUAD_RIFT_APP.activeRun().state==='play');
   }
@@ -94,7 +109,7 @@ async function verifyDreamRoute(page){
   await page.reload();
   assert.equal(await page.evaluate(()=>QUAD_RIFT_APP.restoration.view().status.collected),2);
   assert.deepEqual(errors,[]);
-  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,dreamRoute,lateCollision,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
+  const report={url,scope:'Playwright WebKit, iPhone 13 emulated viewport and touch. Not a physical handset.',viewport,dreamRoute,lateCollision,resultLayout,speakers,tracks,clearedObstacles:6,nextStage:stage,saveSurvivesReload:true,errors};
   if(process.argv[3])fs.writeFileSync(process.argv[3],JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report));
  }finally{await browser.close()}

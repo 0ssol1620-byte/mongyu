@@ -3,7 +3,8 @@
  * No input, collision, engine state or RNG is written here.
  */
 (function(root){'use strict';
-const readableNotices=['R99','R100','R101','R102'].includes(root.MONGYU_PLAYABLE_RELEASE);
+const stageHud=root.MONGYU_STAGE_HUD===true;
+const readableNotices=['R99','R100','R101','R102','R103'].includes(root.MONGYU_PLAYABLE_RELEASE);
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),unit=16/10,morphClocks=new WeakMap(),fieldClocks=new WeakMap();
 function geometry(run){
  const s=run.nativeFrame,pool=s.game.pool,cur=pool.objects[pool.currentIndex],a=s.game.actor,A=run.kernels.Assembly;
@@ -13,6 +14,34 @@ function geometry(run){
  let player={...q,x:px,y:py,baseX:px,baseY:py,tangent,inward:{x:tangent.y*(pool.direction===0?1:-1),y:-tangent.x*(pool.direction===0?1:-1)},direction:pool.direction,face:cur.geometry.orientation,height,bodyHeight:42.5,poseClock:a.frame/8,jumpProgress:a.frame/Math.max(1,run.kernels.Trajectories.frameCount(a.actorState)),kick:[1,2,9,11].includes(a.actorState)?.5:0,impact:[13,16].includes(a.actorState)?.7:0,nativeState:a.actorState,nativeFrame:a.frame};
  if(s.game.controller.modeP>0){const command=(s.map.drawCommands||[]).find(c=>c.role==='current-actor');if(command){player=actorPose(command,{player},{origin:s.presentation.viewport,mask:false});player.baseX=player.x;player.baseY=player.y;player.face=cur.geometry.orientation;}}
  return {nativeRuntime:true,player,characterId:run.characterId,room:run.room,bounds:{left:0,top:0,right:384,bottom:384,width:384,height:384},nativeSurfaces:[],boss:run.boss?{...run.boss}:null,time:run.time,familyIndex:run.familyIndex};
+}
+const surfaceCommands=new Set(['0x4d936','0x4d68a','0x4d35a','0x4d72c']);
+const entityCommands=new Set(['0x4c91e','0x4c88a','0x4caac']);
+const surfaceDirection=[[1,0],[0,-1],[-1,0],[0,1]];
+function jointOverhangs(cells,pool,rotate){
+ const byPosition=new Set(),terrain=[];
+ for(const cell of cells){
+  if(cell.role!=='terrain-cell'||!surfaceCommands.has(cell.raw))continue;
+  const face=cell.orientation%4,q=rotate(cell.x,cell.y,face);
+  const x=q.x-(face===1||face===2?16:0),y=q.y-(face===0||face===1?16:0);
+  terrain.push({cell,face,x,y});byPosition.add(face+':'+x+':'+y);
+ }
+ const overhangs=new Set();
+ for(const {cell,face,x,y} of terrain){
+  const joined=pool.objects.some(entry=>{
+   if(!entry||entry.geometry.orientation!==face||cell.x!==entry.scalarE+entry.geometry.scalarD)return false;
+   const next=pool.objects[entry.linkB];
+   return next?.geometry.orientation===(face+1)%4;
+  });
+  if(!joined)continue;
+  const wall=(face+1)%4;
+  const [dx,dy]=surfaceDirection[face],[wx,wy]=surfaceDirection[wall];
+  const bx=x-16*dx,by=y-16*dy;
+  if(byPosition.has(wall+':'+bx+':'+by)&&byPosition.has(wall+':'+(bx+16*wx)+':'+(by+16*wy))){
+   overhangs.add(cell);
+  }
+ }
+ return overhangs;
 }
 function snapshot(run){
  const s=run.nativeFrame,m=s.map,v=s.presentation.viewport,groups=[],backgrounds=[];let group={clip:null,cells:[],actors:[],effects:[]};groups.push(group);
@@ -24,6 +53,14 @@ function snapshot(run){
   else if(cmd.type==='semantic-action-effect')group.effects.push(cmd);
  }
  const transition=s.game.controller.controllerStateUK===200||s.u.l===3;
+ // The terrain pass includes the terminal sampling column. At a connected
+ // perpendicular joint, the adjacent wall already closes the visible face.
+ if(stageHud&&s.game.stage.behaviorCode!==3){
+  for(const layer of groups){
+   const overhangs=jointOverhangs(layer.cells,s.game.pool,run.kernels.Assembly.rotatePoint);
+   if(overhangs.size)layer.overhangs=overhangs;
+  }
+ }
  const view=s.game.view,cur=s.game.pool.objects[s.game.pool.currentIndex],floating=view.aq>0&&16*cur.geometry.activeLength<view.av;
  return {mask:s.game.stage.behaviorCode===3,groups:groups.filter(g=>g.cells.length||g.actors.length||g.effects.length),backgrounds,origin:{x:v.x,y:v.y},palette:m.t,backgroundPeriod:root.MongyuNativeRenderParameters?.paletteByte(m.t,140)||6,counter:s.u.B,countdown:s.r.timerT,notification:s.u.D,notificationCode:s.u.aF,specialMode:s.u.musicModeI,floating,split:(s.u.actionLock&15)>0&&(s.u.actionLock&15)<=4,actionLock:s.u.actionLock,
   transition:transition?{step:m.ad,count:m.e,buffers:m.capture,actor:s.u.l===3?null:{fromX:m.Z,fromY:m.aa,toX:m.ab,toY:m.ac},boss:s.u.l===3}:null,
@@ -56,6 +93,12 @@ function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
   c.restore();return;
  }
  const r=tileBounds(cmd,scene),x=r.x+dx,y=r.y+dy;
+ if(stageHud&&entityCommands.has(cmd.raw)){
+  // Moving collision cells keep their full footprint and a distinct edge.
+  c.fillStyle='#21152b';c.fillRect(x+.35,y+.35,15.3,15.3);
+  c.strokeStyle='#ffbd9d';c.lineWidth=1.25;c.strokeRect(x+1,y+1,14,14);
+  c.fillStyle='#ffbd9dbb';c.fillRect(x+4,y+6.5,8,2.2);return;
+ }
  c.fillRect(x+.35,y+.35,15.3,15.3);
  const darkBase=/^#[0-3][0-9a-f][0-3][0-9a-f][0-3][0-9a-f]$/i.test(color.base);
  c.fillStyle=darkBase?'#e5cbd189':color.accent;
@@ -167,8 +210,8 @@ function draw(c,run,opt,geo){
  const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
  c.save();background(c,opt.viewport,scene,p,reduced);c.fillStyle='#20183645';c.fillRect(0,0,cam.width,cam.height);if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
-  c.save();if(scene.split&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
-  for(const cell of group.cells)tile(c,cell,scene,p,0,0,reduced);c.globalAlpha=1;
+  c.save();if((scene.split||stageHud)&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
+  for(const cell of group.cells){if(!group.overhangs?.has(cell))tile(c,cell,scene,p,0,0,reduced)}c.globalAlpha=1;
   if(!reduced)effects(c,group,scene,p);
   if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId)}}
   c.restore();
@@ -190,10 +233,17 @@ function draw(c,run,opt,geo){
  if(scene.countdown>0){
   const x=cam.width/2,y=cam.height*.29;
   c.save();c.translate(x,y);c.fillStyle='#20182ded';
+  if(stageHud){
+   c.beginPath();c.moveTo(0,-27);c.lineTo(27,0);c.lineTo(0,27);c.lineTo(-27,0);c.closePath();c.fill();
+   c.strokeStyle='#fff0d67d';c.lineWidth=1;c.stroke();
+   c.textAlign='center';c.textBaseline='middle';c.font='750 24px system-ui';c.fillStyle='#fff0d6';
+   c.fillText(String(Math.ceil(scene.countdown/10)),0,1);c.restore();
+  }else{
   if(typeof c.roundRect==='function'){c.beginPath();c.roundRect(-68,-34,136,68,18);c.fill()}else c.fillRect(-68,-34,136,68);
   c.textAlign='center';c.textBaseline='middle';c.font='750 27px system-ui';c.fillStyle='#fff0d6';
   c.fillText(String(Math.ceil(scene.countdown/10)),0,-6);
   c.font='600 11px system-ui';c.fillText('곧 달리기 시작',0,18);c.restore();
+  }
  }
  return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:readableNotices?speech(run,scene,player,cam,M):null};
 }

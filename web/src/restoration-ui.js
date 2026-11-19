@@ -53,6 +53,7 @@ function mount(host){
  const C=root.MongyuRestorationCatalog,G=root.MongyuRestorationStoryGraph,R=root.QuadRiftRestoration,M=root.MongyuRestorationMastery,$=id=>host.document.getElementById(id);
  if(!C||!R||!$('restorationCollection'))return null;
  const native=root.MongyuNativeRestoration;
+ const stageHud=root.MONGYU_STAGE_HUD===true;
  const stageEdition=root.MONGYU_STAGE_EDITION===true;
  const routeEdition=root.MONGYU_ROUTE_EDITION===true;
  const dreamEdition=root.MONGYU_DREAM_EDITION===true;
@@ -337,7 +338,7 @@ function mount(host){
   host.document.body.dataset.restoration=String(active);$('squareCollection').hidden=!active;$('pauseRestoration').hidden=!active;
   const isResult=['clear','fail'].includes(v.state);
   if(stageEdition){
-   $('squareResult').dataset.outcome=isResult?v.state:'';
+   $('squareResult').dataset.outcome=isResult?(stageHud&&qualified?'clear':v.state):'';
    $('openingResultProgress').hidden=!(isResult&&v.opening);
   }
   if($('squarePractice'))$('squarePractice').hidden=!(isResult&&v.opening&&!v.opening.practice&&v.state==='fail');
@@ -370,8 +371,12 @@ function mount(host){
    const reason=qualified||openingNeedsJump?'':currentGoal&&openingEnabled?'이번 '+currentGoal.current+' / 목표 '+currentGoal.target+'점':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
    text('restorationRecordBadge',newBest?'새 최고 기록':'');
    $('restorationRecordBadge').hidden=!newBest;
-   text('squareSummary',[reason,detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
-   text('restorationResultMastery',recordText(isFree?'freeplay':activeSlot.id)+(!mastery.ok?'\n기록을 저장할 수 없어 이번 실행에만 남습니다.':''));
+   const goal=stageHud&&!qualified&&objective.target?'누적 '+objective.current+' / '+objective.target+'점':'';
+   text('squareSummary',[goal||reason,goal?'':detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
+   const recordKey=isFree?'freeplay':activeSlot.id;
+   const best=localRecord(recordKey).bestScore;
+   const masteryNote=stageHud?(best>v.score?'최고 '+best+'점':''):recordText(recordKey);
+   text('restorationResultMastery',masteryNote+(!mastery.ok?'\n기록을 저장할 수 없어 이번 실행에만 남습니다.':''));
    $('restorationResultMastery').hidden=!$('restorationResultMastery').textContent;
    const next=C.getSlot(nextSlot);text('restorationResultNext',qualified&&next?'다음 · '+next.number+' '+next.title:'');$('restorationResultNext').hidden=!qualified||!next;
   }
@@ -447,6 +452,7 @@ function mount(host){
  $('restorationOpen').onclick=open;$('restorationClose').onclick=host.closeDialog;$('restorationStart').onclick=e=>start(e);$('restorationSceneNext').onclick=nextScene;$('restorationSceneSkip').onclick=skipScene;
  $('restorationSceneAction').onclick=()=>{if(scene&&!scene.graph&&scene.index>0){scene.index--;showScene()}};
  if($('squarePractice'))$('squarePractice').onclick=practiceOpening;
+ if(stageHud)text('squarePractice','구간 연습');
  if(root.MONGYU_SPECTRAL_EDITION)text('pauseRestoration','꿈 지도');
  $('modeRestoration').onclick=open;$('modeSquare').onclick=host.startLegacy;$('pauseRestoration').onclick=open;$('squareCollection').onclick=open;$('squareNext').onclick=nextMemory;$('restorationFree').onclick=startFree;
  function beginCall(event){if(!callContext||callContext.triggered||callContext.run.state!=='play'||callContext.run.time<.2||!callContext.run.localCall())return false;callContext.triggered=true;scene={kind:'call',slot:activeSlot,index:0,pages:['길 한가운데서 전화가 울립니다.'],elapsed:0,rings:0,beats:0,beatAt:0};sceneLast=null;showScene(event);return true}
