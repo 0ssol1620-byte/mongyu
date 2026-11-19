@@ -72,7 +72,7 @@ function background(c,viewport,scene,p,reduced){
  const key=reduced?'reduced':'normal';
  let cached=backgroundCache[key];
  if(typeof root.OffscreenCanvas==='function'&&cached?.scene!==scene){
-  const signature=scene.palette+':'+commands.map(cmd=>cmd.role==='background-fill'?cmd.rgb:[cmd.x-scene.origin.x,cmd.y-scene.origin.y,cmd.width,cmd.height,cmd.colorRole?.packedPaletteOffset,cmd.colorRole?.nibble].join(',')).join('|');
+  const signature=scene.palette+':'+commands.map(cmd=>cmd.role==='background-fill'?cmd.rgb:[cmd.x-scene.origin.x,cmd.y-scene.origin.y,cmd.width,cmd.height,cmd.colorRole?.packedPaletteOffset,cmd.colorRole?.nibble,cmd.colorRole?.grayTransform,reduced?0:cmd.colorRole?.brightnessDelta].join(',')).join('|');
   if(cached?.signature===signature)cached.scene=scene;
   else {
   const surface=cached?.surface||new root.OffscreenCanvas(240,240);
