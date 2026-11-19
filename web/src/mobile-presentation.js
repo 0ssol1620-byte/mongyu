@@ -131,7 +131,7 @@ function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
  paintLeg(c,legs[1],[1.4,1.5,1.05,1.1,.58],ink,pose.footAngles[1]);
  contour(c,limbContour(arms[0],[1.05,.95,.68,.6,.36]),ink);
  const bob=pose.bob,lean=character==='elder'?2:0;
- if(character==='walker'){
+ if(character==='walker'&&!q.pose){
   const drift=Number.isFinite(q.strideDistance)?Math.sin(q.strideDistance/7):Math.sin(t*4);
   const tail=reduced?0:drift*1.4;
   const ribbon=style.detail==='scarf'?style.accent:ink==='#fff8de'?'#ffc08f':'#742861';

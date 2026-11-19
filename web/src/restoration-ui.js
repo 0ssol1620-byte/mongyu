@@ -119,7 +119,7 @@ function mount(host){
   const isCall=activeSlot.rule.type==='call'&&!free;
   // Local-call interruption remains the explicitly authored scene bridge.
   const Run=native&&!isCall&&native.slotMetadata(activeSlot.number,{freePlay:free}).supported?native.RestorationRun:R.RestorationRun;
-  const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
+  const run=new Run({settings:{speed:'fast'},slot:activeSlot,viewport:host.viewport?.(),attempt:save.attempt+1,practice:free||isCall,...config,openingAssist:activeSlot.number===2&&!free,frontier:save.collected.length+1,priorCredit:save.nativeProgress?.[activeSlot.id]?.credit??save.slotScores[activeSlot.id]??0,recordScore:save.nativeProgress?.[activeSlot.id]?.recordScore??0});
   activeRun=run;callContext=isCall?{run,triggered:false,answered:false,pending:false,awarded:false}:null;
   host.startRun(run,event);return true;
  }
