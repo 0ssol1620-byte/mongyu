@@ -1,0 +1,577 @@
+{
+  "scope": "600 RAF callbacks per build in one development run. Same browser and throttling, includes countdown, earlier R95 render before final cache-key refinement. Scheduling noise and different reached simulation frames limit causal claims. No handset result.",
+  "runs": {
+    "r94": {
+      "release": "R94",
+      "errors": [],
+      "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+      "deviceValidation": false,
+      "framesMs": {
+        "samples": 600,
+        "p50": 19.70000000006985,
+        "p95": 101,
+        "p99": 690.6999999999534,
+        "max": 1392.5999999999767
+      },
+      "simulationMs": {
+        "samples": 228,
+        "p50": 10.199999999953434,
+        "p95": 35.800000000046566,
+        "p99": 680.0999999999767,
+        "max": 1283.3000000000466
+      },
+      "longTasks": [
+        {
+          "start": 10793.5,
+          "ms": 69
+        },
+        {
+          "start": 10868.900000000023,
+          "ms": 59
+        },
+        {
+          "start": 11063.800000000047,
+          "ms": 214
+        },
+        {
+          "start": 11284.199999999953,
+          "ms": 235
+        },
+        {
+          "start": 11563.900000000023,
+          "ms": 57
+        },
+        {
+          "start": 11800,
+          "ms": 68
+        },
+        {
+          "start": 12059.800000000047,
+          "ms": 177
+        },
+        {
+          "start": 13127.900000000023,
+          "ms": 74
+        },
+        {
+          "start": 13287.199999999953,
+          "ms": 59
+        },
+        {
+          "start": 13347.699999999953,
+          "ms": 59
+        },
+        {
+          "start": 13415.199999999953,
+          "ms": 51
+        },
+        {
+          "start": 13468,
+          "ms": 59
+        },
+        {
+          "start": 13855.599999999977,
+          "ms": 51
+        },
+        {
+          "start": 13923.5,
+          "ms": 1223
+        },
+        {
+          "start": 15173.699999999953,
+          "ms": 1369
+        },
+        {
+          "start": 16545.199999999953,
+          "ms": 359
+        },
+        {
+          "start": 16945.599999999977,
+          "ms": 701
+        },
+        {
+          "start": 17663.599999999977,
+          "ms": 140
+        },
+        {
+          "start": 17807.599999999977,
+          "ms": 1208
+        },
+        {
+          "start": 19023.099999999977,
+          "ms": 174
+        },
+        {
+          "start": 19239.800000000047,
+          "ms": 244
+        },
+        {
+          "start": 19702.099999999977,
+          "ms": 78
+        },
+        {
+          "start": 20218.900000000023,
+          "ms": 117
+        },
+        {
+          "start": 20338,
+          "ms": 139
+        },
+        {
+          "start": 20490,
+          "ms": 1332
+        },
+        {
+          "start": 21827.199999999953,
+          "ms": 161
+        },
+        {
+          "start": 21997.900000000023,
+          "ms": 793
+        },
+        {
+          "start": 22958.599999999977,
+          "ms": 65
+        },
+        {
+          "start": 23024.800000000047,
+          "ms": 195
+        },
+        {
+          "start": 23246.400000000023,
+          "ms": 61
+        },
+        {
+          "start": 23307.900000000023,
+          "ms": 459
+        },
+        {
+          "start": 23778.099999999977,
+          "ms": 58
+        },
+        {
+          "start": 23882.599999999977,
+          "ms": 571
+        },
+        {
+          "start": 24457.5,
+          "ms": 52
+        },
+        {
+          "start": 24556.699999999953,
+          "ms": 128
+        },
+        {
+          "start": 24686.699999999953,
+          "ms": 456
+        },
+        {
+          "start": 25616.599999999977,
+          "ms": 51
+        },
+        {
+          "start": 25777.5,
+          "ms": 54
+        },
+        {
+          "start": 27287.599999999977,
+          "ms": 51
+        },
+        {
+          "start": 27649.599999999977,
+          "ms": 66
+        },
+        {
+          "start": 27920.5,
+          "ms": 50
+        },
+        {
+          "start": 28581.5,
+          "ms": 89
+        },
+        {
+          "start": 28671.699999999953,
+          "ms": 661
+        },
+        {
+          "start": 29517.599999999977,
+          "ms": 56
+        },
+        {
+          "start": 29575.400000000023,
+          "ms": 60
+        },
+        {
+          "start": 29665.099999999977,
+          "ms": 93
+        },
+        {
+          "start": 29761.800000000047,
+          "ms": 79
+        },
+        {
+          "start": 29843.099999999977,
+          "ms": 109
+        },
+        {
+          "start": 29956.199999999953,
+          "ms": 122
+        },
+        {
+          "start": 30086.099999999977,
+          "ms": 94
+        },
+        {
+          "start": 30180.300000000047,
+          "ms": 66
+        },
+        {
+          "start": 30256.5,
+          "ms": 106
+        },
+        {
+          "start": 30364,
+          "ms": 74
+        },
+        {
+          "start": 30442.199999999953,
+          "ms": 168
+        },
+        {
+          "start": 30613.300000000047,
+          "ms": 137
+        },
+        {
+          "start": 30755.5,
+          "ms": 173
+        },
+        {
+          "start": 30933.199999999953,
+          "ms": 57
+        },
+        {
+          "start": 30992.099999999977,
+          "ms": 61
+        },
+        {
+          "start": 31054.300000000047,
+          "ms": 75
+        },
+        {
+          "start": 31130.199999999953,
+          "ms": 51
+        },
+        {
+          "start": 31208.800000000047,
+          "ms": 93
+        },
+        {
+          "start": 31559.300000000047,
+          "ms": 51
+        },
+        {
+          "start": 33741.5,
+          "ms": 62
+        },
+        {
+          "start": 35929.69999999995,
+          "ms": 54
+        }
+      ],
+      "staticAttributeChanges": {},
+      "updates": 231,
+      "time": 17.324999999999925,
+      "state": "play",
+      "hearts": 3
+    },
+    "r95": {
+      "release": "R95",
+      "errors": [],
+      "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+      "deviceValidation": false,
+      "framesMs": {
+        "samples": 600,
+        "p50": 21.800000000046566,
+        "p95": 51.39999999990687,
+        "p99": 74.79999999993015,
+        "max": 231.40000000002328
+      },
+      "simulationMs": {
+        "samples": 207,
+        "p50": 11.20000000006985,
+        "p95": 23.5,
+        "p99": 33.90000000002328,
+        "max": 71.19999999995343
+      },
+      "longTasks": [
+        {
+          "start": 2636.6999999999534,
+          "ms": 55
+        },
+        {
+          "start": 3011.4000000000233,
+          "ms": 51
+        },
+        {
+          "start": 4206.099999999977,
+          "ms": 77
+        },
+        {
+          "start": 4283.900000000023,
+          "ms": 62
+        },
+        {
+          "start": 4348,
+          "ms": 131
+        },
+        {
+          "start": 4483.099999999977,
+          "ms": 98
+        },
+        {
+          "start": 4588.5,
+          "ms": 93
+        },
+        {
+          "start": 4772.699999999953,
+          "ms": 51
+        },
+        {
+          "start": 5057,
+          "ms": 50
+        },
+        {
+          "start": 5138.400000000023,
+          "ms": 62
+        },
+        {
+          "start": 5202,
+          "ms": 57
+        },
+        {
+          "start": 5430.699999999953,
+          "ms": 53
+        },
+        {
+          "start": 5505.099999999977,
+          "ms": 54
+        },
+        {
+          "start": 5656.199999999953,
+          "ms": 52
+        },
+        {
+          "start": 7547.599999999977,
+          "ms": 59
+        },
+        {
+          "start": 8129.5,
+          "ms": 52
+        },
+        {
+          "start": 8196.400000000023,
+          "ms": 59
+        },
+        {
+          "start": 8428.900000000023,
+          "ms": 58
+        },
+        {
+          "start": 10105.900000000023,
+          "ms": 50
+        },
+        {
+          "start": 10156.79999999993,
+          "ms": 61
+        },
+        {
+          "start": 10250.79999999993,
+          "ms": 57
+        },
+        {
+          "start": 10309.099999999977,
+          "ms": 70
+        },
+        {
+          "start": 10379.699999999953,
+          "ms": 54
+        },
+        {
+          "start": 10980,
+          "ms": 63
+        },
+        {
+          "start": 11203.099999999977,
+          "ms": 51
+        },
+        {
+          "start": 11308.79999999993,
+          "ms": 51
+        },
+        {
+          "start": 13152.599999999977,
+          "ms": 57
+        },
+        {
+          "start": 14226.79999999993,
+          "ms": 66
+        },
+        {
+          "start": 14294,
+          "ms": 55
+        },
+        {
+          "start": 14440,
+          "ms": 80
+        },
+        {
+          "start": 14583.900000000023,
+          "ms": 55
+        },
+        {
+          "start": 14644.79999999993,
+          "ms": 157
+        },
+        {
+          "start": 14803.400000000023,
+          "ms": 110
+        },
+        {
+          "start": 15185,
+          "ms": 54
+        },
+        {
+          "start": 16009.29999999993,
+          "ms": 106
+        },
+        {
+          "start": 16117.599999999977,
+          "ms": 60
+        },
+        {
+          "start": 16882.199999999953,
+          "ms": 58
+        }
+      ],
+      "staticAttributeChanges": {},
+      "updates": 209,
+      "time": 15.67499999999994,
+      "state": "play",
+      "hearts": 3
+    },
+    "r95_final": {
+      "release": "R95",
+      "errors": [],
+      "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+      "deviceValidation": false,
+      "framesMs": {
+        "samples": 600,
+        "p50": 19.0999999998603,
+        "p95": 34.800000000046566,
+        "p99": 51.799999999813735,
+        "max": 128.20000000018626
+      },
+      "simulationMs": {
+        "samples": 173,
+        "p50": 10.300000000046566,
+        "p95": 17.699999999953434,
+        "p99": 31.300000000046566,
+        "max": 41
+      },
+      "longTasks": [
+        {
+          "start": 4242.700000000186,
+          "ms": 53
+        },
+        {
+          "start": 4296.200000000186,
+          "ms": 110
+        },
+        {
+          "start": 4433.700000000186,
+          "ms": 91
+        },
+        {
+          "start": 4526.300000000047,
+          "ms": 52
+        },
+        {
+          "start": 5966.300000000047,
+          "ms": 122
+        },
+        {
+          "start": 6167.700000000186,
+          "ms": 77
+        },
+        {
+          "start": 6247,
+          "ms": 81
+        }
+      ],
+      "staticAttributeChanges": {},
+      "updates": 175,
+      "time": 13.124999999999964,
+      "state": "play",
+      "hearts": 3
+    },
+    "r94_control": {
+      "release": "R94",
+      "errors": [],
+      "protocol": "600 ordinary RAF frames at CPU rate 4 with native input every 0.45 simulation seconds after countdown; fresh storage, same viewport, DPR and Chromium; no CPU profiler; DOM mutation and long-task observers attached",
+      "deviceValidation": false,
+      "framesMs": {
+        "samples": 600,
+        "p50": 18.5,
+        "p95": 38.9000000001397,
+        "p99": 55,
+        "max": 102.5
+      },
+      "simulationMs": {
+        "samples": 179,
+        "p50": 10.900000000139698,
+        "p95": 19.699999999953434,
+        "p99": 25.700000000186265,
+        "max": 43.199999999953434
+      },
+      "longTasks": [
+        {
+          "start": 2596.100000000093,
+          "ms": 73
+        },
+        {
+          "start": 4852.699999999953,
+          "ms": 67
+        },
+        {
+          "start": 4979.899999999907,
+          "ms": 62
+        },
+        {
+          "start": 10613.899999999907,
+          "ms": 54
+        },
+        {
+          "start": 12121.800000000047,
+          "ms": 51
+        },
+        {
+          "start": 12191.800000000047,
+          "ms": 53
+        },
+        {
+          "start": 12264.100000000093,
+          "ms": 59
+        },
+        {
+          "start": 13621,
+          "ms": 56
+        }
+      ],
+      "staticAttributeChanges": {},
+      "updates": 179,
+      "time": 13.424999999999962,
+      "state": "play",
+      "hearts": 3
+    }
+  }
+}

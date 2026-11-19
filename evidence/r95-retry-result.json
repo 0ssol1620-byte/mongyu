@@ -1,0 +1,11 @@
+{
+  "outcome": {
+    "slot": 3,
+    "state": "fail",
+    "lives": 0,
+    "score": 123,
+    "seconds": 14.174999999999955
+  },
+  "retried": true,
+  "errors": []
+}

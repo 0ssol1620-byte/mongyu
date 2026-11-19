@@ -1,0 +1,453 @@
+{
+  "scope": "74 isolated native entries, seed 7, noon, fast, up to 220 updates, action every seven updates. Ground poses and five intermediate samples of reached grounded corners. Segment centrelines tested against the inner 11x11 units of visible 16-unit terrain cells. Does not certify all possible runs, stroke-edge overlap, whole-body clearance or original-game equivalence.",
+  "slots": 74,
+  "groundPoses": 1867,
+  "cornerPoses": 365,
+  "intersections": 0,
+  "rows": [
+    {
+      "slot": 2,
+      "ground": 33,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 3,
+      "ground": 42,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 4,
+      "ground": 27,
+      "corners": 15,
+      "errors": []
+    },
+    {
+      "slot": 6,
+      "ground": 49,
+      "corners": 20,
+      "errors": []
+    },
+    {
+      "slot": 7,
+      "ground": 34,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 8,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 9,
+      "ground": 47,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 10,
+      "ground": 21,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 11,
+      "ground": 17,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 12,
+      "ground": 38,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 14,
+      "ground": 34,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 15,
+      "ground": 44,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 17,
+      "ground": 31,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 18,
+      "ground": 39,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 19,
+      "ground": 43,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 20,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 21,
+      "ground": 24,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 23,
+      "ground": 16,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 25,
+      "ground": 29,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 26,
+      "ground": 35,
+      "corners": 20,
+      "errors": []
+    },
+    {
+      "slot": 27,
+      "ground": 25,
+      "corners": 15,
+      "errors": []
+    },
+    {
+      "slot": 29,
+      "ground": 29,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 30,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 31,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 32,
+      "ground": 34,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 33,
+      "ground": 33,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 35,
+      "ground": 19,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 36,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 37,
+      "ground": 30,
+      "corners": 15,
+      "errors": []
+    },
+    {
+      "slot": 38,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 40,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 42,
+      "ground": 35,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 43,
+      "ground": 53,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 44,
+      "ground": 56,
+      "corners": 20,
+      "errors": []
+    },
+    {
+      "slot": 45,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 46,
+      "ground": 24,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 48,
+      "ground": 32,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 50,
+      "ground": 37,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 51,
+      "ground": 31,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 53,
+      "ground": 11,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 54,
+      "ground": 68,
+      "corners": 20,
+      "errors": []
+    },
+    {
+      "slot": 57,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 58,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 59,
+      "ground": 26,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 60,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 61,
+      "ground": 33,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 63,
+      "ground": 45,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 64,
+      "ground": 34,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 66,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 67,
+      "ground": 44,
+      "corners": 55,
+      "errors": []
+    },
+    {
+      "slot": 68,
+      "ground": 29,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 70,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 71,
+      "ground": 41,
+      "corners": 15,
+      "errors": []
+    },
+    {
+      "slot": 72,
+      "ground": 13,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 74,
+      "ground": 44,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 75,
+      "ground": 32,
+      "corners": 20,
+      "errors": []
+    },
+    {
+      "slot": 76,
+      "ground": 43,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 77,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 78,
+      "ground": 44,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 79,
+      "ground": 29,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 82,
+      "ground": 24,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 83,
+      "ground": 36,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 85,
+      "ground": 14,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 86,
+      "ground": 28,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 88,
+      "ground": 22,
+      "corners": 5,
+      "errors": []
+    },
+    {
+      "slot": 89,
+      "ground": 38,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 90,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 91,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 93,
+      "ground": 50,
+      "corners": 15,
+      "errors": []
+    },
+    {
+      "slot": 94,
+      "ground": 31,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 95,
+      "ground": 22,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 97,
+      "ground": 25,
+      "corners": 10,
+      "errors": []
+    },
+    {
+      "slot": 98,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    },
+    {
+      "slot": 99,
+      "ground": 0,
+      "corners": 0,
+      "errors": []
+    }
+  ]
+}

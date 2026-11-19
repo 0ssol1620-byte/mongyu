@@ -1,0 +1,14 @@
+{
+  "scope": "Android-sized Chromium viewport, offline after load, normal touch input without save injection",
+  "firstRunSeconds": 14.69999999999995,
+  "openingBumpObserved": true,
+  "taps": 27,
+  "score": 151,
+  "newBestVisible": true,
+  "firstWorldEarned": true,
+  "oneTapNext": true,
+  "goalsVisible": true,
+  "oneTapRestartFromPause": true,
+  "persistAfterReload": true,
+  "errors": []
+}
