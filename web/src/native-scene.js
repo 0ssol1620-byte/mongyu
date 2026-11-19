@@ -56,7 +56,8 @@ function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
  }
  const r=tileBounds(cmd,scene),x=r.x+dx,y=r.y+dy;
  c.fillRect(x+.35,y+.35,15.3,15.3);
- c.fillStyle=color.accent;
+ const darkBase=/^#[0-3][0-9a-f][0-3][0-9a-f][0-3][0-9a-f]$/i.test(color.base);
+ c.fillStyle=darkBase?'#e5cbd189':color.accent;
  const side=((cmd.orientation||0)%4+4)%4;
  if(side===0)c.fillRect(x+1,y+14,14,1.3);
  if(side===1)c.fillRect(x+14,y+1,1.3,14);

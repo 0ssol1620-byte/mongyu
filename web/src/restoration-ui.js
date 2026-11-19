@@ -306,12 +306,13 @@ function mount(host){
    $('squareRetry').hidden=false;$('squareRestart').hidden=true;
    text('squareRetry','다시 달리기');
    text('squareNext','다음 기억으로');
+   text('squareCollection','꿈 지도');
    const primary=!$('squareNext').hidden?'squareNext':qualified?'squareCollection':'squareRetry';
    $('squareResult').dataset.primaryAction=primary;
    for(const id of ['squareNext','squareCollection','squareRetry','squareRestart','squareHome'])$(id).dataset.primary=String(id===primary);
    const detail=['기억을 찾았습니다.','찾은 기억을 다시 만났습니다.','자유 달리기 기록'].includes(award)?'':award;
    const reason=qualified?'':v.state==='fail'&&v.hearts===0?'남은 기회를 모두 썼어요.':v.result?.reason;
-   text('restorationRecordBadge',newBest?'최고 기록 +'+newBest+'점':'');
+   text('restorationRecordBadge',newBest?'새 최고 기록':'');
    $('restorationRecordBadge').hidden=!newBest;
    text('squareSummary',[reason,detail,!storageOK||readOnly?'진행은 이번 실행에만 남습니다.':''].filter(Boolean).join('\n'));
    text('restorationResultMastery',recordText(isFree?'freeplay':activeSlot.id)+(!mastery.ok?'\n기록을 저장할 수 없어 이번 실행에만 남습니다.':''));
