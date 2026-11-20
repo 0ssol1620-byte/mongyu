@@ -6,6 +6,27 @@
 
 iPhone에서는 Safari로 링크를 열고 ‘꿈속으로’를 누르세요. 공유 메뉴에서 ‘홈 화면에 추가’를 선택하면 홈 화면에 아이콘을 만들 수 있습니다. 웹의 진행 기록은 접속한 주소의 브라우저 저장소에 남습니다. Android 8.0 이상의 R102 테스트 앱은 R103으로 업데이트할 수 있습니다.
 
+## 함께 개발하기
+
+공동 작업의 기준 브랜치는 `main`입니다. 저장소 소유자가 GitHub의 **Settings → Collaborators → Add people**에서 상대 GitHub 아이디를 초대합니다. 상대가 수락하면 같은 저장소에서 작업 브랜치를 만들고 올릴 수 있습니다. [공동 작업자 설정](https://github.com/0ssol1620-byte/mongyu/settings/access)
+
+```sh
+git clone https://github.com/0ssol1620-byte/mongyu.git
+cd mongyu
+git switch -c work/change-name
+```
+
+한 가지 변경을 작업 브랜치에 커밋한 뒤 GitHub에서 `main` 대상의 Pull Request를 열면 서로 수정 내용을 확인할 수 있습니다. 게임 코드는 `web/src/`에, 화면 스타일은 `web/mobile.css`에, Android 앱 코드는 `android/app/`에 있습니다. 코드가 바뀐 Pull Request에서 GitHub Actions가 게임 소스 검사를 실행합니다. 공개 플레이 페이지는 별도 `gh-pages` 브랜치에서 배포합니다.
+
+Python 3.10 이상에서 웹 빌드를 만들어 브라우저로 바로 테스트할 수 있습니다. [로컬 플레이 주소](http://127.0.0.1:4173/MONGYU_R103.html)
+
+```sh
+python3 web/build.py --release R103
+python3 -m http.server 4173 --bind 127.0.0.1 --directory web
+```
+
+## 빌드와 검사
+
 ```sh
 python3 scripts/test.py
 ANDROID_SDK_ROOT=/path/to/sdk python3 android/build-unsigned.py

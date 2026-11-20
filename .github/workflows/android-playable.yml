@@ -2,7 +2,10 @@ name: Standalone Android QA
 on:
   workflow_dispatch:
   push:
-    branches: [codex/r103-stage-polish]
+    branches: [main, codex/r103-stage-polish]
+    paths-ignore: ['docs/**', 'evidence/**', 'README.md']
+  pull_request:
+    branches: [main]
     paths-ignore: ['docs/**', 'evidence/**', 'README.md']
 permissions:
   contents: read
@@ -18,6 +21,7 @@ jobs:
       - name: Validate standalone game
         run: python3 scripts/test.py
   playable:
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/codex/r103-stage-polish'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
