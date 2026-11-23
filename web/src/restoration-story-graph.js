@@ -2186,6 +2186,30 @@ const sequences=freeze([
     }
   }
 ]);
+// R104 polish: short authored bridges for memories that would otherwise start with no scene at all
+// (e.g. 003 right after the first memory's result). Shown once, always skippable. Wording is original.
+const N='narration',T='reflection';
+const interludes=freeze({
+ 3:{lines:[{text:'문 너머에도 네모난 방이 기다리고 있었다.',kind:N},{text:'이번 문은 점수로 열리나 봐. 300점.',kind:T}]},
+ 4:{lines:[{text:'한 번에 다 못 해도 괜찮대.',kind:T},{text:'달린 만큼 차곡차곡 쌓여서, 600점이 되면 열린다.',kind:N}]},
+ 6:{lines:[{text:'일부러 부딪혀야 열리는 문도 있구나.',kind:T},{text:'200점 즈음에서, 딱 한 번만.',kind:T}]},
+ 7:{lines:[{text:'발이 조금 익숙해졌다.',kind:T},{text:'조금 더 멀리, 400점.',kind:T}]},
+ 9:{lines:[{text:'멈추는 순간도 기억에 남는 걸까.',kind:T},{text:'500점 언저리에서 숨을 내려놓자.',kind:T}]},
+ 10:{lines:[{text:'첫 장의 마지막 길. 바람이 조금 따뜻하다.',kind:N},{text:'500점. 천천히 가 보자.',kind:T}]},
+ 11:{lines:[{text:'같은 자리에서 세 번 넘어지면, 무언가 보일지도 몰라.',kind:T}]},
+ 12:{lines:[{text:'모서리가 아까보다 조금 둥글어 보인다.',kind:T},{text:'600점까지.',kind:T}]},
+ 14:{lines:[{text:'하루치 걸음을 모으듯이.',kind:T},{text:'1500점이 쌓일 때까지 달린다.',kind:N}]},
+ 15:{lines:[{text:'아름다운 것들은 왜 이렇게 모서리가 날카로울까.',kind:T},{text:'700점. 다치지 않게.',kind:T}]},
+ 18:{lines:[{text:'떠오른 얼굴은 잠시 접어 두기로 했다.',kind:N},{text:'800점을 향해.',kind:T}]},
+ 19:{lines:[{text:'달린 시간이 쌓이면, 꿈도 조금은 넓어질까.',kind:T},{text:'합쳐서 3000점.',kind:T}]},
+ 21:{lines:[{text:'새 장이다. 공기의 색이 달라졌다.',kind:N},{text:'900점. 처음처럼.',kind:T}]},
+ 25:{lines:[{text:'솔이 발끝을 졸졸 따라온다.',kind:N},{text:'이번엔 한 번도 부딪히지 말자. 250점.',kind:T}]},
+ 26:{lines:[{text:'뛰어오른 김에, 공중에서 한 번 더.',kind:T},{text:'발을 뻗어 차 보자.',kind:T}]},
+ 27:{lines:[{text:'솔, 오늘은 멀리 가 보자.',kind:T},{text:'1000점의 길이다.',kind:N}]},
+ 29:{lines:[{text:'떠올랐던 몸이 다시 무거워졌다.',kind:T},{text:'그래도 쌓인 건 남는다. 5000점.',kind:T}]},
+ 30:{lines:[{text:'같은 1000점이라도, 어제와는 다른 길.',kind:T}]}
+});
+function getInterlude(slot){const n=Number(slot?.number??slot);return Object.prototype.hasOwnProperty.call(interludes,n)?interludes[n]:null}
 const bySlot=new Map(sequences.map(sequence=>[sequence.slot,sequence]));
 function getSequence(slot){return bySlot.get(Number(slot?.number??slot))||null}
 function getStep(slot,cursor){const sequence=getSequence(slot);return sequence&&Number.isInteger(cursor)&&cursor>=0&&cursor<sequence.terminalCursor?sequence.steps[cursor]:null}
@@ -2218,6 +2242,6 @@ function stageForStep(slot,cursor){
    nativeRenderCode:step.actorRenderCode,action:step.action||'',authoredStaging:true,renderingEvidence:'native selectors and observed shapes; authored vectors and timing'};
 }
 function completionProof(state){const sequence=validState(state);if(!sequence||state.status!=='completed'||state.cursor!==sequence.terminalCursor)return null;return freeze({type:'narrative-complete',slot:sequence.slot,nativeState:sequence.nativeState,nativeRow:sequence.nativeRow,terminalCursor:sequence.terminalCursor,structureVersion:74,wording:'authored'})}
-const api=freeze({version:74,sequences,getSequence,getStep,createState,advance,cancel,displayText,stageForStep,completionProof,markerForCode,poseForActor});
+const api=freeze({version:74,sequences,interludes,getInterlude,getSequence,getStep,createState,advance,cancel,displayText,stageForStep,completionProof,markerForCode,poseForActor});
 root.MongyuRestorationStoryGraph=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
