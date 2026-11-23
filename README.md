@@ -6,6 +6,22 @@
 
 iPhone에서는 Safari로 링크를 열고 ‘꿈속으로’를 누르세요. 공유 메뉴에서 ‘홈 화면에 추가’를 선택하면 홈 화면에 아이콘을 만들 수 있습니다. 웹의 진행 기록은 접속한 주소의 브라우저 저장소에 남습니다. Android 8.0 이상의 R102 테스트 앱은 R103으로 업데이트할 수 있습니다.
 
+## R104 개발 빌드 (작업 중, `work/r104-phase1`)
+
+기획서 로드맵 1단계 "손맛과 연출"을 R104 빌드에 구현하고 있습니다. [기획서](docs/MONGYU_NOM3_MV_PLAN_KO.html) · [1단계 명세](docs/R104_PHASE1_SPEC_KO.md)
+
+- 이야기 장면: 화면 아무 곳이나 탭해서 넘기기, 타자기 출력, ▼ 표시
+- 충돌: 플래시·히트스톱·흔들림·빛 조각·3겹 효과음·진동(지원 기기)
+- 골인: 오로라 문, 마지막 20% 가장자리 빛, 통과 슬로모션
+- 튜토리얼: 첫 장애물 느린 찬스, 탭 위치 빛 고리, 실패 원인 말풍선
+- HUD: 큰 점수, 하단 진행 게이지, 그 위 캐릭터 말풍선
+
+```sh
+python3 web/build.py --release R104
+python3 -m http.server 4173 --bind 127.0.0.1 --directory web
+# http://127.0.0.1:4173/MONGYU_R104.html
+```
+
 ## 함께 개발하기
 
 공동 작업의 기준 브랜치는 `main`입니다. 저장소 소유자가 GitHub의 **Settings → Collaborators → Add people**에서 상대 GitHub 아이디를 초대합니다. 상대가 수락하면 같은 저장소에서 작업 브랜치를 만들고 올릴 수 있습니다. [공동 작업자 설정](https://github.com/0ssol1620-byte/mongyu/settings/access)

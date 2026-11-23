@@ -14,7 +14,7 @@ html[data-polish-edition] #restorationScene[data-line=typing] #restorationSceneT
 html[data-polish-edition] #restorationScene .scene-balloon{position:relative}
 html[data-polish-edition] #restorationScene .scene-balloon::before{
  content:'▼';position:absolute;right:14px;bottom:7px;z-index:1;
- font:700 11px/1 system-ui,sans-serif;color:currentColor;opacity:0;pointer-events:none;
+ font:700 13px/1 system-ui,sans-serif;color:#7b4fd0;text-shadow:0 0 6px rgba(123,79,208,.35);opacity:0;pointer-events:none;
 }
 html[data-polish-edition] #restorationScene[data-presentation=narration] .scene-balloon::before{right:4px;bottom:-4px}
 html[data-polish-edition] #restorationScene[data-line=done] .scene-balloon::before{

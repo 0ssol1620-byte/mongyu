@@ -13,7 +13,7 @@ function clock(){return (root.performance?.now?.()??Date.now())/1000}
 function settings(){try{return host?.settings?.()||{}}catch(_){return {}}}
 function reduced(){return settings().reduced===true}
 function sound(kind){try{host?.sound?.(kind)}catch(_){}}
-function vibrate(ms){if(settings().vibration===true&&typeof root.navigator?.vibrate==='function')try{root.navigator.vibrate(ms)}catch(_){}}
+function vibrate(ms){const r=host?.activeRun?.(),on=r?.settings?.vibration??settings().vibration;if(on!==false&&on!==0&&typeof root.navigator?.vibrate==='function')try{root.navigator.vibrate(ms)}catch(_){}}
 function viewport(){try{return host?.viewport?.()||{width:390,height:844}}catch(_){return {width:390,height:844}}}
 const glows=new Map();
 /* Soft round glow per ink, rendered once and blitted (cheaper and softer than per-particle gradients). */
