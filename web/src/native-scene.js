@@ -109,6 +109,115 @@ function tile(c,cmd,scene,p,dx=0,dy=0,reduced=false){
  if(side===3)c.fillRect(x+1,y+1,1.3,14);
 }
 
+// R104 polish: native cells drawn as lit architecture. Every block keeps its exact
+// 16-unit collision square as its lit top face; a darker front face and a soft cast
+// shadow extend only beyond the side facing away from the running surface.
+const polishEdition=()=>root.MONGYU_POLISH_EDITION===true;
+const BOSS_RAW='0x5595a',MASK_RAW='0x5113a',WALK=[[0,-1],[-1,0],[0,1],[1,0]],AWAY=[[0,1],[1,0],[0,-1],[-1,0]],FACE=6;
+const occupied=new Set(),cellKey=(x,y)=>(Math.round(x)+4096)*16384+(Math.round(y)+4096);
+const blockBuffer={x:new Float64Array(512),y:new Float64Array(512),o:new Int8Array(512),n:0};
+function cellHash(x,y){let h=(Math.round(x)*73856093)^(Math.round(y)*19349663);h=Math.imul(h^(h>>>13),0x5bd1e995);return ((h^(h>>>15))>>>0)}
+function chapterPalette(geo,run){const f=geo?.familyIndex??run?.familyIndex;return root.MongyuNativePalette?.chapter?.(Number.isFinite(f)?f:0)||null}
+// Strip of depth [a,b] measured outward (a,b>=0) or inward (a,b<0) from one side of a 16-unit cell,
+// optionally lengthened by `before`/`after` units along the side.
+function sideRect(c,x,y,dx,dy,a,b,before=0,after=0){
+ const lo=Math.min(a,b),hi=Math.max(a,b),d=hi-lo,l=16+before+after;
+ if(dy<0)c.rect(x-before,y-hi,l,d);else if(dy>0)c.rect(x-before,y+16+lo,l,d);else if(dx<0)c.rect(x-hi,y-before,d,l);else c.rect(x+16+lo,y-before,d,l);
+}
+function polishBlocks(c,cells,scene,pal,overhangs){
+ const B=blockBuffer,S=root.MongyuStagecraft,mix=S.mix,rgba=S.rgba,tone=pal.block;B.n=0;occupied.clear();
+ for(const cmd of cells){
+  if(cmd.role!=='terrain-cell'||entityCommands.has(cmd.raw)||cmd.raw===BOSS_RAW||overhangs?.has(cmd))continue;
+  if(B.n>=B.x.length)break;const r=tileBounds(cmd,scene);B.x[B.n]=r.x;B.y[B.n]=r.y;B.o[B.n]=cmd.raw===MASK_RAW?-1:((cmd.orientation||0)%4+4)%4;occupied.add(cellKey(r.x,r.y));B.n++;
+ }
+ if(!B.n)return 0;
+ const has=(x,y)=>occupied.has(cellKey(x,y)),n=B.n,open=(x,y,d)=>!has(x+16*d[0],y+16*d[1]);
+ const pass=(fill,fn)=>{c.beginPath();for(let i=0;i<n;i++)fn(B.x[i],B.y[i],B.o[i]);c.fillStyle=fill;c.fill()};
+ // Front face beyond the away side. At an L joint the face also wraps the open run end
+ // (and its diagonal) so corners read as one solid mass; free ends stay exact.
+ const face=(x,y,o,a,b)=>{if(o<0)return;const d=AWAY[o];if(!open(x,y,d))return;const corner=!open(x,y,WALK[o]);
+  const p0=d[1]?[-1,0]:[0,-1],p1=d[1]?[1,0]:[0,1],e0=corner&&open(x,y,p0),e1=corner&&open(x,y,p1);
+  sideRect(c,x,y,d[0],d[1],a,b,e0?b:0,e1?b:0);
+  if(e0)sideRect(c,x,y,p0[0],p0[1],0,Math.min(b,FACE));if(e1)sideRect(c,x,y,p1[0],p1[1],0,Math.min(b,FACE))};
+ const dark=mix(pal.sky[0],'#000000',.45);
+ pass(rgba(dark,.2),(x,y,o)=>o<0?(open(x,y,AWAY[2])&&sideRect(c,x,y,0,1,0,6)):face(x,y,o,0,FACE+6));
+ pass(rgba(dark,.3),(x,y,o)=>o<0?(open(x,y,AWAY[2])&&sideRect(c,x,y,0,1,0,3)):face(x,y,o,0,FACE+2.5));
+ pass(tone.shadow,(x,y,o)=>face(x,y,o,0,FACE));
+ // Lamp-lit windows in the front face, in the middle of long runs.
+ pass(rgba(pal.lamp,.82),(x,y,o)=>{if(o<0||cellHash(x,y)%3)return;const d=AWAY[o];if(!open(x,y,d))return;const along=d[1]?[1,0]:[0,1];if(open(x,y,along)||open(x,y,[-along[0],-along[1]]))return;
+  const h=d[1]?3.2:4.4,cx=d[0]>0?x+16+FACE/2:d[0]<0?x-FACE/2:x+8,cy=d[1]>0?y+16+FACE/2:d[1]<0?y-FACE/2:y+8;c.rect(cx-.9,cy-h/2,1.8,h)});
+ // Lit top face (the collision square) with a soft gradient toward the front face.
+ pass(tone.side,(x,y)=>c.rect(x-.15,y-.15,16.3,16.3));
+ pass(rgba(tone.shadow,.55),(x,y,o)=>{const d=o<0?AWAY[2]:AWAY[o];if(open(x,y,d))sideRect(c,x,y,d[0],d[1],-2.2,0)});
+ pass(rgba(tone.shadow,.4),(x,y,o)=>{if(cellHash(x,y)%2)return;const w=o<0||o%2===0;if(w&&has(x-16,y))c.rect(x-.35,y+4.2,.7,8);else if(!w&&has(x,y-16))c.rect(x+4.2,y-.35,8,.7)});
+ pass(tone.top,(x,y,o)=>{const s=o<0?WALK[0]:WALK[o];if(open(x,y,s))sideRect(c,x,y,s[0],s[1],-5,0)});
+ // Run ends: pale toward the light (left/top), dark away from it.
+ pass(rgba(tone.top,.85),(x,y)=>{if(!has(x-16,y))c.rect(x,y,1.3,16);if(!has(x,y-16))c.rect(x,y,16,1.3)});
+ pass(rgba(tone.shadow,.85),(x,y)=>{if(!has(x+16,y))c.rect(x+14.6,y,1.4,16);if(!has(x,y+16))c.rect(x,y+14.6,16,1.4)});
+ // Rail on the running edge: bright lip, rail shadow line and two posts per cell.
+ pass(mix(tone.top,'#ffffff',.6),(x,y,o)=>{const s=o<0?WALK[0]:WALK[o];if(open(x,y,s))sideRect(c,x,y,s[0],s[1],-1,0)});
+ pass(rgba(tone.side,.8),(x,y,o)=>{const s=o<0?WALK[0]:WALK[o];if(!open(x,y,s))return;sideRect(c,x,y,s[0],s[1],-3.4,-2.7);
+  for(const k of [3.6,11.6]){if(s[1]<0)c.rect(x+k,y+1,.8,1.8);else if(s[1]>0)c.rect(x+k,y+13.2,.8,1.8);else if(s[0]<0)c.rect(x+1,y+k,1.8,.8);else c.rect(x+13.2,y+k,1.8,.8)}});
+ return n;
+}
+function polishCrystals(c,cells,scene,pal,t,reduced){
+ const S=root.MongyuStagecraft,M=root.MongyuNativePalette.MEANING,halo=S.glow(M.coral,64);let n=0;
+ for(const cmd of cells){
+  if(cmd.role!=='terrain-cell'||!entityCommands.has(cmd.raw))continue;n++;
+  const r=tileBounds(cmd,scene),x=r.x,y=r.y,cx=x+8,cy=y+8,h=cellHash(cmd.screenX,cmd.screenY),b=reduced?.5:.5+.5*Math.sin(t*3.1+(h%628)/100),a=(cmd.alpha??255)/255;
+  c.globalAlpha=a;
+  if(halo){c.globalCompositeOperation='lighter';c.globalAlpha=a*(.34+.26*b);c.drawImage(halo,cx-17,cy-17,34,34);c.globalCompositeOperation='source-over';c.globalAlpha=a}
+  c.fillStyle=S.rgba(S.mix(pal.block.shadow,M.coralDeep,.3),.72);c.fillRect(x+.4,y+.4,15.2,15.2);
+  // Faceted coral crystal filling the collision footprint.
+  const k=reduced?0:Math.sin(t*2+(h%97))*.6;
+  c.beginPath();c.moveTo(cx,y+.6+k*.3);c.lineTo(x+15.4,y+5.2);c.lineTo(cx,cy);c.lineTo(x+.6,y+5.2);c.closePath();c.fillStyle='#ffc1b0';c.fill();
+  c.beginPath();c.moveTo(x+15.4,y+5.2);c.lineTo(x+15.4,y+10.8);c.lineTo(cx,y+15.4-k*.3);c.lineTo(cx,cy);c.closePath();c.fillStyle=M.coralDeep;c.fill();
+  c.beginPath();c.moveTo(x+.6,y+5.2);c.lineTo(cx,cy);c.lineTo(cx,y+15.4-k*.3);c.lineTo(x+.6,y+10.8);c.closePath();c.fillStyle=M.coral;c.fill();
+  c.globalAlpha=a*(.45+.45*b);c.fillStyle='#fff3ea';c.beginPath();c.moveTo(cx,cy-3.2);c.lineTo(cx+1.7,cy);c.lineTo(cx,cy+3.2);c.lineTo(cx-1.7,cy);c.closePath();c.fill();
+ }
+ c.globalAlpha=1;return n;
+}
+function polishShards(c,cells,scene,t,reduced){
+ const S=root.MongyuStagecraft,M=root.MongyuNativePalette.MEANING,halo=S.glow(M.gold,64);let n=0;
+ for(const cmd of cells){
+  if(cmd.role!=='cell-decoration')continue;n++;
+  const q=point(cmd.screenX,cmd.screenY,scene),h=cellHash(cmd.x,cmd.y+cmd.kind*7),fade=(cmd.alpha??255)/255,big=(cmd.kind===2?1.12:1)*(.5+.5*fade),b=reduced?.5:.5+.5*Math.sin(t*2.6+(h%628)/100),angle=reduced?Math.PI/8:t*1.5+cmd.kind*.8,bob=reduced?0:Math.sin(t*2.2+h%11)*1.1;
+  c.globalAlpha=(cmd.alpha??255)/255;
+  if(halo){c.globalCompositeOperation='lighter';c.globalAlpha*=.42+.3*b;c.drawImage(halo,q.x-18*big,q.y+bob-18*big,36*big,36*big);c.globalCompositeOperation='source-over';c.globalAlpha=(cmd.alpha??255)/255}
+  c.save();c.translate(q.x,q.y+bob);c.rotate(angle);c.scale(big,big);
+  c.beginPath();c.moveTo(0,-8);c.lineTo(3.6,-1);c.lineTo(0,8);c.closePath();c.fillStyle=M.gold;c.fill();
+  c.beginPath();c.moveTo(0,-8);c.lineTo(-3.6,1);c.lineTo(0,8);c.closePath();c.fillStyle=M.goldLight;c.fill();
+  c.beginPath();c.moveTo(0,-8);c.lineTo(3.6,-1);c.lineTo(0,8);c.lineTo(-3.6,1);c.closePath();c.strokeStyle='rgba(255,250,232,.85)';c.lineWidth=.7;c.stroke();
+  c.globalAlpha*=.55+.45*b;c.fillStyle='#fffaf0';c.fillRect(-.6,-4.5,1.2,9);
+  c.restore();
+ }
+ c.globalAlpha=1;return n;
+}
+const bossBuffer={x:new Float64Array(256),y:new Float64Array(256)};
+function polishBoss(c,cells,scene,pal,t,reduced){
+ const S=root.MongyuStagecraft,M=root.MongyuNativePalette.MEANING,X=bossBuffer.x,Y=bossBuffer.y;let n=0,sx=0,sy=0,minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+ for(const cmd of cells){if(cmd.role!=='terrain-cell'||cmd.raw!==BOSS_RAW||n>=X.length)continue;const r=tileBounds(cmd,scene);X[n]=r.x;Y[n]=r.y;n++;sx+=r.x+8;sy+=r.y+8;minX=Math.min(minX,r.x);maxX=Math.max(maxX,r.x+16);minY=Math.min(minY,r.y);maxY=Math.max(maxY,r.y+16)}
+ if(!n)return 0;
+ const breath=reduced?.5:.5+.5*Math.sin(t*1.7),halo=S.glow(M.coralDeep,96),size=Math.max(maxX-minX,maxY-minY)*1.5;
+ if(halo){c.globalCompositeOperation='lighter';c.globalAlpha=.3+.18*breath;c.drawImage(halo,sx/n-size/2,sy/n-size/2,size,size);c.globalCompositeOperation='source-over';c.globalAlpha=1}
+ // Thin coral threads tie neighbouring plates into one broken memory.
+ c.beginPath();for(let i=0;i<n;i++)for(let j=0;j<n;j++){const dx=X[j]-X[i],dy=Y[j]-Y[i];if((dx>8&&dx<24&&Math.abs(dy)<8)||(dy>8&&dy<24&&Math.abs(dx)<8)){c.moveTo(X[i]+8,Y[i]+8);c.lineTo(X[j]+8,Y[j]+8)}}
+ c.strokeStyle=S.rgba(M.coral,.35+.25*breath);c.lineWidth=2.2;c.stroke();
+ const plate=S.mix(pal.block.shadow,M.coralDeep,.38),lit=S.mix(plate,M.coral,.42),rim=S.rgba(M.coral,.95);
+ c.beginPath();for(let i=0;i<n;i++)c.rect(X[i]+1,Y[i]+1,14,14);c.fillStyle=plate;c.fill();
+ c.beginPath();for(let i=0;i<n;i++){c.moveTo(X[i]+1,Y[i]+1);c.lineTo(X[i]+15,Y[i]+1);c.lineTo(X[i]+1,Y[i]+15);c.closePath()}c.fillStyle=lit;c.fill();
+ c.beginPath();for(let i=0;i<n;i++)c.rect(X[i]+1.5,Y[i]+1.5,13,13);c.strokeStyle=rim;c.lineWidth=1;c.stroke();
+ // A slowly turning ornament on each plate.
+ for(let i=0;i<n;i++){const a=reduced?Math.PI/4:t*.9+i*.55,s=3.6+(reduced?0:Math.sin(t*2.3+i)*.7);
+  c.save();c.translate(X[i]+8,Y[i]+8);c.rotate(a);c.fillStyle='#ffb6a4';c.fillRect(-s/2,-s/2,s,s);c.fillStyle='#fff1e9';c.fillRect(-s/5,-s/5,s/2.5,s/2.5);c.restore();
+ }
+ return n;
+}
+function polishGroup(c,group,scene,pal,t,reduced){
+ const blocks=polishBlocks(c,group.cells,scene,pal,group.overhangs),boss=polishBoss(c,group.cells,scene,pal,t,reduced),crystals=polishCrystals(c,group.cells,scene,pal,t,reduced),shards=polishShards(c,group.cells,scene,t,reduced);
+ return {blocks,boss,crystals,shards};
+}
+
 const backgroundCache={normal:null,reduced:null};
 function background(c,viewport,scene,p,reduced){
  const palette=root.MongyuNativePalette,w=viewport.width,h=viewport.height,commands=scene.backgrounds||[];
@@ -137,8 +246,8 @@ function background(c,viewport,scene,p,reduced){
  // Non-browser drawing harnesses have no offscreen canvas.
  for(const command of commands){c.fillStyle=command.role==='background-fill'?palette.color(scene.palette,{rgb:command.rgb}):palette.color(scene.palette,command.colorRole,reduced);if(command.role==='background-fill')c.fillRect(0,0,w,h);else c.fillRect((command.x-scene.origin.x)*size/240,(command.y-scene.origin.y)*size/240,command.width*size/240,command.height*size/240)}
 }
-function effects(c,group,scene,p){
- c.save();c.fillStyle=p[3];c.strokeStyle=p[3];c.lineWidth=1.5;
+function effects(c,group,scene,p,polish=false){
+ c.save();c.fillStyle=polish?'#ffeca5':p[3];c.strokeStyle=c.fillStyle;c.lineWidth=1.5;
  for(const e of group.effects){
   if(e.primitive==='rect'){const q=point(e.x,e.y,scene);c.fillRect(q.x,q.y,(e.width||2)*unit,(e.height||2)*unit)}
   else if(e.primitive==='line'){const a=point(e.x1,e.y1,scene),b=point(e.x2,e.y2,scene);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke()}
@@ -161,12 +270,13 @@ function morphPlayer(geo,scene,u){
  const a=scene.transition?.actor;if(!a)return geo.player;const q=point(a.fromX+(a.toX-a.fromX)*u,a.fromY+(a.toY-a.fromY)*u,scene),basis=root.MongyuMobile.actorBasis(geo.player),offset=scene.mask?8:16;
  return {...geo.player,x:q.x+basis.nx*offset,y:q.y+basis.ny*offset,nativeState:11};
 }
-function morph(c,geo,scene,run,opt,p,u,player){
+function morph(c,geo,scene,run,opt,p,u,player,pal=null){
  const t=scene.transition,b=t.buffers;if(!b)return;const mix=(a,z)=>a+(z-a)*u;
  const n=Math.min(200,t.count,b.oldX.length,b.newX.length);
  for(let i=0;i<n;i++){
-  const q=point(mix(b.oldX[i],b.newX[i]),mix(b.oldY[i],b.newY[i]),scene),frame=u<.5?b.oldCommands[i]:b.newCommands[i];
-  c.fillStyle=frame===2?p[2]:p[1];c.fillRect(q.x-(scene.mask?8:0),q.y-(scene.mask?8:16),15,15);
+  const q=point(mix(b.oldX[i],b.newX[i]),mix(b.oldY[i],b.newY[i]),scene),frame=u<.5?b.oldCommands[i]:b.newCommands[i],x=q.x-(scene.mask?8:0),y=q.y-(scene.mask?8:16);
+  if(pal){c.fillStyle=pal.block.side;c.fillRect(x,y,15.4,15.4);c.fillStyle=pal.block.top;c.fillRect(x,y,15.4,3.6);c.fillStyle=pal.block.shadow;c.fillRect(x,y+11.6,15.4,3.8);continue}
+  c.fillStyle=frame===2?p[2]:p[1];c.fillRect(x,y,15,15);
  }
  if(t.actor)root.MongyuMobile.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},!!opt.reduced,geo.characterId);
 }
@@ -207,16 +317,18 @@ function draw(c,run,opt,geo){
  const scene=geo.nativeScene;if(!scene)return null;const M=root.MongyuMobile,reduced=!!(opt.reduced||geo.reducedMotion),p=scenePalette(scene.palette),special=scene.split||geo.boss;
  const progress=scene.transition?morphProgress(scene,run,reduced):0,player=scene.transition?morphPlayer(geo,scene,progress):geo.player;
  const cam=special?overview(opt.viewport):M.camera(opt.viewport,{...geo,player},opt,run);
- const art=root.MongyuStagecraft,profile=root.MongyuMapDirection?.describe(run),backdrop=art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
- c.save();background(c,opt.viewport,scene,p,reduced);c.fillStyle='#20183645';c.fillRect(0,0,cam.width,cam.height);if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
+ const art=root.MongyuStagecraft,pal=polishEdition()&&art?.sky?chapterPalette(geo,run):null,profile=pal?null:root.MongyuMapDirection?.describe(run),backdrop=pal?art.mix(pal.sky[0],pal.sky[1],.5):art?.backgroundAt(scene,p,opt.viewport,cam.width/2,cam.height/2,reduced),actorInk=art?.inkFor(backdrop,M.look().body);opt={...opt,actorInk};
+ const clock=pal?fieldClock(run,opt):0;let polishStats=null;
+ c.save();if(pal){art.sky(c,opt.viewport,pal.index,cam,clock,reduced);polishStats={blocks:0,boss:0,crystals:0,shards:0}}else{background(c,opt.viewport,scene,p,reduced);c.fillStyle='#20183645';c.fillRect(0,0,cam.width,cam.height)}if(art&&profile){const colors=root.MongyuNativePalette?.get(scene.palette).colors,basis=M.actorBasis(player);art.draw(c,cam,profile,p,fieldClock(run,opt),reduced,{intensity:opt.dreamIntensity,colors:colors?[colors[0],colors[2],colors[4],colors[5]]:undefined,focus:{x:(player.x+basis.nx*21.25)*cam.scale+cam.offsetX,y:(player.y+basis.ny*21.25)*cam.scale+cam.offsetY},tempo:root.MONGYU_EMBEDDED_MUSIC?.[profile.recordingId]?.bpm||120,morph:scene.transition?progress:0})}c.translate(cam.offsetX,cam.offsetY);c.scale(cam.scale,cam.scale);
  for(const group of scene.groups){
   c.save();if((scene.split||stageHud)&&group.clip){c.beginPath();c.rect(group.clip.x,group.clip.y,group.clip.width,group.clip.height);c.clip()}
-  for(const cell of group.cells){if(!group.overhangs?.has(cell))tile(c,cell,scene,p,0,0,reduced)}c.globalAlpha=1;
-  if(!reduced)effects(c,group,scene,p);
+  if(pal){const s=polishGroup(c,group,scene,pal,clock,reduced);for(const k in s)polishStats[k]+=s[k]}
+  else for(const cell of group.cells){if(!group.overhangs?.has(cell))tile(c,cell,scene,p,0,0,reduced)}c.globalAlpha=1;
+  if(!reduced)effects(c,group,scene,p,!!pal);
   if(scene.split){for(const command of group.actors){const q=actorPose(command,geo,scene);if(!q)continue;if(command.role==='history-actor')M.dog(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);else M.sprite(c,q,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId)}}
   c.restore();
  }
- if(scene.transition)morph(c,geo,scene,run,opt,p,progress,player);
+ if(scene.transition)morph(c,geo,scene,run,opt,p,progress,player,pal);
  if(!scene.split&&!scene.transition){
   const visible=scene.groups.some(g=>g.actors.some(a=>a.role==='current-actor'));
   if(geo.companion)M.dog(c,geo.companion,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced);
@@ -225,11 +337,11 @@ function draw(c,run,opt,geo){
    M.sprite(c,player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
   }
   if(!readableNotices&&scene.phase==='notification'){
-   const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=p[1];c.fillText('…',x,y-2);c.restore();
+   const q=geo.player,x=q.x+10,y=q.y-q.bodyHeight-14;c.save();c.fillStyle=pal?'#fff4dc':p[3];c.beginPath();c.ellipse(x,y,15,10,0,0,Math.PI*2);c.fill();c.font='600 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle=pal?pal.block.shadow:p[1];c.fillText('…',x,y-2);c.restore();
   }
  }else if(scene.transition?.boss)M.sprite(c,geo.player,{poseTime:opt.presentationTime||0,contrast:true,ink:opt.actorInk},reduced,geo.characterId);
  c.restore();
- if(geo.boss&&geo.boss.maxHp>0){c.save();const w=Math.min(140,cam.width*.35),x=(cam.width-w)/2,y=64;c.fillStyle=p[1];c.fillRect(x,y,w,4);c.fillStyle=p[3];c.fillRect(x,y,w*clamp(geo.boss.hp/geo.boss.maxHp,0,1),4);c.restore()}
+ if(geo.boss&&geo.boss.maxHp>0){c.save();const w=Math.min(140,cam.width*.35),x=(cam.width-w)/2,y=64;c.fillStyle=pal?'rgba(20,14,32,.6)':p[1];c.fillRect(x,y,w,4);c.fillStyle=pal?root.MongyuNativePalette.MEANING.coral:p[3];c.fillRect(x,y,w*clamp(geo.boss.hp/geo.boss.maxHp,0,1),4);c.restore()}
  if(scene.countdown>0){
   const x=cam.width/2,y=cam.height*.29;
   c.save();c.translate(x,y);c.fillStyle='#20182ded';
@@ -245,7 +357,9 @@ function draw(c,run,opt,geo){
   c.font='600 11px system-ui';c.fillText('곧 달리기 시작',0,18);c.restore();
   }
  }
- return {kind:'r38-square',camera:cam,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:readableNotices?speech(run,scene,player,cam,M):null};
+ const shown=scene.transition?.boss?geo.player:player,basis=shown?M.actorBasis(shown):null,half=(shown?.bodyHeight||42.5)/2;
+ const actor=shown&&Number.isFinite(shown.x)&&Number.isFinite(shown.y)?{x:(shown.x+basis.nx*half)*cam.scale+cam.offsetX,y:(shown.y+basis.ny*half)*cam.scale+cam.offsetY,footX:shown.x*cam.scale+cam.offsetX,footY:shown.y*cam.scale+cam.offsetY}:null;
+ return {kind:'r38-square',camera:cam,actor,polish:polishStats,nativePhase:scene.phase,nativeGroups:scene.groups.length,nativeCells:scene.groups.reduce((n,g)=>n+g.cells.length,0),nativeLayout:scene.split?'partitioned':'single',zoom:1,speech:readableNotices?speech(run,scene,player,cam,M):null};
 }
 const api={snapshot,geometry,overview,point,tileBounds,scenePalette,cellStyle,tile,actorPose,morphPlayer,draw};root.MongyuNativeScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

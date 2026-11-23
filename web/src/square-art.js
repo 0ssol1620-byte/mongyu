@@ -372,8 +372,15 @@ function aftermath(c,geo,fx,view,reduced,cam){
   c.fillStyle=IVORY;c.fillText(view.text,x,y,width);c.restore();
  }
 }
+// R104: the displayed native actor's body centre in CSS canvas pixels, refreshed by
+// every native draw. Stale (no native draw for 250 ms) or non-native frames read null.
+const actorMark={x:0,y:0,footX:0,footY:0,at:-Infinity,live:false};
+const clockNow=()=>typeof root.performance?.now==='function'?root.performance.now():Date.now();
+function markActor(actor){if(actor&&Number.isFinite(actor.x)&&Number.isFinite(actor.y)){actorMark.x=actor.x;actorMark.y=actor.y;actorMark.footX=actor.footX??actor.x;actorMark.footY=actor.footY??actor.y;actorMark.at=clockNow();actorMark.live=true}else actorMark.live=false}
+function actorScreen(){return actorMark.live&&clockNow()-actorMark.at<=250?{x:actorMark.x,y:actorMark.y,footX:actorMark.footX,footY:actorMark.footY}:null}
 function draw(c,run,opt={},geometry){const geo=geometry||(root.MongyuPresentation?root.MongyuPresentation.geometry(run,opt):run.geometry(opt.aftermath?.elapsed||0)),b=geo.bounds,nominal=run?.room||root.QuadRiftSquare?.ROOMS?.[geo.room?.index]||geo.room;
- if(geo.nativeRuntime&&geo.nativeScene&&root.MongyuNativeScene)return root.MongyuNativeScene.draw(c,run,opt,geo);
+ if(geo.nativeRuntime&&geo.nativeScene&&root.MongyuNativeScene){const frame=root.MongyuNativeScene.draw(c,run,opt,geo);markActor(frame?.actor);return frame}
+ actorMark.live=false;
  if(geo.encounter)return EncounterArt.draw(c,geo,opt,{camera,parameters,bossHealthBar,expression});
  // Fit the complete room's authored 16% fold envelope, not its current width.
  // Thus actual walls visibly travel during a fold instead of camera fit cancelling it.
@@ -390,5 +397,5 @@ function draw(c,run,opt={},geometry){const geo=geometry||(root.MongyuPresentatio
  }
  if(geo.faceCounter||geo.legSweep||['sun','leg','face'].includes(opt.aftermath?.kind))bossHealthBar(c,geo);else heartBossHud(c,geo);c.restore();return {kind:'r38-square',stage:fx.stage,clock:fx.t,gain:fx.gain,camera:cam,layout};}
 function title(c,opt={}){const b={left:-145,top:-145,right:145,bottom:145,width:290,height:290},t=Number(opt.time)||0;return draw(c,null,opt,{room:{index:Math.floor(t/15)%6,radius:14},bounds:b,time:t,corner:{progress:0},hazards:[],player:{x:-44,y:145,tangent:{x:1,y:0},height:0}})}
-root.MongyuSquareArt={nativeMaskSupport,faceArena,faceArt,faceActors,faceDefeat,legBossArt,legDefeat,draw,title,camera,parameters,exterior,chamber,support,heartSupport,heartStrike,heartBossHud,bossHealthBar,aftermathFrame,hazard,wall,runner,portal,attacks,palettes,intensePalettes,supportPath,actionCue,characters,dogCompanion,velocity,wake,speech,expression,expressionLayout,response,replicaLayout,worldLayer,aftermath,aftermathActorScale};if(typeof module!=='undefined')module.exports=root.MongyuSquareArt;
+root.MongyuSquareArt={markActor,nativeMaskSupport,faceArena,faceArt,faceActors,faceDefeat,legBossArt,legDefeat,draw,title,camera,parameters,exterior,chamber,support,heartSupport,heartStrike,heartBossHud,bossHealthBar,aftermathFrame,hazard,wall,runner,portal,attacks,palettes,intensePalettes,supportPath,actionCue,characters,dogCompanion,velocity,wake,speech,expression,expressionLayout,response,replicaLayout,worldLayer,aftermath,aftermathActorScale};Object.defineProperty(root.MongyuSquareArt,'actorScreen',{get:actorScreen,enumerable:true,configurable:true});if(typeof module!=='undefined')module.exports=root.MongyuSquareArt;
 })(globalThis);
