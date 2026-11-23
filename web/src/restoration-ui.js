@@ -57,10 +57,11 @@ function mount(host){
  const stageEdition=root.MONGYU_STAGE_EDITION===true;
  const routeEdition=root.MONGYU_ROUTE_EDITION===true;
  const dreamEdition=root.MONGYU_DREAM_EDITION===true;
+ const polishEdition=root.MONGYU_POLISH_EDITION===true,TYPE_RATE=35;
  const openingEnabled=(dreamEdition||root.MONGYU_PLAYABLE_RELEASE==='R97')&&!!root.MongyuOpening;
  const storage=native?native.isolatedStorage(host.storage):host.storage,skinJournal=root.MongyuMapSkins?.create(storage);
  const loaded=C.loadSave(storage);let save=loaded.save,storageOK=loaded.ok,readOnly=loaded.readOnly,selected=C.getSlot(save.selected)||C.slots[0];
- let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0,openingNeedsJump=false;
+ let audioBoardEntry=0,aftermath=null,scene=null,sceneLast=null,activeSlot=null,activeConfig=null,activeRun=null,callContext=null,award='',free=false,settingValue=false,settingTouched=false,qualified=false,summaryCache=null,launchAfterOpening=false,newBest=0,openingNeedsJump=false,line=null;
  let mastery=M?.load(storage)||{ok:true,save:null},completionSequence=0;
  const journalButtons=[];
  const sessionId=Date.now().toString(36),completedRuns=new WeakSet(),aftermathRuns=new WeakSet(),progressCache=new Map(),buttons=[];
@@ -243,21 +244,48 @@ function mount(host){
   const storyTone=root.MongyuMobile?.worldPalette?.((slot.chapter||1)-1)?.[0];if(storyTone)$('restorationScene').style.setProperty?.('--story-world',storyTone);
   $('restorationScene').dataset.kind=scene.kind;$('restorationScene').dataset.effect=scene.vignette?.effect||'';
   $('restorationSceneLight').hidden=true;host.openDialog('restorationScene',event);
-  text('restorationSceneLabel',String(slot.number).padStart(3,'0')+' · '+(scene.intro?.name||scene.vignette?.name||slot.title));
+  // R104: the opening prologue chains straight into memory 002's run (map, result and record all use 002), so it carries that number.
+  text('restorationSceneLabel',polishEdition&&scene.kind==='opening'?'002 · 접힌 빛':String(slot.number).padStart(3,'0')+' · '+(scene.intro?.name||scene.vignette?.name||slot.title));
   const openingVoice=dreamEdition&&scene.kind==='opening',step=scene.graph?G.getStep(slot,scene.index):null,other=slot.number===100?'붉은 형상':({22:'솔',47:'담',69:'여울',87:'여울'}[slot.number]||'');
   const speaker=openingVoice?'길':step&&['reflection','thought'].includes(step.kind)?'길 · 독백':step?.speakerLane===0?'길':step?.speakerLane===1?other:step?.speakerLane===2?'길 · '+other:'';
   $('restorationScene').dataset.presentation=openingVoice||step&&['dialogue','thought','reflection','hesitation'].includes(step.kind)?'speech':'narration';$('restorationScene').dataset.speaker=String(step?.speakerLane??'self');$('restorationScene').querySelector?.('.scene-balloon')?.style?.setProperty?.('--speaker-x',step?.speakerLane===0?'25%':step?.speakerLane===1?'75%':'50%');
   text('restorationSceneSpeaker',isCall?'꿈속 전화':speaker);$('restorationSceneSpeaker').hidden=!isCall&&!speaker;
   text('restorationScenePage',scene.kind==='opening'?'':(scene.index+1)+' / '+scene.pages.length);
   const bossRule=slot.rule.type==='boss'?R.BOSS_RULES[R.BOSS_SLOTS.indexOf(slot.number)]:null;
-  text('restorationSceneText',step?(step.alternateText!==undefined?'길: '+step.text+'\n'+other+': '+step.alternateText:step.text||step.action):scene.pages[scene.index]);
+  const lineText=step?(step.alternateText!==undefined?'길: '+step.text+'\n'+other+': '+step.alternateText:step.text||step.action):scene.pages[scene.index];
+  if(polishEdition)startLine(lineText);else text('restorationSceneText',lineText);
   $('restorationSceneText').style.whiteSpace='pre-line';$('restorationSceneText').dataset.kind=step?.kind||'';text('restorationSceneRule',isIntro?(bossRule?.instruction||slot.instruction):'');$('restorationSceneRule').hidden=!isIntro;
   text('restorationSceneNext',isIntro?'준비됐어 · 시작':isCall?'꿈속 전화 받기':scene.index===scene.pages.length-1?(launchAfterOpening?'첫 달리기 시작':'기억에 남기기'):'계속');
-  $('restorationSceneNext').hidden=false;$('restorationSceneNext').disabled=isCall&&scene.rings<2;
+  $('restorationSceneNext').hidden=false;$('restorationSceneNext').disabled=isCall&&scene.rings<2;if(polishEdition)paintLine();
   $('restorationSceneAction').hidden=!!scene.graph||scene.index===0||isInterlude||isIntro||isCall;text('restorationSceneAction','앞 장면');
   text('restorationSceneSkip',isIntro?(root.MONGYU_SPECTRAL_EDITION?'꿈 지도':'세계 모음'):isCall?'받지 않고 달리기':'나중에 보기');drawSceneCast();
   host.audioEntry?.({kind:'scene',owner:scene,sceneKind:scene.kind,spoken:openingVoice||!!speaker,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow},event);
   ($('restorationSceneNext').disabled?$('restorationSceneSkip'):$('restorationSceneNext')).focus({preventScroll:true});
+ }
+ // R104 typewriter: one span per character keeps the full sentence in the live region at once; only classes change while typing.
+ function startLine(value){
+  const node=$('restorationSceneText'),full=String(value??''),chars=Array.from(full),instant=!!host.reduced?.()||scene?.kind==='call';
+  line={full,count:chars.length,at:scene?.elapsed||0,shown:instant?chars.length:0,spans:null,painted:0};
+  if(instant||!chars.length||!host.document.createElement||!node?.replaceChildren){text('restorationSceneText',full);line.shown=line.count;return}
+  line.spans=chars.map(ch=>{const span=host.document.createElement('span');span.className='tw-c';span.textContent=ch;return span});
+  node.replaceChildren(...line.spans);
+  if(node.textContent!==full){node.textContent=full;line.spans=null;line.shown=line.count}
+ }
+ function lineTyping(){return !!line&&line.shown<line.count&&$('restorationSceneText')?.textContent===line.full}
+ function paintLine(){
+  if(!line)return;
+  if(line.spans){if($('restorationSceneText').children?.[0]!==line.spans[0])line.shown=line.count;const to=Math.min(line.shown,line.count);for(let i=line.painted;i<to;i++)line.spans[i].classList.add('tw-on');line.painted=Math.max(line.painted,to)}
+  const next=$('restorationSceneNext'),state=lineTyping()?'typing':next.disabled||next.hidden?'wait':'done',view=$('restorationScene');
+  if(view.dataset.line!==state)view.dataset.line=state;
+ }
+ function completeLine(){if(!line)return false;line.shown=line.count;paintLine();return true}
+ // R104: a tap anywhere but a control first finishes the typing line, then acts like the next button (never while it is disabled).
+ function tapScene(event){
+  if(!scene||host.dialog?.()!=='restorationScene'||event.target?.closest?.('button,a,input,select,textarea,label,summary'))return false;
+  const next=$('restorationSceneNext');
+  if(lineTyping()){completeLine();(next.disabled?$('restorationSceneSkip'):next).focus({preventScroll:true});return true}
+  if(next.hidden||next.disabled)return false;
+  return nextScene(event);
  }
  function finishEvent(proof,gesture){
   const before=save.collected.length,shouldLaunch=launchAfterOpening;
@@ -316,9 +344,11 @@ function mount(host){
   }
   if(M){
    const key=result.freePlay?'freeplay':run.openingCourse?'r97-opening':activeSlot.id;
-   const previousBest=localRecord(key).bestScore;
+   const previous=localRecord(key),previousBest=previous.bestScore;
    mastery=M.record(storage,key,result,sessionId+':'+(++completionSequence));
    newBest=mastery.ok&&result.score>previousBest?result.score-previousBest:0;
+   // R104: the badge needs a stored best to beat; the opening result shows lights, so it must collect more lights than that best.
+   if(polishEdition&&newBest&&(!previous.attemptCount||run.openingCourse&&!(result.bestCombo>previous.bestChain)))newBest=0;
   }
   if(run.options.freePlay||result.freePlay){qualified=false;award='자유 달리기 기록';return}
   if(activeSlot.rule.type==='setting'&&!run.nativeRuntime){
@@ -450,6 +480,7 @@ function mount(host){
  $('restorationSetting').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'fast':true,e);$('restorationSettingOff').onclick=e=>chooseSetting(selected.rule.setting==='speed'?'slow':false,e);
  if($('storyOpen'))$('storyOpen').onclick=openJournal;if($('storyJournalClose'))$('storyJournalClose').onclick=host.closeDialog;
  $('restorationOpen').onclick=open;$('restorationClose').onclick=host.closeDialog;$('restorationStart').onclick=e=>start(e);$('restorationSceneNext').onclick=nextScene;$('restorationSceneSkip').onclick=skipScene;
+ if(polishEdition)$('restorationScene').addEventListener('click',tapScene);
  $('restorationSceneAction').onclick=()=>{if(scene&&!scene.graph&&scene.index>0){scene.index--;showScene()}};
  if($('squarePractice'))$('squarePractice').onclick=practiceOpening;
  if(stageHud)text('squarePractice','구간 연습');
@@ -476,10 +507,11 @@ function mount(host){
   if(scene.kind==='interlude'){if(!host.reduced?.()&&scene.vignette?.effect==='levitate'&&scene.elapsed-(scene.drawAt||0)>=.04){scene.drawAt=scene.elapsed;drawSceneCast()}}
   else if($('restorationSceneCast').height!==((host.viewport?.().height||800)<=480?200:320))drawSceneCast();
   if(scene.kind==='call'){const rings=Math.min(2,Math.floor(scene.elapsed/.9));if(rings!==scene.rings){scene.rings=rings;text('restorationSceneText',rings===2?'두 번의 벨. 받을까요?':'벨이 한 번 울렸습니다.');text('restorationScenePage',rings+' / 2');$('restorationSceneNext').disabled=rings<2}}
+  if(polishEdition&&line){if(line.shown<line.count)line.shown=host.reduced?.()?line.count:Math.min(line.count,Math.floor((scene.elapsed-line.at)*TYPE_RATE)+1);paintLine()}
  }
  render();
  return {settingChanged:(run,receipt)=>{if(run!==activeRun||!receipt.accepted||receipt.name!==activeSlot?.rule.setting)return false;if(activeConfig){activeConfig.settingValue=receipt.value;activeConfig.settingTouched=true;}if(selected.id===activeSlot.id){settingValue=receipt.value;settingTouched=true;render()}return true},tick,open,start,retry,continueJourney,complete,onRunStatus,syncTitle,select,render,sceneNext:nextScene,aftermathFor,aftermathRenderFor,finishAftermath,cancelAftermath,suspendAftermath,
-  view:()=>({aftermath:aftermathFor(host.activeRun()),save:C.normalizeSave(save),status:summary(),selected:selected.id,page:page(),qualified,activeSlot:activeSlot?.id,storageOK,readOnly,scene:scene?{index:scene.index,pages:scene.pages.length,kind:scene.kind,effect:scene.vignette?.effect,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow,terminalCursor:scene.sequence?.terminalCursor,sourceStringIds:scene.graph?G.getStep(selected,scene.index)?.sourceStringIds:undefined,stepKind:scene.graph?G.getStep(selected,scene.index)?.kind:undefined}:null,free,settingTouched,settingValue,mastery:localRecord(free?'freeplay':selected.id),call:callContext?{triggered:callContext.triggered,pending:callContext.pending,awarded:callContext.awarded}:null}),
+  view:()=>({aftermath:aftermathFor(host.activeRun()),save:C.normalizeSave(save),status:summary(),selected:selected.id,page:page(),qualified,activeSlot:activeSlot?.id,storageOK,readOnly,scene:scene?{index:scene.index,pages:scene.pages.length,kind:scene.kind,effect:scene.vignette?.effect,nativeState:scene.sequence?.nativeState,nativeRow:scene.sequence?.nativeRow,terminalCursor:scene.sequence?.terminalCursor,sourceStringIds:scene.graph?G.getStep(selected,scene.index)?.sourceStringIds:undefined,stepKind:scene.graph?G.getStep(selected,scene.index)?.kind:undefined,...(polishEdition&&line?{typing:lineTyping(),lineShown:Math.min(line.shown,line.count),lineLength:line.count}:{})}:null,free,settingTouched,settingValue,mastery:localRecord(free?'freeplay':selected.id),call:callContext?{triggered:callContext.triggered,pending:callContext.pending,awarded:callContext.awarded}:null}),
   dialogControls:{get storyJournal(){return ['storyJournalClose',...journalButtons]},get restorationCollection(){return ['restorationClose','restorationPagePrev','restorationPageNext','restorationRouteNext',buttons[selected.number-1].id,...($('restorationClock').hidden?[]:['restorationPeriod']),'restorationSetting','restorationSettingOff','restorationStart','restorationFree']},restorationScene:['restorationSceneAction','restorationSceneNext','restorationSceneSkip']}};
 }
 root.MongyuRestorationUI={mount,VIGNETTES,INTRO,sceneStage};if(typeof module!=='undefined')module.exports=root.MongyuRestorationUI;
