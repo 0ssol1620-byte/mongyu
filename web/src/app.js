@@ -533,6 +533,7 @@ function dreamMusic(){
  const request=restorationMusicRequest(),permitted=request?restorationMusicAllowed(request):activeSquareRun?.mode==='restoration'?false:audioAllowed();
  if(activeSquareRun||request){
   if(!permitted){licensedPlayer?.stop();squarePlayer?.stop();return}
+  if(activeSquareRun&&globalThis.MongyuPolish?.musicOverride?.(activeSquareRun)){licensedPlayer?.stop();squarePlayer?.stop();return}
   // Screen music needs a packaged licensed backend; no new procedural scene score.
   if(!activeSquareRun&&(typeof MongyuLicensedScore==='undefined'||!Object.values(globalThis.MONGYU_EMBEDDED_MUSIC||{}).some(t=>t.src)))return;
   // Invoke media.play within the trusted start/resume handler even while the
@@ -778,7 +779,7 @@ if(typeof MongyuCompanionBridge!=='undefined'&&$('bridgeOpen'))window.QUAD_RIFT_
 if(typeof MongyuSquareReply!=='undefined'&&$('replyOpen'))window.QUAD_RIFT_APP.squareReply=MongyuSquareReply.mount({document,window,canOpen:context=>context==='journey'?replyAvailable():game.state==='title'&&!collectionOpen&&!dialog,onOpen:(event,context)=>{if(context==='journey'){replyUsed=true;game.cancelOriginJump();resetClock(event?.timeStamp);game.pause();events()}else{clearNarrative();invalidateMemory('other-mode')}stopSound()},onClose:(event,context,outcome)=>{if(context==='journey'&&game.mode==='origin-route'&&outcome?.completed)narrative.replySolved=true;replyReturnPending=context==='journey';if(context==='journey'){game.cancelOriginJump();resetClock(event?.timeStamp);bridgeBlockUntil=timestamp(event?.timeStamp)+100}last=null;acc=0;sync();draw();return miniGameReturnFocus()},reduced:()=>settings.reduced});
 if(typeof MongyuTilt!=='undefined'&&$('tiltOpen'))window.QUAD_RIFT_APP.tilt=MongyuTilt.mount({document,window,onOpen:()=>{clearNarrative();invalidateMemory('other-mode');modal(null);suspend()},onClose:()=>{last=null;acc=0;modal('settings',$('options'));sync()},reduced:()=>settings.reduced});
 retireLegacySurfaces();
-globalThis.MongyuPolish?.attach({sound:kind=>sound(kind),settings:()=>settings,activeRun:()=>activeSquareRun,canvas,viewport:()=>({...viewport})});
+globalThis.MongyuPolish?.attach({sound:kind=>sound(kind),settings:()=>settings,activeRun:()=>activeSquareRun,canvas,viewport:()=>({...viewport}),audio:()=>{try{if(!audioAllowed())return null;ensureAudioGraph();return {context:audio,music:musicBus,sfx:sfxBus}}catch(_){return null}},startRun:(run,event)=>startRestorationRun(run,event),refreshMusic:()=>dreamMusic()});
 // Reveal only after the final scene, style and all controllers are mounted.
 if(document.documentElement?.dataset)document.documentElement.dataset.boot='ready';if($('bootSplash'))$('bootSplash').hidden=true;
 })();

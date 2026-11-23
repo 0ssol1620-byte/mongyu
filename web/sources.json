@@ -47,6 +47,7 @@
   "map-skin-journal.js",
   "dream-route-art.js",
   "restoration-ui.js",
+  "character-art.js",
   "mobile-presentation.js",
   "presentation-runtime.js",
   "native-palette.js",
@@ -56,5 +57,10 @@
   "durable-storage.js",
   "play-juice.js",
   "play-hud.js",
+  "adaptive-music.js",
+  "endless-dream.js",
+  "illusion-course.js",
+  "share-capture.js",
+  "play-modes.js",
   "app.js"
 ]
