@@ -1,5 +1,6 @@
 [
   "assets.js",
+  "polish-bus.js",
   "content.js",
   "progression.js",
   "origin-records.js",
@@ -53,5 +54,7 @@
   "native-scene.js",
   "release-policy.js",
   "durable-storage.js",
+  "play-juice.js",
+  "play-hud.js",
   "app.js"
 ]

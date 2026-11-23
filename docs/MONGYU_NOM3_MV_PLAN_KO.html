@@ -1,0 +1,568 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>몽유 기획서</title><style>
+:root{--bg:#faf8f4;--paper:#ffffff;--ink:#22202a;--quiet:#6b6676;--axis:#9a95a6;--line:#e6e1ea;--accent:#6b4fd8;--accent-soft:rgba(107,79,216,.10);--th:#f3eff8}
+@media (prefers-color-scheme:dark){:root{--bg:#14121b;--paper:#1c1a25;--ink:#ece9f3;--quiet:#a7a2b5;--axis:#7d7890;--line:#2f2c3b;--accent:#a996ff;--accent-soft:rgba(169,150,255,.14);--th:#25222f}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:40px 16px 80px}article{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(16px,5vw,56px)}
+h1{font-size:30px;line-height:1.3;margin:0 0 6px}h2{font-size:22px;margin:48px 0 12px;padding-top:20px;border-top:1px solid var(--line)}h3{font-size:18px;margin:32px 0 8px}
+.byline{color:var(--quiet);font-size:14px;margin:0 0 24px}a{color:var(--accent)}code{background:var(--th);padding:1px 6px;border-radius:4px;font-size:.9em}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--th);white-space:nowrap}
+ul,ol{padding-left:22px}li{margin:4px 0}figure{margin:24px 0}figcaption{color:var(--quiet);font-size:13px;text-align:center;margin-top:6px}.roadmap{width:100%;height:auto;font-family:inherit}
+</style></head><body><main><article><h1>몽유 기획서: 놈3 × Monument Valley 융합 연출</h1>
+<p class="byline">2026-11-23 · 원본: <a href="https://claude.ai/artifact/MHNsuGuuG8t7FGdZwZGyei">claude.ai 문서</a></p>
+
+<h2>결론: "손끝으로 걷는 꿈의 건축"</h2>
+<p>몽유는 <strong>놈의 손맛(원터치 리듬 + 벽·천장으로 세계가 도는 쾌감)</strong> 위에 <strong>Monument Valley의 세계(불가능한 건축, 고요한 색, 음악이 되는 상호작용)</strong> 를 입힌 회전 러너로 갑니다. 한 줄 정의는 "멈추지 않고 달리는 Monument Valley"입니다.</p>
+<ul>
+<li><strong>놈에서 가져올 것:</strong> 한 손 조작, 바닥→벽→천장으로 넘어가는 시점 회전, 짧은 판(30~60초), 즉시 재시작, 리듬감 있는 장애물 배치.</li>
+<li><strong>Monument Valley에서 가져올 것:</strong> 착시 건축이 길이 되는 레벨, 파스텔 그라데이션과 빛·안개의 층, 말 없는 스토리텔링, 상호작용마다 음이 되는 사운드.</li>
+<li><strong>둘을 묶는 몽유만의 장치:</strong> 달리는 도중 탭 한 번에 건축이 돌아 끊긴 길이 이어지는 "착시 점프". 놈의 회전이 Monument Valley의 착시를 여는 열쇠가 됩니다.</li>
+<li><strong>1위를 노리는 조건:</strong> 첫 30초 안에 "예쁘다"와 "손맛 있다"가 동시에 와야 합니다. 그래서 1차 개발은 연출(충돌, 골인 오로라, 큰 점수·게이지, 말풍선 가이드)과 아트 통일에 집중합니다.</li>
+</ul>
+<h2>놈 시리즈와 놈3에서 배울 것</h2>
+<p>놈의 본질은 <strong>원버튼 + 세계 회전 + 멈추지 않는 달리기</strong>이고, 몽유는 이미 이 골격을 갖고 있습니다. 놈3의 교훈은 단순한 도형과 사랑 이야기의 결합은 강했지만, 가파른 난이도와 불친절한 조건 때문에 시리즈 최저 평가를 받았다는 점입니다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>놈3 (게임빌, 2007)</th>
+<th>몽유에 주는 의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>조작</td>
+<td>원버튼 러닝 액션, "휴대폰을 돌린다"는 컨셉</td>
+<td>탭 하나로 끝내는 조작은 유지. 폰 회전 대신 화면 안의 세계가 도는 연출로 대체</td>
+</tr>
+<tr>
+<td>핵심 장치</td>
+<td>스테이지·보스·메뉴까지 모두 사각형의 집합, 사각형이 모든 장애물</td>
+<td>몽유 2번째 기억의 사각 타일 벽이 여기서 왔음. 사각형을 모뉴먼트 밸리식 건축 블록으로 재해석</td>
+</tr>
+<tr>
+<td>레벨</td>
+<td>맵·셀의 움직임·크기를 임의로 조합, 패턴 "수십만 개"</td>
+<td>절차적 생성은 무한 모드에만. 스토리 레벨은 손으로 디자인</td>
+</tr>
+<tr>
+<td>보스</td>
+<td>8·20·31·38·45·58·66·77·90·99번 등 10개 보스 스테이지</td>
+<td>챕터 끝마다 건축 자체가 보스가 되는 구간</td>
+</tr>
+<tr>
+<td>이야기</td>
+<td>사랑이 주제, 부제의 '사각형'이 '사랑'도 뜻함, 실연으로 끝남</td>
+<td>대사 최소화, 관계 중심의 감정 서사는 계승</td>
+</tr>
+<tr>
+<td>사운드</td>
+<td>심장 박동 소리 기반 배경음</td>
+<td>박동·호흡을 리듬의 단서로 쓰는 아이디어 채택</td>
+</tr>
+<tr>
+<td>발매</td>
+<td>2007년 6월 28일 SKT 먼저, WIPI, 2,900원</td>
+<td>—</td>
+</tr>
+<tr>
+<td>평가</td>
+<td>전자신문 "이달의 우수게임" 11월상, IGF 모바일 최종 후보</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>반드시 피해야 할 놈3의 실수</strong> (나무위키 기준 "평가는 놈 시리즈에서 제일 낮다")</p>
+<ul>
+<li>3번 맞으면 죽고 회복 수단이 없었으며 난이도가 급상승했습니다. 몽유는 체크포인트와 완만한 난이도 곡선이 필수입니다.</li>
+<li>스킨 1개 100원 결제로 스테이지를 건너뛸 수 있었습니다. 결제로 진행을 사는 구조는 프리미엄 감성을 깨므로 피합니다.</li>
+<li>시간대, 전화 받기 같은 괴상한 해금 조건과 97·98번의 비공개 조건이 있었습니다. 현재 몽유의 '꿈속 전화 받기', 설정 바꾸기 미션이 같은 함정에 가깝습니다.</li>
+</ul>
+<p>시리즈 전체로는 2003년 첫 출시 후 4개 시리즈가 통산 300만 다운로드를 기록했고, 2010년 놈4도 4방향 회전 조작을 유지했습니다(<a href="https://www.gamemeca.com/view.php?gid=85606">게임메카, 2010</a>). 출처: <a href="https://namu.moe/w/%EB%86%883">나무위키 놈3</a>, <a href="https://m.etnews.com/200711300120">전자신문</a>.</p>
+<h2>Monument Valley에서 배울 것</h2>
+<p>Monument Valley의 본질은 <strong>"모든 화면이 작품"인 절제된 프리미엄 경험</strong>입니다. 8명이 10개월, $1.4M으로 만든 약 90분짜리 게임이 약 50개국 유료 앱 1위를 했습니다. 몽유 규모의 팀이 따라갈 수 있는 성공 공식입니다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Monument Valley</th>
+<th>몽유에 주는 의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>화면 원칙</td>
+<td>모든 화면은 퍼즐·건축 구조·그래픽 구성 세 가지로 작동(Dan Gray), 매 프레임이 전시할 만한 가치(Ken Wong)</td>
+<td>달리는 중 아무 프레임을 잡아도 포스터가 되게. 게임판이 화면 위 절반만 쓰는 현재 구성은 탈락</td>
+</tr>
+<tr>
+<td>영향</td>
+<td>일본 판화, 미니멀 조각, 중동·인도·북아프리카 건축, Fez, Windosill, Sword &amp; Sworcery</td>
+<td>몽유는 한국적 모티브(단청, 달항아리, 돌탑, 창호지 빛)를 자기 어휘로 삼아 차별화</td>
+</tr>
+<tr>
+<td>구성</td>
+<td>여백 위에 떠 있는 "작은 세계"(조각, 건축 모형, 분재), 등각 투상</td>
+<td>한 기억 = 하나의 떠 있는 건축물. 달리며 그 건축을 한 바퀴 도는 구조</td>
+</tr>
+<tr>
+<td>상호작용</td>
+<td>등각 착시와 불가능한 도형("sacred geometry"), 레벨마다 다른 핵심 메커닉, 색으로 조작 가능 지점 표시</td>
+<td>기억마다 새 메커닉 하나, 탭할 곳은 항상 같은 색(금빛)으로 일관</td>
+</tr>
+<tr>
+<td>온보딩</td>
+<td>직접 안내 없이 탐험으로 목표를 찾게 설계, 비게이머 사용자 테스트를 반복</td>
+<td>글 설명보다 레벨 자체가 가르치게. 말풍선은 보조</td>
+</tr>
+<tr>
+<td>사운드</td>
+<td>Stafford Bawler·Obfusc·Grigori의 음악, 장치가 움직일 때의 "깊은 울림"과 "클릭"</td>
+<td>회전·착지·골인이 모두 음악적인 음으로 들리게</td>
+</tr>
+<tr>
+<td>비즈니스</td>
+<td>무료 모델·리더보드·유료 벽·소셜 연동을 빼고 프리미엄 유료로 출시</td>
+<td>아래 시장 섹션에서 모델 제안</td>
+</tr>
+</tbody>
+</table>
+<p><strong>성과</strong></p>
+<ul>
+<li>개발: 2013년 초부터 10개월, 8명, 개발비 $1.4M. iOS 2014년 4월 3일 출시 후 2주 안에 개발비 회수.</li>
+<li>판매: 1개월 50만, 3개월 100만, 2016년 5월 2,600만 장, 매출 $14M 이상.</li>
+<li>수상: 2014 Apple Design Award, Apple 2014 최고의 iPad 게임, D.I.C.E. 아트 디렉션 부문, BAFTA British Game·Mobile/Handheld Game, 2015 IMGA 그랑프리, Metacritic 89.</li>
+<li>시리즈: Monument Valley 2(2017), Monument Valley 3(2024년 12월).</li>
+<li>경고: 2015년 1월 Ustwo 발표로 Android 설치의 95%, iOS의 60%가 무료 복사본이었습니다.</li>
+</ul>
+<p>출처: <a href="https://en.wikipedia.org/wiki/Monument_Valley_(video_game)">Wikipedia: Monument Valley</a>, <a href="https://www.pocketgamer.biz/feature/58906/stairway-to-heaven-the-making-of-monument-valley/">PocketGamer.biz: Stairway to heaven</a>.</p>
+<h2>시장: "1위"를 어디서 노릴 것인가</h2>
+<p>몽유가 현실적으로 노릴 1위는 <strong>다운로드·매출 종합 1위가 아니라 "유료/추천 차트 1위 + 앱스토어 피처드 + 디자인 어워드"</strong> 입니다. Monument Valley가 약 50개국 유료 앱 1위를 한 길이고, 종합 차트는 대규모 UA와 라이브옵스의 영역이기 때문입니다.</p>
+<p><strong>2025년 종합 차트의 현실</strong> (<a href="https://www.pocketgamer.biz/the-most-downloaded-mobile-games-of-2025">PocketGamer.biz</a>, AppMagic 추정 1/1~12/22)</p>
+<table>
+<thead>
+<tr>
+<th>순위</th>
+<th>게임</th>
+<th>2025 다운로드</th>
+<th>몽유에 주는 신호</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Block Blast</td>
+<td>3억 5,620만</td>
+<td>짧은 세션, 즉시 이해되는 규칙</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Roblox</td>
+<td>2억 8,600만</td>
+<td>UGC 플랫폼, 비교 대상 아님</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Free Fire (+Max)</td>
+<td>2억 7,960만</td>
+<td>비교 대상 아님</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Subway Surfers</td>
+<td>1억 8,670만</td>
+<td>러너 장르는 여전히 상위권. 원터치 러너의 수요 존재</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Pizza Ready</td>
+<td>1억 6,100만</td>
+<td>하이브리드캐주얼</td>
+</tr>
+</tbody>
+</table>
+<p><strong>장르 흐름</strong></p>
+<ul>
+<li>하이브리드캐주얼은 IAP 매출 +20%로 의미 있게 성장한 유일한 세그먼트입니다. 모바일 IAP 전체는 $81.75B(+1.3%), 다운로드는 504.1억(-7.2%)입니다(<a href="https://gamedevreports.substack.com/p/sensor-tower-state-of-gaming-2026">Sensor Tower 요약</a>).</li>
+<li>상위 25개 캐주얼 게임의 D7 리텐션은 2022년 초부터 하락 추세이고, 상위 하이브리드캐주얼이 이를 넘었습니다(같은 출처). "쉽게 시작, 깊게 성장"하는 구조가 리텐션을 이깁니다.</li>
+<li>캐주얼 매출의 72% 이상은 퍼즐($8.2B)과 카지노($6.9B)입니다. Merge는 매출 +80%로 가장 빠르게 성장했습니다(<a href="https://mobidictum.com/appmagic-casual-games-report-2025-summary/">AppMagic 요약</a>).</li>
+<li>매출 급상승을 만드는 라이브옵스는 이벤트 메뉴(성공률 83.4%), 원정(expeditions), 배틀패스 순입니다. 리워드 광고는 전체 광고 노출의 17.7%(+53.9%)입니다(<a href="https://gamedevreports.substack.com/p/sensor-tower-state-of-gaming-2026">Sensor Tower 요약</a>).</li>
+<li>프리미엄 러너의 선례는 Alto's Odyssey입니다. 2018년 Apple Design Award를 받았고, 같은 해 Florence, INSIDE, Frost, Oddmar가 함께 수상했습니다(<a href="https://www.macrumors.com/2018/06/04/apple-announces-2018-apple-design-award-winners/">MacRumors</a>).</li>
+</ul>
+<p><strong>몽유의 전략 제안</strong></p>
+<ol>
+<li><strong>무료 시작 + 프리미엄 해금:</strong> 챕터 1~2는 무료, 이후 챕터는 1회 구매로 열기. Monument Valley의 "유료 벽 없음"과 무료 복사본 문제(Android 95%)를 함께 고려한 절충안입니다.</li>
+<li><strong>하이브리드 층:</strong> 스토리 클리어 후 "무한 꿈" 모드(놈식 절차적 생성 + 일일 도전 + 주간 순위)로 리텐션을 확보합니다. 의상 스킨은 외형만, 진행을 파는 결제는 없습니다.</li>
+<li><strong>피처드를 노리는 기술 품질:</strong> 60fps 유지, 햅틱, 접근성(색약 모드, 모션 줄이기), 모든 화면 비율 대응을 출시 전 기준으로 잡습니다.</li>
+<li><strong>공유가 공짜 UA가 되게:</strong> Monument Valley의 카메라 모드처럼, 골인 순간과 오로라를 9:16 짧은 영상으로 저장·공유하는 기능을 넣습니다. 광고 소재의 53.7%가 비디오인 시장에서 예쁜 화면이 곧 광고입니다.</li>
+</ol>
+<h2>융합 설계: 회전 러닝 × 착시 건축</h2>
+<p>핵심 규칙은 하나입니다. <strong>탭 = 점프, 그리고 길이 끝나는 곳에서 세계가 돈다.</strong> 놈처럼 손가락 하나로 계속 달리고, Monument Valley처럼 건축이 회전하면서 불가능한 길이 이어집니다. 플레이어는 "내가 건축을 돌렸다"고 느끼지만 조작은 여전히 탭 하나입니다.</p>
+<p><strong>한 판(기억 1개, 40~70초)의 구조</strong></p>
+<ol>
+<li><strong>도입 (3초):</strong> 떠 있는 건축물 전체를 보여주는 등각 카메라, 골인 오로라가 꼭대기에서 일렁임. "저기까지 간다"를 첫 화면에서 알려줌.</li>
+<li><strong>달리기 (여러 구간):</strong> 바닥 → 벽 → 천장으로 면을 갈아타며 리듬 점프. 면이 바뀔 때마다 카메라가 90° 돌며 색이 한 단계 바뀜.</li>
+<li><strong>착시 점프 (구간당 1~2회):</strong> 길이 끊긴 곳에서 금빛 표식을 탭하면 건축이 돌아 끊긴 길이 눈으로만 이어짐(펜로즈 계단, 에셔식 문). 놈의 회전이 여기서 "보상"이 됨.</li>
+<li><strong>골인 (5초):</strong> 오로라 문을 통과하면 건축 전체가 빛을 받아 완성되고, 음악이 한 소절 해결됨.</li>
+<li><strong>기록 (즉시):</strong> 큰 점수, 별 3개(클리어·빛 수집·무피격), 탭 한 번에 다음 기억.</li>
+</ol>
+<p><strong>챕터별 새 메커닉 (Monument Valley식 "한 챕터 한 아이디어")</strong></p>
+<table>
+<thead>
+<tr>
+<th>챕터</th>
+<th>세계</th>
+<th>새 메커닉</th>
+<th>놈에서 온 것 / MV에서 온 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>새벽 계단의 탑</td>
+<td>바닥·벽·천장 회전 러닝</td>
+<td>놈의 회전 / MV의 탑</td>
+</tr>
+<tr>
+<td>2</td>
+<td>달빛 수로</td>
+<td>착시 점프로 끊긴 길 잇기</td>
+<td>— / 착시 건축</td>
+</tr>
+<tr>
+<td>3</td>
+<td>사각의 정원</td>
+<td>움직이는 사각 블록(밀리고 닫히는 벽)</td>
+<td>놈3의 사각형 / MV의 슬라이딩 플랫폼</td>
+</tr>
+<tr>
+<td>4</td>
+<td>거꾸로 된 성</td>
+<td>중력 반전 구간</td>
+<td>놈의 천장 달리기 / MV의 뒤집힌 방</td>
+</tr>
+<tr>
+<td>5</td>
+<td>심장의 시계탑</td>
+<td>박동 리듬에 맞춘 장애물(음악이 곧 타이밍)</td>
+<td>놈3의 심장 박동 BGM / MV의 장치 사운드</td>
+</tr>
+<tr>
+<td>보스</td>
+<td>건축 자체가 움직이는 구간</td>
+<td>무너지는 길 위에서 버티기</td>
+<td>놈3 보스 / MV의 거대 구조물</td>
+</tr>
+</tbody>
+</table>
+<p><strong>난이도 원칙 (놈3의 실수 반복 금지)</strong></p>
+<ul>
+<li>구간마다 체크포인트를 두고, 실패하면 0.5초 안에 그 구간 처음부터 다시 시작합니다.</li>
+<li>같은 곳에서 3번 실패하면 말풍선이 원인(일찍/늦게)을 알려주고, 5번이면 그 장애물만 느리게 보여주는 "꿈의 잔상"을 제안합니다.</li>
+<li>스토리 진행을 결제로 판매하지 않고, 숨은 조건이나 기기 조작 조건(전화 받기, 설정 바꾸기)을 없앱니다.</li>
+</ul>
+<h2>연출 기획</h2>
+<p>연출의 기준은 <strong>"모든 입력에 0.1초 안에 눈·귀·손이 동시에 반응한다"</strong> 입니다. 현재 몽유는 충돌·골인·점수 모두 이 중 한두 개만 반응합니다.</p>
+<h3>화면 배치: 하단 게이지 + 그 위 말풍선 (채택)</h3>
+<p>제안하신 배치가 맞습니다. 현재 화면 하단 40%가 비어 있고 엄지가 닿는 영역이라, 게임판을 가리지 않으면서 시선 이동이 가장 적습니다.</p>
+<table>
+<thead>
+<tr>
+<th>영역 (390×844 기준)</th>
+<th>내용</th>
+<th>크기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>상단 (0~10%)</td>
+<td>점수 크게(숫자 40px 이상), 오른쪽 일시정지</td>
+<td>점수는 화면에서 가장 큰 글자</td>
+</tr>
+<tr>
+<td>게임판 (10~68%)</td>
+<td>건축물·캐릭터·장애물, 캐릭터 높이 화면의 8~10%</td>
+<td>현재 약 5% → 2배</td>
+</tr>
+<tr>
+<td>말풍선 (68~80%)</td>
+<td>튜토리얼, 응원, 실패 원인, 이야기 한 줄. 캐릭터 얼굴 아이콘 + 꼬리가 게임판을 가리킴</td>
+<td>본문 18px 이상, 최대 2줄</td>
+</tr>
+<tr>
+<td>게이지 (80~90%)</td>
+<td>코스 진행률 바(두께 14~18px), 위에 빛 수집 눈금 6개, 끝에 오로라 문 아이콘</td>
+<td>가로 화면의 86%</td>
+</tr>
+<tr>
+<td>여백 (90~100%)</td>
+<td>홈 인디케이터·안전 영역</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3>튜토리얼: "보고, 따라하고, 혼자 한다"</h3>
+<ol>
+<li><strong>느린 찬스 (첫 장애물):</strong> 장애물 앞에서 시간이 느려지고 화면 아래에 탭 손가락 애니메이션. 탭할 때까지 기다려 주므로 첫 경험이 실패가 되지 않음.</li>
+<li><strong>리듬 맞추기 (2~3번째):</strong> 장애물 앞 바닥에 "여기서 탭" 빛 고리가 퍼지고, 탭 타이밍이 맞으면 "완벽!" 말풍선.</li>
+<li><strong>벽 넘기 (처음 회전):</strong> 카메라가 돌기 직전 말풍선 "벽도 바닥이야". 회전 중에는 장애물을 두지 않음.</li>
+<li><strong>혼자 해보기:</strong> 안내 없이 남은 구간. 실패하면 원인별 한 줄 피드백("조금 일찍 눌렀어", "한 박자 늦었어"). 코드에 이미 있는 <code>crash.early</code> 판정을 사용.</li>
+<li><strong>새 규칙 등장 때마다 반복:</strong> 점수 목표, 목숨, 착시 점프도 같은 3단계(느린 찬스 → 안내 → 혼자)로 소개.</li>
+</ol>
+<h3>이야기 장면</h3>
+<ul>
+<li>화면 아무 곳이나 탭하면 다음 대사. 글자가 나오는 중에 탭하면 한 번에 다 보여주고, 다시 탭하면 넘김.</li>
+<li>대사는 한 글자씩(초당 30~40자), 끝나면 말풍선 우하단에 ▼ 표시가 깜빡임.</li>
+<li>길게 누르면 빨리감기, 우상단에 "건너뛰기". 모든 기억 사이에 짧은 장면 1~3컷을 넣어 이야기가 끊기지 않게 함.</li>
+</ul>
+<h3>충돌: 0.6초 안에 "아프다"를 전달</h3>
+<table>
+<thead>
+<tr>
+<th>시점</th>
+<th>눈</th>
+<th>귀</th>
+<th>손</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0ms</td>
+<td>화면 전체 흰빛 플래시 60ms, 캐릭터가 장애물 색으로 번쩍임</td>
+<td>낮은 "쿵" + 유리 깨지는 고음 레이어</td>
+<td>진동 40ms 강하게</td>
+</tr>
+<tr>
+<td>0~120ms</td>
+<td>히트스톱(시간 정지), 화면 흔들림 진폭 6px→감쇠</td>
+<td>BGM 필터가 순간 닫힘(물속 소리)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>120~600ms</td>
+<td>장애물이 빛 조각 12~20개로 흩어짐, 캐릭터는 뒤로 튕겨 구르고 주변이 채도 낮아짐</td>
+<td>잔향이 남는 차임 하강음</td>
+<td>약한 진동 두 번</td>
+</tr>
+<tr>
+<td>600ms~</td>
+<td>말풍선에 원인 한 줄, 탭하면 체크포인트부터 즉시 재시작</td>
+<td>BGM 복귀</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>목숨이 있는 모드에서는 상단 하트가 깨지는 애니메이션과 0.8초 무적(캐릭터 깜빡임)을 붙입니다. 모션 줄이기 설정에서는 흔들림·플래시를 끕니다.</p>
+<h3>골인: 오로라 문</h3>
+<ul>
+<li><strong>미리 보이게:</strong> 판이 시작될 때부터 건축 꼭대기에 오로라가 일렁이고, 게이지 끝에도 같은 아이콘. 남은 거리 20%부터 오로라 빛이 화면 가장자리까지 번짐.</li>
+<li><strong>모양:</strong> 세로 커튼 3~4겹(청록 → 보라 → 분홍), 노이즈로 천천히 흘러내리고 아래는 밝게 타오름. 가산 합성 + 블룸. 문 안쪽은 밝은 안개.</li>
+<li><strong>통과 순간:</strong> 슬로모션 0.4초, 오로라가 화면 전체로 퍼지며 건축 전체에 불이 켜짐, 빛 조각이 점수로 날아가 숫자가 올라감. BGM은 해결 화음으로 끝남.</li>
+</ul>
+<h3>점수와 기록</h3>
+<ul>
+<li>점수는 상단 가운데 큰 숫자. 오를 때마다 1.2배로 튀었다 돌아오고, 완벽 타이밍은 "+50 완벽"이 캐릭터 위에서 떠오름.</li>
+<li>연속 완벽은 콤보 배율(×2, ×3)로 게이지 색이 점점 밝아짐.</li>
+<li>결과 화면: 점수 카운트업(1초), 별 3개가 하나씩 찍힘, 신기록일 때만 "새 기록". "다음 기억" 버튼은 → 아이콘(현재는 ↻로 잘못됨).</li>
+</ul>
+<h3>카메라와 전환</h3>
+<ul>
+<li>면이 바뀔 때 0.35초 ease-in-out 회전, 회전 중 살짝 줌아웃(0.92배)해 건축 전체가 보이게.</li>
+<li>이야기 → 플레이: 대사가 사라지며 카메라가 캐릭터에게 다가가 바로 달리기 시작(스크린 전환 없이).</li>
+<li>플레이 → 결과: 카메라가 뒤로 빠지며 완성된 건축 전체를 보여주는 "포스터 컷". 이 화면이 공유 이미지가 됨.</li>
+</ul>
+<h2>아트 디렉션과 에셋</h2>
+<p>아트 방향은 <strong>"한국의 밤을 건축한 떠 있는 조각"</strong> 입니다. 지금은 기억마다 그림체가 달라(1번째 보라 몽환 톤, 2번째 원색 초록 체크무늬) 같은 게임으로 보이지 않으므로, 하나의 렌더러와 하나의 팔레트 규칙으로 통일하는 것이 첫 작업입니다.</p>
+<p><strong>시각 규칙 5가지</strong></p>
+<ol>
+<li><strong>등각 입체:</strong> 모든 길은 두께가 있는 블록. 윗면·옆면·그림자면 3톤으로 칠해 선 하나짜리 길을 없앰.</li>
+<li><strong>챕터당 팔레트 5색:</strong> 하늘 그라데이션 2색 + 건축 3톤. 배경은 명도가 낮고 채도가 적어 게임판이 항상 돋보이게. 체크무늬처럼 고대비 패턴은 배경에 쓰지 않음.</li>
+<li><strong>의미 색은 고정:</strong> 금빛 = 탭할 곳·빛 조각, 산호·주홍 = 위험, 오로라(청록→보라) = 목적지. 챕터 팔레트가 바뀌어도 이 3색은 그대로.</li>
+<li><strong>빛과 안개의 층:</strong> 전경(어두운 실루엣) · 중경(게임판) · 원경(안개 속 건축). 원경은 패럴랙스 0.2배로 천천히.</li>
+<li><strong>글자는 적게, 크게:</strong> 플레이 중 글자는 점수와 말풍선만. 최소 14px, 본문 18px.</li>
+</ol>
+<p><strong>에셋 목록과 품질 기준</strong></p>
+<table>
+<thead>
+<tr>
+<th>에셋</th>
+<th>현재</th>
+<th>목표 품질</th>
+<th>만드는 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주인공</td>
+<td>평면 도형, 2번째 기억에서는 검은 실루엣, 화면 높이의 약 5%</td>
+<td>잠옷 망토를 두른 아이. 달리기 8프레임, 점프·착지·벽 전환·넘어짐·기쁨 포즈. 망토는 물리 흔들림. 화면 높이 8~10%</td>
+<td>벡터 리그(Spine 또는 코드 스켈레톤)</td>
+</tr>
+<tr>
+<td>장애물</td>
+<td>단색 빨간 삼각형</td>
+<td>챕터별 3종: 가시 수정, 도는 문양 판, 깨진 기억 조각. 살아 있는 듯 숨 쉬는 움직임과 내부 발광</td>
+<td>절차적 벡터 + 글로우 셰이더</td>
+</tr>
+<tr>
+<td>건축 블록</td>
+<td>선 하나, 사각 타일</td>
+<td>두께·그림자·창문·난간·계단이 있는 모듈 20종</td>
+<td>등각 타일 키트</td>
+</tr>
+<tr>
+<td>골인</td>
+<td>28px 마름모 테두리</td>
+<td>오로라 문(커튼 3~4겹 + 빛 기둥 + 파티클)</td>
+<td>WebGL 셰이더</td>
+</tr>
+<tr>
+<td>배경</td>
+<td>추상 사이케델릭 텍스처, 체크무늬</td>
+<td>챕터별 하늘 그라데이션 + 안개 + 원경 건축 실루엣 3층</td>
+<td>그림 + 패럴랙스</td>
+</tr>
+<tr>
+<td>이펙트</td>
+<td>얇은 원, 점 6개</td>
+<td>충돌 파편, 착지 먼지, 빛 조각 흡수, 완벽 링, 면 전환 잔상</td>
+<td>파티클 시스템</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>작은 알약 표시, 1~2px 게이지</td>
+<td>큰 점수, 굵은 게이지, 캐릭터 얼굴 말풍선, 별 3개 결과</td>
+<td>디자인 시스템 통일</td>
+</tr>
+<tr>
+<td>아이콘·스토어 이미지</td>
+<td>기본 런처 아이콘</td>
+<td>주인공 + 오로라 문 아이콘, "포스터 컷" 스크린샷 6장, 15~30초 트레일러</td>
+<td>게임 내 카메라 모드로 촬영</td>
+</tr>
+</tbody>
+</table>
+<p><strong>기술 방향:</strong> 현재 Canvas 2D로는 오로라, 블룸, 안개를 60fps로 유지하기 어렵습니다. 게임판은 Canvas를 유지하고 배경·오로라·파티클만 WebGL 레이어(예: PixiJS)로 옮기는 방안을 먼저 시험해 보는 것을 권합니다.</p>
+<h2>BGM과 사운드</h2>
+<p>음악은 <strong>플레이어의 달리기에 따라 층이 쌓이는 적응형 음악</strong>으로 바꿔야 합니다. 현재는 Kevin MacLeod·Eric Skiff의 CC BY 4.0 곡(챕터 10곡 + 보스 3곡 + 이야기 2곡 등)과 Kenney CC0 효과음을 쓰는데, 널리 쓰이는 무료 음원이라 다른 게임·영상에서도 들리고 몽유만의 정체성이 되지 못합니다. Monument Valley는 전용 작곡가 3명(Stafford Bawler, Obfusc, Grigori)이 만들었고 사운드트랙이 비닐 음반으로 나올 만큼 브랜드가 됐습니다.</p>
+<p><strong>음악 구조: 한 챕터 = 한 곡, 4개 층(스템)</strong></p>
+<table>
+<thead>
+<tr>
+<th>층</th>
+<th>켜지는 조건</th>
+<th>악기 예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 바탕</td>
+<td>기억 시작부터</td>
+<td>사운드 패드, 낮은 드론, 심장 박동 같은 킥(놈3의 박동 BGM 계승)</td>
+</tr>
+<tr>
+<td>2. 리듬</td>
+<td>첫 점프 성공 후</td>
+<td>가벼운 퍼커션, 피치카토 현</td>
+</tr>
+<tr>
+<td>3. 멜로디</td>
+<td>빛 조각 3개 또는 콤보 ×2</td>
+<td>가야금·해금·대금 같은 국악기 음색 + 신스 리드</td>
+</tr>
+<tr>
+<td>4. 절정</td>
+<td>골인 직전 20%</td>
+<td>코러스 패드, 바이올린 상승</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>충돌하면 상위 층이 빠지고 저역 필터가 닫힌 뒤, 재시작과 함께 다시 쌓입니다. 음악이 끊기지 않고 마디에 맞춰 전환됩니다.</li>
+<li>음악의 줄기(예: 100 BPM)에 장애물을 배치하면 음악이 곧 타이밍 가이드가 됩니다. 레벨 에디터에 박자 격자를 넣어 설계합니다.</li>
+<li>현재 코드에는 이미 지도·여정 음악 제어(<code>journey-audio.js</code>, <code>licensed-score.js</code>)가 있으므로, Web Audio의 스템 동기 재생을 추가하는 방식으로 확장합니다.</li>
+</ul>
+<p><strong>효과음 세트 (모두 같은 음조로 조율)</strong></p>
+<table>
+<thead>
+<tr>
+<th>이벤트</th>
+<th>소리 방향</th>
+<th>현재</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>점프</td>
+<td>곡의 음조에 맞는 짧은 현 픽. 연속 점프는 음이 올라감(도-미-솔)</td>
+<td>있음 (Kenney)</td>
+</tr>
+<tr>
+<td>착지</td>
+<td>부드러운 나무 톡</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>면 전환</td>
+<td>깊은 울림 + 돌 장치가 도는 클릭(MV의 "깊은 울림·클릭" 참고)</td>
+<td>있음(약함)</td>
+</tr>
+<tr>
+<td>빛 수집</td>
+<td>음계를 한 칸씩 오르는 종소리</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>완벽 타이밍</td>
+<td>반짝이는 차임 + 저음 펀치</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>충돌</td>
+<td>낮은 쿵 + 유리 고음 + 차임 하강 3겹</td>
+<td>짧은 단일 샘플</td>
+</tr>
+<tr>
+<td>골인</td>
+<td>곡의 해결 화음 + 오로라 쉬머</td>
+<td>클리어 징글</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>버튼별 다른 높이의 부드러운 톤</td>
+<td>일부</td>
+</tr>
+</tbody>
+</table>
+<p><strong>소싱 방법 (추천 순)</strong></p>
+<ol>
+<li><strong>전용 작곡 의뢰:</strong> 메인 테마 1곡 + 챕터 5곡(각 4스템) + 효과음 세트. 국내 인디 게임 작곡가에게 국악기 샘플·신스 혼합 방향으로 의뢰. 저작권은 게임 내 사용 + 사운드트랙 발매까지 계약.</li>
+<li><strong>대안:</strong> 로열티 프리 라이브러리에서 스템이 제공되는 곡만 골라 쓰는 방법. 단, 정체성은 약해집니다.</li>
+<li>
+<p>현재 CC BY 곡은 프로토타입 단계에서만 유지하고 출시 전 교체합니다.</p>
+</li>
+<li>
+<p>☐ 작곡 의뢰 예산과 일정 결정 (열린 질문)</p>
+</li>
+</ol>
+<h2>로드맵</h2>
+<p>첫 단계는 <strong>눈에 바로 보이는 손맛과 연출</strong>입니다. 현재 코드 위에서 바로 고칠 수 있고 체감 효과가 가장 크며, 이후 단계는 각 관문을 통과해야 시작합니다.</p>
+<figure><svg viewBox="0 0 760 680" role="img" aria-label="로드맵" class="roadmap"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--axis)"/></marker></defs><text x="24" y="34" font-size="15" font-weight="600" fill="var(--ink)">손맛과 연출부터 고치고, 출시는 세 관문을 통과한 뒤에</text><rect x="24" y="60" width="712" height="96" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><text x="40" y="84" font-size="13" font-weight="600" fill="var(--ink)">1단계 · 손맛과 연출 (지금 바로)</text><text x="40" y="106" font-size="11.5" fill="var(--ink)">화면 아무 곳 탭으로 이야기 넘기기, 충돌 연출(플래시·흔들림·파편·진동·효과음 3겹)</text><text x="40" y="124" font-size="11.5" fill="var(--ink)">오로라 골인, 큰 점수, 하단 진행 게이지와 그 위 말풍선</text><text x="40" y="142" font-size="11.5" fill="var(--ink)">첫 장애물 느린 찬스 튜토리얼, 결과 화면 버그(아이콘·줄바꿈·새 기록·번호) 수정</text><line x1="60" y1="156" x2="60" y2="174" stroke="var(--axis)"/><polygon points="46,188 60,174 74,188 60,202" fill="none" stroke="var(--axis)"/><line x1="60" y1="202" x2="60" y2="220" stroke="var(--axis)" marker-end="url(#ar)"/><text x="88" y="192" font-size="11.5" fill="var(--quiet)">관문 A: 처음 하는 사람 5명이 안내 없이 첫 기억 클리어</text><rect x="24" y="220" width="712" height="96" rx="8" fill="none" stroke="var(--axis)" stroke-width="1.25"/><text x="40" y="244" font-size="13" font-weight="600" fill="var(--ink)">2단계 · 아트 통일</text><text x="40" y="266" font-size="11.5" fill="var(--ink)">렌더러 하나로 통합, 2번째 기억 이후 체크무늬 화면 교체, 옛 모드 코드 정리</text><text x="40" y="284" font-size="11.5" fill="var(--ink)">등각 입체 블록, 챕터 팔레트, 안개 3층, WebGL 오로라·파티클</text><text x="40" y="302" font-size="11.5" fill="var(--ink)">주인공 리그와 애니메이션, 장애물 3종 리디자인</text><line x1="60" y1="316" x2="60" y2="334" stroke="var(--axis)"/><polygon points="46,348 60,334 74,348 60,362" fill="none" stroke="var(--axis)"/><line x1="60" y1="362" x2="60" y2="380" stroke="var(--axis)" marker-end="url(#ar)"/><text x="88" y="352" font-size="11.5" fill="var(--quiet)">관문 B: 모든 기억이 같은 게임으로 보이고, 보급형 안드로이드에서 60fps</text><rect x="24" y="380" width="712" height="96" rx="8" fill="none" stroke="var(--axis)" stroke-width="1.25"/><text x="40" y="404" font-size="13" font-weight="600" fill="var(--ink)">3단계 · 융합 메커닉과 사운드</text><text x="40" y="426" font-size="11.5" fill="var(--ink)">착시 점프, 챕터별 새 메커닉 5종, 박자 격자 위에 레벨 배치</text><text x="40" y="444" font-size="11.5" fill="var(--ink)">전용 작곡 4스템 적응형 음악, 효과음 세트 교체</text><text x="40" y="462" font-size="11.5" fill="var(--ink)">실패 원인 말풍선, 구간 체크포인트, 꿈의 잔상 도움</text><line x1="60" y1="476" x2="60" y2="494" stroke="var(--axis)"/><polygon points="46,508 60,494 74,508 60,522" fill="none" stroke="var(--axis)"/><line x1="60" y1="522" x2="60" y2="540" stroke="var(--axis)" marker-end="url(#ar)"/><text x="88" y="512" font-size="11.5" fill="var(--quiet)">관문 C: 비공개 베타 D1 40%, D7 15% 이상</text><rect x="24" y="540" width="712" height="96" rx="8" fill="none" stroke="var(--axis)" stroke-width="1.25"/><text x="40" y="564" font-size="13" font-weight="600" fill="var(--ink)">4단계 · 출시와 성장</text><text x="40" y="586" font-size="11.5" fill="var(--ink)">무한 꿈 모드와 일일 도전, 포스터 컷 공유 영상</text><text x="40" y="604" font-size="11.5" fill="var(--ink)">스토어 아이콘·스크린샷·트레일러, 접근성 옵션</text><text x="40" y="622" font-size="11.5" fill="var(--ink)">앱스토어·구글 플레이 피처드 제안, 소프트 런칭</text></svg><figcaption>몽유 로드맵 · 4단계, 관문 3개</figcaption></figure>
+
+<p>관문 수치는 제안 목표입니다. D7 15%는 상위 캐주얼 게임의 D7 리텐션이 2022년부터 내리막인 점을 고려한 보수적 기준입니다. 단계별 기간과 인력은 아직 정해지지 않았습니다.</p>
+<ul>
+<li>☐ 단계별 일정과 담당자 정하기 (열린 질문)</li>
+<li>☐ 비즈니스 모델 확정: 무료 시작 + 프리미엄 해금 안 검토 (열린 질문)</li>
+</ul>
+<h2>출처</h2>
+<ul>
+<li><a href="https://namu.moe/w/%EB%86%883">나무위키: 놈3</a></li>
+<li><a href="https://m.etnews.com/200711300120">전자신문: 이달의 우수게임 놈3 (2007)</a></li>
+<li><a href="https://www.gamemeca.com/view.php?gid=85606">게임메카: 놈4 기사 (2010)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Monument_Valley_(video_game)">Wikipedia: Monument Valley</a></li>
+<li><a href="https://www.pocketgamer.biz/feature/58906/stairway-to-heaven-the-making-of-monument-valley/">PocketGamer.biz: Stairway to heaven, the making of Monument Valley (2014)</a></li>
+<li><a href="https://www.pocketgamer.biz/the-most-downloaded-mobile-games-of-2025">PocketGamer.biz: The most downloaded mobile games of 2025</a></li>
+<li><a href="https://mobidictum.com/appmagic-casual-games-report-2025-summary/">Mobidictum: AppMagic casual games report 2025 summary</a></li>
+<li><a href="https://gamedevreports.substack.com/p/sensor-tower-state-of-gaming-2026">Game Dev Reports: Sensor Tower State of Gaming 2026</a></li>
+<li><a href="https://www.macrumors.com/2018/06/04/apple-announces-2018-apple-design-award-winners/">MacRumors: 2018 Apple Design Award winners</a></li>
+<li>몽유 저장소 <code>0ssol1620-byte/mongyu</code> R103 빌드를 390×844 모바일 화면에서 직접 플레이하며 확인한 내용(2026-11-23)</li>
+</ul></article></main></body></html>
