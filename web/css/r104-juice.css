@@ -1,1 +1,3 @@
 /* R104 juice styles. Only shipped in --release R104 builds; scope selectors under html[data-polish-edition]. */
+html[data-polish-edition] #game{transform-origin:50% 50%}
+html[data-polish-edition] #game.juice-shake{will-change:transform}

@@ -11,7 +11,9 @@ const configs=Object.freeze({
  pass:[.13,650,980,.01,.5],chain:[.17,780,1300,.02,.6],start:[.15,260,520,.01,.3],resume:[.12,260,440,.01,.25],
  'r34-counter':[.16,760,1400,.12,.65],'r36-echo-collected':[.18,850,1300,.02,.6],
  'tutorial-progress':[.13,500,750,.01,.4],'tutorial-complete':[.26,520,1040,.01,.55],'tutorial-retry':[.13,280,200,.04,.2],
- 'arcade-perfect':[.14,720,1080,.01,.55]
+ 'arcade-perfect':[.14,720,1080,.01,.55],
+ 'impact-glass':[.3,2600,3900,.22,.95],'impact-chime-fall':[.62,1560,520,.02,.85],
+ 'aurora-shimmer':[1.2,620,1320,.07,.95],'perfect-chime':[.24,990,1480,.01,.75]
 });
 const caches=new WeakMap();
 function sample(kind){return root.MONGYU_EMBEDDED_EFFECTS?.[kind]}
