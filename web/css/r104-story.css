@@ -1,1 +1,36 @@
 /* R104 story styles. Only shipped in --release R104 builds; scope selectors under html[data-polish-edition]. */
+
+/* Story scene: the whole screen advances, so taps should feel like taps (no zoom, no text selection). */
+html[data-polish-edition] #restorationScene{
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ -webkit-user-select:none;user-select:none;
+}
+html[data-polish-edition] #restorationScene :is(button,select,input){cursor:pointer}
+
+/* Typewriter: characters stay in the DOM (and in the live region); untyped ones are only transparent. */
+html[data-polish-edition] #restorationScene[data-line=typing] #restorationSceneText .tw-c:not(.tw-on){opacity:0}
+
+/* ▼ continue marker at the bubble's bottom-right once the line has finished. */
+html[data-polish-edition] #restorationScene .scene-balloon{position:relative}
+html[data-polish-edition] #restorationScene .scene-balloon::before{
+ content:'▼';position:absolute;right:14px;bottom:7px;z-index:1;
+ font:700 11px/1 system-ui,sans-serif;color:currentColor;opacity:0;pointer-events:none;
+}
+html[data-polish-edition] #restorationScene[data-presentation=narration] .scene-balloon::before{right:4px;bottom:-4px}
+html[data-polish-edition] #restorationScene[data-line=done] .scene-balloon::before{
+ opacity:.85;animation:r104-story-more 1.2s ease-in-out infinite;
+}
+@keyframes r104-story-more{0%,100%{opacity:.9;transform:translateY(0)}50%{opacity:.12;transform:translateY(2px)}}
+html[data-polish-edition] body[data-dream-motion=reduced] #restorationScene[data-line=done] .scene-balloon::before{animation:none;opacity:.85}
+@media (prefers-reduced-motion:reduce){
+ html[data-polish-edition] #restorationScene[data-line=done] .scene-balloon::before{animation:none;opacity:.85}
+}
+
+/* Result: the primary "다음 기억으로" carries a forward arrow, never the retry ↻ it inherited from the generic primary rule. */
+html[data-polish-edition] body[data-restoration=true] #squareResult #squareNext[data-primary=true]::before{content:'→'}
+
+/* Result/pause top row: labels stay on one line ("다시 달리기"), so the slots get room for them. */
+html[data-polish-edition][data-stage-hud] body[data-restoration=true] :is(#squareResult,#pauseSheet) button:not([data-primary=true]):not(#resumePlay){
+ width:58px;min-width:58px;padding:1px 0;white-space:nowrap;
+ right:calc(var(--hud-edge) + var(--slot,0) * 60px);
+}
