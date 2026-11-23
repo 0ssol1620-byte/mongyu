@@ -11,6 +11,7 @@ const looks=Object.freeze([
 ].map(([id,name,at,body,accent,detail])=>Object.freeze({id,name,at,body,accent,detail})));
 const stageEdition=root.MONGYU_STAGE_EDITION===true;
 const dreamEdition=root.MONGYU_DREAM_EDITION===true;
+const polishEdition=root.MONGYU_POLISH_EDITION===true;
 let selected='moon',saved=true,progress=()=>0,lastWall=null,motion=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function count(n){return Number.isSafeInteger(n)?clamp(n,0,100):0}
@@ -185,6 +186,8 @@ function prismWalker(c,q,pose,style,ink,t,reduced){
  c.restore();
 }
 function sprite(c,q,fx={},reduced=false,character='walker',style=look()){
+ // R104: the redesigned dreamer (character-art.js) owns every character drawing.
+ if(polishEdition&&root.MongyuCharacter?.draw)return root.MongyuCharacter.draw(c,q,fx,reduced,character,style);
  const t=reduced?0:fx.poseTime??fx.t??0,pose=gait(t,character==='elder'?{...q,carrier:true}:q,reduced),{hip,shoulder,legs,arms}=pose;
  const ink=fx.ink||(fx.onDark&&style.body==='#18121d'?'#fff8de':style.body),basis=actorBasis(q),size=(q.bodyHeight||60)/43.5;
  c.save();c.translate(q.x,q.y);c.rotate(basis.angle);c.scale(size,size*basis.sign);if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
