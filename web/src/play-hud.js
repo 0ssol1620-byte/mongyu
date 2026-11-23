@@ -31,9 +31,10 @@ function nativeModel(run,v){
   hearts:{now:hearts,max:Math.max(max,hearts)},streak:0};
 }
 function model(run,O,status){return run?.openingCourse?openingModel(run,O):nativeModel(run,status)}
-/* Speech priority: coach (until run.time < coach.until) -> canvas dialogue -> section guide -> nothing. */
-function pickSpeech(run,dialogue,guide){
- const c=run?.coach;
+/* Speech priority: coach (until run.time < coach.until) -> canvas dialogue -> section guide -> nothing.
+   `coach` overrides run.coach (native runs: the HUD's own rule tutor). */
+function pickSpeech(run,dialogue,guide,coach){
+ const c=coach||run?.coach;
  if(c&&typeof c.text==='string'&&c.text&&(!Number.isFinite(c.until)||num(run.time)<c.until))return {text:c.text,kind:String(c.kind||'coach'),source:'coach'};
  if(dialogue)return {text:String(dialogue),kind:'line',source:'dialogue'};
  if(guide)return {text:String(guide),kind:'guide',source:'guide'};
@@ -48,6 +49,71 @@ function shouldShow(run,doc){
 /* Opening section guide = the old bottom hint (status().cue), minus the brief '빛 회수' flash after each pass. */
 function openingGuide(run){if(!run.crash&&num(run.time)-num(run.crossedAt)<.65)return '';try{return run.status?.()?.cue?.text||''}catch(_){return ''}}
 const visibleText=n=>n&&!n.hidden&&n.textContent?n.textContent.trim():'';
+/* Combo glow level 0..4: perfect streak x2 -> 1, x3 -> 2, x4+ -> 3, plus 1 when the adaptive music is at full intensity. */
+function comboLevel(streak,intensity){return Math.min(4,(streak>=2?Math.min(3,streak-1):0)+(num(intensity)>=4?1:0))}
+
+/* Native rule tutorial: the first time a memory brings a rule, guide (안내) -> praise the first success (칭찬) -> afterwards silence (혼자).
+   A rule counts as seen once praised, or once a run that showed its guide ends. */
+const RULE_TUTOR=Object.freeze({
+ 'run-score':{guide:r=>'점수 '+r.target+'점을 모으면 기억이 열려',praise:'잘했어! 기억이 열렸어'},
+ 'cumulative-score':{guide:r=>'점수는 매번 쌓여. 합쳐서 '+r.target+'점이면 열려',praise:'잘했어! 다 모았어'},
+ 'damage-range':{guide:r=>'점수가 '+r.min+'~'+r.max+'점일 때 딱 한 번 부딪혀 봐',praise:'잘했어! 딱 맞췄어'},
+ 'death-range':{guide:r=>r.min+'~'+r.max+'점에서 마지막 하트를 잃으면 돼',praise:'잘했어!'},
+ 'repeated-damage':{guide:r=>'같은 장애물에 '+r.target+'번 부딪혀 봐',praise:'잘했어!'},
+ 'flawless-score':{guide:r=>'한 번도 부딪히지 말고 '+r.target+'점까지!',praise:'잘했어! 한 번도 안 다쳤어'},
+ 'kick':{guide:()=>'점프한 뒤 공중에서 한 번 더 탭하면 차기야',praise:'잘했어! 멋진 차기야'},
+ 'map-change':{guide:r=>'벽 모양이 '+r.target+'번 바뀔 때까지 버텨 봐',praise:'잘했어!'},
+ lives:{guide:()=>'하트가 0이 되면 처음부터야',hit:'괜찮아, 하트가 남아 있으면 계속 달려',praise:'잘 버텼어! 그대로 계속'},
+ wall:{guide:()=>'벽도 바닥이야. 그대로 달려',praise:'잘했어! 어느 면이든 똑같아'}
+});
+const TUTOR_KEY='r104-rule-tutorial',GUIDE_HOLD=3.4,PRAISE_HOLD=2.2,TUTOR_DELAY=.6,LIVES_PRAISE_AFTER=4,WALL_PRAISE_AFTER=3.5;
+function ruleStore(storage){
+ const seen=new Set();try{const v=JSON.parse(storage?.getItem?.(TUTOR_KEY)||'[]');if(Array.isArray(v))for(const id of v)if(typeof id==='string')seen.add(id)}catch(_){}
+ return {has:id=>seen.has(id),add(id){if(seen.has(id))return false;seen.add(id);try{storage?.setItem?.(TUTOR_KEY,JSON.stringify([...seen]))}catch(_){}return true},list:()=>[...seen]};
+}
+function nativeFace(run){const g=run?.nativeFrame?.game;const f=g?.pool?.objects?.[g.pool.currentIndex]?.geometry?.orientation;return Number.isFinite(f)?f:null}
+function createTutor(store){
+ let st=null;
+ const say=(time,kind,text,hold)=>{st.coach={kind,text,until:time+hold}};
+ const learned=id=>{st.pending.delete(id);store.add(id)};
+ function step(run,v){
+  if(!run?.nativeRuntime||!v){st=null;return null}
+  if(!st||st.run!==run){
+   st={run,queue:[],coach:null,pending:new Map(),face:nativeFace(run),hearts:num(v.hearts),hitAt:null,wallAt:null,eligible:v.supported!==false&&!v.freePlay&&!run.practice};
+   const rule=run.slot?.rule||{},spec=RULE_TUTOR[rule.type];
+   if(st.eligible){
+    if(spec&&!store.has(rule.type))st.queue.push({id:rule.type,text:spec.guide(rule)});
+    if(num(run.initialLives)>1&&!store.has('lives'))st.queue.push({id:'lives',text:RULE_TUTOR.lives.guide()});
+   }
+  }
+  if(!st.eligible)return null;
+  const time=num(run.time),hearts=num(v.hearts);
+  if(['clear','fail'].includes(run.state)||v.result){for(const id of [...st.pending.keys()])learned(id);st.queue.length=0;return null}
+  if(run.state!=='play')return null;
+  // first successes
+  const type=run.slot?.rule?.type,o=v.scoreObjective||{};
+  if(st.pending.has(type)&&(v.qualified||num(o.target)>0&&num(o.current)>=o.target)){learned(type);say(time,'praise',RULE_TUTOR[type].praise,PRAISE_HOLD)}
+  if(hearts<st.hearts){
+   st.hitAt=time;st.wallAt=st.wallAt===null?null:time;
+   if(st.pending.has('lives')&&hearts>0)say(time,'tutorial',RULE_TUTOR.lives.hit,2.4);
+  }
+  st.hearts=hearts;
+  if(st.pending.has('lives')&&st.hitAt!==null&&hearts>0&&time-st.hitAt>=LIVES_PRAISE_AFTER){learned('lives');say(time,'praise',RULE_TUTOR.lives.praise,PRAISE_HOLD)}
+  const face=nativeFace(run);
+  if(face!==null&&st.face===null)st.face=face;
+  if(face!==null&&face!==st.face&&!st.pending.has('wall')&&!store.has('wall')){st.pending.set('wall',time);st.wallAt=time;say(time,'tutorial',RULE_TUTOR.wall.guide(),2.6)}
+  if(st.pending.has('wall')&&time-st.wallAt>=WALL_PRAISE_AFTER){learned('wall');say(time,'praise',RULE_TUTOR.wall.praise,PRAISE_HOLD)}
+  // next guide once the dock is free
+  if(st.queue.length&&time>=TUTOR_DELAY&&(!st.coach||time>=st.coach.until)){const next=st.queue.shift();st.pending.set(next.id,time);say(time,'tutorial',next.text,GUIDE_HOLD)}
+  return st.coach&&time<st.coach.until?st.coach:null;
+ }
+ return {step,get state(){return st}};
+}
+function defaultStorage(host){
+ if(host?.storage)return host.storage;
+ try{const ls=root.localStorage;if(!ls)return null;return root.MongyuNativeRestoration?.isolatedStorage?root.MongyuNativeRestoration.isolatedStorage(ls):ls}catch(_){return null}
+}
+const HALVES='<span class="r104-half r104-half-l">'+HEART+'</span><span class="r104-half r104-half-r">'+HEART+'</span><i class="r104-chip"></i><i class="r104-chip"></i><i class="r104-chip"></i>';
 
 function mount(doc,host){
  const $=id=>doc.getElementById(id),html=doc.documentElement;
@@ -63,18 +129,26 @@ function mount(doc,host){
  const row=el('div','r104-gauge-row',gauge),track=el('div','r104-track',row),fill=el('div','r104-fill',el('div','r104-fill-clip',track)),notchBox=el('div','r104-notches',track),headRail=el('div','r104-head-rail',track);
  el('span','r104-head',headRail);el('span','r104-gate',row,GATE);
  ($('stage')||doc.body).appendChild(hud);
- const s={run:null,show:null,score:null,ratio:-1,left:null,right:null,notchKey:'',notches:[],heartsKey:'',hearts:[],speechKey:'',speechKind:'',dockOn:false,lastSpeechAt:-1e9,streak:-1,kind:'',statusKey:'',status:null,frameSpeech:null,frameRun:null};
+ const s={run:null,show:null,score:null,ratio:-1,left:null,right:null,notchKey:'',notches:[],heartsKey:'',hearts:[],speechKey:'',speechKind:'',dockOn:false,lastSpeechAt:-1e9,streak:-1,kind:'',statusKey:'',status:null,frameSpeech:null,frameRun:null,
+  bursts:[],heartsNow:null,lostAt:null,invincible:null,combo:-1};
+ const tutor=createTutor(ruleStore(defaultStorage(host)));
  const reduced=()=>!!host?.settings?.()?.reduced;
  const pop=(n,frames,ms)=>{if(!reduced()&&typeof n.animate==='function')try{n.animate(frames,{duration:ms,easing:'cubic-bezier(.2,.9,.3,1.15)'})}catch(_){}};
  const set=(n,key,value)=>{if(n[key]!==value)n[key]=value};
  function setShow(on){if(s.show===on)return;s.show=on;hud.dataset.show=String(on);html.classList.toggle('r104-hud-on',on)}
+ /* A lost heart cracks down the middle; the halves tumble apart with three chips (reduced motion: the outline simply fades in). */
+ function breakHeart(h,now){
+  if(reduced())return;
+  h.dataset.break='true';const node=el('span','r104-heart-burst',h,HALVES);node.setAttribute('aria-hidden','true');
+  s.bursts.push({node,heart:h,until:now+820});
+ }
  function status(run){if(!run.nativeRuntime||typeof run.status!=='function')return null;const key=run.updates+'|'+run.state;if(s.statusKey!==key||s.run!==run){s.statusKey=key;s.status=run.status()}return s.status}
  function update(){
   const run=host?.activeRun?.()||null,show=shouldShow(run,doc);
-  setShow(show);if(!show)return;
+  setShow(show);if(!show){if(run?.nativeRuntime&&['clear','fail'].includes(run.state))tutor.step(run,status(run));return}
   const red=String(reduced());if(hud.dataset.reduced!==red)hud.dataset.reduced=red;
-  if(run!==s.run){s.run=run;s.score=null;s.ratio=-1;s.notchKey=null;s.speechKey='';s.streak=-1;s.frameSpeech=null}
-  const m=model(run,root.MongyuOpening,status(run));
+  if(run!==s.run){s.run=run;s.score=null;s.ratio=-1;s.notchKey=null;s.speechKey='';s.streak=-1;s.frameSpeech=null;s.heartsNow=null;s.lostAt=null}
+  const v=status(run),m=model(run,root.MongyuOpening,v),now=num(root.performance?.now?.());
   if(s.kind!==m.kind){s.kind=m.kind;hud.dataset.kind=m.kind}
   if(m.score!==s.score){const up=s.score!==null&&m.score>s.score;s.score=m.score;set(scoreValue,'textContent',String(m.score));if(up)pop(scoreBox,[{transform:'scale(1)'},{transform:'scale(1.2)',offset:.3},{transform:'scale(1)'}],360)}
   if(m.streak!==s.streak){s.streak=m.streak;streak.textContent=m.streak>=2?'완벽 ×'+m.streak:'';streak.dataset.on=String(m.streak>=2);if(m.streak>=2)pop(streak,[{transform:'scale(.8)',opacity:.4},{transform:'scale(1)',opacity:1}],260)}
@@ -86,11 +160,20 @@ function mount(doc,host){
   if(notchKey!==s.notchKey){s.notchKey=notchKey;notchBox.replaceChildren();s.notches=m.notches.map(n=>{const d=el('span','r104-notch',notchBox);d.style.left=(n.pos*100).toFixed(2)+'%';d.dataset.lit='init';return d})}
   m.notches.forEach((n,i)=>{const d=s.notches[i];if(!d)return;const lit=String(n.lit);if(d.dataset.lit!==lit){const was=d.dataset.lit;d.dataset.lit=lit;if(lit==='true'&&was==='false')pop(d,[{transform:'translate(-50%,-50%) rotate(45deg) scale(1.9)'},{transform:'translate(-50%,-50%) rotate(45deg) scale(1)'}],420)}});
   const heartsKey=m.hearts?m.hearts.max:'';
-  if(heartsKey!==s.heartsKey){s.heartsKey=heartsKey;capLeft.replaceChildren();s.left=null;s.hearts=[];if(m.hearts){capLeft.textContent='';s.left='';for(let i=0;i<m.hearts.max;i++)s.hearts.push(el('span','r104-heart',capLeft,HEART))}}
-  if(m.hearts)s.hearts.forEach((h,i)=>{const on=String(i<m.hearts.now);if(h.dataset.on!==on){const was=h.dataset.on;h.dataset.on=on;if(was==='true'&&on==='false')pop(h,[{transform:'scale(1.5)'},{transform:'scale(1)'}],380)}});
+  if(heartsKey!==s.heartsKey){s.heartsKey=heartsKey;capLeft.replaceChildren();s.left=null;s.hearts=[];s.bursts=[];if(m.hearts){capLeft.textContent='';s.left='';for(let i=0;i<m.hearts.max;i++)s.hearts.push(el('span','r104-heart',capLeft,HEART))}}
+  if(m.hearts)s.hearts.forEach((h,i)=>{const on=String(i<m.hearts.now);if(h.dataset.on!==on){const was=h.dataset.on;h.dataset.on=on;if(was==='true'&&on==='false')breakHeart(h,now)}});
+  for(let i=s.bursts.length-1;i>=0;i--){const b=s.bursts[i];if(now>=b.until){b.node.remove?.();b.heart.dataset.break='false';s.bursts.splice(i,1)}}
+  // Mercy window after a lost heart: native damage cooldown (actor.p > 0) when exposed, else 0.8 s.
+  if(m.hearts){if(s.heartsNow!==null&&m.hearts.now<s.heartsNow)s.lostAt=now;s.heartsNow=m.hearts.now}
+  let invincible=false;
+  if(m.hearts&&s.lostAt!==null&&run.state==='play'&&m.hearts.now>0){const p=run.nativeFrame?.game?.actor?.p,age=now-s.lostAt;invincible=Number.isFinite(p)?age<250||p>0&&age<3000:age<800}
+  if(invincible!==s.invincible){s.invincible=invincible;hud.dataset.invincible=String(invincible)}
+  const combo=comboLevel(m.streak,root.MongyuAdaptiveMusic?.intensity);
+  if(combo!==s.combo){s.combo=combo;hud.dataset.combo=String(combo)}
+  const coach=run.nativeRuntime?tutor.step(run,v):null;
   const dialogue=(s.frameRun===run&&s.frameSpeech)||visibleText($('runnerSpeech'));
   const guide=run.openingCourse?openingGuide(run):(visibleText($('runLesson'))||visibleText($('hudCue')));
-  const speech=pickSpeech(run,dialogue,guide),now=num(root.performance?.now?.());
+  const speech=pickSpeech(run,dialogue,guide,coach);
   if(speech){
    s.lastSpeechAt=now;const key=speech.kind+'|'+speech.text;
    if(key!==s.speechKey){const guide=speech.kind==='guide';if((s.speechKind==='guide')!==guide||!s.speechKind)face.innerHTML=guide?GUIDE:FACE;s.speechKey=key;s.speechKind=speech.kind;dock.dataset.kind=speech.kind;dock.dataset.source=speech.source;dockText.textContent=speech.text;
@@ -108,6 +191,6 @@ function mount(doc,host){
 let mounted=null;
 function start(host){if(mounted||!enabled||!root.document)return mounted;mounted=mount(root.document,host);return mounted}
 if(enabled&&root.MongyuPolish){if(root.MongyuPolish.host)start(root.MongyuPolish.host);else root.MongyuPolish.on('attach',start)}
-const api=Object.freeze({enabled,model,openingModel,nativeModel,pickSpeech,shouldShow,openingGuide,mount,get mounted(){return mounted}});
+const api=Object.freeze({enabled,model,openingModel,nativeModel,pickSpeech,shouldShow,openingGuide,comboLevel,createTutor,ruleStore,RULE_TUTOR,mount,get mounted(){return mounted}});
 root.MongyuPlayHud=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

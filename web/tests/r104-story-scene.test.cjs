@@ -86,19 +86,22 @@ test('R103 and older keep the original scene: no tap handler, no typewriter, 001
  assert.equal(g.$('restorationSceneText').textContent,LINE);
  assert.equal(g.$('restorationScene').dataset.line,undefined);
 });
-function finishOpening(g,run,bestCombo,clean=0){
+function finishOpening(g,run,bestCombo,clean=0,score){
  const passed=bestCombo;
+ if(score!==undefined)run.score=score;
  run.state='fail';run.result={runVersion:97,mode:'restoration',slotId:run.slot.id,ruleId:run.slot.ruleId,completed:true,practice:false,state:'fail',attempt:run.attempt,time:4,hits:1,score:passed*100+clean*10,jumps:passed,kicks:0,mapChanges:0,bestCombo,openingProof:{course:'folded-light',passed,clean,distance:100},reason:'충돌'};
  g.ui.complete(run);
  g.ui.onRunStatus({mode:'restoration',state:'fail',score:run.result.score,hearts:0,opening:{section:'바닥',passed,total:6,clean,practice:false,crash:{early:false}}});
  return g.$('restorationRecordBadge').hidden;
 }
-test('R104 record badge only when the run beats a stored best on the shown light count',()=>{
+// Phase 2: the opening result now shows the polish score (run.score), so the record follows that score.
+test('R104 record badge only when the run beats a stored best polish score',()=>{
  const g=boot();g.ui.continueJourney({isTrusted:false});g.tap();g.tap();
- assert.equal(finishOpening(g,g.started.at(-1),3,1),true,'first attempt: nothing stored to beat');
- g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),1),true,'fewer lights');
- g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),3,3),true,'same light count, higher hidden score');
- g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),4),false,'more lights than the stored best');
+ assert.equal(finishOpening(g,g.started.at(-1),3,1,640),true,'first attempt: nothing stored to beat');
+ g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),1,0,210),true,'lower score');
+ g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),3,3,640),true,'same score');
+ g.ui.retry({isTrusted:false});assert.equal(finishOpening(g,g.started.at(-1),4,0,820),false,'beats the stored best');
+ assert.equal(g.ui.view().result.newRecord,true);
  assert.equal(g.started.length,4);
 });
 test('R103 keeps its original record badge rule',()=>{
