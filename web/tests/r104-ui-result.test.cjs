@@ -70,7 +70,7 @@ test('stars: lights and clean run are judged separately; fail shows the score bu
  assert.deepEqual(Array.from(g.ui.view().result.stars),[true,true,false],'a checkpoint restart is not a clean run');
  g.ui.retry({isTrusted:false});const again=g.started.at(-1);endOpening(g,again,{state:'fail',score:774,passed:2});
  const r=g.ui.view().result;assert.equal(r.state,'fail');assert.deepEqual(Array.from(r.stars),[false,false,false]);
- assert.equal(g.$('squareResult').dataset.tapRetry,'true');assert.equal(r.hint,'탭하면 다시 달리기');
+ assert.equal(g.$('squareResult').dataset.tapRetry,'true');assert.equal(r.hint,typeof again.retryFromCheckpoint==='function'?'탭하면 이 구간부터 다시':'탭하면 다시 달리기');
 });
 test('reduced motion: final score and stars at once, no count-up',()=>{
  const g=boot({reduced:true}),run=firstRun(g);endOpening(g,run);
