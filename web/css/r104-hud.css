@@ -1,1 +1,74 @@
 /* R104 hud styles. Only shipped in --release R104 builds; scope selectors under html[data-polish-edition]. */
+/* While the new HUD is on, the old pill, score row, small hint and canvas bubble stay in the a11y tree but are not drawn. */
+html[data-polish-edition].r104-hud-on #squareHud,html[data-polish-edition].r104-hud-on #runHud,html[data-polish-edition].r104-hud-on #hudCue,html[data-polish-edition].r104-hud-on #runnerSpeech{opacity:0!important;transition:none!important}
+html[data-polish-edition] .r104-hud{--hud-ink:#fbf4ff;--hud-glass:rgba(26,19,48,.62);--hud-edge:rgba(255,236,255,.16);--hud-gold:#ffd786;--hud-gold-deep:#f3a95b;--hud-bottom:max(10.5%,calc(env(safe-area-inset-bottom) + 14px));--gauge-h:16px;--dock-bottom:max(19.5%,calc(var(--hud-bottom) + 66px));
+ position:absolute;inset:0;z-index:2;pointer-events:none;user-select:none;-webkit-user-select:none;color:var(--hud-ink);font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+ opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s linear .28s}
+html[data-polish-edition] .r104-hud *{pointer-events:none}
+html[data-polish-edition] .r104-hud[data-show=true]{opacity:1;visibility:visible;transition:opacity .28s ease,visibility 0s}
+/* Score */
+html[data-polish-edition] .r104-top{position:absolute;left:50%;top:max(8px,calc(env(safe-area-inset-top) + 4px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;max-width:calc(100% - 132px)}
+html[data-polish-edition] .r104-score{position:relative;display:flex;align-items:baseline;gap:3px;padding:0 18px 0 20px;border-radius:28px;transform-origin:50% 60%;white-space:nowrap;background:linear-gradient(180deg,rgba(40,28,74,.46),rgba(22,15,42,.34));border:1px solid rgba(255,236,255,.1);box-shadow:0 8px 24px rgba(8,4,22,.22);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+html[data-polish-edition] .r104-score-value{font-size:46px;line-height:1.1;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1;color:#fff4dc;background:linear-gradient(180deg,#fffaf0 18%,#ffe3a6 58%,#f7b77a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 10px rgba(255,190,120,.35)) drop-shadow(0 1px 1px rgba(30,14,50,.65))}
+html[data-polish-edition] .r104-score-unit{font-size:15px;font-weight:700;color:#f6dcb4;opacity:.85;transform:translateY(-4px)}
+html[data-polish-edition] .r104-streak{margin-top:2px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:750;letter-spacing:.04em;color:#3a2410;background:linear-gradient(90deg,#ffe7a8,#ffc58c);box-shadow:0 2px 10px rgba(255,190,110,.35);opacity:0;transition:opacity .2s}
+html[data-polish-edition] .r104-streak[data-on=true]{opacity:1}
+/* Speech dock */
+html[data-polish-edition] .r104-dock{position:absolute;left:50%;bottom:var(--dock-bottom);width:min(86%,460px);transform:translate(-50%,8px);display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px 8px 9px;box-sizing:border-box;border-radius:22px;background:linear-gradient(180deg,rgba(44,32,78,.74),var(--hud-glass));border:1px solid var(--hud-edge);box-shadow:0 10px 28px rgba(8,4,22,.42),inset 0 1px 0 rgba(255,255,255,.08);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);opacity:0;transition:opacity .26s ease,transform .26s ease}
+html[data-polish-edition] .r104-dock[data-on=true]{opacity:1;transform:translate(-50%,0)}
+html[data-polish-edition] .r104-dock:before{content:'';position:absolute;left:31px;top:-7px;width:13px;height:13px;transform:rotate(45deg);border-radius:3px 0 0 0;background:rgba(44,32,78,.74);border-left:1px solid var(--hud-edge);border-top:1px solid var(--hud-edge);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);clip-path:polygon(0 0,100% 0,0 100%)}
+html[data-polish-edition] .r104-face{flex:0 0 auto;width:40px;height:40px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,226,186,.35),0 0 16px rgba(201,162,255,.35)}
+html[data-polish-edition] .r104-face svg{display:block;width:100%;height:100%}
+html[data-polish-edition] .r104-dock-text{margin:0;flex:1 1 auto;min-width:0;font-size:18px;line-height:1.34;font-weight:650;letter-spacing:-.005em;word-break:keep-all;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;text-shadow:0 1px 2px rgba(10,4,24,.5)}
+html[data-polish-edition] .r104-dock[data-kind=guide] .r104-dock-text{color:#ffe9c2;font-weight:600}
+html[data-polish-edition] .r104-dock[data-source=coach]{border-color:rgba(255,215,140,.42);box-shadow:0 10px 28px rgba(8,4,22,.42),0 0 22px rgba(255,200,120,.22),inset 0 1px 0 rgba(255,255,255,.1)}
+html[data-polish-edition] .r104-dock[data-kind=perfect] .r104-dock-text{color:var(--hud-gold)}
+html[data-polish-edition] .r104-dock[data-kind=early] .r104-dock-text,html[data-polish-edition] .r104-dock[data-kind=late] .r104-dock-text{color:#ffc9b8}
+/* Progress gauge */
+html[data-polish-edition] .r104-gauge{position:absolute;left:7%;width:86%;bottom:var(--hud-bottom);display:flex;flex-direction:column;gap:6px}
+html[data-polish-edition] .r104-gauge-cap{display:flex;justify-content:space-between;align-items:center;min-height:16px;padding:0 40px 0 4px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#eadcff;text-shadow:0 1px 4px rgba(10,4,24,.8)}
+html[data-polish-edition] .r104-cap-left{display:flex;align-items:center;gap:4px}
+html[data-polish-edition] .r104-cap-right{font-variant-numeric:tabular-nums;color:#ffe7b8}
+html[data-polish-edition] .r104-gauge-row{display:flex;align-items:center;gap:10px}
+html[data-polish-edition] .r104-track{position:relative;flex:1 1 auto;height:var(--gauge-h);border-radius:999px;background:linear-gradient(180deg,rgba(14,9,30,.72),rgba(46,34,82,.6));border:1px solid var(--hud-edge);box-shadow:inset 0 2px 5px rgba(0,0,0,.4),0 6px 18px rgba(8,4,22,.35);overflow:visible}
+html[data-polish-edition] .r104-fill-clip{position:absolute;inset:2px;border-radius:999px;overflow:hidden}
+html[data-polish-edition] .r104-fill{width:100%;height:100%;border-radius:999px;transform:translateX(-100%);background:linear-gradient(90deg,#ffb48d,#f4a6e8 45%,#b9a6ff 70%,#94ead8);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 3px rgba(80,30,90,.25)}
+html[data-polish-edition] .r104-hud[data-kind=native] .r104-fill{background:linear-gradient(90deg,#ff9fb4,#f4a6e8 50%,#ffd786)}
+html[data-polish-edition] .r104-notches{position:absolute;inset:0}
+html[data-polish-edition] .r104-notch{position:absolute;top:50%;width:9px;height:9px;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);background:rgba(30,20,56,.9);border:1.5px solid rgba(230,214,255,.6);box-sizing:border-box;transition:background .25s,border-color .25s,box-shadow .25s}
+html[data-polish-edition] .r104-notch[data-lit=true]{background:linear-gradient(135deg,#fff3c4,var(--hud-gold) 50%,var(--hud-gold-deep));border-color:#fff6d6;box-shadow:0 0 10px rgba(255,210,120,.85),0 0 2px #fff}
+html[data-polish-edition] .r104-head-rail{position:absolute;left:2px;right:2px;top:0;bottom:0;transform:translateX(0)}
+html[data-polish-edition] .r104-head{position:absolute;left:0;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:radial-gradient(circle,#fff 30%,#fff3dc 55%,rgba(255,236,210,0) 72%);box-shadow:0 0 10px 3px rgba(255,240,220,.7)}
+html[data-polish-edition] .r104-gate{flex:0 0 auto;width:30px;height:30px;margin:-8px 0 -6px;filter:drop-shadow(0 0 6px rgba(170,140,255,.6))}
+html[data-polish-edition] .r104-gate svg{display:block;width:100%;height:100%}
+html[data-polish-edition] .r104-hud[data-kind=native] .r104-gate{display:none}
+html[data-polish-edition] .r104-hud[data-kind=native] .r104-gauge-cap{padding-right:4px}
+html[data-polish-edition] .r104-heart{display:inline-block;width:17px;height:15px;transition:opacity .2s}
+html[data-polish-edition] .r104-heart svg{display:block;width:100%;height:100%;fill:#ff8fa8;filter:drop-shadow(0 0 4px rgba(255,130,160,.55))}
+html[data-polish-edition] .r104-heart[data-on=false] svg{fill:rgba(255,255,255,.08);stroke:rgba(255,190,205,.55);stroke-width:1.2;filter:none}
+/* Small phones */
+@media (max-width:340px),(max-height:600px){
+ html[data-polish-edition] .r104-hud{--dock-bottom:max(18%,calc(var(--hud-bottom) + 50px))}
+ html[data-polish-edition] .r104-score-value{font-size:40px}
+ html[data-polish-edition] .r104-dock{gap:10px;min-height:50px;padding:8px 12px 8px 8px;border-radius:18px}
+ html[data-polish-edition] .r104-face{width:36px;height:36px}
+ html[data-polish-edition] .r104-dock-text{font-size:17px;line-height:1.32}
+}
+/* Landscape phones: compact strip along the bottom edge, dock in the bottom-left corner, play field center stays clear. */
+@media (orientation:landscape) and (max-height:520px){
+ html[data-polish-edition] .r104-hud{--hud-bottom:max(10px,calc(env(safe-area-inset-bottom) + 6px));--gauge-h:12px}
+ html[data-polish-edition] .r104-top{top:max(6px,calc(env(safe-area-inset-top) + 2px))}
+ html[data-polish-edition] .r104-score-value{font-size:36px}
+ html[data-polish-edition] .r104-gauge{left:auto;right:max(16px,calc(env(safe-area-inset-right) + 10px));width:min(44%,420px);gap:3px}
+ html[data-polish-edition] .r104-gauge-cap{font-size:11px;min-height:14px}
+ html[data-polish-edition] .r104-gate{width:24px;height:24px}
+ html[data-polish-edition] .r104-dock{left:max(16px,calc(env(safe-area-inset-left) + 10px));bottom:var(--hud-bottom);width:min(40%,380px);transform:translateY(8px);min-height:46px;padding:7px 12px 7px 7px;gap:9px;border-radius:16px}
+ html[data-polish-edition] .r104-dock[data-on=true]{transform:none}
+ html[data-polish-edition] .r104-dock:before{left:22px}
+ html[data-polish-edition] .r104-face{width:32px;height:32px}
+ html[data-polish-edition] .r104-dock-text{font-size:15px;line-height:1.3}
+}
+/* Reduced motion (app setting mirrored to data-reduced, or the OS preference): fades only, no slides or pops. */
+html[data-polish-edition] .r104-hud[data-reduced=true] .r104-dock,html[data-polish-edition] .r104-hud[data-reduced=true] .r104-dock[data-on=true]{transition:opacity .2s linear}
+html[data-polish-edition] .r104-hud[data-reduced=true] .r104-notch{transition:none}
+@media (prefers-reduced-motion:reduce){html[data-polish-edition] .r104-hud .r104-dock{transition:opacity .2s linear!important}html[data-polish-edition] .r104-hud .r104-notch{transition:none!important}}
