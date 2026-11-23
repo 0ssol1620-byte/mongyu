@@ -108,7 +108,7 @@ test('reduced motion removes hit-stop and finish slow motion',()=>{
  try{
   let hitAt=null,failAt=null;play({on:true,skip:2,watch:(r,ev)=>{if(hitAt===null&&ev.includes('hit')){hitAt=r.updates;assert.equal(r.hitStop,0)}if(ev.includes('fail'))failAt=r.updates}});
   assert.ok(Math.abs(failAt-hitAt-.72*120)<=2);
-  const {run}=play({on:true});assert.ok(run.clock-run.time<1.1,'only the clear outro, no slow motion');
+  const {run}=play({on:true});assert.ok(run.clock-run.time<O.TIMING.clearOutro+.1,'only the clear outro, no slow motion');
  }finally{if(host===undefined)delete globalThis.MongyuPolish;else globalThis.MongyuPolish=host}
 });
 test('new synthesized effects are defined',()=>{

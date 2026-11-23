@@ -1,11 +1,12 @@
-/* R104 game feel: collision impact, aurora finish, tutorial overlays. Owned by workstream B. */
+/* R104 game feel: collision impact, aurora finish, score popups. Owned by workstream F (phase 1: B). */
 (function(root){'use strict';
 const enabled=root.MONGYU_POLISH_EDITION===true;
 /* Timeline (seconds after impact): flash 0-.06, shake 0-.32, hit-stop .12 (OpeningRun sim), shards .12-.6, dim/desaturate ramps to .12 and holds. */
 const FLASH=.06,SHAKE=.32,SHAKE_PX=6,SHARD_DELAY=.12,SHARD_LIFE=.48,DIM_IN=.12,DIM_HOLD=.6,DIM_OUT=.4,BLOOM=.95,MAX=40;
 const SHARD_INKS=['255,246,224','255,214,170','201,182,255','159,243,230'],AURORA_INKS=['121,246,222','150,206,255','190,150,255','255,160,222'];
 const pool=Array.from({length:MAX},()=>({on:false,kind:0,age:0,life:0,x:0,y:0,vx:0,vy:0,sx:0,sy:0,qx:0,qy:0,tx:0,ty:0,size:0,spin:0,turn:0,ink:''}));
-let host=null,run=null,impact=null,bloom=null,last=0,shaking=false,shakeTimer=0,seed=7,edge=null;
+let host=null,run=null,impact=null,bloom=null,last=0,shaking=false,shakeTimer=0,seed=7,edge=null,popupPoints=0;
+const POPUP_LIFE=1.05,popups=Array.from({length:6},()=>({on:false,at:0,x:0,y:0,text:'',sub:'',perfect:false}));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const ease=u=>1-Math.pow(1-u,3);
 function rand(){seed=seed*16807%2147483647;return (seed-1)/2147483646}
@@ -24,12 +25,15 @@ function glow(ink){
  glows.set(ink,g);return g;
 }
 function spawn(){for(const p of pool)if(!p.on){p.on=true;return p}return null}
-function clearAll(){impact=null;bloom=null;for(const p of pool)p.on=false;resetShake()}
+function clearAll(){impact=null;bloom=null;for(const p of pool)p.on=false;for(const p of popups)p.on=false;popupPoints=run?.points||0;resetShake()}
 function resetShake(){if(shaking&&host?.canvas?.style){host.canvas.style.transform='';host.canvas.classList?.remove('juice-shake')}shaking=false}
 function setShake(x,y){const c=host?.canvas;if(!c?.style)return;if(!shaking)c.classList?.add('juice-shake');shaking=true;c.style.transform='translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px) scale(1.03)'}
 function impactPoint(r){
  const O=root.MongyuOpening,vp=viewport();
  if(r.openingCourse&&O?.project&&r.crash){const o=O.OBSTACLES[r.crash.index],p=o&&O.project(r,o.at,o.height*.6);if(p)return p}
+ /* Native memories: the character's screen position from the square-art renderer (workstream E), when available. */
+ if(!r.openingCourse){const A=root.MongyuSquareArt;let p=null;try{p=typeof A?.actorScreen==='function'?A.actorScreen(r):A?.actorScreen}catch(_){p=null}
+  if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))return {x:p.x,y:p.y}}
  return {x:vp.width*.5,y:vp.height*.46};
 }
 function burst(x,y,count){
@@ -43,16 +47,42 @@ function homing(x,y,count,delay,inks){
 }
 function onEvent({run:r,event}){
  if(!r||r!==host?.activeRun?.())return;
- if(r!==run){clearAll();run=r}
+ if(r!==run){run=r;clearAll()}
  if(event==='hit'||event==='fail'&&!r.openingCourse&&(!impact||clock()-impact.at>.4)){
-  const p=impactPoint(r);impact={at:clock(),x:p.x,y:p.y,dim:null,ended:false};burst(p.x,p.y,16);
+  const p=impactPoint(r);impact={at:clock(),x:p.x,y:p.y,dim:null,ended:false};burst(p.x,p.y,16);for(const q of popups)q.on=false;
   sound('impact-glass');sound('impact-chime-fall');vibrate(40);
   clearTimeout(shakeTimer);shakeTimer=setTimeout(resetShake,(SHAKE+.08)*1000);
  }else if(r.openingCourse&&(event==='pass'||event==='perfect')){
   const O=root.MongyuOpening,o=O.OBSTACLES[r.index-1],p=o&&O.project?.(r,o.at,o.height+26);
   if(p)homing(p.x,p.y,event==='perfect'?7:4,.12,SHARD_INKS);
   if(event==='perfect')sound('perfect-chime');
+  popup(r,event==='perfect');
  }
+}
+/* Score popups rising from the character: "+50 완벽" on perfect timing (streak bonus), "+100" on a normal clear. */
+function popup(r,perfect){
+ const O=root.MongyuOpening,gain=Number.isFinite(r.points)?r.points-popupPoints:100;popupPoints=r.points||0;
+ const body=r.view?.body||44,p=O?.project?.(r,r.distance,(r.height||0)+body+10);if(!p)return;
+ let slot=popups.find(q=>!q.on)||popups.reduce((a,b)=>a.at<b.at?a:b);
+ const bonus=50*Math.min(5,Math.max(1,r.perfectStreak||1)),streak=r.perfectStreak||0;
+ slot.on=true;slot.at=clock();slot.x=p.x;slot.y=p.y;slot.perfect=perfect;
+ slot.text=perfect?'+'+bonus+' 완벽':'+'+Math.max(0,perfect?gain-bonus:gain);slot.sub=perfect&&streak>1?'×'+streak:'';
+ for(const q of popups)if(q!==slot&&q.on&&slot.at-q.at<.5)q.y-=22;
+}
+function drawPopups(c,calm){
+ let any=false;const now=clock();
+ for(const p of popups){
+  if(!p.on)continue;const t=now-p.at;if(t>=POPUP_LIFE){p.on=false;continue}any=true;
+  const u=t/POPUP_LIFE,rise=calm?0:ease(Math.min(1,u*1.25))*34,pop=calm?1:t<.12?.72+.36*(t/.12):t<.22?1.08-.08*((t-.12)/.1):1,alpha=u<.08?u/.08:u>.65?(1-u)/.35:1;
+  c.save();c.translate(p.x,p.y-rise);c.scale(pop,pop);c.textAlign='center';c.textBaseline='middle';
+  c.font=p.perfect?'800 20px system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif':'700 15px system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+  c.globalAlpha=alpha*.55;c.fillStyle='rgba(28,16,44,.9)';c.fillText(p.text,.8,1.6);
+  if(p.perfect){const g=glow('255,226,150');if(g){c.globalCompositeOperation='lighter';c.globalAlpha=alpha*.5;c.drawImage(g,-46,-22,92,44);c.globalCompositeOperation='source-over'}}
+  c.globalAlpha=alpha;c.fillStyle=p.perfect?'#ffe39a':'#fff4e2';c.fillText(p.text,0,0);
+  if(p.sub){c.font='800 12px system-ui,sans-serif';c.globalAlpha=alpha*.9;c.fillStyle='#ffd0a0';c.fillText(p.sub,0,17)}
+  c.restore();
+ }
+ return any;
 }
 function drawShards(c,dt){
  let any=false;c.save();c.globalCompositeOperation='lighter';
@@ -99,11 +129,12 @@ function edgeGlow(c,w,h){
 }
 function drawAurora(c,r,w,h,calm){
  const O=root.MongyuOpening,progress=r.distance/O.FINISH,k=r.outro?.kind==='clear'||r.state==='clear'?1:clamp((progress-.8)/.2,0,1);
- if(k>0){const e=edgeGlow(c,w,h),t=r.clock??r.time,wave=calm?1:.85+.15*Math.sin(t*2.1);
+ const settle=1-.6*(r.view?.poster||0);
+ if(k>0){const e=edgeGlow(c,w,h),t=r.clock??r.time,wave=(calm?1:.85+.15*Math.sin(t*2.1))*settle;
   c.save();c.globalCompositeOperation='lighter';c.globalAlpha=k*wave;c.fillStyle=e.g;c.fillRect(0,0,w,h);c.globalAlpha=k*(calm?.6:.6+.4*Math.sin(t*1.3+1));c.fillStyle=e.top;c.fillRect(0,0,w,h*.3);c.restore()}
  if(r.outro?.kind==='clear'&&!bloom){const p=O.project?.(r,O.FINISH,34)||{x:w/2,y:h*.4};bloom={at:clock(),x:p.x,y:p.y};homing(p.x,p.y,18,.28,AURORA_INKS);sound('aurora-shimmer')}
  if(!bloom)return k>0;
- const t=clock()-bloom.at,u=clamp(t/BLOOM,0,1),e=ease(u),radius=24+e*Math.hypot(w,h)*1.1,peak=calm?.5:.82;
+ const t=clock()-bloom.at,u=clamp(t/BLOOM,0,1),e=ease(u),radius=24+e*Math.hypot(w,h)*1.1,peak=calm?.45:.62;
  const g=c.createRadialGradient(bloom.x,bloom.y,0,bloom.x,bloom.y,radius);
  g.addColorStop(0,'rgba(255,250,240,'+(peak*.9).toFixed(3)+')');g.addColorStop(.16,'rgba(150,240,226,'+(peak*.5).toFixed(3)+')');g.addColorStop(.4,'rgba(176,146,255,'+(peak*.42).toFixed(3)+')');g.addColorStop(.68,'rgba(255,156,222,'+(peak*.3).toFixed(3)+')');g.addColorStop(1,'rgba(255,156,222,0)');
  c.save();c.globalCompositeOperation='lighter';c.globalAlpha=(u<.1?u/.1:1)*(1-.5*clamp((t-.3)/.7,0,1));c.fillStyle=g;c.fillRect(0,0,w,h);
@@ -112,13 +143,14 @@ function drawAurora(c,r,w,h,calm){
 }
 function onFrame({ctx:c,run:r,viewport:vp,reduced:calm}){
  const now=clock(),dt=clamp(now-(last||now),0,.05);last=now;
- if(r!==run){clearAll();run=r}
+ if(r!==run){run=r;clearAll()}
  if(!c||!r)return;
  const w=vp.width,h=vp.height;calm=calm===true||reduced();
  let live=false;
  if(r.openingCourse&&r.polish)live=drawAurora(c,r,w,h,calm)||live;
  if(impact)live=drawImpact(c,r,w,h,calm)||live;
  live=drawShards(c,dt)||live;
+ if(r.openingCourse&&r.state==='play'&&!r.crash)live=drawPopups(c,calm)||live;
  if(!live&&impact&&clock()-impact.at>DIM_HOLD+DIM_OUT)impact=null;
 }
 function attach(h){host=h}
@@ -126,6 +158,7 @@ if(enabled&&root.MongyuPolish){
  root.MongyuPolish.on('attach',attach);root.MongyuPolish.on('run-event',onEvent);root.MongyuPolish.on('frame',onFrame);
  if(root.MongyuPolish.host)attach(root.MongyuPolish.host);
 }
-const api=Object.freeze({enabled,limits:Object.freeze({particles:MAX,shakePx:SHAKE_PX,hitStop:.12}),activeParticles:()=>pool.filter(p=>p.on).length,reset:clearAll});
+const api=Object.freeze({enabled,limits:Object.freeze({particles:MAX,shakePx:SHAKE_PX,hitStop:.12}),activeParticles:()=>pool.filter(p=>p.on).length,
+ popups:()=>popups.filter(p=>p.on).map(p=>({text:p.text,sub:p.sub,perfect:p.perfect,x:p.x,y:p.y})),impactPoint,reset:clearAll});
 root.MongyuJuice=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
