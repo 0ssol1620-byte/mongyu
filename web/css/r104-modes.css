@@ -1,1 +1,80 @@
 /* R104 modes styles. Only shipped in --release R104 builds; scope selectors under html[data-polish-edition]. */
+/* Meaning colours as CSS variables (read by DOM UI; canvas art reads MongyuModes.colors()). 색약 모드 = html[data-cvd=on]. */
+html[data-polish-edition]{--mongyu-tap:#ffd98a;--mongyu-tap-hi:#ffeca5;--mongyu-danger:#ff8a73;--mongyu-danger-deep:#ff6f61;--mongyu-goal:#7ff3e1;--mongyu-goal-2:#8ab8ff}
+html[data-polish-edition][data-cvd=on]{--mongyu-tap:#ffc928;--mongyu-tap-hi:#ffe14d;--mongyu-danger:#7f8cff;--mongyu-danger-deep:#5b6cff;--mongyu-goal:#bfe9ff;--mongyu-goal-2:#e6f4ff}
+
+/* Title: 새로운 꿈 row under 꿈속으로, same voice as 꿈 지도 · 옷장 · 이야기 but gathered in a hairline capsule. */
+html[data-polish-edition] .r104-modes-row{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:2px;margin:2px auto 6px;padding:2px 6px;
+ border:1px solid rgba(232,216,240,.16);border-radius:999px;background:rgba(22,14,40,.34);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);width:max-content;max-width:100%}
+html[data-polish-edition] .r104-modes-row button{width:auto;min-width:44px;min-height:40px;margin:0;padding:4px 9px;border:0;border-radius:999px;background:none;box-shadow:none;clip-path:none;
+ color:#e8d8f0;font-size:12px;font-weight:650;letter-spacing:.01em;white-space:nowrap;text-shadow:0 2px 5px #130a24;cursor:pointer}
+html[data-polish-edition] .r104-modes-row button::before{content:attr(data-glyph);margin-right:5px;color:#debbf2}
+html[data-polish-edition] .r104-modes-row #dreamDailyOpen::before{color:var(--mongyu-tap)}
+html[data-polish-edition] .r104-modes-row button:is(:hover,:focus-visible){background:rgba(232,216,240,.1);color:#fff4fb}
+html[data-polish-edition] .r104-modes-row button:focus-visible{outline:2px solid #ffe2a1;outline-offset:1px}
+html[data-polish-edition] .r104-modes-row button:active{transform:scale(.97)}
+html[data-polish-edition] .r104-modes-row button+button{position:relative}
+html[data-polish-edition] .r104-modes-row button+button::after{content:'';position:absolute;left:-1px;top:30%;bottom:30%;width:1px;background:rgba(232,216,240,.18)}
+@media (max-width:340px){html[data-polish-edition] .r104-modes-row button{padding:4px 6px;font-size:11px}}
+
+/* Settings: 접근성 group. */
+html[data-polish-edition] .r104-access{display:flex;flex-direction:column;margin:10px 0 4px;padding-top:8px;border-top:1px solid rgba(232,216,240,.14)}
+html[data-polish-edition] .r104-access-title{margin:0 0 2px!important;font-size:11px!important;font-weight:700;letter-spacing:.14em;color:#d9c2e4!important;opacity:.85}
+html[data-polish-edition] .r104-access-help{margin:6px 0 0!important;font-size:12px!important;line-height:1.45;color:#cdb8d8!important;opacity:.85}
+html[data-polish-edition] .r104-access button[aria-pressed=true]{color:#ffe7ae}
+html[data-polish-edition] #cvdMode::after{content:'';display:inline-block;width:22px;height:8px;margin-left:10px;vertical-align:middle;border-radius:4px;
+ background:linear-gradient(90deg,var(--mongyu-danger) 0 33%,var(--mongyu-tap) 33% 66%,var(--mongyu-goal) 66%)}
+
+/* While a dream run (무한 꿈 · 오늘의 도전 · 착시 정원) is active it draws its own HUD/coach on the canvas. */
+html[data-polish-edition] body[data-r104-mode] :is(#squareHud,#hudCue,#runnerSpeech,#r104Hud,#squareResult,#runHud,#restorationAftermath){display:none!important}
+
+/* Dream result panel: dark glass sheet low on screen, score large, gold primary. */
+html[data-polish-edition] .r104-dream-result{position:absolute;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;
+ background:linear-gradient(180deg,rgba(12,8,26,0) 30%,rgba(12,8,26,.55) 62%,rgba(12,8,26,.82));animation:r104DreamIn .32s ease both}
+html[data-polish-edition] .r104-dream-result[hidden]{display:none}
+html[data-polish-edition] .r104-dream-result .box{pointer-events:auto;width:min(360px,calc(100% - 32px));margin:0 0 max(22px,calc(env(safe-area-inset-bottom) + 14px));padding:0;background:none;border:0;box-shadow:none;display:flex;flex-direction:column;gap:12px;color:#fbf4ff}
+html[data-polish-edition] .dream-identity{text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+html[data-polish-edition] .dream-kicker{margin:0;font-size:12px;letter-spacing:.16em;color:#e2cbe9;opacity:.85}
+html[data-polish-edition] .dream-badge{margin-top:4px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:750;color:#3a2410;background:linear-gradient(90deg,#ffe7a8,#ffc58c)}
+html[data-polish-edition] .dream-badge[hidden]{display:none}
+html[data-polish-edition] .r104-dream-result h1{margin:4px 0 0;font-size:24px;line-height:1.25;color:#fff4fb;text-shadow:0 2px 12px rgba(10,6,22,.7)}
+html[data-polish-edition] .dream-score{margin:0;display:flex;align-items:baseline;gap:4px}
+html[data-polish-edition] .dream-score #dreamResultScore{font-size:52px;line-height:1.05;font-weight:800;font-variant-numeric:tabular-nums;color:#fff4dc;
+ background:linear-gradient(180deg,#fffaf0 18%,#ffe3a6 58%,#f7b77a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 10px rgba(255,190,120,.3))}
+html[data-polish-edition] .dream-score .score-unit{font-size:16px;font-weight:700;color:#f6dcb4}
+html[data-polish-edition] .dream-detail{margin:0;white-space:pre-line;font-size:13px;line-height:1.5;color:#e9d9ef}
+html[data-polish-edition] .dream-board{list-style:none;margin:6px 0 0;padding:6px 10px;width:100%;box-sizing:border-box;border-radius:14px;background:rgba(30,20,54,.55);border:1px solid rgba(255,236,255,.1);font-size:13px}
+html[data-polish-edition] .dream-board[hidden]{display:none}
+html[data-polish-edition] .dream-board{text-align:left}
+html[data-polish-edition] .dream-board::before{content:attr(aria-label);display:block;margin:0 0 2px;font-size:11px;letter-spacing:.12em;color:#c9b3d6}
+html[data-polish-edition] .dream-board li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;padding:3px 2px;color:#e6d6ee}
+html[data-polish-edition] .dream-board li .rank{color:#bfa9cc;font-variant-numeric:tabular-nums}
+html[data-polish-edition] .dream-board li .pts{font-variant-numeric:tabular-nums;font-weight:700}
+html[data-polish-edition] .dream-board li[data-current=true]{color:#ffe7ae}
+html[data-polish-edition] .dream-board li[data-current=true] .rank{color:var(--mongyu-tap)}
+html[data-polish-edition] .dream-actions{display:flex;flex-direction:column;gap:8px}
+html[data-polish-edition] .dream-actions button{width:100%;min-height:46px;margin:0;border-radius:23px;font-size:15px;font-weight:700;clip-path:none;cursor:pointer;
+ color:#fbf4ff;background:rgba(36,26,64,.7);border:1px solid rgba(255,236,255,.18);box-shadow:none}
+html[data-polish-edition] .dream-actions #dreamRetry{min-height:52px;font-size:17px;color:#2e1c0c;border:0;background:linear-gradient(180deg,#ffeec2,#ffcf8a);box-shadow:0 8px 24px rgba(255,190,110,.28)}
+html[data-polish-edition] .dream-actions #dreamHome{background:none;border-color:transparent;color:#d9c6e2;min-height:40px;font-size:14px}
+html[data-polish-edition] .dream-share,html[data-polish-edition] .r104-share-bar{display:flex;gap:8px}
+html[data-polish-edition] .dream-share button[hidden],html[data-polish-edition] .r104-share-bar button[hidden]{display:none}
+html[data-polish-edition] :is(#dreamPoster,#sharePoster)::before{content:'▣';margin-right:6px;color:var(--mongyu-tap);font-size:12px}
+html[data-polish-edition] :is(#dreamClip,#shareClip)::before{content:'▶';margin-right:6px;color:var(--mongyu-goal);font-size:11px}
+html[data-polish-edition] .dream-actions button:disabled{opacity:.5}
+html[data-polish-edition] .dream-actions button:focus-visible,html[data-polish-edition] .r104-share-bar button:focus-visible{outline:2px solid #ffe2a1;outline-offset:2px}
+html[data-polish-edition] .dream-note{margin:0;min-height:1em;text-align:center;font-size:12px;color:#e6d4ee}
+html[data-polish-edition] .dream-note:empty{display:none}
+
+/* Share bar on the first-memory / memory clear screens: a quiet pill pair low on screen, under the primary action. */
+html[data-polish-edition] .r104-share-bar{position:absolute;z-index:31;left:50%;top:auto;bottom:max(7%,calc(env(safe-area-inset-bottom) + 34px));transform:translateX(-50%);flex-wrap:nowrap;justify-content:center;align-items:center;
+ width:max-content;max-width:calc(100% - 32px);padding:3px;border-radius:999px;background:rgba(22,14,40,.52);border:1px solid rgba(255,236,255,.14);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:r104ShareIn .3s ease both}
+html[data-polish-edition] .r104-share-bar[hidden]{display:none}
+html[data-polish-edition] .r104-share-bar button{flex:none;width:auto!important;min-width:0;min-height:40px;margin:0;padding:6px 14px;border:0;border-radius:999px;background:none;clip-path:none;box-shadow:none;color:#fbf0ff;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+html[data-polish-edition] .r104-share-bar button+button{border-left:1px solid rgba(255,236,255,.14);border-radius:0 999px 999px 0}
+html[data-polish-edition] .r104-share-bar button:active{background:rgba(255,236,255,.1)}
+html[data-polish-edition] .r104-share-bar .dream-note{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;text-shadow:0 1px 6px #120a22}
+@keyframes r104DreamIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes r104ShareIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){html[data-polish-edition] :is(.r104-dream-result,.r104-share-bar){animation:none}}
+html[data-polish-edition] body[data-dream-motion=reduced] :is(.r104-dream-result,.r104-share-bar){animation:none}
