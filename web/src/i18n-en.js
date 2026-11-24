@@ -129,7 +129,7 @@ add([
 /* ---- wardrobe, stories ---- */
 add([
  ['오늘의 나','Today\'s me'],['옷장 닫기','Close wardrobe'],['여행자의 옷','Traveler\'s outfits'],['지난 이야기','Past stories'],['이야기 닫기','Close story'],['이야기와 대사는 몽유를 위한 각색입니다.','The story and dialogue are adapted for Mongyu.'],['만난 이야기','Stories you\'ve met'],
- ['길','Gil'],['솔','Sol'],['담','Dam'],['여울','Yeoul'],['입는 중','Wearing'],['입기','Wear'],['달빛','Moonlight'],['이슬','Dew'],['복숭아','Peach'],['라일락','Lilac'],['물결','Ripple'],['잔불','Embers'],['이끼','Moss'],['저녁별','Evening Star'],['서리','Frost'],['일식','Eclipse'],['새벽','Dawn'],
+ ['길','Gil'],['솔','Sol'],['담','Dam'],['여울','Yeoul'],['입는 중','Wearing'],['입기','Wear'],['달빛','Moonlight'],['이슬','Dew'],['복숭아','Peach'],['라일락','Lilac'],['물결','Ripple'],['잔불','Embers'],['이끼','Moss'],['저녁별','Evening Star'],['서리','Frost'],['일식','Eclipse'],['새벽','Dawn'],['꿈 아이','Dream kid'],
  ['기억을 모으면 새로운 옷이 열려요.','Collect memories to unlock new outfits.'],['찾은 기억의 색 입기','Wear the found memory\'s color'],['이 기억의 색 입기','Wear this memory\'s color'],['기억 색 벗기','Take off the memory color'],
  ['이야기 보기','View story'],['엔딩 보기','View ending'],['엔딩 다시 보기','View ending again'],['자유 달리기 · 엔딩 감상 후','Free run · after the ending'],['자유롭게 달리기','Run freely'],['자유 플레이 · 100개 수집 후','Free play · after collecting all 100'],
  ['빨리 넘기는 중','Skipping ahead'],['잠긴 기억','Locked memory'],['열린 기억','Open memory'],['찾은 기억','Found memory'],['이 꿈 시작','Start this dream'],['기억 만나기','Meet the memory'],['다시 들어가기','Re-enter'],['달리기','Run'],

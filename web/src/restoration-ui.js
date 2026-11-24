@@ -187,6 +187,8 @@ function v105(s){
  for(const [re,rep] of PATTERNS105)if(re.test(s))return s.replace(re,rep);
  return s;
 }
+// The generated art for the equipped look: the ink silhouette, or the dream kid when that skin is worn.
+const pid105=(p,style)=>root.MongyuCharacter?.portraitId?root.MongyuCharacter.portraitId(p,style):'pose-'+p;
 function portrait105(parent,id,cls){
  const d=root.document;if(!d?.createElement||!parent)return null;
  const wrap=d.createElement('span');wrap.className='r105-portrait'+(cls?' '+cls:'');wrap.setAttribute('aria-hidden','true');
@@ -429,7 +431,7 @@ function mount(host){
    else if(dreamEdition&&root.MongyuMobile){
     const q={x,y:baseline-lift,bodyHeight:h,height:lift,pose:'stand'};
     if(dog)root.MongyuMobile.dog(c,q,{poseTime:scene.elapsed,ink:fx.ink},!!reduced);
-    else root.MongyuMobile.sprite(c,q,{poseTime:scene.elapsed,ink:scene.kind==='opening'?'#fff2df':fx.ink},!!reduced,actor.id);
+    else root.MongyuMobile.sprite(c,q,{poseTime:scene.elapsed,ink:scene.kind==='opening'?'#fff2df':fx.ink,...(UI105?{onDark:true}:{})},!!reduced,actor.id);
    }
    else A.characters(c,{characterId:dog?'dog':actor.id,player:dog?null:{x,y:baseline-lift,tangent:{x:1,y:0},height:lift,bodyHeight:h},companion:dog?{x,y:baseline,tangent:{x:1,y:0},bodyHeight:h}:null},fx,true);
    c.restore();
@@ -577,7 +579,7 @@ function mount(host){
   const identity=panel.querySelector('.result-identity'),box=panel.querySelector('.box'),actions=panel.querySelector('.result-actions');
   if(!identity||!box||!actions)return;
   if(!result105){
-   result105={portrait:portrait105(identity,'pose-hurt')};
+   result105={portrait:portrait105(identity,pid105('hurt'))};
    panel.dataset.r105='result';
    for(const [id,name] of Object.entries(ICON105))$(id)?.setAttribute('data-r105-icon',name);
    for(const id of ['sharePoster','shareClip']){const b=$(id);if(b&&!b.getAttribute('aria-label'))b.setAttribute('aria-label',b.textContent)}
@@ -585,7 +587,7 @@ function mount(host){
   // share pair and the tap-to-retry hint live inside the sheet, so everything sits in the bottom third
   const bar=$('r104ShareBar');if(bar&&bar.parentNode!==actions)actions.appendChild(bar);
   const hint=panel.querySelector('.r104-retry-hint');if(hint&&hint.parentNode!==box)box.appendChild(hint);
-  setPortrait105(result105.portrait,v.state==='clear'?'pose-joy':'pose-hurt');
+  setPortrait105(result105.portrait,pid105(v.state==='clear'?'joy':'hurt'));
   panel.dataset.outcome105=v.state;
  }
  function sync105Pause(v){
@@ -622,7 +624,7 @@ function mount(host){
   const box=panel.querySelector('.box'),count=$('wardrobeCount');if(!box||!count)return;
   const hero=d.createElement('div');hero.className='r105-ward-hero';
   const aura=d.createElement('span');aura.className='r105-ward-aura';aura.setAttribute('aria-hidden','true');hero.appendChild(aura);
-  const pose=portrait105(hero,'pose-stand','r105-ward-pose');
+  const pose=portrait105(hero,pid105('stand'),'r105-ward-pose');
   const name=d.createElement('p');name.className='r105-ward-name';hero.appendChild(name);
   box.insertBefore(hero,count);
   const locked=d.createElement('p');locked.className='r105-ward-locked';
@@ -643,6 +645,7 @@ function mount(host){
     const eq=equipped||M2.looks[0];
     aura.style.background='radial-gradient(circle at 50% 55%,'+eq.body+'66,'+eq.accent+'22 55%,transparent 72%)';
     name.textContent=eq.name+' · 입는 중';
+    setPortrait105(pose,pid105('stand',eq));
     locked.hidden=remaining===0;
     locked.textContent=remaining?'열리면 이 자리에 나와요 · '+remaining+'벌 남음':'';
     const st=$('wardrobeStatus');

@@ -109,6 +109,8 @@ html[data-polish-edition][data-ui-edition]{--s-ink:#fbf4ff;--s-soft:#e9dff5;--s-
 /* ---- portrait (pose-* generated art) ---- */
 html[data-polish-edition][data-ui-edition] .r105-portrait{display:block;flex:none;position:relative;width:88px;height:88px;pointer-events:none}
 html[data-polish-edition][data-ui-edition] .r105-portrait img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(10,6,24,.5))}
+/* the ink silhouette is near-black: a thin warm rim keeps it readable on the dark sheets (the dream kid needs none) */
+html[data-polish-edition][data-ui-edition] .r105-portrait[data-pose^=sil-] img{filter:drop-shadow(1px 0 0 #F3E4CF) drop-shadow(-1px 0 0 #F3E4CF) drop-shadow(0 1px 0 #F3E4CF) drop-shadow(0 -1px 0 #F3E4CF) drop-shadow(0 6px 10px rgba(10,6,24,.5))}
 html[data-polish-edition][data-ui-edition] body:not([data-dream-motion=reduced]) .r105-portrait img{animation:r105-bob 5s ease-in-out infinite}
 @keyframes r105-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){html[data-polish-edition][data-ui-edition] .r105-portrait img{animation:none!important}}

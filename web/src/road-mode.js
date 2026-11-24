@@ -173,10 +173,10 @@ function onEnd(run){
  ui.rKicker.textContent=C().CHAPTER1.number+'장 · '+(course?.title||r.name||'꿈의 길');
  ui.rBadge.hidden=!rec.newBest;
  ui.rHeading.textContent=clear?'빛의 문이 열렸어':'꿈이 접혔네';
- // Portrait: pose-joy when the gate opened, pose-hurt otherwise (generated art; nothing is shown when the table is missing).
- const pose=artSrc(clear?'pose-joy':'pose-hurt');
+ // Portrait: joy when the gate opened, pose-hurt otherwise (generated art; nothing is shown when the table is missing).
+ const pid=root.MongyuCharacter?.portraitId?.(clear?'joy':'hurt')||(clear?'pose-joy':'pose-hurt'),pose=artSrc(pid);
  if(pose){ui.portrait.src=pose;ui.portrait.hidden=false}else{ui.portrait.removeAttribute('src');ui.portrait.hidden=true}
- ui.portrait.dataset.pose=clear?'joy':'hurt';
+ ui.portrait.dataset.pose=clear?'joy':'hurt';ui.portrait.dataset.art=pid;
  ui.stars.setAttribute('aria-label',clear?'별 '+goals.filter(Boolean).length+' / 3':'별 없음');
  ui.starNodes.forEach(n=>{n.dataset.on='false'});ui.goalNodes.forEach((n,i)=>{n.dataset.on='false';n.dataset.new=String(!!rec.newGoals[i]&&clear)});
  ui.stars.hidden=!clear;ui.starGoals.hidden=!clear;

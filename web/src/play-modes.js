@@ -142,7 +142,7 @@ function onEnd(run){
  const kicker=run.dreamMode==='daily'?'오늘의 도전 · '+root.MongyuEndless.dayKey(run.date).slice(5).replace('-','.'):run.dreamMode==='endless'?'무한 꿈':'착시 정원';
  ui.kicker.textContent=kicker;
  ui.heading.textContent=run.dreamMode==='illusion'?(r.state==='clear'?(UI105?'오로라의 문이 열렸어':'오로라의 문을 열었다'):(UI105?'정원이 접혔네':'정원이 접혔다')):(r.laps>0?(UI105?r.laps+'바퀴 돌았어':r.laps+'바퀴를 돌았다'):(UI105?'꿈이 접혔네':'꿈이 접혔다'));
- if(UI105&&ui.portrait){const a=root.MongyuArt.image(r.state==='clear'||r.laps>0?'pose-joy':'pose-hurt');if(a)ui.portrait.firstChild.setAttribute('src',a.src)}
+ if(UI105&&ui.portrait){const pid=root.MongyuCharacter?.portraitId?.(r.state==='clear'||r.laps>0?'joy':'hurt')||(r.state==='clear'||r.laps>0?'pose-joy':'pose-hurt'),a=root.MongyuArt.image(pid);if(a){ui.portrait.firstChild.setAttribute('src',a.src);ui.portrait.dataset.pose=pid}}
  ui.score.textContent=fmt(r.score);
  ui.badge.hidden=!record.newBest;
  const lines=[];
