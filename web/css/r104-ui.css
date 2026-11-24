@@ -1,5 +1,5 @@
 /* R105 UI styles. Only shipped in polish builds; every selector lives under html[data-ui-edition].
-   World as menu: a dawn garden lobby (drawn on the title canvas), chunky gold primary buttons, glass secondary buttons,
+   World as menu: a dark blacklight lobby (drawn on the title canvas), chunky gold primary buttons, glass secondary buttons,
    a re-skinned settings dialog and pause sheet. Original controls stay in the DOM and keep their handlers. */
 
 html[data-ui-edition]{
@@ -7,8 +7,8 @@ html[data-ui-edition]{
  --r105-ice:#dff2ff;--r105-pink:#ff9ed8;--r105-coral:#ff8a73;--r105-aurora:#7ff3e1;--r105-muted:rgba(223,242,255,.64);
  --r105-glass:rgba(27,21,48,.58);--r105-line:rgba(255,255,255,.13);--r105-radius:16px;--r105-radius-l:24px;
  --r105-font:system-ui,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
- --r105-dock-h:72px;--r105-dock-bottom:calc(env(safe-area-inset-bottom) + 14px);
- --r105-cta-bottom:max(calc(var(--r105-dock-bottom) + var(--r105-dock-h) + 22px),17%);
+ --r105-dock-h:66px;--r105-dock-bottom:calc(env(safe-area-inset-bottom) + 14px);
+ --r105-cta-bottom:calc(var(--r105-dock-bottom) + var(--r105-dock-h) + 14px);
 }
 
 /* ---------- press feedback shared by the new controls ---------- */
@@ -40,7 +40,7 @@ html[data-ui-edition] .r105-lobby button:focus-visible,html[data-ui-edition] .r1
 
 /* primary: gold, tactile, thick bottom edge, breathing sheen */
 html[data-ui-edition] .r105-cta{
- position:absolute;left:50%;bottom:var(--r105-cta-bottom);transform:translateX(-50%);width:70%;max-width:340px;min-width:200px;height:60px;
+ position:absolute;left:50%;bottom:var(--r105-cta-bottom);transform:translateX(-50%);width:70%;max-width:340px;min-width:200px;height:58px;
  display:flex;align-items:center;justify-content:center;gap:10px;padding:0 20px;margin:0;border:0;border-radius:30px;cursor:pointer;
  font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--r105-ink-on-gold);
  background:linear-gradient(180deg,var(--r105-gold-hi) 0%,var(--r105-gold) 62%,#f1b866 100%);
@@ -53,12 +53,12 @@ html[data-ui-edition] .r105-cta-ic svg{fill:currentColor;width:22px;height:22px;
 html[data-ui-edition] .r105-cta-text{line-height:1}
 html[data-ui-edition] .r105-cta-sheen{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none}
 html[data-ui-edition] .r105-cta-sheen::before{content:'';position:absolute;top:0;bottom:0;width:38%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:r105-sheen 4.2s ease-in-out 1.2s infinite}
-html[data-ui-edition] .r105-cta-halo{position:absolute;inset:-9px;border-radius:40px;background:radial-gradient(closest-side,rgba(255,236,165,.45),rgba(255,236,165,0));filter:blur(8px);z-index:-1;pointer-events:none;animation:r105-breathe 3.2s ease-in-out infinite}
+html[data-ui-edition] .r105-cta-halo{position:absolute;inset:-11px;border-radius:40px;background:radial-gradient(closest-side,rgba(214,92,255,.5),rgba(255,46,154,.16) 70%,rgba(255,46,154,0));filter:blur(8px);z-index:-1;pointer-events:none;animation:r105-breathe 3.2s ease-in-out infinite}
 @keyframes r105-sheen{0%,55%{left:-50%}100%{left:130%}}
 @keyframes r105-breathe{0%,100%{opacity:.35;transform:scale(.96)}50%{opacity:.9;transform:scale(1.06)}}
 
-/* iridescent hairline borders (psychedelic lobby): a gradient ring masked to the border box, drifting very slowly */
-html[data-ui-edition]{--r105-iris:linear-gradient(115deg,#6ff0ff,#a6ff6a,#ffe66a,#ff7ad9,#a98bff,#6ff0ff)}
+/* neon hairline borders (dark lobby): one violet -> magenta family (no rainbow), a gradient ring masked to the border box, drifting very slowly */
+html[data-ui-edition]{--r105-iris:linear-gradient(115deg,#7b3cff,#c43dff,#ff2e9a,#c43dff,#7b3cff)}
 html[data-ui-edition] :is(.r105-cta,.r105-dock)::before{
  content:'';position:absolute;inset:-4px;padding:2px;border-radius:inherit;pointer-events:none;
  background:var(--r105-iris);background-size:240% 100%;
@@ -73,8 +73,8 @@ html[data-ui-edition] .r105-dock::before{inset:0;padding:1.5px;opacity:.95}
 html[data-ui-edition] .r105-dock{
  position:absolute;left:50%;transform:translateX(-50%);bottom:var(--r105-dock-bottom);width:calc(100% - 28px);max-width:430px;height:var(--r105-dock-h);
  display:flex;gap:2px;padding:6px;border-radius:28px;border:1px solid var(--r105-line);pointer-events:auto;
- background:linear-gradient(180deg,rgba(60,46,98,.62),rgba(27,21,48,.72));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 22px rgba(10,6,24,.34);
+ background:linear-gradient(180deg,rgba(38,16,88,.74),rgba(14,5,38,.88));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+ box-shadow:inset 0 1px 0 rgba(214,160,255,.18),0 0 22px rgba(123,60,255,.28),0 8px 22px rgba(6,2,20,.5);
 }
 html[data-ui-edition] .r105-dock-btn{
  position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0;margin:0;
@@ -83,12 +83,12 @@ html[data-ui-edition] .r105-dock-btn{
 html[data-ui-edition] .r105-dock-btn .r105-dock-ic{display:grid;place-items:center;width:34px;height:30px}
 html[data-ui-edition] .r105-dock-btn .r105-dock-ic svg{width:26px;height:26px}
 html[data-ui-edition] .r105-dock-btn:active{background:rgba(255,255,255,.1)}
-html[data-ui-edition] .r105-dock-btn[data-dock=modes] .r105-dock-ic{color:var(--r105-pink)}
-html[data-ui-edition] .r105-dock-btn[data-dock=map] .r105-dock-ic{color:var(--r105-aurora)}
-html[data-ui-edition] .r105-dock-btn[data-dock=wardrobe] .r105-dock-ic{color:var(--r105-gold)}
-html[data-ui-edition] .r105-dock-btn[data-dock=story] .r105-dock-ic{color:#c9b7ff}
-html[data-ui-edition] .r105-dock-btn[aria-disabled=true],html[data-ui-edition] .r105-dock-btn[data-off]{opacity:.5}
-html[data-ui-edition] .r105-soon{position:absolute;top:-7px;right:2px;margin:0;padding:1px 6px;border-radius:9px;background:rgba(255,217,138,.9);color:var(--r105-ink-on-gold);font-size:12px;font-weight:700;line-height:1.35}
+html[data-ui-edition] .r105-dock-btn[data-dock=modes] .r105-dock-ic{color:#ff7ad0}
+html[data-ui-edition] .r105-dock-btn[data-dock=map] .r105-dock-ic{color:#5ff0ff}
+html[data-ui-edition] .r105-dock-btn[data-dock=wardrobe] .r105-dock-ic{color:#d9b8ff}
+html[data-ui-edition] .r105-dock-btn[data-dock=story] .r105-dock-ic{color:#b58cff}
+html[data-ui-edition] .r105-dock-btn[aria-disabled=true]>:not(.r105-soon),html[data-ui-edition] .r105-dock-btn[data-off]{opacity:.55}
+html[data-ui-edition] .r105-soon{position:absolute;top:-11px;right:-3px;margin:0;padding:1px 7px;border-radius:9px;background:linear-gradient(90deg,#7b3cff,#ff2e9a);color:#fff;font-size:12px;font-weight:700;line-height:1.35;box-shadow:0 0 8px rgba(196,61,255,.6)}
 
 /* toast */
 html[data-ui-edition] .r105-toast{
@@ -355,7 +355,7 @@ html[data-ui-edition] body #pauseSheet[data-r105] .pause-actions>.r105-in{animat
  html[data-ui-edition] #settings .r105-sec{margin-bottom:8px}
 }
 @media (max-width:359px){
- html[data-ui-edition] .r105-dock-btn{font-size:14px}
+ html[data-ui-edition] .r105-dock-btn{font-size:13px;letter-spacing:-.01em}
  html[data-ui-edition] .r105-card{grid-template-columns:76px minmax(0,1fr) 20px;gap:10px}
  html[data-ui-edition] .r105-card-art{width:76px;height:52px}
 }

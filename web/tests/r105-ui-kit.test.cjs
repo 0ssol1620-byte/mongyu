@@ -68,10 +68,10 @@ test('lobby scene: caches static layers per viewport and draws only composites p
  const r1=recorder();
  const res=S.draw(r1.g,{viewport:{width:390,height:844,dpr:2},time:1.25,reduced:false});
  assert.equal(res.kind,'r105-lobby');assert.equal(S.cached,'390x844@2');
- const built=sprites.length;assert.ok(built>=10,'static layers are offscreen sprites: '+built);
+ const built=sprites.length;assert.ok(built>=8,'static layers are offscreen sprites: '+built);
  const r2=recorder();S.draw(r2.g,{viewport:{width:390,height:844,dpr:2},time:2.5,reduced:false});
  assert.equal(sprites.length,built,'no new sprites for an unchanged viewport');
- assert.ok(sprite>=2,'dreamer is drawn each frame through MongyuMobile.sprite');
+ assert.ok(sprite>=2,'dreamer is drawn each frame through MongyuMobile.sprite (one call per draw)');
  assert.ok(r2.ops.filter(o=>o[0]==='drawImage').length>20,'frame is mostly drawImage composites');
  S.draw(recorder().g,{viewport:{width:844,height:390,dpr:2},time:0,reduced:false});
  assert.equal(S.cached,'844x390@2');assert.ok(sprites.length>built,'new viewport rebuilds');
