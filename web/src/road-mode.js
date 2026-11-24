@@ -1,6 +1,6 @@
 /* R105 "꿈의 길" campaign mode: chapters, course list, stars, unlocks, result panel. Owned by workstream A (chapter selection: workstream CP).
    Title button (added by play-modes.js) -> #roadScreen (chapter tabs + the 5 courses of the chosen chapter up a stone road) -> a CourseRun via MongyuPolish.host.startRun -> #roadResult.
-   Progress lives in mongyu.r105.road: {v:1,plays,last,courses:{c1:{g:bitmask(1 완주,2 빛 조각,4 무피격),stars,best,clears,plays,bestShards,bestProgress}}}; ids c1-c5 are chapter 1, c6-c25 chapters 2-5.
+   Progress lives in mongyu.r105.road: {v:1,plays,last,courses:{c1:{g:bitmask(1 완주,2 빛 조각,4 무피격),stars,best,clears,plays,bestShards,bestProgress}}}; ids c1-c5 are chapter 1, c6-c25 chapters 2-5, c26-c50 chapters 6-10 (UI edition).
    Unlocks run over the flat course list: a course opens once the one before it has a star, so a chapter opens when the previous chapter's last course is cleared. */
 (function(root){'use strict';
 const enabled=root.MONGYU_POLISH_EDITION===true;
@@ -32,7 +32,9 @@ const courses=()=>C()?.allCourses?.()||C()?.CHAPTER1?.courses||[];
 const chapterOfId=id=>chapters().find(ch=>ch.courses.some(c=>c.id===id))||chapters()[0]||null;
 const setVar=(node,name,v)=>{const st=node.style;if(st.setProperty)st.setProperty(name,v);else st[name]=v};
 /* Backdrop of a chapter: the generated chapter-N art, else the dark lobby, else the old lobby (nothing when the art table is missing). */
-const backdrop=n=>artSrc('chapter-'+n)||artSrc('lobby-trip')||artSrc('lobby-psy');
+/* Chapters 6-10 until their own chapter-N art is generated: a dark trip image that suits the theme (stage / liquid / pulse / void), else chapter 1. */
+const FALLBACK_ART={6:'trip-heart',7:'trip-aqua',8:'trip-toxic',9:'lobby-trip',10:'chapter-1'};
+const backdrop=n=>artSrc('chapter-'+n)||(FALLBACK_ART[n]&&artSrc(FALLBACK_ART[n]))||artSrc('lobby-trip')||artSrc('lobby-psy');
 const entry=(d,id)=>{const c=d.courses[id];return c&&typeof c==='object'?c:{g:0,stars:0,best:0,clears:0,plays:0,bestShards:0,bestProgress:0}};
 /* A course opens once the one before it was completed (at least one star). */
 function unlocked(index,d=read()){if(index<=0)return true;const prev=courses()[index-1];return !!prev&&entry(d,prev.id).stars>=1}
@@ -138,6 +140,11 @@ function selectChapter(i,focus){
  if(focus){try{ui.tabs.querySelector('[aria-selected="true"]')?.focus?.({preventScroll:true})}catch(_){}}
  return true;
 }
+/* With ten chapters the tab row scrolls sideways: keep the selected tab centred (needs the screen to be visible for real sizes). */
+function centerTab(){
+ try{const sel=ui?.tabs?.querySelector?.('[aria-selected="true"]');if(!sel||!ui.tabs.clientWidth)return;
+  const x=sel.offsetLeft-(ui.tabs.clientWidth-sel.offsetWidth)/2;if(Number.isFinite(x))ui.tabs.scrollLeft=Math.max(0,x)}catch(_){}
+}
 function renderTabs(d){
  const list=chapters();ui.tabs.hidden=list.length<2;ui.tabs.replaceChildren();
  list.forEach((ch,i)=>{
@@ -149,6 +156,7 @@ function renderTabs(d){
   el('span',{class:'ch-n','aria-hidden':'true'},tab,open?'★ '+n:'잠김');
   tab.onclick=()=>selectChapter(i);
  });
+ centerTab();
 }
 function render(){
  if(!ui)return;
@@ -194,7 +202,7 @@ function open(event){
  if(!doc)return false;mount();if(!ui)return false;
  hideResult();const d=read(),list=courses(),targetId=nextCourseId(d);
  view=Math.max(0,chapters().indexOf(chapterOfId(targetId)));
- render();ui.screen.hidden=false;try{root.setTimeout(()=>root.MongyuPsy?.warm?.(),350)}catch(_){}doc.body.dataset.road='open';
+ render();ui.screen.hidden=false;centerTab();try{root.setTimeout(()=>root.MongyuPsy?.warm?.(),350)}catch(_){}doc.body.dataset.road='open';
  const node=ui.list.querySelector('[data-course="'+targetId+'"] .rd-card');
  try{node?.focus?.({preventScroll:true});node?.scrollIntoView?.({block:'center'})}catch(_){}
  return true;

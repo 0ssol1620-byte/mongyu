@@ -2,11 +2,11 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 globalThis.MONGYU_POLISH_EDITION=true;globalThis.MONGYU_UI_EDITION=true;
 for(const f of ['trip-palettes','items','opening-run','illusion-course','helix-act','penrose-act','endless-dream','chapters','square-act','boss-act'])require('../src/'+f+'.js');
 const Course=require('../src/course-run.js'),Chapters=globalThis.MongyuChapters,Trip=globalThis.MongyuTrip;
-const NEW=Chapters.chapters,ALL=Course.allCourses();
+const NEW=Chapters.chapters.slice(0,4),ALL=Course.allCourses().slice(0,25);   // chapters 2-5; chapters 6-10 are covered by r105-chapters2-*.test.cjs
 const seconds=c=>c.acts.reduce((s,a)=>s+a.weight,0);
 
 test('chapters 2-5: five courses each, ids continue c6-c25, chapter 1 and its ids are untouched', () => {
- assert.equal(Course.CHAPTERS.length,5);assert.equal(Course.CHAPTERS[0],Course.CHAPTER1);
+ assert.ok(Course.CHAPTERS.length>=5);assert.equal(Course.CHAPTERS[0],Course.CHAPTER1);
  assert.deepEqual(Course.CHAPTER1.courses.map(c=>c.id),['c1','c2','c3','c4','c5']);
  assert.deepEqual(NEW.map(c=>c.number),[2,3,4,5]);
  for(const ch of NEW)assert.equal(ch.courses.length,5,ch.id);
@@ -68,7 +68,7 @@ test('item rules: at most 2 gifts and one memory star per course, 26+ s apart, n
 test('voice: chapter titles are nouns, intro (1-2 lines) and ending (1 line) are first-person banmal monologue, no developer words', () => {
  const bad=/실행|허용|활성|인스턴스|세션|리셋|했다\.?$|이다\.?$|하십시오|습니다/;
  assert.equal(Course.CHAPTER1.title,'자각몽의 정원');assert.deepEqual(NEW.map(c=>c.title),['잊혀진 유년기','불가능한 도시','또 다른 나','경계의 호텔']);
- for(const ch of Course.CHAPTERS){
+ for(const ch of Course.CHAPTERS.slice(0,5)){
   assert.ok(ch.intro.length>=1&&ch.intro.length<=2,ch.id+' intro lines');assert.equal(typeof ch.ending,'string');assert.ok(ch.ending.length>8&&!ch.ending.includes('\n'));
   for(const l of [...ch.intro,ch.ending,ch.title,ch.subtitle])assert.doesNotMatch(l,bad,l);
   for(const l of [...ch.intro,ch.ending]){assert.match(l,/[.?]$/);assert.ok(l.length<=22,'short monologue: '+l);assert.doesNotMatch(l,/(요|니다|세요)[.?]$/,'banmal: '+l)}
@@ -81,7 +81,7 @@ test('English: every new title, line and chapter-tab label translates fully', ()
  const ctx={MONGYU_UI_EDITION:true,console,performance:{now:()=>0},navigator:{language:'en'}};vm.createContext(ctx);
  for(const f of ['i18n.js','i18n-en.js','i18n-en-psy.js','i18n-en-screens.js','i18n-en-chapters.js'])vm.runInContext(fs.readFileSync(path.join(SRC,f),'utf8'),ctx,{filename:f});
  const T=ctx.MongyuI18n,lines=[];
- for(const ch of Course.CHAPTERS){lines.push(ch.title,ch.subtitle,...ch.intro,ch.ending,ch.number+'장',ch.number+'장 '+ch.title+', 별 3 / 15',ch.number+'장 '+ch.title+', 잠김. 앞 장의 마지막 코스를 완주하면 열려요.',
+ for(const ch of Course.CHAPTERS.slice(0,5)){lines.push(ch.title,ch.subtitle,...ch.intro,ch.ending,ch.number+'장',ch.number+'장 '+ch.title+', 별 3 / 15',ch.number+'장 '+ch.title+', 잠김. 앞 장의 마지막 코스를 완주하면 열려요.',
   '새 장이 열렸어요 · '+ch.number+'장 '+ch.title,'다음 장 · '+ch.title,'앞 장의 마지막 코스 「'+ch.courses[4].title+'」를 완주하면 열려요');
   for(const c of ch.courses)lines.push(c.title,c.subtitle,c.title+', 잠김. 앞 장을 완주하면 열려요.')}
  lines.push('장 선택','잠김','앞 장을 완주하면 열려요','사각 방','중력 뒤집기','탭하면 중력이 뒤집혀','사각 방에서 길이 끊겼어요','중력 뒤집기에서 길이 끊겼어요','★ 11');

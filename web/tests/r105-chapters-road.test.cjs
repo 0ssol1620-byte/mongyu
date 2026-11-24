@@ -9,7 +9,8 @@ function page(o={}){
  ctx.MONGYU_POLISH_EDITION=true;ctx.MONGYU_UI_EDITION=true;ctx.MONGYU_EMBEDDED_ART=o.art||ART;
  let active=null;const started=[];
  ctx.MongyuPolish={on(){return()=>{}},emit(){},host:{startRun(run){active=run;started.push(run);return true},viewport:()=>({width:390,height:844}),settings:()=>({}),activeRun:()=>active}};
- for(const f of FILES)vm.runInContext(fs.readFileSync(path.join(SRC,f),'utf8'),ctx,{filename:f});
+ // chapters 6-10 exist only with MONGYU_UI_EDITION at the time chapters.js loads; this file covers the five original chapters (r105-chapters2-road.test.cjs covers all ten)
+ for(const f of FILES){if(f==='chapters.js'&&o.ten!==true)ctx.MONGYU_UI_EDITION=false;vm.runInContext(fs.readFileSync(path.join(SRC,f),'utf8'),ctx,{filename:f});ctx.MONGYU_UI_EDITION=true}
  return {h,ctx,started,Road:ctx.MongyuRoad,Course:ctx.MongyuCourse,$:id=>h.doc.getElementById(id)};
 }
 const save=(h,n,stars=3)=>{const ids=Array.from({length:25},(_,i)=>'c'+(i+1)),cs={};ids.slice(0,n).forEach(id=>{cs[id]={g:stars===3?7:1,stars,best:2000,clears:1,plays:1,bestShards:5,bestProgress:1}});h.data.set('mongyu.r105.road',JSON.stringify({v:1,plays:n,last:ids[Math.max(0,n-1)],courses:cs}))};
