@@ -39,6 +39,12 @@ if ui_edition and (p/'assets/art/manifest.json').is_file():
     for name,item in json.loads((art_dir/'manifest.json').read_text(encoding='utf-8'))['images'].items():
         art[name]={'src':asset(art_dir,item),'w':item['w'],'h':item['h'],'kind':item.get('kind','sprite')}
 sources.append('globalThis.MONGYU_EMBEDDED_ART='+json.dumps(art,separators=(',',':'))+';')
+audio={}
+if ui_edition and (p/'assets/audio/manifest.json').is_file():
+    audio_dir=p/'assets/audio'
+    for name,item in json.loads((audio_dir/'manifest.json').read_text(encoding='utf-8'))['tracks'].items():
+        audio[name]={'src':asset(audio_dir,item),**{k:v for k,v in item.items() if k not in ('file','mime','note','title','sha256','nominalBpm','padding','sourceOffset')}}
+if ui_edition:sources.append('globalThis.MONGYU_EMBEDDED_AUDIO='+json.dumps(audio,separators=(',',':'))+';')
 if effects:sources.append('globalThis.MONGYU_EMBEDDED_EFFECTS='+json.dumps(effects,separators=(',',':'))+';')
 source_hashes={}
 for f in files:
@@ -68,5 +74,6 @@ if release!='R92':out=out.replace('<title>몽유 · MONGYU R86</title>',f'<title
 data=out.encode('utf-8');(p/f'MONGYU_{release}.html').write_bytes(data)
 report={'release':release,'bytes':len(data),'sha256':digest(data),'sourceCount':len(source_hashes),'sources':source_hashes,'audio':[{k:t[k] for k in ['id','sha256','bytes','license']} for t in tracks.values()], 'effects':[{k:t[k] for k in ['file','sha256','bytes','license']} for t in effects.values()]}
 if spectral_edition:report['artwork']=artwork
+if audio:report['embeddedAudio']=[{'id':k,'bytes':v['bytes'],'kind':v.get('kind'),'source':v['source']} for k,v in audio.items()]
 (p/'build-manifest.json').write_bytes((json.dumps(report,indent=2)+'\n').encode('utf-8'))
 print(json.dumps({k:v for k,v in report.items() if k!='sources'}))
