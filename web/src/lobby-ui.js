@@ -28,17 +28,25 @@ function invoke(id,event){
 }
 
 /* ---------- starting the dream road ---------- */
-/* Contract with the road workstream: MongyuRoad.start(event) when it exists, otherwise a #roadOpen button, otherwise the old 꿈속으로. */
+/* Contract with the road workstream: MongyuRoad.start(courseId,event) when it exists, otherwise a #roadOpen button, otherwise the old 꿈속으로. */
 function roadEntry(){
  const R=root.MongyuRoad;
  if(R&&typeof R.start==='function')return 'api';
  if($('roadOpen'))return 'button';
  return 'continue';
 }
+/* The course the 달리기 button enters: the first unlocked course without a star yet, else the last cleared one, else course 1. */
+function nextCourseId(){
+ try{
+  const R=root.MongyuRoad,list=root.MongyuCourse?.CHAPTER1?.courses||[],d=R.read();let target=0;
+  for(let i=0;i<list.length;i++){const e=R.entry(d,list[i].id);if(R.unlocked(i,d)&&e.stars<1){target=i;break}else if(e.stars>=1)target=i}
+  return list[target]?.id||'c1';
+ }catch(_){return 'c1'}
+}
 function startRoad(event){
  const how=roadEntry();
  const go=()=>{
-  if(how==='api')return root.MongyuRoad.start(event)!==false;
+  if(how==='api')return root.MongyuRoad.start(nextCourseId(),event)!==false;
   if(how==='button')return invoke('roadOpen',event);
   return invoke('titleContinue',event);
  };
