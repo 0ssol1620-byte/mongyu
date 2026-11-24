@@ -70,8 +70,9 @@ const CHAPTER1=Object.freeze({
   {id:'c4',title:'내려오는 길',subtitle:'소용돌이처럼 빨라지는 하강',bpm:104,seed:404,glow:['#ffa7d1','#ffd98a'],
    acts:[act('helix-down',{items:[gift(.595,'time')]},14),act('bridge',{preset:'descent',tone:2,items:[star(.4216),gift(.62,'feather')]},22),act('floor-wall',{span:[0,2]},10)],
    fallback:[act('bridge',{preset:'descent',tone:2},22),act('bridge',{preset:'stairs',tone:2},20),act('floor-wall',{span:[0,2]},10)]},
-  {id:'c5',title:'새벽의 탑',subtitle:'오르고, 숨 돌리고, 내려와 문을 연다',bpm:100,seed:505,glow:['#ffeca5','#ff9ed8'],
-   acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{items:[gift(.563,'bubble')]},16),act('align',{},7),act('bridge',{preset:'dawn',tone:1,items:[star(.764)]},14),act('helix-down',{items:[gift(.555,'time')]},14)],
+  {id:'c5',title:'새벽의 탑',subtitle:'오르고, 숨 돌리고, 내려와 문을 연다',bpm:100,seed:505,glow:['#ffeca5','#ff9ed8'],boss:{id:'B01',n:1,name:'큐브'},
+   /* R105 boss B01 (boss-act.js): one boss act; the classic acts below are the fallback when the boss act is missing */
+   acts:[act('boss',{trip:'c1',boss:'B01',items:[{kind:'bubble',ph:0,ev:3},{kind:'memory-star',ph:1,ev:4,lane:'hi'},{kind:'time',ph:2,ev:3}]},72)],
    fallback:[act('floor-wall',{span:[0,1]},7),act('bridge',{preset:'stairs',tone:0},20),act('bridge',{preset:'calm',tone:1},11),act('bridge',{preset:'dawn',tone:2},18),act('floor-wall',{span:[1,2]},9)]}
  ].map(c=>Object.freeze({trip:'c1',chapter:1,...c})))
 });
@@ -125,18 +126,20 @@ class CourseRun{
  reset(){
   const resume=this.options.resume,idx=this.acts.length?clamp(Math.trunc(resume?.index)||0,0,this.acts.length-1):0;
   this.state='ready';this.events=[];this.updates=0;this.clock=0;this.inputCount=0;this.portal=null;this.result=null;this.outro=null;this.crash=null;this.coach=null;
-  this.deaths=Math.max(0,Math.trunc(resume?.deaths)||0);this.failCounts={...(resume?.fails||{})};this.carries=[];this.assistActs=[];this.carry={...emptyCarry(),...(resume?.carry||{})};
+  this.cps={...(resume?.cps||{})};this.deaths=Math.max(0,Math.trunc(resume?.deaths)||0);this.failCounts={...(resume?.fails||{})};this.carries=[];this.assistActs=[];this.carry={...emptyCarry(),...(resume?.carry||{})};
   this.actIndex=idx;this.child=null;this.hearts=1;this.score=this.carry.points+this.carry.bonus;this.time=this.carry.time;this.pose=undefined;this._p=0;this._pAt=-1;
   this.beginAct(idx,this.carry);
  }
  get distance(){return this.child?.distance||0}
  get perfectStreak(){return this.child?.perfectStreak||0}
+ /* R105 boss act: 1-5 while a boss plays (adaptive music / licensed boss track read run.boss) */
+ get boss(){return this.child?.boss||0}
  get actName(){return this.actLabel(this.actIndex)}
- actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬',square:'사각 방',flip:'중력 뒤집기',mirror:'거울',wait:'엘리베이터'})[this.acts[i]?.type]||'구간'}
+ actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬',square:'사각 방',flip:'중력 뒤집기',mirror:'거울',wait:'엘리베이터',boss:'보스'})[this.acts[i]?.type]||'구간'}
  setViewport(width=390,height=844){this.viewport={width,height};this.child?.setViewport?.(width,height)}
  makeChild(i,carry){
   const a=this.acts[i];if(!a)return null;
-  const chain={index:i,count:this.acts.length,first:i===0,last:i===this.acts.length-1,carry:{points:carry.points,shards:carry.shards,perfectStreak:carry.perfectStreak,hearts:carry.hearts},bpm:this.bpm,seed:this.seed+i*7919};
+  const chain={index:i,count:this.acts.length,first:i===0,last:i===this.acts.length-1,carry:{points:carry.points,shards:carry.shards,perfectStreak:carry.perfectStreak,hearts:carry.hearts},bpm:this.bpm,seed:this.seed+i*7919,resume:this.cps[i]||null};
   /* R105 items: mods/flags ride along in chain.carry; items:[{at|beat,kind}] belong to the act; 3 fails on this stretch put an assist bubble near its start. */
   let items;
   if(uiItems()){
@@ -168,7 +171,7 @@ class CourseRun{
  /* As a fresh run for the host (startRun): resumes at the start of the act where the player fell. */
  checkpointRun(){
   const carry={...(this.carries[this.actIndex]||this.carry)};
-  return new CourseRun({...this.options,attempt:this.attempt+1,viewport:{...this.viewport},settings:this.settings,resume:{index:this.actIndex,carry,deaths:this.deaths,fails:{...this.failCounts}}});
+  return new CourseRun({...this.options,attempt:this.attempt+1,viewport:{...this.viewport},settings:this.settings,resume:{index:this.actIndex,carry,deaths:this.deaths,fails:{...this.failCounts},cps:{...this.cps}}});
  }
  inputDown(){return this.action()}
  inputUp(){this.child?.inputUp?.()}
@@ -219,7 +222,7 @@ class CourseRun{
   const reduced=reducedMotion();this.portal={age:0,duration:reduced?PORTAL_REDUCED:PORTAL,swapped:false,reduced,snap:null,snapped:false};
   this.events.push('portal');
  }
- failAct(child){this.deaths++;this.failCounts[this.actIndex]=(this.failCounts[this.actIndex]|0)+1;this.finishCourse('fail',child)}
+ failAct(child){const cp=typeof child.phaseCheckpoint==='function'?child.phaseCheckpoint():null;if(cp)this.cps[this.actIndex]=cp;this.deaths++;this.failCounts[this.actIndex]=(this.failCounts[this.actIndex]|0)+1;this.finishCourse('fail',child)}
  finishCourse(state,child){
   const r=child?.result||{},c=this.carry,shards=c.shards+(state==='clear'?0:actShards(child||{}));
   this.state=state;this.portal=null;this.hearts=state==='fail'?0:1;
@@ -332,4 +335,5 @@ const api=Object.freeze({enabled,CourseRun,registerAct,unregisterAct,hasAct,reso
 root.MongyuCourse=api;if(typeof module!=='undefined')module.exports=api;
 /* R105 chapter acts (square-act.js is loaded before this file, so the engine registers them here; square-act.js registers itself when loaded later). */
 try{root.MongyuSquareAct?.register?.(api)}catch(_){}
+try{root.MongyuBossAct?.register?.(api)}catch(_){}
 })(globalThis);

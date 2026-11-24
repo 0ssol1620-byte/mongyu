@@ -94,7 +94,7 @@ function play(run,{skip=()=>false,max=120*200}={}){run.start();let n=0;const log
 
 test('chapter 1 items: deterministic, 0-2 gifts and one memory star per course, 25 s apart', () => {
  const gifts=[],stars=[];
- for(const course of Course.CHAPTER1.courses){
+ for(const course of Course.CHAPTER1.courses.filter(c=>!c.boss)){   // c5 is boss B01: its items are checked in r105-boss-act.test.cjs
   const list=course.acts.flatMap(a=>a.opts.items||[]),g=list.filter(i=>Items.GIFTS.includes(i.kind)),s=list.filter(i=>i.kind==='memory-star');
   assert.ok(g.length<=2,course.id+' gifts');assert.equal(s.length,1,course.id+' memory star');
   for(const i of list){assert.ok(Items.normKind(i.kind));assert.ok(i.at>0&&i.at<1)}
@@ -110,7 +110,7 @@ test('chapter 1 items: deterministic, 0-2 gifts and one memory star per course, 
 });
 
 test('all five courses clear with and without the items, and the items do not change the clear time much', () => {
- for(const course of Course.CHAPTER1.courses){
+ for(const course of Course.CHAPTER1.courses.filter(c=>!c.boss)){
   for(const k in mem)delete mem[k];
   const bare=mkCourse(course.id,{acts:course.acts.map(a=>({...a,opts:{...a.opts,items:undefined}}))});
   const withItems=mkCourse(course.id);

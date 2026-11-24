@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {host:makeHost,event}=require('./host.cjs');
 const SRC=path.resolve(__dirname,'..','src');
-const FILES=['ui-icons.js','trip-palettes.js','items.js','opening-run.js','illusion-course.js','helix-act.js','penrose-act.js','endless-dream.js','chapters.js','square-act.js','course-run.js','road-mode.js'];
+const FILES=['ui-icons.js','trip-palettes.js','items.js','opening-run.js','illusion-course.js','helix-act.js','penrose-act.js','endless-dream.js','chapters.js','square-act.js','boss-act.js','course-run.js','road-mode.js'];
 const ART={'lobby-trip':{src:'data:image/webp;base64,LOBBYTRIP'},'chapter-3':{src:'data:image/webp;base64,CHAPTER3'},'course-c1':{src:'data:image/webp;base64,COURSE1'},'pose-joy':{src:'data:image/webp;base64,JOY'},'pose-hurt':{src:'data:image/webp;base64,HURT'}};
 /* The road module on a DOM-stub page with every chapter loaded. */
 function page(o={}){

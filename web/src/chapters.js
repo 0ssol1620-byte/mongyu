@@ -9,6 +9,7 @@ const act=(type,opts={},weight)=>({type,opts,weight});
 const gift=(at,kind)=>({at,kind,lane:'lo'}),star=at=>({at,kind:'memory-star',lane:'hi'});
 /* every act of a chapter carries the chapter's trip palette (acts read options.trip) */
 const mk=(trip,bpm)=>(type,opts,weight)=>act(type,{trip,...opts},weight);
+/* Boss courses (c10 B02, c15 B03, c20 B04, c25 B05; c5 B01 lives in course-run.js) hold a single 'boss' act (boss-act.js) with its own item list; their former acts stay as the fallback. */
 /* Item placement: course id -> [act index, kind ('star' = memory star), at = fraction of that act's path]. Found by running the autopilot over probe items (ground stretches for gifts,
    the top of a jump over a hazard for the star); gifts sit near 1/3 and 2/3 of the course, 26+ s apart, and never in an act that cannot use them (no feather in a flip corridor). */
 const ITEMS={
@@ -16,28 +17,27 @@ const ITEMS={
  c7:[[1,'bubble',0.815],[2,'time',0.798],[2,'star',0.595]],
  c8:[[0,'time',0.695],[2,'bubble',0.818],[3,'star',0.759]],
  c9:[[1,'bubble',0.416],[3,'feather',0.632],[3,'star',0.434]],
- c10:[[1,'time',0.39],[3,'bubble',0.284],[3,'star',0.776]],
  c11:[[1,'bubble',0.468],[2,'star',0.627]],
  c12:[[0,'bubble',0.764],[1,'time',0.811],[3,'star',0.743]],
  c13:[[0,'bubble',0.23],[2,'time',0.326],[2,'star',0.386]],
  c14:[[0,'bubble',0.502],[1,'feather',0.688],[2,'star',0.5]],
- c15:[[0,'time',0.811],[3,'bubble',0.255],[3,'star',0.876]],
  c16:[[1,'bubble',0.341],[2,'star',0.5]],
  c17:[[1,'bubble',0.554],[3,'time',0.24],[3,'star',0.542]],
  c18:[[1,'time',0.232],[2,'bubble',0.229],[2,'star',0.5]],
  c19:[[1,'bubble',0.501],[2,'feather',0.664],[2,'star',0.857]],
- c20:[[0,'time',0.823],[1,'bubble',0.779],[2,'star',0.647]],
  c21:[[1,'bubble',0.531],[2,'star',0.533]],
  c22:[[0,'bubble',0.693],[2,'feather',0.263],[2,'star',0.762]],
  c23:[[0,'time',0.762],[1,'bubble',0.572],[2,'star',0.397]],
  c24:[[1,'bubble',0.34],[2,'time',0.241],[2,'star',0.61]],
- c25:[[3,'bubble',0.288],[5,'feather',0.429],[5,'star',0.643]]
 };
 const withItems=c=>{
  const it=ITEMS[c.id];if(!it)return c;
  const acts=c.acts.map((a,i)=>{const mine=it.filter(e=>e[0]===i).map(e=>e[1]==='star'?star(e[2]):gift(e[2],e[1]));return mine.length?{...a,opts:{...a.opts,items:mine}}:a});
  return {...c,acts};
 };
+/* boss course: one boss act; its former acts become the fallback (classic acts only). Items use {ph:phase 0-2, ev:element}: a gift sits between element ev and ev+1, the star on the apex of the ev-th jump. */
+const bossAct=(trip,id,items)=>act('boss',{trip,boss:id,items},72);
+const gv=(kind,ph,ev)=>({kind,ph,ev}),sv=(ph,ev)=>({kind:'memory-star',ph,ev,lane:'hi'});
 const freeze=c=>Object.freeze({...c,acts:Object.freeze(c.acts),fallback:c.fallback?Object.freeze(c.fallback):null});
 
 /* ---------- chapter 2: 잊혀진 유년기 (c2, bpm 88) — toys, swings, chalkboards; a slow, rubbery, small-scale feel (palette key c2, light sage) ---------- */
@@ -51,8 +51,9 @@ const CH2=[
   acts:[a2('bridge',{preset:'garden',tone:1},25),a2('align',{variant:'dawn'},4),a2('penrose',{variant:'dawn'},29),a2('bridge',{preset:'dawn',tone:2},21)],fallback:null},
  {id:'c9',title:'칠판',subtitle:'지워지는 발판 앞으로',bpm:88,seed:909,glow:['#b5c8db','#c6ddb4'],
   acts:[a2('floor-wall',{span:[0,2]},10),a2('helix-up',{},29),a2('align',{variant:'dawn'},4),a2('bridge',{preset:'descent',tone:2},28)],fallback:null},
- {id:'c10',title:'장난감 왕',subtitle:'건전지는 어디 넣나',bpm:88,seed:1010,glow:['#c67746','#c6ddb4'],
-  acts:[a2('bridge',{preset:'ascent',tone:1},25),a2('penrose',{variant:'dawn'},29),a2('align',{variant:'dawn'},4),a2('helix-down',{},31)],fallback:null}
+ {id:'c10',title:'장난감 왕',subtitle:'건전지는 어디 넣나',bpm:88,seed:1010,glow:['#c67746','#c6ddb4'],boss:{id:'B02',n:2,name:'장난감 왕'},
+  acts:[bossAct('c2','B02',[gv('bubble',0,2),sv(1,4),gv('time',2,3)])],
+  fallback:[act('bridge',{trip:'c2',preset:'ascent',tone:1},25),act('penrose',{trip:'c2',variant:'dawn'},29),act('align',{trip:'c2',variant:'dawn'},4),act('helix-down',{trip:'c2'},31)]}
 ];
 
 /* ---------- chapter 3: 불가능한 도시 (c3, bpm 120) — impossible stairs, gravity flips, a crosswalk upside down; the rotating square room (palette key c3, sand / teal / pink) ---------- */
@@ -70,7 +71,7 @@ const CH3=[
   acts:[a3('square',{sides:10,startLap:1},26),a3('bridge',{preset:'garden',tone:2},24),a3('flip',{beats:36,level:1},19)],
   fallback:[act('bridge',{trip:'c3',preset:'ascent',tone:2},25),act('bridge',{trip:'c3',preset:'garden',tone:2},24),act('floor-wall',{trip:'c3',span:[1,2]},7)]},
  {id:'c15',title:'도시',subtitle:'길을 다시 접는 도시',bpm:120,seed:1515,glow:['#cf4763','#f1ddb7'],
-  acts:[a3('penrose',{variant:'dusk'},30),a3('flip',{beats:34,level:2},17),a3('align',{variant:'dusk'},4),a3('square',{sides:10,startLap:2},26)],
+  boss:{id:'B03',n:3,name:'도시'},acts:[bossAct('c3','B03',[gv('bubble',0,3),sv(1,4),gv('time',2,4)])],
   fallback:[act('penrose',{trip:'c3',variant:'dusk'},29),act('align',{trip:'c3',variant:'dusk'},4),act('bridge',{trip:'c3',preset:'descent',tone:2},22)]}
 ];
 
@@ -90,7 +91,7 @@ const CH4=[
   acts:[a4('floor-wall',{span:[0,2]},10),a4('mirror',{beats:42,level:2},25),a4('bridge',{preset:'descent',tone:1},26),a4('align',{variant:'dawn'},6)],
   fallback:[act('floor-wall',{trip:'c4',span:[0,2]},10),act('bridge',{trip:'c4',preset:'ascent',tone:1},25),act('bridge',{trip:'c4',preset:'descent',tone:1},26)]},
  {id:'c20',title:'반사체',subtitle:'과거 입력을 기억하는 상대',bpm:100,seed:2020,glow:['#37333d','#8f90c5'],
-  acts:[a4('mirror',{beats:40,level:2},23),a4('helix-up',{},29),a4('mirror',{beats:46,level:3},28)],
+  boss:{id:'B04',n:4,name:'반사체'},acts:[bossAct('c4','B04',[gv('bubble',0,3),sv(1,4),gv('time',1,6)])],
   fallback:[act('floor-wall',{trip:'c4',span:[0,2]},10),act('helix-up',{trip:'c4'},29),act('bridge',{trip:'c4',preset:'descent',tone:1},22)]}
 ];
 
@@ -110,7 +111,7 @@ const CH5=[
   acts:[a5('floor-wall',{span:[0,2]},10),a5('wait',{waits:3,level:1},46),a5('helix-up',{},31)],
   fallback:[act('floor-wall',{trip:'c5',span:[0,2]},10),act('helix-up',{trip:'c5'},29),act('bridge',{trip:'c5',preset:'calm',tone:0},12)]},
  {id:'c25',title:'없는 출구',subtitle:'모든 길이 한 복도로 모여요',bpm:76,seed:2525,glow:['#c9a258','#d8c5bd'],
-  acts:[a5('floor-wall',{span:[0,1]},6),a5('align',{variant:'dusk'},5),a5('square',{sides:6,startLap:2},15),a5('flip',{beats:22,level:2},16),a5('mirror',{beats:22,level:2},18),a5('wait',{waits:1,level:2},26)],
+  boss:{id:'B05',n:5,name:'없는 출구'},acts:[bossAct('c5','B05',[gv('bubble',0,4),sv(1,3),gv('time',2,1)])],
   fallback:[act('floor-wall',{trip:'c5',span:[0,2]},10),act('bridge',{trip:'c5',preset:'ascent',tone:0},25),act('helix-down',{trip:'c5'},29)]}
 ];
 

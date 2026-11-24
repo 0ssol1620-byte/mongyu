@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 globalThis.MONGYU_POLISH_EDITION=true;globalThis.MONGYU_UI_EDITION=true;
-for(const f of ['trip-palettes','items','opening-run','illusion-course','helix-act','penrose-act','endless-dream','chapters','square-act'])require('../src/'+f+'.js');
+for(const f of ['trip-palettes','items','opening-run','illusion-course','helix-act','penrose-act','endless-dream','chapters','square-act','boss-act'])require('../src/'+f+'.js');
 const Course=require('../src/course-run.js'),Chapters=globalThis.MongyuChapters,Trip=globalThis.MongyuTrip;
 const NEW=Chapters.chapters,ALL=Course.allCourses();
 const seconds=c=>c.acts.reduce((s,a)=>s+a.weight,0);
@@ -35,6 +35,7 @@ test('every act type is registered, courses run 42-96 s, and the chapter signatu
  const NEWACTS=['square','flip','mirror','wait'];
  for(const c of ALL.slice(5)){
   for(const a of c.acts)assert.ok(Course.hasAct(a.type),c.id+' needs '+a.type);
+  if(c.boss){assert.ok(seconds(c)>=60&&seconds(c)<=120,c.id+' boss length');assert.equal(c.acts.length,1,c.id);if(c.fallback)for(const a of c.fallback)assert.ok(Course.hasAct(a.type)&&!NEWACTS.includes(a.type)&&a.type!=='boss');continue}   // boss courses: r105-boss-act.test.cjs
   const s=seconds(c);assert.ok(s>=42&&s<=96,c.id+' '+s+'s');
   assert.ok(c.acts.length>=3&&c.acts.length<=6,c.id);
   if(c.fallback)for(const a of c.fallback)assert.ok(Course.hasAct(a.type)&&!NEWACTS.includes(a.type),'fallback uses classic acts only: '+c.id);
@@ -42,10 +43,9 @@ test('every act type is registered, courses run 42-96 s, and the chapter signatu
  const types=ch=>new Set(ch.courses.flatMap(c=>c.acts.map(a=>a.type)));
  for(const t of ['bridge','penrose','align','helix-up','floor-wall'])assert.ok(types(NEW[0]).has(t),'ch2 '+t);
  for(const t of ['square','flip','penrose','align'])assert.ok(types(NEW[1]).has(t),'ch3 impossible city '+t);
- assert.ok(NEW[2].courses.every(c=>c.acts.some(a=>a.type==='mirror')),'ch4 is the mirror');
+ assert.ok(NEW[2].courses.every(c=>c.boss||c.acts.some(a=>a.type==='mirror')),'ch4 is the mirror');
  assert.ok(types(NEW[3]).has('wait')&&NEW[3].courses.slice(0,4).every(c=>c.acts.some(a=>a.type==='wait')),'ch5 waits at the elevator');
- const finale=Course.courseById('c25');const ft=new Set(finale.acts.map(a=>a.type));
- for(const t of ['floor-wall','align','square','flip','mirror','wait'])assert.ok(ft.has(t),'finale gathers '+t);
+ const finale=Course.courseById('c25');assert.equal(finale.boss.id,'B05','the finale is boss B05 "No Exit" (its three rules are tested in r105-boss-act.test.cjs)');
  // the first course of a chapter introduces its new idea (tutorial, level 0, short)
  assert.ok(Course.courseById('c11').acts.some(a=>a.type==='square'&&a.opts.tutorial));assert.ok(Course.courseById('c13').acts[0].type==='flip'&&Course.courseById('c13').acts[0].opts.tutorial);
  assert.ok(Course.courseById('c16').acts[0].type==='mirror'&&Course.courseById('c16').acts[0].opts.tutorial&&Course.courseById('c16').acts[0].opts.level===0);
@@ -53,7 +53,7 @@ test('every act type is registered, courses run 42-96 s, and the chapter signatu
 });
 
 test('item rules: at most 2 gifts and one memory star per course, 26+ s apart, never a feather where it cannot be used', () => {
- for(const c of ALL.slice(5)){
+ for(const c of ALL.slice(5).filter(c=>!c.boss)){   // boss courses place items by phase/element: r105-boss-act.test.cjs
   const list=[];let t0=0;
   for(const a of c.acts){for(const it of a.opts.items||[]){assert.ok(it.at>0&&it.at<1,c.id);list.push({...it,type:a.type,t:t0+it.at*a.weight})}t0+=a.weight}
   const gifts=list.filter(i=>i.kind!=='memory-star'),stars=list.filter(i=>i.kind==='memory-star');
