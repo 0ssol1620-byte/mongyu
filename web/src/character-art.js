@@ -1,4 +1,4 @@
-/* R104 character art: hooded dreamer sprite with full pose set. Owned by workstream D.
+/* R104 character art: hooded dreamer sprite with full pose set. Owned by workstream D. R105: the default player is now the faceless ink silhouette (see the raster section).
  * Presentation only: never writes the actor, run state or RNG. Local space matches the
  * legacy sprite: feet at y=0, facing +x, 43.5 units tall before the caller's bodyHeight.
  */
@@ -378,24 +378,38 @@ function drawElder(c,S,p,g,R,ow,reduced,q,t){
  c.restore();
 }
 
-/* ---------- R105 raster dreamer ---------- */
-// The generated design (pose-*.webp, run-01..08.webp, 512px, transparent) replaces the vector child. The elder, the woman, the dog
-// and the vector child itself (while images decode, or where no canvas exists) keep the code above.
-const RUN_IDS=['run-01','run-02','run-03','run-04','run-05','run-06','run-07','run-08'];
-const ART_IDS=['pose-stand','pose-run-a','pose-run-b','pose-jump','pose-land','pose-hurt','pose-joy','pose-sleep',...RUN_IDS];
-// Anchor in the 512px source: [body centre x, sole line y]. All frames share one scale so the head keeps its size.
-const META={'pose-stand':[288,484],'pose-run-a':[286,482],'pose-run-b':[288,483],'pose-jump':[269,478],'pose-land':[295,457],'pose-hurt':[250,450],'pose-joy':[266,483],'pose-sleep':[250,417]};
-for(const id of RUN_IDS)META[id]=[287,503];
-const REF_H=470,UNIT=43.5/REF_H;// local units per source pixel (the legacy child is 43.5 units tall)
+/* ---------- R105 raster protagonist ---------- */
+// Default player: the faceless near-black ink silhouette (sil-*.webp, 512px, transparent, facing right). It is drawn flat; on a dark
+// scene a thin warm rim (#F3E4CF) is baked around it, on a light scene only a faint soft shadow is added. The generated pyjama kid
+// (pose-*.webp, run-01..08.webp) stays in the manifest and is the wardrobe skin `dream`. The elder, the woman, the dog and the
+// vector child itself (while images decode, or where no canvas exists) keep the code above.
+const DREAM_RUN=['run-01','run-02','run-03','run-04','run-05','run-06','run-07','run-08'];
+const DREAM_IDS=['pose-stand','pose-run-a','pose-run-b','pose-jump','pose-land','pose-hurt','pose-joy','pose-sleep',...DREAM_RUN];
+const SIL_RUN=['sil-run-01','sil-run-02','sil-run-03','sil-run-04'];
+const SIL_IDS=['sil-stand','sil-run-a','sil-run-b','sil-jump','sil-land','sil-hurt','sil-joy','sil-sleep',...SIL_RUN];
+const ART_IDS=[...SIL_IDS,...DREAM_IDS];
+// Anchor in the 512px source: [body centre x, sole line y]. All frames of a set share one scale so the head keeps its size.
+const META={'pose-stand':[288,484],'pose-run-a':[286,482],'pose-run-b':[288,483],'pose-jump':[269,478],'pose-land':[295,457],'pose-hurt':[250,450],'pose-joy':[266,483],'pose-sleep':[250,417],
+ 'sil-stand':[255,503],'sil-run-a':[255,502],'sil-run-b':[255,502],'sil-jump':[255,432],'sil-land':[255,453],'sil-hurt':[255,430],'sil-joy':[255,504],'sil-sleep':[255,357]};
+for(const id of DREAM_RUN)META[id]=[287,503];
+// The silhouette run cycle is ONE step (contact, down, passing, up) and the other leg's step is the same picture, so it loops every step.
+// The stance foot sits at x=404,315,194,136 in the four frames; the anchors below move each frame so that foot falls on a straight
+// line (85,7,-71,-149 from the anchor, 78px per frame): over a step the foot travels 312px = .65 body heights (REF_H 480) while the
+// ground does the same, so the planted foot does not slide. The body is moved at most +-22px (4% of its height) for it.
+SIL_RUN.forEach((id,i)=>{META[id]=[[319,503],[308,502],[265,503],[285,504]][i]});
+const DREAM={sil:false,run:DREAM_RUN,step:.9,unit:43.5/470,f:{stand:'pose-stand',runA:'pose-run-a',runB:'pose-run-b',jump:'pose-jump',land:'pose-land',hurt:'pose-hurt',joy:'pose-joy',sleep:'pose-sleep'},shadowW:11};
+const SIL={sil:true,run:SIL_RUN,step:.65,unit:43.5/480,f:{stand:'sil-stand',runA:'sil-run-a',runB:'sil-run-b',jump:'sil-jump',land:'sil-land',hurt:'sil-hurt',joy:'sil-joy',sleep:'sil-sleep'},shadowW:10};
 const TIERS=[96,128,160,192,256,320,384,512];
-const NECK=[235,200];// cape pivot in source pixels
+const NECK=[235,200];// dream cape pivot in source pixels
 const STRIPS=[235,190,145,100,55,0];
-// Wardrobe: the hat, cape and slippers (the purple parts of the art) take this colour; null keeps the original art.
-const TINT={moon:null,ink:'#d9d3f3',dew:'#58d1b4',peach:'#f08e86',lilac:'#d79af2',tide:'#4ea9e0',ember:'#f27a48',moss:'#8fba58',dusk:'#e08cb6',frost:'#8cd5f2',eclipse:'#f2b445',dawn:'#ffd36e'};
+// Dream wardrobe: the hat, cape and slippers (the purple parts of the art) take this colour; null keeps the original art.
+const TINT={dream:null,moon:null,ink:'#d9d3f3',dew:'#58d1b4',peach:'#f08e86',lilac:'#d79af2',tide:'#4ea9e0',ember:'#f27a48',moss:'#8fba58',dusk:'#e08cb6',frost:'#8cd5f2',eclipse:'#f2b445',dawn:'#ffd36e'};
 const TRIP_RIM={violet:'#7b3cff',aqua:'#19f0d0',ember:'#ff7a1a',toxic:'#b6ff2a',heart:'#ff3d7a'};
-let currentTrip='violet',rasterOn=true,artRequested=false;
-const base=new Map(),rimmed=new Map();// bucket key -> Map(frame|tier -> {cv,m})
+const INK='#201D29',WARM='#F3E4CF';
+let currentTrip='violet',tripKnown=false,rasterOn=true,artRequested=false;
+const base=new Map(),rimmed=new Map(),silFlat=new Map(),silDone=new Map(),tinted=new Map(),shadows=new Map();// bucket key -> Map(frame|tier -> {cv,m})
 const stats={builds:0,fallbacks:0};
+const isDream=style=>!!style&&style.id==='dream';
 function art(){return root.MongyuArt&&root.MongyuArt.enabled?root.MongyuArt:null}
 function makeCanvas(w,h,read){
  let cv=null;
@@ -412,18 +426,27 @@ function setTrip(key){pinned=typeof key==='string'&&key?key:null}
 // Best-effort chapter colour when the caller names none: the running course/act's `trip` option (set by CourseRun), probed twice a second.
 let probeAt=-1e9;
 function detectTrip(){
- if(pinned)return pinned;
+ if(pinned){tripKnown=true;return pinned}
  const now=typeof root.performance?.now==='function'?root.performance.now():0;
  if(now-probeAt<500)return currentTrip;probeAt=now;
- try{const r=root.MongyuPolish?.host?.activeRun?.();const k=r?.child?.trip||r?.acts?.[r.actIndex]?.opts?.trip||r?.trip||r?.options?.trip;currentTrip=typeof k==='string'&&k?k:'violet'}catch(_){}
+ try{const r=root.MongyuPolish?.host?.activeRun?.();const k=r?.child?.trip||r?.acts?.[r.actIndex]?.opts?.trip||r?.trip||r?.options?.trip;tripKnown=typeof k==='string'&&!!k;currentTrip=tripKnown?k:'violet'}catch(_){}
  return currentTrip;
 }
 function rimColor(key){const T=root.MongyuTrip;return(T&&T.get&&T.get(key).rim)||TRIP_RIM[key]||TRIP_RIM.violet}
+// A dark ground: the caller says so (onDark / dark), a light ink on a story page, or a known chapter whose palette is not flagged light.
+function sceneDark(q,fx,trip){
+ if(fx.light===true||fx.onDark===false||fx.dark===false)return false;
+ if(fx.onDark===true||fx.dark===true)return true;
+ if(typeof fx.ink==='string')return lum(fx.ink)>.3;
+ const T=root.MongyuTrip,key=q.trip||fx.trip||(tripKnown||pinned?trip:null);
+ if(key&&T&&T.get)return T.get(key).light!==true;
+ return false;
+}
 function tintHex(style){
  const id=style&&style.id;if(id&&Object.prototype.hasOwnProperty.call(TINT,id))return TINT[id];
  if(!style||typeof style.accent!=='string')return null;return mix(style.accent,'#ffffff',.08);
 }
-// Hue remap of the purple hat/cape/slippers only: skin, pyjamas, hair and the white pom-pom keep their colours.
+// Hue remap of the purple hat/cape/slippers only (dream skin): skin, pyjamas, hair and the white pom-pom keep their colours.
 function recolor(d,T){
  const tr=T?T[0]:0,tg=T?T[1]:0,tb=T?T[2]:0,YREF=105;
  for(let i=0;i<d.length;i+=4){
@@ -459,7 +482,7 @@ function baseCanvas(id,tier,tint,skin){
  }
  e={cv:out.cv,m:0};m.set(key,e);stats.builds++;return e;
 }
-// A thin neon outline plus a soft halo in the chapter colour, baked once per frame, size, skin and chapter.
+// Dream skin: a thin neon outline plus a soft halo in the chapter colour, baked once per frame, size, skin and chapter.
 function rimCanvas(id,tier,tint,skin,trip){
  const key=id+'|'+tier,m=bucket(rimmed,skin+'|'+trip);let e=m.get(key);if(e)return e;
  const b=baseCanvas(id,tier,tint,skin);if(!b)return null;
@@ -471,37 +494,105 @@ function rimCanvas(id,tier,tint,skin,trip){
  o.x.globalAlpha=1;o.x.drawImage(b.cv,mg,mg);
  e={cv:o.cv,m:mg};m.set(key,e);stats.builds++;return e;
 }
-// Builds the other frames in idle slices after the first draw at a new size/skin/chapter, so a stride never stalls on a cache miss.
+
+/* ----- silhouette: flat ink, warm rim on dark, skin accent treatments ----- */
+// The flat figure: every pixel is ink, only the alpha of the source is kept (the generated art carries a faint purple grain).
+function flatCanvas(id,tier){
+ const A=art(),img=A&&A.image(id);if(!img||!img.complete||!img.naturalWidth)return null;
+ const m=bucket(silFlat,'ink'),key=id+'|'+tier;let e=m.get(key);if(e)return e;
+ const o=makeCanvas(tier,tier,false);if(!o)return null;
+ o.x.imageSmoothingEnabled=true;o.x.imageSmoothingQuality='high';o.x.clearRect(0,0,tier,tier);o.x.drawImage(img,0,0,tier,tier);
+ o.x.globalCompositeOperation='source-in';o.x.fillStyle=INK;o.x.fillRect(0,0,tier,tier);o.x.globalCompositeOperation='source-over';
+ e={cv:o.cv,m:0};m.set(key,e);stats.builds++;return e;
+}
+function tintedCanvas(flat,id,tier,col){
+ const m=bucket(tinted,col),key=id+'|'+tier;let e=m.get(key);if(e)return e;
+ const o=makeCanvas(tier,tier,false);if(!o)return null;
+ o.x.drawImage(flat.cv,0,0);o.x.globalCompositeOperation='source-in';o.x.fillStyle=col;o.x.fillRect(0,0,tier,tier);o.x.globalCompositeOperation='source-over';
+ m.set(key,e=o.cv);return e;
+}
+// Skin = accent treatment of the same ink figure (no hats, capes or clothes): rim colour, a halo, a thicker line or a short afterimage.
+//   plain  thin rim only (길: the warm cream rim on dark, nothing but a shadow on light; 달빛: moon-white rim with a faint halo)
+//   leaf   rim + soft tinted halo        scarf  a thicker rim        comet  rim + a three-step afterimage trail behind
+//   star   rim + a wide tinted halo
+const skinCache=new Map();
+function silSkin(style,dark){
+ const id=style&&style.id||'moon',key=id+(dark?'|d':'|l');let s=skinCache.get(key);if(s)return s;
+ const acc=style&&typeof style.accent==='string'&&id!=='moon'?style.accent:WARM,det=style&&style.detail||'plain';
+ const lit=id==='moon'?WARM:id==='ink'?'#fffbea':mix(acc,'#ffffff',.28),deep=id==='moon'?INK:mix(acc,INK,.5);
+ s={key,id,dark,rim:null,rimW:1,halo:null,hb:0,ha:0,trail:null,shadow:'0,0,0',shadowA:dark?.55:.2};
+ if(dark){
+  s.rim=lit;s.shadow=rgbTriplet(mix(acc,'#000000',.74));
+  if(id==='ink'){s.halo='#fff3c8';s.hb=3;s.ha=.4}
+  else if(det==='leaf'){s.halo=acc;s.hb=3;s.ha=.5}
+  else if(det==='scarf')s.rimW=1.8;
+  else if(det==='comet'){s.trail=acc}
+  else if(det==='star'){s.halo=acc;s.hb=6;s.ha=.62}
+ }else{
+  s.shadow=rgbTriplet(id==='moon'||id==='ink'?INK:mix(acc,INK,.62));
+  if(id!=='moon'&&id!=='ink'){// every other skin keeps a thin accent edge on a light page too
+   s.rim=mix(acc,INK,.3);s.rimW=det==='scarf'?1.8:1;
+   if(det==='leaf'||det==='star'){s.halo=deep;s.hb=det==='star'?5:3;s.ha=.34}
+   else if(det==='comet')s.trail=deep;
+  }
+ }
+ if(skinCache.size>48)skinCache.clear();skinCache.set(key,s);return s;
+}
+function rgbTriplet(h){return rgb(h).join(',')}
+// The cached, ready-to-blit canvas for one frame at one size and skin. Costs ~10 drawImages once; a draw afterwards is a single drawImage.
+function silCanvas(id,tier,sk){
+ const flat=flatCanvas(id,tier);if(!flat)return null;
+ if(!sk.rim&&!sk.halo&&!sk.trail)return flat;
+ const m=bucket(silDone,sk.key),key=id+'|'+tier;let e=m.get(key);if(e)return e;
+ const r=Math.max(1,Math.round(tier/190)),rr=Math.ceil(r*sk.rimW),hb=Math.ceil(r*sk.hb),trailLen=sk.trail?r*4:0;
+ const mg=rr+Math.ceil(hb*1.6)+trailLen+1,size=tier+mg*2,o=makeCanvas(size,size,false);if(!o)return flat;
+ const x=o.x;
+ if(sk.halo){const s=tintedCanvas(flat,id,tier,sk.halo);if(s){const BIG=size*2;x.save();x.shadowColor=sk.halo;x.shadowBlur=hb*2;x.shadowOffsetX=BIG;x.globalAlpha=sk.ha;x.drawImage(s,mg-BIG,mg);x.restore()}}
+ if(sk.trail){const s=tintedCanvas(flat,id,tier,sk.trail);if(s)for(let k=3;k>=1;k--){x.globalAlpha=.2/k+.05;x.drawImage(s,mg-k*r*1.3,mg+k*r*.2)}}
+ if(sk.rim){const s=tintedCanvas(flat,id,tier,sk.rim);if(s){x.globalAlpha=.95;for(let k=0;k<8;k++){const a=k*Math.PI/4;x.drawImage(s,mg+Math.cos(a)*rr,mg+Math.sin(a)*rr)}}}
+ x.globalAlpha=1;x.drawImage(flat.cv,mg,mg);
+ e={cv:o.cv,m:mg};m.set(key,e);stats.builds++;return e;
+}
+// Soft contact shadow: one baked radial gradient per colour, stretched flat under the feet.
+function shadowCanvas(rgbs){
+ let e=shadows.get(rgbs);if(e!==undefined)return e;
+ const o=makeCanvas(64,64,false);
+ if(o){const g=o.x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba('+rgbs+',1)');g.addColorStop(.55,'rgba('+rgbs+',.45)');g.addColorStop(1,'rgba('+rgbs+',0)');o.x.fillStyle=g;o.x.fillRect(0,0,64,64)}
+ if(shadows.size>24)shadows.clear();shadows.set(rgbs,e=o?o.cv:null);return e;
+}
+// Builds the other frames in idle slices after the first draw at a new size/skin, so a stride never stalls on a cache miss.
 let warmKey='',warmToken=0;
-const WARM_ORDER=[...RUN_IDS,'pose-stand','pose-jump','pose-land','pose-hurt','pose-joy','pose-run-a','pose-run-b','pose-sleep'];
-function scheduleWarm(tier,tint,skin,trip){
- const key=tier+'|'+skin+'|'+trip;if(key===warmKey||typeof root.setTimeout!=='function')return;
- warmKey=key;const token=++warmToken;let i=0;
+const WARM_ORDER=[...SIL_RUN,'sil-stand','sil-jump','sil-land','sil-hurt','sil-joy','sil-run-a','sil-run-b','sil-sleep'];
+const WARM_DREAM=[...DREAM_RUN,'pose-stand','pose-jump','pose-land','pose-hurt','pose-joy','pose-run-a','pose-run-b','pose-sleep'];
+function scheduleWarm(tier,tag,build,dream){
+ const key=tier+'|'+tag;if(key===warmKey||typeof root.setTimeout!=='function')return;
+ warmKey=key;const token=++warmToken;let i=0;const order=dream?WARM_DREAM:WARM_ORDER;
  const step=()=>{
   if(token!==warmToken)return;const A=art();if(!A)return;
-  while(i<WARM_ORDER.length){const id=WARM_ORDER[i++];if(A.ready(id)){rimCanvas(id,tier,tint,skin,trip);root.setTimeout(step,12);return}}
+  while(i<order.length){const id=order[i++];if(A.ready(id)){build(id);root.setTimeout(step,12);return}}
  };
  root.setTimeout(step,60);
 }
 function pickTier(side){for(const t of TIERS)if(t>=side*.95)return t;return 512}
-function runFrame(q,reduced,t){
- if(Number.isFinite(q.strideDistance))return RUN_IDS[Math.floor(((q.strideDistance/(.9*(q.bodyHeight||60)))%1+1)%1*8)&7];
- if(reduced)return 'pose-run-a';
- return Math.floor(t*4)%2?'pose-run-b':'pose-run-a';
+function runFrame(P,q,reduced,t){
+ const n=P.run.length;
+ if(Number.isFinite(q.strideDistance)){const u=((q.strideDistance/(P.step*(q.bodyHeight||60)))%1+1)%1;return P.run[(P.sil?Math.round(u*n):Math.floor(u*n))%n]}
+ if(reduced)return P.f.runA;
+ return Math.floor(t*4)%2?P.f.runB:P.f.runA;
 }
 // Nearest decoded frame so a late decode never flashes the vector fallback mid-run.
-function readyId(A,id){
+function readyId(A,P,id){
  if(A.ready(id))return id;
- const k=RUN_IDS.indexOf(id);
- if(k>=0)for(let d=1;d<4;d++)for(const j of [k-d,k+d]){const n=RUN_IDS[(j+8)%8];if(A.ready(n))return n}
- for(const f of ['pose-run-a','pose-run-b','pose-stand'])if(A.ready(f))return f;
+ const n=P.run.length,k=P.run.indexOf(id);
+ if(k>=0)for(let d=1;d<n/2;d++)for(const j of [k-d,k+d]){const c=P.run[(j+n)%n];if(A.ready(c))return c}
+ for(const f of [P.f.runA,P.f.runB,P.f.stand])if(A.ready(f))return f;
  return null;
 }
-// The cape and cap tip are the left of the figure: they are drawn as strips that fan out about the neck, so the whole back leans with speed.
-function drawFigure(c,e,id,u2,ox,oy,theta,tier){
+// Dream skin: the cape and cap tip are the left of the figure: they are drawn as strips that fan out about the neck, so the whole back leans with speed.
+function drawFigure(c,e,id,u2,ox,oy,theta,tier,unit){
  const m=e.m,full=e.cv.width,k=tier/512;
  if(!theta){c.drawImage(e.cv,ox,oy,full*u2,full*u2);return}
- const px=(NECK[0]-META[id][0])*UNIT,py=(NECK[1]-META[id][1])*UNIT,n=STRIPS.length-1,sx=STRIPS[0]*k+m;
+ const px=(NECK[0]-META[id][0])*unit,py=(NECK[1]-META[id][1])*unit,n=STRIPS.length-1,sx=STRIPS[0]*k+m;
  c.drawImage(e.cv,sx,0,full-sx,full,ox+sx*u2,oy,(full-sx)*u2,full*u2);
  for(let i=0;i<n;i++){
   const x1=STRIPS[i]*k+m+1,x0=i===n-1?0:STRIPS[i+1]*k+m,a=theta*((i+1)/n)**1.3;
@@ -512,9 +603,10 @@ function drawFigure(c,e,id,u2,ox,oy,theta,tier){
 function rasterDraw(c,q,fx,reduced,id,style,t,b,size){
  const A=art();if(!A||!rasterOn||typeof c.drawImage!=='function')return false;
  ensureArt();
+ const P=isDream(style)?DREAM:SIL,F=P.f;
  let name=poseOf(q);if(q.pose==='sleep'||q.sleeping||fx.sleep)name='sleep';
  const st=reduced||q.pose==='stand'?null:track(id,t,name==='sleep'?'stand':name,b.angle),tm=Number.isFinite(t)?t:0,height=Math.max(0,q.height||0);
- let frame,sx=1,sy=1,ox=0,oy=0,rot=0,theta=0,shadowK=1;
+ let frame,sx=1,sy=1,ox=0,oy=0,rot=0,theta=0,shadowK=1,pivot=0,bob=0;
  if(st&&Number.isFinite(q.strideDistance)){
   if(Number.isFinite(st.sd)&&st.dt>0){const sp=Math.abs(q.strideDistance-st.sd)/st.dt;st.speed=Number.isFinite(st.speed)?st.speed+(sp-st.speed)*Math.min(1,st.dt*8):sp}
   st.sd=q.strideDistance;
@@ -522,21 +614,25 @@ function rasterDraw(c,q,fx,reduced,id,style,t,b,size){
  const speedN=st&&Number.isFinite(st.speed)?Math.min(1.6,st.speed/((q.bodyHeight||60)*5.5)):.75;
  switch(name){
   case 'run':case 'wall':{
-   frame=runFrame(q,reduced,tm);
-   if(name==='run'&&st&&st.landAt>-9&&tm-st.landAt<.16){const L=Math.sin(Math.PI*.5*clamp(1-(tm-st.landAt)/.16,0,1));frame='pose-land';sx=1+.05*L;sy=1-.06*L}
-   if(!reduced)theta=.14*(speedN-.75)+.025*Math.sin(tm*9);
+   frame=runFrame(P,q,reduced,tm);
+   if(name==='run'&&st&&st.landAt>-9&&tm-st.landAt<.16){const L=Math.sin(Math.PI*.5*clamp(1-(tm-st.landAt)/.16,0,1));frame=F.land;sx=1+.05*L;sy=1-.06*L}
+   if(!reduced){
+    theta=.14*(speedN-.75)+.025*Math.sin(tm*9);
+    // silhouette: the head leans into speed and bobs a little with every step (the whole sprite turns about the soles, collision untouched)
+    if(P.sil&&Number.isFinite(q.strideDistance))bob=.016*Math.sin(q.strideDistance/(P.step*(q.bodyHeight||60))*TAU*2);
+   }
    if(name==='wall'&&!reduced)rot=-.06;
    break}
   case 'jump':case 'float':{
-   frame='pose-jump';
+   frame=F.jump;pivot=16;
    if(name==='jump'&&!reduced){sy=seg(J.sy,clamp(Number.isFinite(q.jumpProgress)?q.jumpProgress:.5,0,1));sx=1/Math.sqrt(sy);theta=.1+.03*Math.sin(tm*8)}
    else if(!reduced){oy=Math.sin(tm*2)*1.2;theta=.1}
    break}
   case 'land':{
-   frame='pose-land';let L=Number.isFinite(q.landProgress)?1-clamp(q.landProgress,0,1):st?clamp(1-(tm-st.poseAt)/.22,0,1):.7;if(reduced)L=0;
+   frame=F.land;let L=Number.isFinite(q.landProgress)?1-clamp(q.landProgress,0,1):st?clamp(1-(tm-st.poseAt)/.22,0,1):.7;if(reduced)L=0;
    const Ls=Math.sin(Math.PI*.5*L);sx=1+.06*Ls;sy=1-.07*Ls;break}
   case 'hurt':{
-   frame='pose-hurt';let p=.18;
+   frame=F.hurt;pivot=16;let p=.18;
    if(!reduced){
     if(q.nativeState===13||q.nativeState===16)p=clamp((q.poseFrame??q.nativeFrame??0)/14,0,1);
     else if(q.deathProgress>0)p=.25+.75*clamp(q.deathProgress,0,1);
@@ -545,30 +641,53 @@ function rasterDraw(c,q,fx,reduced,id,style,t,b,size){
     ox=-6*ease(p/.75);oy=-Math.sin(Math.PI*clamp(p/.64,0,1))*8;rot=-.45*Math.sin(Math.PI*clamp(p/.8,0,1));theta=-.05;
    }
    break}
-  case 'sleep':{frame='pose-sleep';if(!reduced)sy=1+.014*Math.sin(tm*1.5);break}
+  case 'sleep':{frame=F.sleep;if(!reduced)sy=1+.014*Math.sin(tm*1.5);break}
   case 'joy':case 'open':{
-   frame='pose-joy';if(!reduced){const hop=Math.abs(Math.sin(tm*6.2))*2.6;oy=-hop;shadowK=1+hop*.04;theta=.05*Math.sin(tm*7)+.04}
+   frame=F.joy;pivot=16;if(!reduced){const hop=Math.abs(Math.sin(tm*6.2))*2.6;oy=-hop;shadowK=1+hop*.04;theta=.05*Math.sin(tm*7)+.04}
    break}
-  default:{frame='pose-stand';if(!reduced){sy=1+.012*Math.sin(tm*2.5);theta=.025*Math.sin(tm*1.6)}}
+  default:{frame=F.stand;if(!reduced){sy=1+.012*Math.sin(tm*2.5);theta=.025*Math.sin(tm*1.6)}}
  }
- const fid=readyId(A,frame);if(!fid)return false;
+ const fid=readyId(A,P,frame);if(!fid)return false;
  let ms=1;if(typeof c.getTransform==='function'){const m=c.getTransform();if(m&&Number.isFinite(m.a)&&Number.isFinite(m.b))ms=Math.hypot(m.a,m.b)||1}
- const tier=pickTier(512*size*UNIT*ms),skin=style&&style.id?style.id+'|'+(style.accent||''):'moon',tint=tintHex(style),trip=q.trip||fx.trip||detectTrip();
- const e=fx.rim===false?baseCanvas(fid,tier,tint,skin):rimCanvas(fid,tier,tint,skin,trip);
- if(e&&!reduced&&fx.rim!==false)scheduleWarm(tier,tint,skin,trip);
+ const tier=pickTier(512*size*P.unit*ms),skin=style&&style.id?style.id+'|'+(style.accent||''):'moon',trip=q.trip||fx.trip||detectTrip();
+ let e,sk=null,tint=null;
+ if(P.sil){
+  sk=fx.rim===false?silSkin(null,false):silSkin(style,sceneDark(q,fx,trip));
+  e=silCanvas(fid,tier,sk);
+  if(e&&!reduced&&fx.rim!==false)scheduleWarm(tier,sk.key+'|'+tier,i=>silCanvas(i,tier,sk),false);
+ }else{
+  tint=tintHex(style);
+  e=fx.rim===false?baseCanvas(fid,tier,tint,skin):rimCanvas(fid,tier,tint,skin,trip);
+  if(e&&!reduced&&fx.rim!==false)scheduleWarm(tier,skin+'|'+trip,i=>rimCanvas(i,tier,tint,skin,trip),true);
+ }
  if(!e){stats.fallbacks++;return false}
- const u2=512/tier*UNIT,meta=META[fid],ground=height/size;
+ const u2=512/tier*P.unit,meta=META[fid],ground=height/size;
  c.save();c.translate(q.x,q.y);c.rotate(b.angle);c.scale(size,size*b.sign);
  if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
  if(fx.shadow!==false){// soft contact shadow, shrinking as the body rises
   const h=ground+Math.max(0,-oy),k=1/(1+h/20);
-  if(h<70){c.save();c.translate(ox*.5,ground);c.scale(11*shadowK*k,11*shadowK*k*.26);c.globalAlpha*=.5*k;c.beginPath();c.arc(0,0,1,0,TAU);c.fillStyle='rgba(8,4,24,.6)';c.fill();c.restore()}
+  if(h<70){
+   const rgbs=P.sil?sk.shadow:'8,4,24',sc=P.sil?shadowCanvas(rgbs):null,a=(P.sil?sk.shadowA:.5)*k,w=P.shadowW*shadowK*k*(P.sil?1.25:1);
+   c.save();c.translate(ox*.5,ground);c.scale(w,w*.26);c.globalAlpha*=a;
+   if(sc)c.drawImage(sc,-1,-1,2,2);else{c.beginPath();c.arc(0,0,1,0,TAU);c.fillStyle='rgba('+rgbs+',.6)';c.fill()}
+   c.restore();
+  }
  }
  c.translate(ox,oy);
  if(rot){c.translate(0,-18);c.rotate(rot);c.translate(0,18)}
  if(sx!==1||sy!==1)c.scale(sx,sy);
- drawFigure(c,e,fid,u2,-meta[0]*UNIT-e.m*u2,-meta[1]*UNIT-e.m*u2,reduced?0:theta,tier);
+ if(P.sil){
+  const lean=reduced?0:theta*.6+bob;
+  if(lean){c.translate(0,-pivot);c.rotate(lean);c.translate(0,pivot)}
+  c.drawImage(e.cv,-meta[0]*P.unit-e.m*u2,-meta[1]*P.unit-e.m*u2,e.cv.width*u2,e.cv.height*u2);
+ }else drawFigure(c,e,fid,u2,-meta[0]*P.unit-e.m*u2,-meta[1]*P.unit-e.m*u2,reduced?0:theta,tier,P.unit);
  c.restore();return true;
+}
+// <img> portraits (result, wardrobe) pick the art for the equipped look: the silhouette, or the dream kid.
+function portraitId(pose,style){
+ const p=pose==='joy'||pose==='hurt'||pose==='stand'||pose==='sleep'?pose:'stand';
+ if(style===undefined)style=root.MongyuMobile?.look?.();
+ return (isDream(style)?'pose-':'sil-')+p;
 }
 
 /* ---------- entry ---------- */
@@ -593,6 +712,6 @@ function draw(c,q,fx={},reduced=false,character='walker',style){
  c.restore();return true;
 }
 function resetMotion(){tracks.clear()}
-const api=Object.freeze({enabled,draw,poseOf,palette,resetMotion,setTrip,whenReady,ready:artReady,stats,setRaster:v=>{rasterOn=!!v},poses:Object.freeze([...POSES]),artIds:Object.freeze([...ART_IDS])});
+const api=Object.freeze({enabled,draw,poseOf,palette,resetMotion,setTrip,whenReady,portraitId,isDream,silSkin,ready:artReady,stats,setRaster:v=>{rasterOn=!!v},poses:Object.freeze([...POSES]),artIds:Object.freeze([...ART_IDS])});
 root.MongyuCharacter=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
