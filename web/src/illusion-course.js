@@ -9,6 +9,17 @@ const C=Math.cos(Math.PI/6),S=.5,TAU=Math.PI*2;
 const SPEED=68,FLIGHT=.64,PEAK=40,FOOT=4,BUFFER=.09,HIT_STOP=.12,FAIL_OUTRO=.95,CLEAR_OUTRO=1.9,INTRO=2.6;
 const HOLD=42,TURN=.55,WINDOW=170,WIDE=12,THICK=14,BLOCK=7,BLOCK_H=15,ALIGNED=.86;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+/* R105 POL "rubber floor" (chapter 2, blueprint M04/M10): option rubber:true. The world is squashed/stretched vertically by +-6 % in a 3.2 s rhythm (a uniform vertical scale about the runner's feet, so
+   height comparisons are unchanged and the hitboxes stay what you see); coral blocks come in toy sizes (+-12 % of width and height, per block, deterministic) and the runner's size eases between walkways
+   (+-12 %). Collision uses the same scaled sizes, every block carries a small ruler (ticks at the nominal height) so the size change reads, and blocks are always on screen >= 1.3 s before they are reached. */
+const RUBBER=Object.freeze({period:3.2,squash:.06,scale:.12,blocks:[-.8,.6,-.4,1,-1,.5,-.6,.9],runner:[0,.5,-.5,1,-1,.5,0,-.5],ease:26});
+const rubberSquash=clock=>1+RUBBER.squash*Math.sin(Math.PI*2*clock/RUBBER.period);
+const blockScale=i=>1+RUBBER.scale*RUBBER.blocks[i%RUBBER.blocks.length];
+function runnerScale(course,s){
+ const w=course.walks;let i=0;while(i+1<w.length&&w[i+1].s0<=s)i++;
+ const R=RUBBER.runner,cur=R[i%R.length],prev=i?R[(i-1)%R.length]:cur,u=clamp((s-w[i].s0)/RUBBER.ease,0,1),k=u*u*(3-2*u);
+ return 1+RUBBER.scale*(prev+(cur-prev)*k);
+}
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const SECTIONS=[
  {name:'새벽 정원',sky:['#251c40','#5b4270'],arch:['#f7e3ea','#c19ab9','#6b4a7c'],mist:'#d6b3d9',at:0},
@@ -87,6 +98,7 @@ class IllusionRun{
   /* R105: options.plan/options.sections give a chained act its own course; options.chain marks it as one act of a CourseRun. */
   this.chain=options.chain||null;this.chained=!!this.chain;this.sections=options.sections||SECTIONS;
   this.trip=tripOn()?(options.trip||'violet'):null;if(this.trip)this.sections=tripSections(this.sections,this.trip);
+  this.rubber=options.rubber===true;this.rs=1;
   this.cs=options.plan?makeCourse(options.plan,this.chain?.bpm?SPEED*60/this.chain.bpm:0):DEFAULT;
   this.settings={...(options.settings||{})};this.attempt=options.attempt||1;this.skipIntro=!!options.skipIntro;
   this.setViewport(options.viewport?.width,options.viewport?.height);this.reset();
@@ -101,7 +113,7 @@ class IllusionRun{
   this.intro=this.skipIntro||chain||reducedMotion()?0:INTRO;this.slowChance=chain&&this.options.tutorial!==true||!COURSE.gaps.length?'done':'pending';this.coach=chain?null:{kind:'intro',text:COACH.intro,until:this.intro+2.2};
   this.crossedAt=-10;this.turnFlash=-10;this.section=0;this.cam=null;this.blockCoached=false;this.coached=new Set();
   /* R105 items: fl/pk = length and peak factor of the current jump (feather doubles it); mods/itemList from MongyuItems.setup. */
-  this.fl=FLIGHT;this.pk=1;this.mods=null;this.itemList=null;
+  this.fl=FLIGHT;this.pk=1;this.mods=null;this.itemList=null;this.rs=1;
   if(chain||this.options.items)root.MongyuItems?.setup?.(this,{items:this.options.items,start:0,len:this.cs.FINISH,beat:SPEED*60/(chain?.bpm||100)});
  }
  setViewport(width=390,height=844){this.viewport={width,height}}
@@ -170,11 +182,12 @@ class IllusionRun{
   const b=COURSE.blocks[this.blockIndex];
   if(b){
    if(!this.blockCoached&&b.at-this.distance<90){this.blockCoached=true;this.setCoach('block',1.3)}
-   const gapS=this.distance-b.at;
-   if(Math.abs(gapS)<=BLOCK+FOOT&&this.height<BLOCK_H){
+   const gapS=this.distance-b.at,bs=this.rubber?blockScale(this.blockIndex):1;
+   if(this.rubber)this.rs=runnerScale(COURSE,this.distance);
+   if(Math.abs(gapS)<=BLOCK*bs+FOOT*this.rs&&this.height<BLOCK_H*bs){
     if(this.mods&&root.MongyuItems.applyHit(this)){this.blockIndex++;this.crossedAt=this.time;this.perfectStreak=0;return}
     this.hit(b);return}
-   if(gapS>BLOCK+FOOT){
+   if(gapS>BLOCK*bs+FOOT*this.rs){
     this.blockIndex++;this.clears++;this.crossedAt=this.time;
     const lead=b.at-this.lastJump,perfect=Math.abs(lead-SPEED*this.fl/2)<=8;
     this.points+=60+(perfect?40:0);if(perfect){this.perfects++;this.perfectStreak++}else this.perfectStreak=0;this.events.push(perfect?'perfect':'pass');
@@ -246,6 +259,14 @@ function halo(c,x,y,r,rgb,a){
  if(s===undefined){s=null;try{const d=root.document;if(d&&d.createElement){const cv=d.createElement('canvas');cv.width=cv.height=64;const x2=cv.getContext('2d');
   if(x2){const g=x2.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba('+rgb+',.9)');g.addColorStop(.3,'rgba('+rgb+',.34)');g.addColorStop(1,'rgba('+rgb+',0)');x2.fillStyle=g;x2.fillRect(0,0,64,64);s=cv}}}catch(_){s=null}haloSprites.set(rgb,s)}
  if(!s)return;const ga=c.globalAlpha,go=c.globalCompositeOperation;c.globalCompositeOperation='lighter';c.globalAlpha=ga*a;c.drawImage(s,x-r,y-r,r*2,r*2);c.globalCompositeOperation=go;c.globalAlpha=ga;
+}
+/* R105 POL: a small ruler beside the path at a block: ticks at 1/3, 2/3 and the full nominal block height, so the toy-size change of the block reads against a fixed scale. */
+function rulerTick(c,b,course,pal,k){
+ const w=course.walks.find(q=>b.at>=q.s0&&b.at<=q.s1),dx=b.dir==='z'?WIDE/2+4:0,dz=b.dir==='z'?0:WIDE/2+4;if(!w)return;
+ const x=b.p[0]+dx,y=b.p[1],z=b.p[2]+dz,a=project([x,y,z]),t=project([x,y+BLOCK_H,z]);
+ c.save();c.lineCap='round';c.strokeStyle=RIM&&RIM.light?'#2a2434':k.tapLine||pal.arch[2];c.globalAlpha=.8;c.lineWidth=1.1;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(t.x,t.y);c.stroke();
+ for(let i=1;i<=3;i++){const q=project([x,y+BLOCK_H*i/3,z]);c.beginPath();c.moveTo(q.x-(i===3?3.4:2),q.y);c.lineTo(q.x+(i===3?3.4:2),q.y);c.stroke()}
+ c.restore();
 }
 function boxTop(c,x0,x1,y1,z0,z1,fill){const P=(x,z)=>project([x,y1,z]);quad(c,P(x0,z0),P(x1,z0),P(x1,z1),P(x0,z1));c.fillStyle=fill;c.fill();if(RIM)neonEdge(c,[P(x0,z1),P(x1,z1),P(x1,z0)],3.4,.9)}
 function walkBox(w){
@@ -338,6 +359,7 @@ function draw(c,run,opts){
  const isl=root.MongyuEndless?.islands?.();if(isl){c.save();c.translate(w*.5-run.cam.x*scale*.2,h*.5-run.cam.y*scale*.2);c.scale(scale*.9,scale*.9);c.globalAlpha=.13;c.fillStyle=pal.mist;c.fill(isl);c.globalAlpha=.07;c.scale(1.5,1.5);c.translate(90,120);c.fill(isl);c.restore()}
  c.translate(cx,cy);c.scale(scale,scale);
  run.view={cx,cy,scale};
+ if(run.rubber&&!reduced){const sq=rubberSquash(t);c.translate(0,me.y);c.scale(1,sq);c.translate(0,-me.y)}   // R105 POL: slow vertical squash of the whole world about the runner's feet
  // Pillars fade into the mist.
  for(const p of ART.pillars){const a=project([p.x0,p.top,p.z1]),b=project([p.x1,p.top-280,p.z0]);if(!inView(view,a,b,40))continue;pillar(c,p,pal.arch,pal.mist)}
  if(RIM)RIM.sides=true;
@@ -380,19 +402,24 @@ function draw(c,run,opts){
  // Coral blocks.
  for(let i=0;i<COURSE.blocks.length;i++){
   const b=COURSE.blocks[i],p=project(b.p);if(p.x<view.l-30||p.x>view.r+30)continue;
-  const x=b.p[0],y=b.p[1],z=b.p[2],crashed=run.crash?.kind==='block'&&Math.abs(run.crash.s-b.at)<1;
+  const bs=run.rubber?blockScale(i):1,BW=BLOCK*bs,BH=BLOCK_H*bs,x=b.p[0],y=b.p[1],z=b.p[2],crashed=run.crash?.kind==='block'&&Math.abs(run.crash.s-b.at)<1;
   if(RIM)RIM={rim:k.dangerLine,rim2:k.dangerLine,glow:k.danger,sides:true,light:RIM.light};
-  boxSides(c,x-BLOCK,x+BLOCK,y,y+BLOCK_H,z-BLOCK,z+BLOCK,[k.danger,crashed?'#fff2ea':k.danger,k.dangerSide]);
-  boxTop(c,x-BLOCK,x+BLOCK,y+BLOCK_H,z-BLOCK,z+BLOCK,k.dangerTop);
-  if(RIM){const lt=RIM.light;RIM={rim:pal.rim,rim2:pal.rim2,glow:pal.glow,sides:true,light:lt};const hp=project([x,y+BLOCK_H*.5,z]);if(!lt)halo(c,hp.x,hp.y,BLOCK*5.2,k.dangerRgb,crashed?.9:.55)}
-  const f=project([x+BLOCK,y+BLOCK_H*.62,z]);c.strokeStyle=k.dangerLine;c.globalAlpha=.6;c.lineWidth=.7;c.beginPath();c.moveTo(f.x,f.y-3);c.lineTo(f.x,f.y+3);c.stroke();c.globalAlpha=1;
+  boxSides(c,x-BW,x+BW,y,y+BH,z-BW,z+BW,[k.danger,crashed?'#fff2ea':k.danger,k.dangerSide]);
+  boxTop(c,x-BW,x+BW,y+BH,z-BW,z+BW,k.dangerTop);
+  if(RIM&&RIM.light){const Q=(a,b,d)=>project([a,b,d]);c.save();c.lineJoin='round';c.lineWidth=1.6;c.strokeStyle=k.dangerLine;   // R105 POL: bold dark outline on light palettes
+   quad(c,Q(x-BW,y,z+BW),Q(x+BW,y,z+BW),Q(x+BW,y+BH,z+BW),Q(x-BW,y+BH,z+BW));c.stroke();
+   quad(c,Q(x+BW,y,z-BW),Q(x+BW,y,z+BW),Q(x+BW,y+BH,z+BW),Q(x+BW,y+BH,z-BW));c.stroke();
+   quad(c,Q(x-BW,y+BH,z-BW),Q(x+BW,y+BH,z-BW),Q(x+BW,y+BH,z+BW),Q(x-BW,y+BH,z+BW));c.stroke();c.restore()}
+  if(RIM){const lt=RIM.light;RIM={rim:pal.rim,rim2:pal.rim2,glow:pal.glow,sides:true,light:lt};const hp=project([x,y+BH*.5,z]);if(!lt)halo(c,hp.x,hp.y,BW*5.2,k.dangerRgb,crashed?.9:.55)}
+  const f=project([x+BW,y+BH*.62,z]);c.strokeStyle=k.dangerLine;c.globalAlpha=.6;c.lineWidth=.7;c.beginPath();c.moveTo(f.x,f.y-3);c.lineTo(f.x,f.y+3);c.stroke();c.globalAlpha=1;
+  if(run.rubber)rulerTick(c,b,run.cs.COURSE,pal,k);
  }
  // Gold shards.
  for(let i=0;i<COURSE.shards.length;i++){
   if(run.shards[i])continue;const sh=COURSE.shards[i],p=project(sh.p);if(p.x<view.l-20||p.x>view.r+20)continue;
   if(sh.kind==='gap'&&run.turnProgress(sh.gap)<ALIGNED)continue;
   if(root.MongyuItems?.drawLight?.(c,p.x,p.y,19,t,i,reduced,0))continue;
-  c.save();c.translate(p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5));c.rotate(Math.PI/4+(reduced?0:t*1.4));c.fillStyle=k.tap;c.fillRect(-3,-3,6,6);c.restore();
+  c.save();c.translate(p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5));c.rotate(Math.PI/4+(reduced?0:t*1.4));c.fillStyle=k.tap;c.fillRect(-3,-3,6,6);if(RIM&&RIM.light){c.lineWidth=1.2;c.strokeStyle=k.tapLine;c.strokeRect(-3,-3,6,6)}c.restore();
  }
  // R105 pickups: moon bubble, starlight hourglass, cloud feather, memory star.
  if(run.itemList?.length)root.MongyuItems.drawItems(c,run,it=>{const q=point(it.at,COURSE);if(q.x<view.l-30||q.x>view.r+30)return null;return {x:q.x,y:q.y-(it.lane==='hi'?46:21),s:1}},t,reduced,0);
@@ -404,7 +431,7 @@ function draw(c,run,opts){
  if(run.outro?.kind==='clear')alpha=1-clamp(run.outro.age/.8,0,1);
  c.globalAlpha=.45*alpha;c.fillStyle='#fff6dc';c.beginPath();c.ellipse(me.x,me.y,6,2.2,0,0,TAU);if(!run.crash)c.fill();c.globalAlpha=alpha;
  const pose=run.crash?(run.crash.kind==='fall'?'jump':'hurt'):run.intro>0?'stand':run.flight!==null?'jump':'run';
- if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{x:actor.x,y:actor.y-1,bodyHeight:42,renderAngle:0,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/run.fl,pose},{poseTime:t,onDark:true},reduced);
+ if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{x:actor.x,y:actor.y-1,bodyHeight:42*(run.rubber?run.rs:1),renderAngle:0,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/run.fl,pose},{poseTime:t,onDark:true},reduced);
  c.globalAlpha=1;
  if(run.mods&&!run.outro)root.MongyuItems.drawAura(c,run,actor.x,actor.y-21,27,t,reduced);
  if(!reduced&&run.time-run.crossedAt<.3){const age=(run.time-run.crossedAt)/.3;c.globalAlpha=1-age;c.fillStyle=k.tap;for(let i=0;i<6;i++){const a=i*Math.PI/3;c.fillRect(actor.x+Math.cos(a)*(9+age*18)-1.2,actor.y-18+Math.sin(a)*(9+age*18)-1.2,2.4,2.4)}c.globalAlpha=1}
@@ -440,22 +467,23 @@ function aurora(c,p,run,reduced){
  c.globalAlpha=Math.min(1,strength);c.fillStyle='rgba(255,250,236,.85)';c.fillRect(-24,-1,48,1.6);
  c.restore();
 }
+const hudInk=run=>root.MongyuTrip?.hud?.(run&&run.trip)||HUD0;const HUD0={fill:'#fff3d6',sub:'rgba(255,243,226,.88)',stroke:'rgba(20,12,36,.55)',subStroke:'rgba(20,12,36,.6)',combo:'#ffe39a',pill:'rgba(26,19,48,.66)',pillText:'#fbf4ff',pillLine:'rgba(255,236,255,.16)',track:'rgba(255,255,255,.13)',bar:'#bfe9ff',mark:'rgba(255,255,255,.42)',lit:'#ffd98a'};   // R105 POL: HUD ink from the trip palette
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function hud(c,run,w,h,k){
  const {COURSE,FINISH}=run.cs,SECTIONS=run.sections;
  if(run.state==='fail'||run.state==='clear')return;
  const fade=run.outro?1-Math.min(1,run.outro.age/.35):1;if(fade<=0)return;
- c.save();c.globalAlpha=fade;c.textAlign='center';const top=Math.max(14,h*.035);
- c.font='600 11px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.6)';c.strokeText('착시 정원 · '+SECTIONS[run.section].name,w/2,top+10);c.fillStyle='rgba(255,243,226,.85)';c.fillText('착시 정원 · '+SECTIONS[run.section].name,w/2,top+10);
- c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle='rgba(20,12,36,.55)';c.strokeText(String(run.score),w/2,top+52);c.fillStyle='#fff3d6';c.fillText(String(run.score),w/2,top+52);
+ c.save();c.globalAlpha=fade;const H=hudInk(run);c.textAlign='center';const top=Math.max(14,h*.035);
+ c.font='600 11px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle=H.subStroke;c.strokeText('착시 정원 · '+SECTIONS[run.section].name,w/2,top+10);c.fillStyle=H.sub;c.fillText('착시 정원 · '+SECTIONS[run.section].name,w/2,top+10);
+ c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle=H.stroke;c.strokeText(String(run.score),w/2,top+52);c.fillStyle=H.fill;c.fillText(String(run.score),w/2,top+52);
  const coach=run.coach&&run.time<run.coach.until?run.coach.text:'';
- if(coach&&run.state==='play'){c.font='700 16px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
+ if(coach&&run.state==='play'){c.font='700 16px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle=H.pill;c.fill();c.strokeStyle=H.pillLine;c.lineWidth=1;c.stroke();c.fillStyle=H.pillText;c.fillText(coach,w/2,y+6)}
  // Progress gauge with bridge notches and the aurora gate at the end.
  const gy=h*.86,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.distance/FINISH;
- rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.12)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle='#bfe9ff';c.fill();
- for(const g of COURSE.gaps){const x=x0+gw*g.s0/FINISH;c.save();c.translate(x,gy+3);c.rotate(Math.PI/4);c.fillStyle=run.turns[g.index]!==null?k.tapDeep:'rgba(255,255,255,.4)';c.fillRect(-3.2,-3.2,6.4,6.4);c.restore()}
+ rr(c,x0,gy,gw,6,3);c.fillStyle=H.track;c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=H.bar;c.fill();
+ for(const g of COURSE.gaps){const x=x0+gw*g.s0/FINISH;c.save();c.translate(x,gy+3);c.rotate(Math.PI/4);c.fillStyle=run.turns[g.index]!==null?k.tapDeep:H.mark;c.fillRect(-3.2,-3.2,6.4,6.4);c.restore()}
  c.restore();
 }
-const api=Object.freeze({enabled,IllusionRun,COURSE,FINISH,SPEED,FLIGHT,PEAK,WINDOW,TURN,ALIGNED,BLOCK,BLOCK_H,FOOT,point,project,draw,SECTIONS,COACH,makeCourse,build});
+const api=Object.freeze({enabled,RUBBER,rubberSquash,blockScale,runnerScale,IllusionRun,COURSE,FINISH,SPEED,FLIGHT,PEAK,WINDOW,TURN,ALIGNED,BLOCK,BLOCK_H,FOOT,point,project,draw,SECTIONS,COACH,makeCourse,build});
 root.MongyuIllusion=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

@@ -192,7 +192,20 @@ function drawSprite(c,kind,x,y,px,o){
  return true;
 }
 /* The collectible light shard as item-light. i=shard index (phase), up=extra rotation that keeps it upright under a rotated camera. */
+/* R105 POL: on light trips (the course sets this each frame) collectibles are flat gold with a dark outline instead of the glowing art, so they read on pale ground. */
+let LIGHT=null;
+function setLight(ink){LIGHT=ink&&ink.light?ink:null}
+function goldShard(c,x,y,px,t,i,reduced){
+ const K=LIGHT,s=px,w=reduced?.26:.2+.08*Math.cos(t*2+i*1.7);
+ c.save();c.translate(x,y);c.lineJoin='round';
+ c.beginPath();c.moveTo(0,-s*.5);c.lineTo(s*w+s*.08,0);c.lineTo(0,s*.5);c.lineTo(-s*w-s*.08,0);c.closePath();
+ c.fillStyle=K.tap;c.fill();c.lineWidth=Math.max(1.4,s*.1);c.strokeStyle=K.tapLine;c.stroke();
+ c.beginPath();c.moveTo(0,-s*.5);c.lineTo(s*w*.5+s*.04,0);c.lineTo(0,s*.12);c.closePath();c.fillStyle='#fff0b8';c.globalAlpha=.8;c.fill();
+ c.restore();
+ return true;
+}
 function drawLight(c,x,y,px,t,i,reduced,up){
+ if(enabled&&LIGHT){const bob=reduced?0:Math.sin(t*2.2+i)*px*.06;return goldShard(c,x,y+bob,px,t,i,reduced)}
  if(!enabled||!root.MongyuArt?.ready?.('item-light'))return false;
  const sway=reduced?1:.86+.14*Math.cos(t*2+i*1.7),bob=reduced?0:Math.sin(t*2.2+i)*px*.06;
  return drawSprite(c,'light',x,y+bob,px,{rot:up||0,sx:sway});
@@ -205,7 +218,8 @@ function drawItem(c,it,project,t,reduced,up){
  const bob=reduced?0:Math.sin(t*2.1+it.phase)*px*.07,pulse=reduced?1:1+.05*Math.sin(t*3+it.phase);
  if(!it.got){
   /* soft halo keeps the pickup readable on any background, tinted per kind */
-  const g=glow(it.kind);if(g){const gs=px*1.7;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=(it.owned?.25:.7)*(reduced?1:.85+.15*Math.sin(t*2.4+it.phase));c.drawImage(g,p.x-gs/2,p.y+bob-gs/2,gs,gs);c.restore()}
+  const g=glow(it.kind);if(LIGHT){c.save();c.globalAlpha=(it.owned?.4:.85);c.beginPath();c.arc(p.x,p.y+bob,px*.54,0,TAU);c.fillStyle='rgba(255,252,244,.55)';c.fill();c.lineWidth=Math.max(1.4,px*.06);c.strokeStyle=LIGHT.tapLine;c.stroke();c.restore()}
+  else if(g){const gs=px*1.7;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=(it.owned?.25:.7)*(reduced?1:.85+.15*Math.sin(t*2.4+it.phase));c.drawImage(g,p.x-gs/2,p.y+bob-gs/2,gs,gs);c.restore()}
   drawSprite(c,it.kind,p.x,p.y+bob,px*pulse,{alpha:it.owned?.5:1,rot:up||0});
  }else{
   const k=age/.5;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=(1-k)*.8;c.strokeStyle=HALO[it.kind]||HALO.bubble;c.lineWidth=Math.max(1.5,px*.06);c.beginPath();c.arc(p.x,p.y,px*(.5+k*.9),0,TAU);c.stroke();c.restore();
@@ -293,6 +307,6 @@ function drawChips(c,run,cx,y,reduced){
 
 const api=Object.freeze({enabled,TUNING,KINDS,GIFTS,LINES,SFX,SPRITE,normKind,nowOf,newMods,importMods,exportMods,slowLeft,surgeLeft,summary,
  hasMemoryStar,memoryStars,totalMemoryStars,saveMemoryStar,setStorage,readRoad,ROAD_KEY,place,setup,collect,applyHit,applyPace,applyJump,settle,assistLine,
- drawSprite,drawLight,drawItem,drawItems,drawAura,drawChips,chipList,blinkAlpha});
+ drawSprite,drawLight,setLight,drawItem,drawItems,drawAura,drawChips,chipList,blinkAlpha});
 root.MongyuItems=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
