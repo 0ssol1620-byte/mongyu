@@ -14,6 +14,8 @@ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 const mod=(a,n)=>((a%n)+n)%n;
+/* R105 ACC: strength of one effects channel, 0..1 (1 without the profile). psy = layer alpha, bgmotion = beat pulses, fever = combo bloom. Presentation only. */
+const fx=ch=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.value(ch):1}catch(_){return 1}};
 
 /* Every tunable in one frozen table (reported by the verification script). */
 const PARAMS=Object.freeze({
@@ -259,21 +261,24 @@ function render(ctx,run,opts){
  if(st.act!==act){st.fadeAt=portal?0:t;st.act=act}
  let master=ease(clamp((t-st.start)/PARAMS.fadeIn,0,1));
  if(portal)master*=ease(clamp(portal.age/Math.max(.01,portal.duration),0,1));
+ const psy=fx('psy'),bg=fx('bgmotion'),fever=fx('fever');
+ if(psy<=0)return finish(t0);                               // Minimal / layer switched off: nothing is drawn
  if(master<=.002)return true;
 
  if(reduced){
   ensureStill(W,H,pal);
   ctx.save();
   if(!pal.light){ctx.globalCompositeOperation='source-over';ctx.globalAlpha=PARAMS.darkEdge*.7*master;ctx.fillStyle=darkEdge(ctx,W,H);ctx.fillRect(0,0,W,H)}
-  if(still){ctx.globalCompositeOperation=pal.light?'source-over':'screen';ctx.globalAlpha=PARAMS.reducedAlpha*master*(pal.light?.4:1);ctx.drawImage(still,0,0,W,H)}
+  if(still){ctx.globalCompositeOperation=pal.light?'source-over':'screen';ctx.globalAlpha=PARAMS.reducedAlpha*master*Math.min(1,psy/.45)*(pal.light?.4:1);ctx.drawImage(still,0,0,W,H)}
   ctx.restore();
   return finish(t0);
  }
 
+ master*=psy;                                       // the full layer fades with the psy strength (1 at Standard)
  const streak=Number.isFinite(run.perfectStreak)?run.perfectStreak:(run.child?.perfectStreak|0);
- st.level=easeLevel(st.level,levelFor(streak),dt);
+ st.level=easeLevel(st.level,levelFor(streak)*fever,dt);
  const L=st.level;                                     // combo level: saturation (alpha), pattern density and ring count rise gradually with it
- const beat=60/Math.max(40,run.bpm||100),phase=mod(t/beat,1),pulse=1+.06*L*(.5-.5*Math.cos(TAU*phase));
+ const beat=60/Math.max(40,run.bpm||100),phase=mod(t/beat,1),pulse=1+.06*L*bg*(.5-.5*Math.cos(TAU*phase));
  const breath=1+PARAMS.breathDepth*Math.sin(TAU*t/PARAMS.breathPeriod);
  ctx.save();
  // 0. dark edge vignette: keeps the lane readable and gives the neon something to glow against
@@ -296,7 +301,7 @@ function render(ctx,run,opts){
  }
  // 3. NOM3 squares pulsing with the beat, outside the lane
  ctx.globalCompositeOperation=lt;
- squares(ctx,W,H,t,run.bpm||100,L,pal,master*lv,true);
+ squares(ctx,W,H,t,run.bpm||100,L,pal,master*lv,bg>=.5);
  // 4. mandala rosettes in the corners
  const R=Math.min(W,H)*.5,ma=(PARAMS.mandalaAlpha+PARAMS.mandalaCombo*L)*master*lv,sgn=variant?-1:1;
  rosette(ctx,-W*.04,-H*.015,R,t,sgn,L,pal.rim,pal.rim2,ma,0);rosette(ctx,W*1.04,-H*.015,R,t,-sgn,L,pal.rim2,pal.glow,ma,1);
@@ -305,7 +310,7 @@ function render(ctx,run,opts){
  const rs=ripples(t,run.bpm||100,L,tmp),cx=W/2,cy=H*.6,maxR=Math.hypot(W,H)*.52,cols=[pal.rimL,pal.glowL,pal.rim2];
  for(let i=0;i<rs.length;i++){
   const r=rs[i],rad=maxR*r.r;if(rad<4)continue;
-  ctx.globalAlpha=r.alpha*master*lv;ctx.lineWidth=1.5+2.5*r.u;
+  ctx.globalAlpha=r.alpha*bg*master*lv;ctx.lineWidth=1.5+2.5*r.u;
   ctx.strokeStyle=cols[mod(r.k,3)];
   ctx.beginPath();ctx.ellipse(cx,cy,rad,rad*.72,0,0,TAU);ctx.stroke();
  }

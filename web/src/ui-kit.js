@@ -50,7 +50,8 @@ function sound(kind){
  }catch(_){return false}
 }
 function vibrate(ms){
- try{const s=settings();if(s.reduced===true||s.vibration===false)return false;return !!root.navigator?.vibrate?.(Number.isFinite(ms)?ms:6)}catch(_){return false}
+ /* R105 ACC: the haptics channel of MongyuEffects replaces the old blanket 'reduced = no vibration'. */
+ try{const s=settings(),E=root.MongyuEffects,k=E&&E.enabled?E.value('haptics'):(s.reduced===true?0:1);if(k<=0||s.vibration===false)return false;const d=Number.isFinite(ms)?ms:6;return !!root.navigator?.vibrate?.(Math.max(4,Math.round(d*(.4+.6*k))))}catch(_){return false}
 }
 const PRESS='.r105-lobby button,.r105-sheet button,#settings button,#pauseSheet button,#options,.r105-press';
 function onPointerDown(e){
@@ -72,22 +73,25 @@ function stagger(container,opts){
 /* ---------- aurora-gate transition ---------- */
 let gate=null;
 function transition(fn,opts){
- const o=opts||{},soft=o.reduced===undefined?reduced():!!o.reduced;
+ const o=opts||{},gk=fxGate(),soft=o.reduced===undefined?(reduced()||gk<1):!!o.reduced;
  let result;
  try{result=typeof fn==='function'?fn():undefined}finally{
   if(doc?.body&&enabled)playGate(soft);
  }
  return result;
 }
+/* R105 ACC: gate intensity 0..1 (Standard 1, Reduced a short soft fade, Minimal none). */
+function fxGate(){try{const E=root.MongyuEffects;return E&&E.enabled?E.value('gate'):1}catch(_){return 1}}
 function playGate(soft){
  if(gate){gate.remove();gate=null}
+ if(fxGate()<=0)return null;
  const g=el('div',{class:'r105-gate'+(soft?' soft':''),'aria-hidden':'true'},doc.body),L1=el('i',{class:'l'},g),R1=el('i',{class:'r'},g),seam=el('b',null,g);
  gate=g;
  const done=()=>{if(gate===g){g.remove();gate=null}else g.remove()};
  const ms=soft?120:TOKENS.gateMs;
  if(typeof g.animate!=='function'){root.setTimeout?.(done,ms+30);return g}
  const ease=soft?'linear':'cubic-bezier(.7,0,.2,1)';
- if(soft){const a=g.animate([{opacity:.85},{opacity:0}],{duration:ms,easing:ease,fill:'forwards'});a.onfinish=done;return g}
+ if(soft){const a=g.animate([{opacity:.85*Math.max(.3,fxGate())},{opacity:0}],{duration:ms,easing:ease,fill:'forwards'});a.onfinish=done;return g}
  L1.animate([{transform:'translateX(0)'},{transform:'translateX(-101%)'}],{duration:ms,easing:ease,fill:'forwards'});
  R1.animate([{transform:'translateX(0)'},{transform:'translateX(101%)'}],{duration:ms,easing:ease,fill:'forwards'});
  const a=seam.animate([{opacity:1,transform:'scaleX(1)'},{opacity:.9,transform:'scaleX(5)',offset:.55},{opacity:0,transform:'scaleX(9)'}],{duration:ms,easing:'ease-out',fill:'forwards'});
@@ -208,6 +212,7 @@ function skinSettings(){
   const note=$('restorationRunSettingNotice');if(note){note.classList.add('r105-note');run.appendChild(note)}frag.appendChild(run)}
  for(const n of [soundSec,screenSec,accessSec,infoSec,actions])frag.appendChild(n);
  box.insertBefore(frag,head.nextSibling);
+ try{root.MongyuEffects?.mountSettings?.(box)}catch(e){root.console?.error?.('[MongyuEffects]',e)}   // R105 ACC: the effects-strength section
  for(const input of [music,sfx]){
   syncSlider(input);
   input.addEventListener('input',()=>syncSlider(input));

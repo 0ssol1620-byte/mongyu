@@ -22,6 +22,8 @@ const VARIANTS={
 const reachFor=v=>clamp(v*REACH_T,6.5,12);
 const COACH={intro:'나선을 따라 달려요 · 탭 점프',slow:'지금 탭!',perfect:'완벽!',early:'조금 일찍 눌렀어',late:'한 박자 늦었어',finish:'오로라의 문!',crystal:'산호빛 수정은 점프'};
 const reducedMotion=()=>{try{return root.MongyuPolish?.host?.settings?.()?.reduced===true}catch(_){return false}};
+/* R105 ACC: effects strength 0..1 for one channel (1 without the profile). Used by drawing code only, never by the simulation. */
+const fxv=ch=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.value(ch):1}catch(_){return 1}};
 function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5>>>0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- course (deterministic) ---------- */
 function speedProfile(variant,p){
@@ -280,10 +282,10 @@ function camParams(run,reduced){
   if(left<LOOK_UP&&!run.outro&&run.state!=='fail'||run.outro?.kind==='clear'||run.state==='clear'){const k=run.outro?.kind==='clear'||run.state==='clear'?1:smooth(1-left/LOOK_UP);tilt-=k*(reduced?9:20)}
  }else{
   look=lerp(V0.look,V0.lookEnd,reduced?0:u);
-  if(!reduced)dist*=1-V0.fov*u;
+  if(!reduced)dist*=1-V0.fov*u*fxv('zoom');
  }
  if(reduced)dist*=1.12;
- if(clearK>0){dist*=1+.28*clearK;zoom*=1-.08*clearK;tilt-=(up?8:4)*clearK*(reduced?.5:1)}
+ if(clearK>0){const zk=fxv('zoom');dist*=1+.28*clearK*zk;zoom*=1-.08*clearK*zk;tilt-=(up?8:4)*clearK*(reduced?.5:1)*zk}
  return {tilt,zoom,dist,height,look,u,p,clearK};
 }
 function updateCam(run,w,h,reduced){
