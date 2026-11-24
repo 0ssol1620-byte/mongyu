@@ -6,7 +6,7 @@
 const enabled=root.MONGYU_POLISH_EDITION===true;
 const TAU=Math.PI*2,clamp=(x,a,b)=>x<a?a:x>b?b:x,lerp=(a,b,u)=>a+(b-a)*u;
 const ease=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
-const POSES=new Set(['stand','run','jump','land','wall','hurt','joy']);
+const POSES=new Set(['stand','run','jump','land','wall','hurt','joy','sleep']);
 
 /* ---------- colour ---------- */
 function rgb(h){const m=/^#?([0-9a-f]{6})/i.exec(typeof h==='string'?h:'');if(!m)return [24,18,29];const n=parseInt(m[1],16);return [n>>16&255,n>>8&255,n&255]}
@@ -378,6 +378,199 @@ function drawElder(c,S,p,g,R,ow,reduced,q,t){
  c.restore();
 }
 
+/* ---------- R105 raster dreamer ---------- */
+// The generated design (pose-*.webp, run-01..08.webp, 512px, transparent) replaces the vector child. The elder, the woman, the dog
+// and the vector child itself (while images decode, or where no canvas exists) keep the code above.
+const RUN_IDS=['run-01','run-02','run-03','run-04','run-05','run-06','run-07','run-08'];
+const ART_IDS=['pose-stand','pose-run-a','pose-run-b','pose-jump','pose-land','pose-hurt','pose-joy','pose-sleep',...RUN_IDS];
+// Anchor in the 512px source: [body centre x, sole line y]. All frames share one scale so the head keeps its size.
+const META={'pose-stand':[288,484],'pose-run-a':[286,482],'pose-run-b':[288,483],'pose-jump':[269,478],'pose-land':[295,457],'pose-hurt':[250,450],'pose-joy':[266,483],'pose-sleep':[250,417]};
+for(const id of RUN_IDS)META[id]=[287,503];
+const REF_H=470,UNIT=43.5/REF_H;// local units per source pixel (the legacy child is 43.5 units tall)
+const TIERS=[96,128,160,192,256,320,384,512];
+const NECK=[235,200];// cape pivot in source pixels
+const STRIPS=[235,190,145,100,55,0];
+// Wardrobe: the hat, cape and slippers (the purple parts of the art) take this colour; null keeps the original art.
+const TINT={moon:null,ink:'#d9d3f3',dew:'#58d1b4',peach:'#f08e86',lilac:'#d79af2',tide:'#4ea9e0',ember:'#f27a48',moss:'#8fba58',dusk:'#e08cb6',frost:'#8cd5f2',eclipse:'#f2b445',dawn:'#ffd36e'};
+const TRIP_RIM={violet:'#7b3cff',aqua:'#19f0d0',ember:'#ff7a1a',toxic:'#b6ff2a',heart:'#ff3d7a'};
+let currentTrip='violet',rasterOn=true,artRequested=false;
+const base=new Map(),rimmed=new Map();// bucket key -> Map(frame|tier -> {cv,m})
+const stats={builds:0,fallbacks:0};
+function art(){return root.MongyuArt&&root.MongyuArt.enabled?root.MongyuArt:null}
+function makeCanvas(w,h,read){
+ let cv=null;
+ if(root.document&&typeof root.document.createElement==='function')cv=root.document.createElement('canvas');
+ else if(typeof root.OffscreenCanvas==='function')cv=new root.OffscreenCanvas(w,h);
+ if(!cv)return null;cv.width=w;cv.height=h;
+ const x=cv.getContext&&cv.getContext('2d',read?{willReadFrequently:true}:undefined);return x?{cv,x}:null;
+}
+function ensureArt(){const A=art();if(!A||artRequested)return;artRequested=true;try{A.preload(ART_IDS)}catch(_){}}
+function artReady(){const A=art();return !!A&&ART_IDS.every(id=>A.ready(id))}
+function whenReady(cb){const A=art();if(!A||typeof cb!=='function')return false;ensureArt();Promise.resolve(A.preload(ART_IDS)).then(()=>{try{cb()}catch(_){}});return true}
+let pinned=null;
+function setTrip(key){pinned=typeof key==='string'&&key?key:null}
+// Best-effort chapter colour when the caller names none: the running course/act's `trip` option (set by CourseRun), probed twice a second.
+let probeAt=-1e9;
+function detectTrip(){
+ if(pinned)return pinned;
+ const now=typeof root.performance?.now==='function'?root.performance.now():0;
+ if(now-probeAt<500)return currentTrip;probeAt=now;
+ try{const r=root.MongyuPolish?.host?.activeRun?.();const k=r?.child?.trip||r?.acts?.[r.actIndex]?.opts?.trip||r?.trip||r?.options?.trip;currentTrip=typeof k==='string'&&k?k:'violet'}catch(_){}
+ return currentTrip;
+}
+function rimColor(key){const T=root.MongyuTrip;return(T&&T.get&&T.get(key).rim)||TRIP_RIM[key]||TRIP_RIM.violet}
+function tintHex(style){
+ const id=style&&style.id;if(id&&Object.prototype.hasOwnProperty.call(TINT,id))return TINT[id];
+ if(!style||typeof style.accent!=='string')return null;return mix(style.accent,'#ffffff',.08);
+}
+// Hue remap of the purple hat/cape/slippers only: skin, pyjamas, hair and the white pom-pom keep their colours.
+function recolor(d,T){
+ const tr=T?T[0]:0,tg=T?T[1]:0,tb=T?T[2]:0,YREF=105;
+ for(let i=0;i<d.length;i+=4){
+  const a=d[i+3];if(!a)continue;if(a<6){d[i+3]=0;continue}
+  const r=d[i],b=d[i+2];let g=d[i+1];
+  // the cut-out can leave a faint magenta cast on a soft edge: pull it back to a neutral lavender
+  if(a<170&&r-g>45&&b-g>45){g=g+((Math.min(r,b)-g)*.8|0);d[i+1]=g}
+  if(!T)continue;
+  const mx=r>g?(r>b?r:b):(g>b?g:b),mn=r<g?(r<b?r:b):(g<b?g:b),df=mx-mn;if(df<26)continue;
+  const sat=df/mx;if(sat<.16)continue;
+  let h;if(mx===b)h=240+60*(r-g)/df;else if(mx===r)h=(60*(g-b)/df+360)%360;else h=120+60*(b-r)/df;
+  const wh=Math.min(1,Math.max(0,(h-170)/22))*Math.min(1,Math.max(0,(308-h)/14));if(wh<=0)continue;
+  const w=wh*Math.min(1,(sat-.16)/.2);if(w<=.01)continue;
+  const ratio=(.299*r+.587*g+.114*b)/YREF;let nr,ng,nb;
+  if(ratio<=1){nr=tr*ratio;ng=tg*ratio;nb=tb*ratio}else{const k=Math.min(1,(ratio-1)*.8);nr=tr+(255-tr)*k;ng=tg+(255-tg)*k;nb=tb+(255-tb)*k}
+  d[i]=r+(nr-r)*w;d[i+1]=g+(ng-g)*w;d[i+2]=b+(nb-b)*w;
+ }
+}
+function bucket(map,key){let m=map.get(key);if(m)map.delete(key);else{if(map.size>=16)map.delete(map.keys().next().value);m=new Map()}map.set(key,m);return m}
+function baseCanvas(id,tier,tint,skin){
+ const A=art(),img=A&&A.image(id);if(!img||!img.complete||!img.naturalWidth)return null;
+ const m=bucket(base,skin),key=id+'|'+tier;let e=m.get(key);if(e)return e;
+ const w=makeCanvas(tier,tier,true),out=makeCanvas(tier,tier,false);if(!w||!out)return null;
+ w.x.imageSmoothingEnabled=true;w.x.imageSmoothingQuality='high';w.x.clearRect(0,0,tier,tier);w.x.drawImage(img,0,0,tier,tier);
+ try{const im=w.x.getImageData(0,0,tier,tier);recolor(im.data,tint?rgb(tint):null);out.x.putImageData(im,0,0)}
+ catch(_){
+  out.x.drawImage(w.cv,0,0);
+  if(tint){// no pixel access: a 'color' blend over the whole figure, clipped back to its alpha
+   const t=makeCanvas(tier,tier,false);
+   if(t){t.x.drawImage(w.cv,0,0);t.x.globalCompositeOperation='color';t.x.globalAlpha=.7;t.x.fillStyle=tint;t.x.fillRect(0,0,tier,tier);
+    t.x.globalAlpha=1;t.x.globalCompositeOperation='destination-in';t.x.drawImage(w.cv,0,0);out.x.clearRect(0,0,tier,tier);out.x.drawImage(t.cv,0,0)}
+  }
+ }
+ e={cv:out.cv,m:0};m.set(key,e);stats.builds++;return e;
+}
+// A thin neon outline plus a soft halo in the chapter colour, baked once per frame, size, skin and chapter.
+function rimCanvas(id,tier,tint,skin,trip){
+ const key=id+'|'+tier,m=bucket(rimmed,skin+'|'+trip);let e=m.get(key);if(e)return e;
+ const b=baseCanvas(id,tier,tint,skin);if(!b)return null;
+ const r=Math.max(1,Math.round(tier/170)),mg=r+r*3+1,size=tier+mg*2,o=makeCanvas(size,size,false),s=makeCanvas(tier,tier,false);if(!o||!s)return b;
+ const col=rimColor(trip);
+ s.x.drawImage(b.cv,0,0);s.x.globalCompositeOperation='source-in';s.x.fillStyle=col;s.x.fillRect(0,0,tier,tier);
+ const BIG=size*2;o.x.save();o.x.shadowColor=col;o.x.shadowBlur=r*3;o.x.shadowOffsetX=BIG;o.x.globalAlpha=.55;o.x.drawImage(s.cv,mg-BIG,mg);o.x.restore();
+ o.x.globalAlpha=.9;for(let k=0;k<8;k++){const a=k*Math.PI/4;o.x.drawImage(s.cv,mg+Math.cos(a)*r,mg+Math.sin(a)*r)}
+ o.x.globalAlpha=1;o.x.drawImage(b.cv,mg,mg);
+ e={cv:o.cv,m:mg};m.set(key,e);stats.builds++;return e;
+}
+// Builds the other frames in idle slices after the first draw at a new size/skin/chapter, so a stride never stalls on a cache miss.
+let warmKey='',warmToken=0;
+const WARM_ORDER=[...RUN_IDS,'pose-stand','pose-jump','pose-land','pose-hurt','pose-joy','pose-run-a','pose-run-b','pose-sleep'];
+function scheduleWarm(tier,tint,skin,trip){
+ const key=tier+'|'+skin+'|'+trip;if(key===warmKey||typeof root.setTimeout!=='function')return;
+ warmKey=key;const token=++warmToken;let i=0;
+ const step=()=>{
+  if(token!==warmToken)return;const A=art();if(!A)return;
+  while(i<WARM_ORDER.length){const id=WARM_ORDER[i++];if(A.ready(id)){rimCanvas(id,tier,tint,skin,trip);root.setTimeout(step,12);return}}
+ };
+ root.setTimeout(step,60);
+}
+function pickTier(side){for(const t of TIERS)if(t>=side*.95)return t;return 512}
+function runFrame(q,reduced,t){
+ if(Number.isFinite(q.strideDistance))return RUN_IDS[Math.floor(((q.strideDistance/(.9*(q.bodyHeight||60)))%1+1)%1*8)&7];
+ if(reduced)return 'pose-run-a';
+ return Math.floor(t*4)%2?'pose-run-b':'pose-run-a';
+}
+// Nearest decoded frame so a late decode never flashes the vector fallback mid-run.
+function readyId(A,id){
+ if(A.ready(id))return id;
+ const k=RUN_IDS.indexOf(id);
+ if(k>=0)for(let d=1;d<4;d++)for(const j of [k-d,k+d]){const n=RUN_IDS[(j+8)%8];if(A.ready(n))return n}
+ for(const f of ['pose-run-a','pose-run-b','pose-stand'])if(A.ready(f))return f;
+ return null;
+}
+// The cape and cap tip are the left of the figure: they are drawn as strips that fan out about the neck, so the whole back leans with speed.
+function drawFigure(c,e,id,u2,ox,oy,theta,tier){
+ const m=e.m,full=e.cv.width,k=tier/512;
+ if(!theta){c.drawImage(e.cv,ox,oy,full*u2,full*u2);return}
+ const px=(NECK[0]-META[id][0])*UNIT,py=(NECK[1]-META[id][1])*UNIT,n=STRIPS.length-1,sx=STRIPS[0]*k+m;
+ c.drawImage(e.cv,sx,0,full-sx,full,ox+sx*u2,oy,(full-sx)*u2,full*u2);
+ for(let i=0;i<n;i++){
+  const x1=STRIPS[i]*k+m+1,x0=i===n-1?0:STRIPS[i+1]*k+m,a=theta*((i+1)/n)**1.3;
+  c.save();c.translate(px,py);c.rotate(a);c.translate(-px,-py);
+  c.drawImage(e.cv,x0,0,x1-x0,full,ox+x0*u2,oy,(x1-x0)*u2,full*u2);c.restore();
+ }
+}
+function rasterDraw(c,q,fx,reduced,id,style,t,b,size){
+ const A=art();if(!A||!rasterOn||typeof c.drawImage!=='function')return false;
+ ensureArt();
+ let name=poseOf(q);if(q.pose==='sleep'||q.sleeping||fx.sleep)name='sleep';
+ const st=reduced||q.pose==='stand'?null:track(id,t,name==='sleep'?'stand':name,b.angle),tm=Number.isFinite(t)?t:0,height=Math.max(0,q.height||0);
+ let frame,sx=1,sy=1,ox=0,oy=0,rot=0,theta=0,shadowK=1;
+ if(st&&Number.isFinite(q.strideDistance)){
+  if(Number.isFinite(st.sd)&&st.dt>0){const sp=Math.abs(q.strideDistance-st.sd)/st.dt;st.speed=Number.isFinite(st.speed)?st.speed+(sp-st.speed)*Math.min(1,st.dt*8):sp}
+  st.sd=q.strideDistance;
+ }else if(st)st.sd=NaN;
+ const speedN=st&&Number.isFinite(st.speed)?Math.min(1.6,st.speed/((q.bodyHeight||60)*5.5)):.75;
+ switch(name){
+  case 'run':case 'wall':{
+   frame=runFrame(q,reduced,tm);
+   if(name==='run'&&st&&st.landAt>-9&&tm-st.landAt<.16){const L=Math.sin(Math.PI*.5*clamp(1-(tm-st.landAt)/.16,0,1));frame='pose-land';sx=1+.05*L;sy=1-.06*L}
+   if(!reduced)theta=.14*(speedN-.75)+.025*Math.sin(tm*9);
+   if(name==='wall'&&!reduced)rot=-.06;
+   break}
+  case 'jump':case 'float':{
+   frame='pose-jump';
+   if(name==='jump'&&!reduced){sy=seg(J.sy,clamp(Number.isFinite(q.jumpProgress)?q.jumpProgress:.5,0,1));sx=1/Math.sqrt(sy);theta=.1+.03*Math.sin(tm*8)}
+   else if(!reduced){oy=Math.sin(tm*2)*1.2;theta=.1}
+   break}
+  case 'land':{
+   frame='pose-land';let L=Number.isFinite(q.landProgress)?1-clamp(q.landProgress,0,1):st?clamp(1-(tm-st.poseAt)/.22,0,1):.7;if(reduced)L=0;
+   const Ls=Math.sin(Math.PI*.5*L);sx=1+.06*Ls;sy=1-.07*Ls;break}
+  case 'hurt':{
+   frame='pose-hurt';let p=.18;
+   if(!reduced){
+    if(q.nativeState===13||q.nativeState===16)p=clamp((q.poseFrame??q.nativeFrame??0)/14,0,1);
+    else if(q.deathProgress>0)p=.25+.75*clamp(q.deathProgress,0,1);
+    else if(Number.isFinite(q.poseAt)&&tm>=q.poseAt)p=clamp((tm-q.poseAt)/.85,0,1);
+    else if(st)p=clamp((tm-st.poseAt)/.85,0,1);
+    ox=-6*ease(p/.75);oy=-Math.sin(Math.PI*clamp(p/.64,0,1))*8;rot=-.45*Math.sin(Math.PI*clamp(p/.8,0,1));theta=-.05;
+   }
+   break}
+  case 'sleep':{frame='pose-sleep';if(!reduced)sy=1+.014*Math.sin(tm*1.5);break}
+  case 'joy':case 'open':{
+   frame='pose-joy';if(!reduced){const hop=Math.abs(Math.sin(tm*6.2))*2.6;oy=-hop;shadowK=1+hop*.04;theta=.05*Math.sin(tm*7)+.04}
+   break}
+  default:{frame='pose-stand';if(!reduced){sy=1+.012*Math.sin(tm*2.5);theta=.025*Math.sin(tm*1.6)}}
+ }
+ const fid=readyId(A,frame);if(!fid)return false;
+ let ms=1;if(typeof c.getTransform==='function'){const m=c.getTransform();if(m&&Number.isFinite(m.a)&&Number.isFinite(m.b))ms=Math.hypot(m.a,m.b)||1}
+ const tier=pickTier(512*size*UNIT*ms),skin=style&&style.id?style.id+'|'+(style.accent||''):'moon',tint=tintHex(style),trip=q.trip||fx.trip||detectTrip();
+ const e=fx.rim===false?baseCanvas(fid,tier,tint,skin):rimCanvas(fid,tier,tint,skin,trip);
+ if(e&&!reduced&&fx.rim!==false)scheduleWarm(tier,tint,skin,trip);
+ if(!e){stats.fallbacks++;return false}
+ const u2=512/tier*UNIT,meta=META[fid],ground=height/size;
+ c.save();c.translate(q.x,q.y);c.rotate(b.angle);c.scale(size,size*b.sign);
+ if(q.deathProgress)c.globalAlpha*=Math.max(.05,1-q.deathProgress);
+ if(fx.shadow!==false){// soft contact shadow, shrinking as the body rises
+  const h=ground+Math.max(0,-oy),k=1/(1+h/20);
+  if(h<70){c.save();c.translate(ox*.5,ground);c.scale(11*shadowK*k,11*shadowK*k*.26);c.globalAlpha*=.5*k;c.beginPath();c.arc(0,0,1,0,TAU);c.fillStyle='rgba(8,4,24,.6)';c.fill();c.restore()}
+ }
+ c.translate(ox,oy);
+ if(rot){c.translate(0,-18);c.rotate(rot);c.translate(0,18)}
+ if(sx!==1||sy!==1)c.scale(sx,sy);
+ drawFigure(c,e,fid,u2,-meta[0]*UNIT-e.m*u2,-meta[1]*UNIT-e.m*u2,reduced?0:theta,tier);
+ c.restore();return true;
+}
+
 /* ---------- entry ---------- */
 function basisOf(q){const angle=q.renderAngle??Math.atan2(q.tangent?.y||0,q.tangent?.x??1);return {angle,sign:q.direction===1?-1:1}}
 function draw(c,q,fx={},reduced=false,character='walker',style){
@@ -385,6 +578,7 @@ function draw(c,q,fx={},reduced=false,character='walker',style){
  const t=reduced?0:(fx.poseTime??fx.t??0),b=basisOf(q),size=(q.bodyHeight||60)/43.5;
  const kind=character==='elder'?'elder':character==='woman'?'woman':'child',R=RIGS[kind];
  if(!style)style=root.MongyuMobile?.look?.()||null;
+ if(kind==='child'&&rasterDraw(c,q,fx,!!reduced,character||'walker',style,Number(t)||0,b,size))return true;
  const p=palette(style,fx.ink,fx.onDark),g=gradientsFor(c,p,R);
  solve(q,fx,!!reduced,character||'walker',Number(t)||0,R,b.angle);
  // Outlines stay about one device pixel wide at any bodyHeight.
@@ -399,6 +593,6 @@ function draw(c,q,fx={},reduced=false,character='walker',style){
  c.restore();return true;
 }
 function resetMotion(){tracks.clear()}
-const api=Object.freeze({enabled,draw,poseOf,palette,resetMotion,poses:Object.freeze([...POSES])});
+const api=Object.freeze({enabled,draw,poseOf,palette,resetMotion,setTrip,whenReady,ready:artReady,stats,setRaster:v=>{rasterOn=!!v},poses:Object.freeze([...POSES]),artIds:Object.freeze([...ART_IDS])});
 root.MongyuCharacter=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
