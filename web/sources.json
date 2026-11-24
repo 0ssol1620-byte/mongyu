@@ -61,6 +61,10 @@
   "endless-dream.js",
   "illusion-course.js",
   "share-capture.js",
+  "helix-act.js",
+  "penrose-act.js",
+  "course-run.js",
+  "road-mode.js",
   "play-modes.js",
   "app.js"
 ]
