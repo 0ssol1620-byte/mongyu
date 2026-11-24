@@ -20,8 +20,8 @@ test('boss act registers, follows the act contract and every chapter ends on its
   const c=Course.courseById(cid);assert.equal(c.boss.id,id,cid);assert.equal(c.boss.n,IDS.indexOf(id)+1);assert.equal(c.acts.length,1);assert.equal(c.acts[0].type,'boss');assert.equal(c.acts[0].opts.boss,id);assert.equal(c.acts[0].opts.trip,c.trip);
   assert.ok(c.acts[0].weight>=60&&c.acts[0].weight<=120,cid+' weight');assert.ok(c.fallback&&c.fallback.every(a=>Course.hasAct(a.type)&&a.type!=='boss'),cid+' fallback is classic');
  }
- for(const ch of Course.CHAPTERS)assert.ok(ch.courses[4].boss,ch.id+' final course is a boss');
- for(const c of Course.allCourses())if(!['c5','c10','c15','c20','c25'].includes(c.id))assert.ok(!c.boss&&c.acts.every(a=>a.type!=='boss'),c.id);
+ for(const ch of Course.CHAPTERS.slice(0,5))assert.ok(ch.courses[4].boss,ch.id+' final course is a boss');
+ for(const c of Course.allCourses())if(!['c5','c10','c15','c20','c25'].includes(c.id)&&!c.bossPlaceholder)assert.ok(!c.boss&&c.acts.every(a=>a.type!=='boss'),c.id);
  for(const id of IDS){
   const run=mk(id);for(const k of ['state','mode','dreamMode','time','clock','updates','score','hearts','distance','events','coach','crash','result','attempt','outro','perfectStreak','polish'])assert.ok(k in run,id+' field '+k);
   for(const m of ['setViewport','start','pause','resume','retry','inputDown','inputUp','cancelInput','tick','drainEvents','status','drawSelf','phaseCheckpoint','pilot'])assert.equal(typeof run[m],'function',m);

@@ -45,8 +45,8 @@ test('per-channel overrides do not change gameplay either (everything off vs eve
 });
 
 test('a chain of the four new acts through the aurora gates ends with the same score at every level',()=>{
- const c25={...Course.courseById('c25')};
- const acts=c25.acts.filter(a=>['square','flip','mirror','wait'].includes(a.type));
+ const c25={...Course.courseById('c25')};   // c25 is the B05 boss now: build the chain from the first act of each type found in the other courses
+ const acts=['square','flip','mirror','wait'].map(t=>Course.allCourses().filter(c=>!c.boss).flatMap(c=>c.acts).find(a=>a.type===t));
  assert.equal(acts.length,4);
  const res=LEVELS.map(lv=>withLevel(lv,()=>{
   const run=new Course.CourseRun({...c25,acts,viewport:VP,settings:{},attempt:1});run.start();let n=0;const seen=[];

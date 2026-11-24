@@ -59,7 +59,7 @@ test('every act type is registered, courses run 50-100 s, signature acts and bos
  // boss slots: data only, with placeholders until the boss act exists
  const bosses=NEW.map(ch=>ch.courses[4]);assert.deepEqual(bosses.map(c=>c.id),['c30','c35','c40','c45','c50']);assert.deepEqual(bosses.map(c=>c.boss.id),['B06','B07','B08','B09','B10']);
  for(const c of bosses){assert.equal(c.bossPlaceholder,true);assert.ok(Object.keys(c.boss).length===1)}
- for(const c of LATE.filter(c=>!bosses.includes(c)))assert.equal(c.boss,undefined);for(const c of ALL.slice(0,25))assert.equal(c.boss,undefined);
+ for(const c of LATE.filter(c=>!bosses.includes(c)))assert.equal(c.boss,undefined);for(const c of ALL.slice(0,25).filter(c=>!['c5','c10','c15','c20','c25'].includes(c.id)))assert.equal(c.boss,undefined);
 });
 
 test('levels climb through a chapter: the boss placeholder is at least as hard as the first course', () => {

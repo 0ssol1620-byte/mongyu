@@ -32,7 +32,7 @@ test('English: composed lines (boss name + phase, course label with the act coun
   for(const p of D.phases)for(const l of [D.name+' · '+p.name,p.tele,p.coach,...Object.values(p.cause)]){const r=T.translate(l,'en');assert.ok(r!==null&&!HANGUL.test(r),id+': '+l+' -> '+r)}
   for(const l of [D.name,D.sub,D.clear,D.win]){const r=T.translate(l,'en');assert.ok(r!==null&&!HANGUL.test(r),id+': '+l+' -> '+r)}
  }
- for(const c of Course.allCourses().filter(c=>c.boss)){const l=c.title+' · 1/1 보스',r=T.translate(l,'en');assert.ok(r!==null&&!HANGUL.test(r),l+' -> '+r)}
+ for(const c of Course.allCourses().filter(c=>c.boss&&!c.bossPlaceholder)){const l=c.title+' · 1/1 보스',r=T.translate(l,'en');assert.ok(r!==null&&!HANGUL.test(r),l+' -> '+r)}
  assert.equal(T.translate('고스트','en'),'Ghost');assert.equal(T.translate('큐브','en'),'The Cube');
 });
 
