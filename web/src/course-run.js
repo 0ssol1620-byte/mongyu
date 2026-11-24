@@ -135,7 +135,7 @@ class CourseRun{
    items=a.opts.items;
    if(this.options.assist!==false&&(this.failCounts[i]|0)>=3){items=[...(items||[]),{at:.04,kind:'bubble',lane:'lo',assist:true}];this.assistActs[i]=true}
   }
-  const child=resolveAct(a.type)({...a.opts,items,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed,hud:false});
+  const child=resolveAct(a.type)({...a.opts,trip:a.opts.trip||this.options.trip||'violet',items,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed,hud:false});
   child.setViewport?.(this.viewport.width,this.viewport.height);return child;
  }
  /* Enter act i with the given carried state. A snapshot of the carry is kept: a fail restarts the act from exactly that state. */
@@ -259,6 +259,8 @@ function snapshot(c,p){
   const x=snap.getContext('2d');x.drawImage(src,0,0);p.snap=snap;
  }catch(_){p.snap=null}
 }
+/* R105 TR: ink of the trip being played (null outside the UI edition). */
+function tripInk(p){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.ink?T.ink(p.trip||'violet'):null}
 function gate(c,p,w,h){
  const u=clamp(p.age/p.duration,0,1),cx=w/2,cy=h*.46,maxR=Math.hypot(w,h)/2*1.08,min=Math.min(w,h);
  const fade=u<.4?1:1-ease(clamp((u-.4)/.5,0,1));
@@ -267,7 +269,7 @@ function gate(c,p,w,h){
  if(p.reduced)return;
  const inward=ease(clamp(u/.5,0,1)),outward=clamp((u-.5)/.5,0,1),alpha=1-outward*outward;
  c.save();c.globalCompositeOperation='lighter';
- const rings=[['127,243,225',0],['183,140,255',.1],['255,158,216',.2]];
+ const ti=tripInk(p),rings=ti?[[ti.rimRgb,0],[ti.rim2Rgb,.1],[ti.glowRgb,.2]]:[['127,243,225',0],['183,140,255',.1],['255,158,216',.2]];   // R105 TR: the trip's own hue family, no rainbow
  for(let i=0;i<rings.length;i++){
   const [rgb,delay]=rings[i],k=ease(clamp((u-delay*.6)/.5,0,1)),r=maxR+(min*.1-maxR)*k+outward*min*(.5+delay*2);
   c.globalAlpha=alpha*.85;c.lineWidth=3+7*(1-inward)+outward*4;c.strokeStyle='rgba('+rgb+',.9)';
@@ -275,10 +277,11 @@ function gate(c,p,w,h){
   c.globalAlpha=alpha*.3;c.lineWidth=14+10*(1-inward);c.strokeStyle='rgba('+rgb+',.4)';c.stroke();
  }
  const glow=Math.sin(Math.PI*u),gr=min*(.2+.9*Math.sin(Math.PI*clamp(u,0,1))*.8),g=c.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,gr));
- g.addColorStop(0,'rgba(255,250,236,'+(.85*glow).toFixed(3)+')');g.addColorStop(.45,'rgba(190,170,255,'+(.28*glow).toFixed(3)+')');g.addColorStop(1,'rgba(190,170,255,0)');
+ g.addColorStop(0,'rgba(255,250,236,'+(.85*glow).toFixed(3)+')');g.addColorStop(.45,'rgba('+(ti?ti.glowRgb:'190,170,255')+','+(.28*glow).toFixed(3)+')');g.addColorStop(1,'rgba('+(ti?ti.glowRgb:'190,170,255')+',0)');
  c.globalAlpha=1;c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();
 }
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function gaugeInk(run){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.ink?T.mix(T.ink(run.child?.trip||run.options?.trip||'violet').rim,'#ffffff',.45):'#bfe9ff'}
 function hud(c,run,w,h,show=1){
  if(run.state==='fail'||run.state==='clear'||show<=0)return;
  const child=run.child,out=show*(run.outro?.kind==='fail'||run.crash?clamp(1-num(run.outro?.age)/FAIL_HUD,0,1):1);if(out<=0)return;
@@ -293,7 +296,7 @@ function hud(c,run,w,h,show=1){
  if(coach&&run.state==='play'&&!run.portal){c.font='700 16px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
  // Progress gauge with a notch for each act gate (lit once passed).
  const gy=h*.86,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.progress();
- rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle='#bfe9ff';c.fill();
+ rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=gaugeInk(run);c.fill();
  for(const b of run.boundaries()){c.save();c.translate(x0+gw*b,gy+3);c.rotate(Math.PI/4);c.fillStyle=frac>=b?'#ffd98a':'rgba(255,255,255,.45)';c.fillRect(-3.4,-3.4,6.8,6.8);c.restore()}
  const total=run.carry.shardTotal+num(actShardTotal(child||{},null));
  if(total>0){c.font='700 11px system-ui,sans-serif';c.textAlign='right';c.fillStyle='rgba(255,236,190,.85)';c.fillText('◆ '+run.liveShards(),x0+gw,gy-8)}
@@ -301,7 +304,7 @@ function hud(c,run,w,h,show=1){
 }
 function draw(c,run,opts){
  const {width:w,height:h}=opts.viewport,p=run.portal;
- if(p&&!p.snapped)snapshot(c,p);
+ if(p&&!p.snapped){snapshot(c,p);p.trip=run.child?.trip||run.options?.trip||'violet'}
  if(run.child){drawChild(c,run,opts);root.MongyuPsy?.draw?.(c,run,opts)}
  else{c.fillStyle='#1b1230';c.fillRect(0,0,w,h)}
  if(p)gate(c,p,w,h);
