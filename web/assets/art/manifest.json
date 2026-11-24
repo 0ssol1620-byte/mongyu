@@ -1,6 +1,51 @@
 {
   "version": 1,
   "images": {
+    "chapter-1": {
+      "file": "chapter-1.webp",
+      "mime": "image/webp",
+      "sha256": "4440262770d64ea276e01ad7cc4ffd11a6bd249a9fdf425156cfda70420abf2c",
+      "bytes": 30382,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "chapter-2": {
+      "file": "chapter-2.webp",
+      "mime": "image/webp",
+      "sha256": "c71264808c138fdc53ee88ec260075ee36792064dfd927ae9463244aa5fa12a9",
+      "bytes": 48802,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "chapter-3": {
+      "file": "chapter-3.webp",
+      "mime": "image/webp",
+      "sha256": "4c47854a7614d167f5a0dd828567e6f4ec21d196027f7581327548c0dd2b27e8",
+      "bytes": 46444,
+      "w": 720,
+      "h": 1281,
+      "kind": "bg"
+    },
+    "chapter-4": {
+      "file": "chapter-4.webp",
+      "mime": "image/webp",
+      "sha256": "e59cb7c93cdc3ae4c73113134e56b65c7643c1da9a0517304853e0cb543d1963",
+      "bytes": 46656,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "chapter-5": {
+      "file": "chapter-5.webp",
+      "mime": "image/webp",
+      "sha256": "65b7840bd402efee81c751e89005ae03d240dc9c2407f24e1615233b46999aa1",
+      "bytes": 50492,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
     "course-c1": {
       "file": "course-c1.webp",
       "mime": "image/webp",
