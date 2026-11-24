@@ -1,0 +1,1 @@
+Generated a single 4 × 2 run-cycle sprite sheet. The second row closely resembles the first, so the alternating lead leg is hard to distinguish. The background appears magenta, but its exact #FF00FF value is unverified.
