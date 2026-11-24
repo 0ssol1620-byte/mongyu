@@ -1,6 +1,211 @@
-/* R105 "꿈의 길" campaign mode: course list, stars, unlocks, result panel. Owned by workstream A. */
+/* R105 "꿈의 길" campaign mode: course list, stars, unlocks, result panel. Owned by workstream A.
+   Title button (added by play-modes.js) -> #roadScreen (5 courses up a stone road) -> a CourseRun via MongyuPolish.host.startRun -> #roadResult.
+   Progress lives in mongyu.r105.road: {v:1,plays,last,courses:{c1:{g:bitmask(1 완주,2 빛 조각,4 무피격),stars,best,clears,plays,bestShards,bestProgress}}}. */
 (function(root){'use strict';
 const enabled=root.MONGYU_POLISH_EDITION===true;
-const api=Object.freeze({enabled});
+const doc=root.document;
+const KEY='mongyu.r105.road';
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const fmt=n=>Math.max(0,Math.floor(n||0)).toLocaleString('ko-KR');
+const GOAL_TEXT=['완주','빛 조각 전부','무피격'];
+const bits=g=>[!!(g&1),!!(g&2),!!(g&4)];
+const pop=g=>bits(g).filter(Boolean).length;
+
+/* ---------- storage ---------- */
+let store=null;
+function storage(){if(store)return store;try{const s=root.localStorage;store=root.MongyuStorage?root.MongyuStorage.create(s):s}catch(_){store={getItem(){return null},setItem(){throw Error('no storage')},removeItem(){}}}return store}
+function blank(){return {v:1,plays:0,last:null,courses:{}}}
+function read(){
+ try{const d=JSON.parse(storage().getItem(KEY)||'null');if(d&&d.v===1&&d.courses&&typeof d.courses==='object'&&!Array.isArray(d.courses))return d}catch(_){}
+ return blank();
+}
+function write(d){try{storage().setItem(KEY,JSON.stringify(d));return true}catch(_){return false}}
+function reset(){try{storage().removeItem(KEY)}catch(_){}}
+const C=()=>root.MongyuCourse;
+const courses=()=>C()?.CHAPTER1?.courses||[];
+const entry=(d,id)=>{const c=d.courses[id];return c&&typeof c==='object'?c:{g:0,stars:0,best:0,clears:0,plays:0,bestShards:0,bestProgress:0}};
+/* A course opens once the one before it was completed (at least one star). */
+function unlocked(index,d=read()){if(index<=0)return true;const prev=courses()[index-1];return !!prev&&entry(d,prev.id).stars>=1}
+function totalStars(d=read()){return courses().reduce((s,c)=>s+entry(d,c.id).stars,0)}
+function record(r){
+ const d=read(),list=courses(),index=list.findIndex(c=>c.id===r.courseId),c=entry(d,r.courseId);
+ const prevStars=c.stars,prevBest=c.best,clear=r.state==='clear',next={...c};
+ next.plays=(c.plays||0)+1;next.bestProgress=Math.max(c.bestProgress||0,r.progress||0);
+ if(clear){
+  const goals=C().goals(r);next.clears=(c.clears||0)+1;next.best=Math.max(c.best||0,r.score);next.bestShards=Math.max(c.bestShards||0,r.shards||0);
+  next.g=(c.g|0)|(goals[0]?1:0)|(goals[1]?2:0)|(goals[2]?4:0);next.stars=pop(next.g);
+ }
+ d.courses[r.courseId]=next;d.plays=(d.plays||0)+1;d.last=r.courseId;
+ const saved=write(d),newGoals=bits(next.g).map((on,i)=>on&&!bits(c.g|0)[i]);
+ return {best:next.best,newBest:clear&&r.score>prevBest&&prevBest>0,firstClear:clear&&prevStars===0,prevStars,stars:next.stars,newGoals,saved,
+  unlockedNext:clear&&prevStars===0&&index>=0&&index<list.length-1?list[index+1]:null};
+}
+
+/* ---------- DOM ---------- */
+let host=null,ui=null,resultFor=null,countToken=0,starTimers=[];
+const $=id=>doc.getElementById(id);
+function el(tag,attrs={},parent,text){const n=doc.createElement(tag);for(const [k,v] of Object.entries(attrs)){if(k==='class')n.className=v;else n.setAttribute(k,v)}if(text!==undefined)n.textContent=text;if(parent)parent.appendChild(n);return n}
+const hostApi=()=>host||root.MongyuPolish?.host||null;
+const reduced=()=>{try{return hostApi()?.settings?.()?.reduced===true}catch(_){return false}};
+function mount(){
+ if(ui||!doc?.body)return;
+ ui={};const stage=$('stage')||doc.body;
+ // Campaign screen.
+ const screen=el('section',{id:'roadScreen',class:'r105-road',role:'dialog','aria-modal':'true','aria-labelledby':'roadHeading',hidden:''});
+ const head=el('header',{class:'r105-road-head'},screen);
+ ui.back=el('button',{id:'roadBack',type:'button',class:'r105-road-back','aria-label':'처음으로'},head,'‹');
+ const titles=el('div',{class:'r105-road-titles'},head);
+ ui.kicker=el('p',{class:'r105-road-kicker'},titles);
+ ui.heading=el('h1',{id:'roadHeading'},titles);
+ ui.summary=el('p',{id:'roadSummary',class:'r105-road-summary'},titles);
+ const scroll=el('div',{class:'r105-road-scroll',id:'roadScroll'},screen);ui.scroll=scroll;
+ ui.list=el('ol',{id:'roadList',class:'r105-road-list'},scroll);
+ stage.appendChild(screen);ui.screen=screen;
+ ui.back.onclick=()=>close();
+ screen.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();close()}});
+ // Result panel: same sheet as the dream result, plus three stars and a count-up score.
+ const panel=el('section',{id:'roadResult',class:'r104-dream-result r105-road-result',role:'region','aria-labelledby':'roadResultHeading',hidden:''});
+ const box=el('div',{class:'box'},panel),id=el('div',{class:'dream-identity'},box);
+ ui.rKicker=el('p',{class:'dream-kicker',id:'roadResultKicker'},id);
+ ui.rBadge=el('span',{class:'dream-badge',id:'roadResultBadge',hidden:''},id,'새 최고 기록');
+ ui.rHeading=el('h1',{id:'roadResultHeading'},id);
+ ui.stars=el('div',{class:'road-stars',role:'img',id:'roadResultStars'},id);
+ ui.starNodes=[0,1,2].map(()=>el('span',{class:'road-star','data-on':'false'},ui.stars));
+ ui.starGoals=el('ul',{class:'road-goals','aria-hidden':'true'},id);
+ ui.goalNodes=GOAL_TEXT.map(t=>el('li',{'data-on':'false'},ui.starGoals,t));
+ const line=el('p',{class:'dream-score'},id);ui.score=el('span',{id:'roadResultScore'},line);el('span',{class:'score-unit'},line,'점');
+ ui.detail=el('p',{id:'roadResultDetail',class:'dream-detail'},id);
+ const acts=el('div',{class:'dream-actions'},box);
+ ui.primary=el('button',{id:'roadPrimary',type:'button','data-primary':'true'},acts,'다음 코스');
+ ui.again=el('button',{id:'roadAgain',type:'button'},acts,'다시 달리기');
+ const share=el('div',{class:'dream-share',role:'group','aria-label':'공유'},acts);
+ ui.poster=el('button',{id:'roadPoster',type:'button'},share,'포스터 저장');
+ ui.clip=el('button',{id:'roadClip',type:'button'},share,'영상 저장');
+ ui.toRoad=el('button',{id:'roadToRoad',type:'button'},acts,'꿈의 길로');
+ ui.note=el('p',{id:'roadShareNote',class:'dream-note',role:'status','aria-live':'polite'},acts);
+ stage.appendChild(panel);ui.panel=panel;
+ ui.poster.onclick=()=>exportPoster();ui.clip.onclick=()=>exportClip();
+ ui.toRoad.onclick=()=>toRoad();
+}
+function render(){
+ if(!ui)return;
+ const d=read(),list=courses(),ch=C()?.CHAPTER1;
+ ui.kicker.textContent=(ch?.number||1)+'장';ui.heading.textContent=ch?.title||'꿈의 길';
+ const stars=totalStars(d),open=list.findIndex((c,i)=>unlocked(i,d)&&entry(d,c.id).stars<1);
+ ui.summary.textContent='별 '+stars+' / '+list.length*3+'  ·  '+(open>=0?'다음은 '+list[open].title:'모든 길을 걸었어요');
+ ui.list.replaceChildren();
+ list.forEach((course,i)=>{
+  const e=entry(d,course.id),isOpen=unlocked(i,d),state=!isOpen?'locked':e.stars>0?'done':'open',playable=C().playableActs(course).acts;
+  const seconds=Math.round(playable.reduce((s,a)=>s+(a.weight||10),0)/5)*5;
+  const li=el('li',{class:'r105-road-node','data-state':state,'data-course':course.id},ui.list);
+  const stone=el('span',{class:'rd-stone','aria-hidden':'true'},li);el('i',{},stone,!isOpen?'':String(i+1));
+  const card=el('button',{type:'button',class:'rd-card','data-course':course.id},li);
+  if(!isOpen){card.setAttribute('aria-disabled','true');card.setAttribute('aria-label',course.title+', 잠김. 앞 코스를 완주하면 열려요.')}
+  const top=el('span',{class:'rd-row'},card);el('span',{class:'rd-name'},top,course.title);
+  const st=el('span',{class:'rd-stars','aria-label':'별 '+e.stars+' / 3'},top);
+  bits(e.g|0).forEach(on=>el('span',{class:'rd-s','data-on':String(on)},st,'★'));
+  el('span',{class:'rd-desc'},card,!isOpen?'앞 코스를 완주하면 열려요':course.subtitle);
+  const meta=el('span',{class:'rd-meta'},card);
+  el('span',{},meta,playable.length+'구간 · 약 '+seconds+'초');
+  if(isOpen&&e.clears>0)el('span',{class:'rd-best'},meta,'최고 '+fmt(e.best));
+  else if(isOpen&&e.plays>0)el('span',{class:'rd-best'},meta,'도전 '+Math.round((e.bestProgress||0)*100)+'%');
+  card.onclick=ev=>{if(!isOpen)return;start(course.id,ev)};
+ });
+}
+function open(event){
+ if(!doc)return false;mount();if(!ui)return false;
+ hideResult();render();ui.screen.hidden=false;doc.body.dataset.road='open';
+ const d=read(),list=courses();let target=0;
+ for(let i=0;i<list.length;i++)if(unlocked(i,d)&&entry(d,list[i].id).stars<1){target=i;break}else if(entry(d,list[i].id).stars>=1)target=i;
+ const node=ui.list.querySelector('[data-course="'+list[target]?.id+'"] .rd-card');
+ try{node?.focus?.({preventScroll:true});node?.scrollIntoView?.({block:'center'})}catch(_){}
+ return true;
+}
+function close(){if(!ui)return false;ui.screen.hidden=true;if(doc?.body?.dataset)delete doc.body.dataset.road;return true}
+function toRoad(){hideResult();const h=$('pauseHome')||$('squareHome');try{h?.click()}catch(_){}open()}
+
+/* ---------- starting runs ---------- */
+function newRun(id,attempt=1){
+ const Co=C(),h=hostApi(),d=read(),course=Co.courseById(id||d.last||'c1')||courses()[0];
+ return new Co.CourseRun({...course,viewport:h?.viewport?.()||{width:390,height:844},settings:h?.settings?.()||{},attempt});
+}
+function start(id,event){const h=hostApi();if(!h?.startRun)return false;hideResult();close();return h.startRun(newRun(id),event)}
+/* Fail -> restart the failed act with its carried score; clear (or force) -> a fresh run of the same course. */
+function retry(run,event,fresh=false){
+ const h=hostApi();if(!h?.startRun)return false;hideResult();
+ const next=!fresh&&run.state==='fail'&&typeof run.checkpointRun==='function'?run.checkpointRun():newRun(run.id,(run.attempt||1)+1);
+ return h.startRun(next,event);
+}
+
+/* ---------- result ---------- */
+function clearTimers(){countToken++;for(const t of starTimers)root.clearTimeout?.(t);starTimers=[]}
+function countUp(node,to,calm){
+ const token=++countToken;node.textContent=fmt(calm?to:0);
+ if(calm||!root.requestAnimationFrame||to<=0){node.textContent=fmt(to);return}
+ const t0=root.performance?.now?.()??0,dur=clamp(500+to*.1,600,1300);
+ const step=now=>{if(token!==countToken)return;const u=clamp(((now??t0)-t0)/dur,0,1),e=1-Math.pow(1-u,3);node.textContent=fmt(to*e);if(u<1)root.requestAnimationFrame(step);else node.textContent=fmt(to)};
+ root.requestAnimationFrame(step);
+}
+function hideResult(){if(ui?.panel){ui.panel.hidden=true;ui.note.textContent=''}clearTimers();resultFor=null}
+function onEnd(run){
+ const r=run.result;if(!r||!doc)return;mount();if(!ui)return;
+ clearTimers();resultFor=run;const rec=record(r),calm=reduced(),clear=r.state==='clear';
+ const list=courses(),index=list.findIndex(c=>c.id===r.courseId),course=list[index],next=list[index+1]||null,goals=r.goals||C().goals(r);
+ ui.panel.dataset.reduced=String(calm);ui.panel.dataset.state=r.state;
+ ui.rKicker.textContent='꿈의 길 · '+C().CHAPTER1.number+'장 · 코스 '+(index+1);
+ ui.rBadge.hidden=!rec.newBest;
+ ui.rHeading.textContent=clear?r.name+' 완주':r.actName+'에서 길이 끊겼다';
+ ui.stars.setAttribute('aria-label',clear?'별 '+goals.filter(Boolean).length+' / 3':'별 없음');
+ ui.starNodes.forEach(n=>{n.dataset.on='false'});ui.goalNodes.forEach((n,i)=>{n.dataset.on='false';n.dataset.new=String(!!rec.newGoals[i]&&clear)});
+ ui.stars.hidden=!clear;ui.starGoals.hidden=!clear;
+ if(clear)goals.forEach((on,i)=>{if(!on)return;const show=()=>{ui.starNodes[i].dataset.on='true';ui.goalNodes[i].dataset.on='true'};if(calm)show();else starTimers.push(root.setTimeout(show,500+i*340))});
+ countUp(ui.score,r.score,calm);
+ const lines=[];
+ if(clear){
+  lines.push('빛 조각 '+r.shards+' / '+r.shardTotal+(r.deaths?' · 넘어짐 '+r.deaths+'번':' · 한 번도 안 넘어졌다')+(r.bestStreak>1?' · 완벽 ×'+r.bestStreak:''));
+  if(rec.best)lines.push((rec.newBest?'새 최고 ':'최고 ')+fmt(rec.best)+'점 · 별 '+rec.stars+' / 3');
+  if(rec.unlockedNext)lines.push('새 코스가 열렸어요 · '+rec.unlockedNext.title);
+ }else{
+  lines.push(r.actCount+'구간 중 '+(r.actIndex+1)+'번째 · 길의 '+Math.round((r.progress||0)*100)+'%');
+  const cp=run.carries?.[run.actIndex];lines.push('빛 조각 '+r.shards+'개'+(cp?' · 이 구간은 '+fmt(cp.points+cp.bonus)+'점에서 다시 시작해요':''));
+ }
+ if(!rec.saved)lines.push('기록은 이번 실행에만 남습니다.');
+ ui.detail.textContent=lines.join('\n');
+ if(clear){
+  if(next){ui.primary.textContent='다음 코스 · '+next.title;ui.primary.onclick=e=>start(next.id,e)}
+  else{ui.primary.textContent='꿈의 길로';ui.primary.onclick=()=>toRoad()}
+  ui.again.textContent='다시 달리기';ui.again.onclick=e=>retry(run,e,true);
+  ui.toRoad.hidden=!next;
+ }else{
+  ui.primary.textContent='이 구간부터 다시';ui.primary.onclick=e=>retry(run,e);
+  ui.again.textContent='처음부터';ui.again.onclick=e=>retry(run,e,true);ui.toRoad.hidden=false;
+ }
+ ui.again.hidden=false;
+ const S=root.MongyuShare,exportable=S?.supported?.export!==false;
+ ui.poster.hidden=!clear||!exportable;ui.clip.hidden=!clear||!exportable||!S?.supported?.video;ui.clip.disabled=true;ui.note.textContent='';
+ if(S&&!ui.clip.hidden)S.clip(run).then(blob=>{if(resultFor===run){ui.clip.disabled=!blob;ui.clip.hidden=!blob}});
+ ui.panel.hidden=false;
+ try{ui.primary.focus({preventScroll:true})}catch(_){}
+}
+function info(run){const r=run?.result;return {run,title:'꿈의 길 · '+(run?.name||''),subtitle:fmt(r?.score)+'점'}}
+async function exportPoster(){
+ const S=root.MongyuShare,run=hostApi()?.activeRun?.();if(!S||!run)return;ui.note.textContent='포스터를 만드는 중…';
+ try{const res=await S.savePoster(info(run));ui.note.textContent=res.ok?(res.method==='share'?'공유했어요.':'포스터를 저장했어요.'):res.method==='share-cancel'?'':'저장하지 못했어요.'}catch(_){ui.note.textContent='저장하지 못했어요.'}
+}
+async function exportClip(){
+ const S=root.MongyuShare,run=hostApi()?.activeRun?.();if(!S||!run)return;ui.note.textContent='영상을 준비하는 중…';
+ try{const res=await S.saveClip(run,info(run));ui.note.textContent=res.ok?(res.method==='share'?'공유했어요.':'영상을 저장했어요.'):res.method==='share-cancel'?'':'저장할 영상이 없어요.'}catch(_){ui.note.textContent='저장하지 못했어요.'}
+}
+
+function boot(){
+ if(!enabled||!doc)return;
+ const bus=root.MongyuPolish;
+ const ready=h=>{host=h||host;mount()};
+ if(bus){if(bus.host)host=bus.host;bus.on('attach',ready)}
+ if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',()=>{if(bus?.host||host)ready(bus?.host)});else if(bus?.host)ready(bus.host);
+}
+boot();
+const api=Object.freeze({enabled,KEY,read,write,reset,record,unlocked,totalStars,entry,open,close,start,newRun,retry,onEnd,hideResult,render,mount:()=>mount(),toRoad,
+ get ui(){return ui},get resultFor(){return resultFor}});
 root.MongyuRoad=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
