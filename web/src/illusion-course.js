@@ -15,6 +15,14 @@ const SECTIONS=[
  {name:'달빛 수로',sky:['#0f1d34','#2c4f6e'],arch:['#e0f1f7','#8eb2cb','#3e5d7e'],mist:'#a7cfe6',at:0},
  {name:'오로라 탑',sky:['#10222a','#30505a'],arch:['#e9f6ee','#9cc6b6','#43706a'],mist:'#b3e2d6',at:0}
 ];
+/* R105 TR: dark psychedelic sections from a MongyuTrip palette (section 0 = base, 1 leans to the second neon, 2 to the glow). arch = [top, front, side] faces; rim/rim2 = neon edge lines. */
+const tripOn=()=>root.MONGYU_UI_EDITION===true&&!!root.MongyuTrip&&typeof root.MongyuTrip.face==='function';
+function tripSections(list,key){
+ const T=root.MongyuTrip,p=T.get(key),f=T.face(key),lean=['rim','rim2','glow'];
+ return list.map((s,i)=>{const l=p[lean[i%3]],m=(a,t)=>T.mix(a,l,t);
+  return {...s,sky:[m(p.sky[0],.06*i),m(T.mix(p.sky[2],p.sky[0],.3),.12+.05*i)],arch:[m(f.top,.1*i),m(f.front,.06*i),m(f.side,.05*i)],mist:T.mix(p.fog,p.sky[0],.4),rim:p.light?l:T.mix(l,'#ffffff',.22),rim2:p.light?(i%2?p.rim:p.rim2):T.mix(i%2?p.rim:p.rim2,'#ffffff',.15),glow:l,light:!!p.light}});
+}
+let RIM=null;   // {rim,rim2,glow} while a trip is drawn: boxTop/boxSides add the thin neon edge and a soft outer glow
 /* Authored plan: [direction, screen length, options]. x = down-right, z = up-right, stair = Penrose stair (rises
    along +X yet reads flat). gap = rotating bridge after this walkway; lift = invisible (k,k,k) offset of the next piece. */
 const PLAN=[
@@ -78,6 +86,7 @@ class IllusionRun{
   this.options=options;this.mode='dream';this.dreamMode='illusion';this.openingCourse=false;this.polish=true;
   /* R105: options.plan/options.sections give a chained act its own course; options.chain marks it as one act of a CourseRun. */
   this.chain=options.chain||null;this.chained=!!this.chain;this.sections=options.sections||SECTIONS;
+  this.trip=tripOn()?(options.trip||'violet'):null;if(this.trip)this.sections=tripSections(this.sections,this.trip);
   this.cs=options.plan?makeCourse(options.plan,this.chain?.bpm?SPEED*60/this.chain.bpm:0):DEFAULT;
   this.settings={...(options.settings||{})};this.attempt=options.attempt||1;this.skipIntro=!!options.skipIntro;
   this.setViewport(options.viewport?.width,options.viewport?.height);this.reset();
@@ -223,8 +232,22 @@ function boxSides(c,x0,x1,y0,y1,z0,z1,arch){
  const P=(x,y,z)=>project([x,y,z]);
  quad(c,P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1));c.fillStyle=arch[1];c.fill();
  quad(c,P(x1,y0,z0),P(x1,y0,z1),P(x1,y1,z1),P(x1,y1,z0));c.fillStyle=arch[2];c.fill();
+ if(RIM&&RIM.sides){const a=P(x1,y0,z1),b=P(x1,y1,z1);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.lineWidth=.7;c.strokeStyle=RIM.rim2;c.globalAlpha*=.55;c.stroke();c.globalAlpha/=.55}
 }
-function boxTop(c,x0,x1,y1,z0,z1,fill){const P=(x,z)=>project([x,y1,z]);quad(c,P(x0,z0),P(x1,z0),P(x1,z1),P(x0,z1));c.fillStyle=fill;c.fill()}
+/* Neon edge along the visible front and right edges of a top face: soft wide glow under a thin bright line (RIM only). */
+function neonEdge(c,pts,glowW,lineW){
+ const ga=c.globalAlpha;c.beginPath();c.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++)c.lineTo(pts[i].x,pts[i].y);
+ c.lineJoin='round';if(!RIM.light){c.lineWidth=glowW;c.strokeStyle=RIM.glow;c.globalAlpha=ga*.2;c.stroke()}c.lineWidth=lineW;c.strokeStyle=RIM.rim;c.globalAlpha=ga*.95;c.stroke();c.globalAlpha=ga;
+}
+const haloSprites=new Map();
+/* Additive soft halo (a cached radial sprite per colour) so obstacles read at a glance on the dark base. */
+function halo(c,x,y,r,rgb,a){
+ let s=haloSprites.get(rgb);
+ if(s===undefined){s=null;try{const d=root.document;if(d&&d.createElement){const cv=d.createElement('canvas');cv.width=cv.height=64;const x2=cv.getContext('2d');
+  if(x2){const g=x2.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba('+rgb+',.9)');g.addColorStop(.3,'rgba('+rgb+',.34)');g.addColorStop(1,'rgba('+rgb+',0)');x2.fillStyle=g;x2.fillRect(0,0,64,64);s=cv}}}catch(_){s=null}haloSprites.set(rgb,s)}
+ if(!s)return;const ga=c.globalAlpha,go=c.globalCompositeOperation;c.globalCompositeOperation='lighter';c.globalAlpha=ga*a;c.drawImage(s,x-r,y-r,r*2,r*2);c.globalCompositeOperation=go;c.globalAlpha=ga;
+}
+function boxTop(c,x0,x1,y1,z0,z1,fill){const P=(x,z)=>project([x,y1,z]);quad(c,P(x0,z0),P(x1,z0),P(x1,z1),P(x0,z1));c.fillStyle=fill;c.fill();if(RIM)neonEdge(c,[P(x0,z1),P(x1,z1),P(x1,z0)],3.4,.9)}
 function walkBox(w){
  const [a,b]=[w.p0,w.p1];
  if(w.kind==='z')return [a[0]-WIDE,a[0]+WIDE,a[1]-THICK,a[1],b[2],a[2]];
@@ -274,6 +297,7 @@ function armBox(c,g,theta,arch,top,aligned){
   const t=clamp((nx-nz+1)/2,0,1);c.fillStyle=t>.5?arch[2]:arch[1];c.fill();
  }
  quad(c,corner(-hl,-hw,y1),corner(hl,-hw,y1),corner(hl,hw,y1),corner(-hl,hw,y1));c.fillStyle=top;c.fill();
+ if(RIM){const ga=c.globalAlpha;c.lineJoin='round';if(!RIM.light){c.lineWidth=4;c.strokeStyle=RIM.glow;c.globalAlpha=ga*.24;c.stroke()}c.lineWidth=1.1;c.strokeStyle=aligned?RIM.rim:RIM.rim2;c.globalAlpha=ga*.95;c.stroke();c.globalAlpha=ga}
 }
 function gapTheta(g,progress){const base=g.dir==='x'?0:-Math.PI/2;return base+(1-ease(progress))*Math.PI/2}
 function lerpColor(a,b,t){const pa=parseInt(a.slice(1),16),pb=parseInt(b.slice(1),16),m=(s)=>Math.round(((pa>>s)&255)+((((pb>>s)&255)-((pa>>s)&255))*t));return 'rgb('+m(16)+','+m(8)+','+m(0)+')'}
@@ -283,11 +307,14 @@ function palette(run){
  const next=COURSE.walks.find(w=>w.section===i+1);let t=0;if(next)t=clamp((s-(next.s0-260))/260,0,1);
  if(!t)return SECTIONS[i];
  const a=SECTIONS[i],b=SECTIONS[i+1];
- return {name:a.name,sky:[lerpColor(a.sky[0],b.sky[0],t),lerpColor(a.sky[1],b.sky[1],t)],arch:a.arch.map((c,k)=>lerpColor(c,b.arch[k],t)),mist:lerpColor(a.mist,b.mist,t)};
+ const o={name:a.name,sky:[lerpColor(a.sky[0],b.sky[0],t),lerpColor(a.sky[1],b.sky[1],t)],arch:a.arch.map((c,k)=>lerpColor(c,b.arch[k],t)),mist:lerpColor(a.mist,b.mist,t)};
+ if(a.rim&&b.rim){o.rim=lerpColor(a.rim,b.rim,t);o.rim2=lerpColor(a.rim2,b.rim2,t);o.glow=lerpColor(a.glow,b.glow,t);o.light=a.light}
+ return o;
 }
 function draw(c,run,opts){
- const {COURSE,FINISH,ART}=run.cs,SECTIONS=run.sections,{width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,k=root.MongyuEndless?.ink?.()||{danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',tap:'#ffeca5',tapDeep:'#ffd98a',dangerLine:'#ffe1c8'};
+ const {COURSE,FINISH,ART}=run.cs,SECTIONS=run.sections,{width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,k=run.trip?root.MongyuTrip.ink(run.trip):root.MongyuEndless?.ink?.()||{danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',tap:'#ffeca5',tapDeep:'#ffd98a',dangerLine:'#ffe1c8'};
  const pal=palette(run),me=point(run.distance,COURSE);
+ RIM=run.trip&&pal.rim?{rim:pal.rim,rim2:pal.rim2,glow:pal.glow,sides:false,light:!!pal.light}:null;
  let actor={x:me.x,y:me.y-run.height};
  // Camera: follow the runner with a lead; the intro starts wide and eases in.
  let scale=clamp(Math.min(w/290,h/600),.7,2.4),focus={x:me.x+70,y:me.y-20};
@@ -303,25 +330,30 @@ function draw(c,run,opts){
  let sk=skyCache.get(c);const key=pal.sky.join()+h;
  if(!sk||sk.key!==key){const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,pal.sky[0]);g.addColorStop(1,pal.sky[1]);sk={key,g};skyCache.set(c,sk)}
  c.fillStyle=sk.g;c.fillRect(0,0,w,h);
+ if(RIM&&!RIM.light){const hz=c.createLinearGradient(0,h*.45,0,h),mr2=k.glowRgb;hz.addColorStop(0,'rgba('+mr2+',0)');hz.addColorStop(1,'rgba('+mr2+',.14)');c.fillStyle=hz;c.fillRect(0,h*.45,w,h*.55)}   // dream haze rising from below
  // Moon / aurora glow and far floating islands (parallax 0.2).
- const mr=Math.min(w,h)*.13;c.save();c.translate(w*.74,h*.2);c.globalAlpha=.22;c.fillStyle=pal.mist;c.beginPath();c.arc(0,0,mr,0,TAU);c.fill();c.globalAlpha=.07;c.beginPath();c.arc(0,0,mr*1.6,0,TAU);c.fill();c.globalAlpha=.04;c.beginPath();c.arc(0,0,mr*2.4,0,TAU);c.fill();c.restore();
+ const mr=Math.min(w,h)*.13;c.save();c.translate(w*.74,h*.2);c.globalAlpha=.22;c.fillStyle=pal.mist;c.beginPath();c.arc(0,0,mr,0,TAU);c.fill();c.globalAlpha=.07;c.beginPath();c.arc(0,0,mr*1.6,0,TAU);c.fill();c.globalAlpha=.04;c.beginPath();c.arc(0,0,mr*2.4,0,TAU);c.fill();
+ if(RIM){c.globalAlpha=.5;c.strokeStyle=RIM.rim;c.lineWidth=1;for(let i=0;i<7;i++){c.globalAlpha=.2-i*.024;c.beginPath();c.arc(0,0,mr*(1.25+i*.5),0,TAU);c.stroke()}}   // moire rings around the moon
+ c.restore();
  const isl=root.MongyuEndless?.islands?.();if(isl){c.save();c.translate(w*.5-run.cam.x*scale*.2,h*.5-run.cam.y*scale*.2);c.scale(scale*.9,scale*.9);c.globalAlpha=.13;c.fillStyle=pal.mist;c.fill(isl);c.globalAlpha=.07;c.scale(1.5,1.5);c.translate(90,120);c.fill(isl);c.restore()}
  c.translate(cx,cy);c.scale(scale,scale);
  run.view={cx,cy,scale};
  // Pillars fade into the mist.
  for(const p of ART.pillars){const a=project([p.x0,p.top,p.z1]),b=project([p.x1,p.top-280,p.z0]);if(!inView(view,a,b,40))continue;pillar(c,p,pal.arch,pal.mist)}
+ if(RIM)RIM.sides=true;
  // Lit windows on pillars (gold glow when the course is complete).
  const lit=midAct?0:run.outro?.kind==='clear'?clamp(run.outro.age/1.2,0,1):run.state==='clear'?1:0;
  for(const wd of ART.windows){const p=project([wd.x,wd.y,wd.z]);if(p.x<view.l-20||p.x>view.r+20||p.y<view.t-20||p.y>view.b+20)continue;
-  c.fillStyle=lit>0?k.tapDeep:'rgba(20,12,36,.45)';c.globalAlpha=lit>0?.35+.6*lit:1;c.beginPath();c.moveTo(p.x-1.5,p.y-6.5);c.lineTo(p.x+1.5,p.y-8.2);c.lineTo(p.x+1.5,p.y+2);c.lineTo(p.x-1.5,p.y+3.7);c.closePath();c.fill()}
+  c.fillStyle=lit>0?k.tapDeep:RIM?pal.rim2:'rgba(20,12,36,.45)';c.globalAlpha=lit>0?.35+.6*lit:RIM?.38:1;c.beginPath();c.moveTo(p.x-1.5,p.y-6.5);c.lineTo(p.x+1.5,p.y-8.2);c.lineTo(p.x+1.5,p.y+2);c.lineTo(p.x-1.5,p.y+3.7);c.closePath();c.fill()}
  c.globalAlpha=1;
  // Walkway sides, then tops (joins read as one continuous path).
  for(const s of ART.sides){const [x0,x1,y0,y1,z0,z1]=s.box,a=project([x0,y1,z1]),b=project([x1,y0,z0]);if(!inView(view,a,b))continue;boxSides(c,x0,x1,y0,y1,z0,z1,pal.arch)}
  for(const s of ART.tops){const [x0,x1,y1,z0,z1]=s.box,a=project([x0,y1,z1]),b=project([x1,y1,z0]);if(!inView(view,a,b))continue;boxTop(c,x0,x1,y1,z0,z1,s.step?pal.arch[0]:pal.arch[0]);
   if(s.step){c.strokeStyle=pal.arch[2];c.globalAlpha=.6;c.lineWidth=.9;const e=project([x1,y1,z1]),f=project([x1,y1,z0]);c.beginPath();c.moveTo(e.x,e.y);c.lineTo(f.x,f.y);c.stroke();c.globalAlpha=1}}
  // Rails: a thin pale line along each walkway's front edge.
- c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=.8;
+ c.strokeStyle=RIM?pal.rim2:'rgba(255,255,255,.35)';c.lineWidth=.8;if(RIM)c.globalAlpha=.55;
  for(const wk of COURSE.walks){if(wk.kind==='stair')continue;const [x0,x1,,y1,z0,z1]=walkBox(wk),a=project([x0,y1,z1]),b=project([x1,y1,z1]);if(!inView(view,a,b))continue;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke()}
+ c.globalAlpha=1;
  // Rotating bridges with gold markers.
  const active=run.activeGap?.();
  for(const g of COURSE.gaps){
@@ -349,8 +381,10 @@ function draw(c,run,opts){
  for(let i=0;i<COURSE.blocks.length;i++){
   const b=COURSE.blocks[i],p=project(b.p);if(p.x<view.l-30||p.x>view.r+30)continue;
   const x=b.p[0],y=b.p[1],z=b.p[2],crashed=run.crash?.kind==='block'&&Math.abs(run.crash.s-b.at)<1;
+  if(RIM)RIM={rim:k.dangerLine,rim2:k.dangerLine,glow:k.danger,sides:true,light:RIM.light};
   boxSides(c,x-BLOCK,x+BLOCK,y,y+BLOCK_H,z-BLOCK,z+BLOCK,[k.danger,crashed?'#fff2ea':k.danger,k.dangerSide]);
   boxTop(c,x-BLOCK,x+BLOCK,y+BLOCK_H,z-BLOCK,z+BLOCK,k.dangerTop);
+  if(RIM){const lt=RIM.light;RIM={rim:pal.rim,rim2:pal.rim2,glow:pal.glow,sides:true,light:lt};const hp=project([x,y+BLOCK_H*.5,z]);if(!lt)halo(c,hp.x,hp.y,BLOCK*5.2,k.dangerRgb,crashed?.9:.55)}
   const f=project([x+BLOCK,y+BLOCK_H*.62,z]);c.strokeStyle=k.dangerLine;c.globalAlpha=.6;c.lineWidth=.7;c.beginPath();c.moveTo(f.x,f.y-3);c.lineTo(f.x,f.y+3);c.stroke();c.globalAlpha=1;
  }
  // Gold shards.
@@ -376,7 +410,7 @@ function draw(c,run,opts){
  if(!reduced&&run.time-run.crossedAt<.3){const age=(run.time-run.crossedAt)/.3;c.globalAlpha=1-age;c.fillStyle=k.tap;for(let i=0;i<6;i++){const a=i*Math.PI/3;c.fillRect(actor.x+Math.cos(a)*(9+age*18)-1.2,actor.y-18+Math.sin(a)*(9+age*18)-1.2,2.4,2.4)}c.globalAlpha=1}
  c.restore();
  // Completion bloom.
- if(lit>0){c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.12*lit;c.fillStyle=pal.mist;c.fillRect(0,0,w,h);c.restore()}
+ if(lit>0){c.save();c.globalCompositeOperation=RIM&&RIM.light?'source-over':'lighter';c.globalAlpha=.12*lit;c.fillStyle=pal.mist;c.fillRect(0,0,w,h);c.restore()}
  if(!run.chained)hud(c,run,w,h,k);
  return null;
 }
@@ -386,13 +420,16 @@ function finger(c,x,y,t,reduced){
  c.save();c.translate(x+8,y+10-press);c.rotate(-.35);c.lineJoin='round';c.lineWidth=2.4;c.strokeStyle='rgba(32,20,56,.5)';c.stroke(HAND);c.fillStyle='#fff7ec';c.fill(HAND);c.lineWidth=.7;c.strokeStyle='#ffcfae';c.stroke(HAND);c.restore();
 }
 const CURTAINS=[[-22,15,200,'127,243,225',0],[-8,18,240,'138,184,255',1.7],[7,17,220,'183,140,255',3.1],[21,14,186,'255,158,216',4.4]];
+/* R105 TR: the gate curtains use the goal colour (aurora teal) plus the trip's own neon family instead of a teal/blue/violet/pink rainbow. */
+function tripCurtains(key){const k=root.MongyuTrip.ink(key);return [[-22,15,200,k.auroraRgb,0],[-8,18,240,k.rimRgb,1.7],[7,17,220,k.auroraRgb,3.1],[21,14,186,k.glowRgb,4.4]]}
 const auroraInks=new WeakMap();
 function aurora(c,p,run,reduced){
  const FINISH=run.cs.FINISH;
  let ink=auroraInks.get(c);
- if(!ink){ink=CURTAINS.map(([,,height,rgb])=>{const g=c.createLinearGradient(0,0,0,-height);g.addColorStop(0,'rgba(255,252,240,.9)');g.addColorStop(.06,'rgba('+rgb+',.8)');g.addColorStop(.35,'rgba('+rgb+',.32)');g.addColorStop(1,'rgba('+rgb+',0)');return g});auroraInks.set(c,ink)}
+ const tk=run.trip||'';
+ if(!ink||ink.tk!==tk){ink=(tk?tripCurtains(tk):CURTAINS).map(([,,height,rgb])=>{const g=c.createLinearGradient(0,0,0,-height);g.addColorStop(0,'rgba(255,252,240,.9)');g.addColorStop(.06,'rgba('+rgb+',.8)');g.addColorStop(.35,'rgba('+rgb+',.32)');g.addColorStop(1,'rgba('+rgb+',0)');return g});ink.tk=tk;auroraInks.set(c,ink)}
  const near=clamp((run.distance-(FINISH-700))/500,0,1),outro=run.outro?.kind==='clear'?clamp(run.outro.age/.6,0,1):run.state==='clear'?1:0,strength=.45+.4*near+.3*outro,t=(reduced?.2:1)*run.clock;
- c.save();c.translate(p.x,p.y);c.globalCompositeOperation='lighter';
+ c.save();c.translate(p.x,p.y);c.globalCompositeOperation=RIM&&RIM.light?'source-over':'lighter';
  for(let i=0;i<CURTAINS.length;i++){
   const [x,width,height,,phase]=CURTAINS[i];c.fillStyle=ink[i];c.globalAlpha=Math.min(1,strength*(.65+.2*Math.sin(t*1.3+phase)));
   c.beginPath();const n=12;

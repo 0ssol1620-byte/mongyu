@@ -10,7 +10,7 @@ html[data-polish-edition] .r104-modes-row #dreamEndlessOpen::after{display:none}
 
 /* 꿈의 길 campaign screen: five courses climbing a stone road, bottom (1) to top (5). */
 html[data-polish-edition] .r105-road{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;color:#fbf4ff;
- background:radial-gradient(120% 50% at 50% 0,rgba(255,176,150,.2),rgba(255,176,150,0) 70%),linear-gradient(180deg,#34234f 0%,#21163f 38%,#120c2a 100%);
+ background:radial-gradient(120% 50% at 50% 0,rgba(180,107,255,.22),rgba(180,107,255,0) 70%),linear-gradient(180deg,#1b0f3e 0%,#10082a 40%,#07031a 100%);
  font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;animation:r105RoadIn .28s ease both}
 html[data-polish-edition] .r105-road[hidden]{display:none}
 html[data-polish-edition] .r105-road[style*="--r105-road-bg"]{background:linear-gradient(180deg,rgba(24,14,44,.7) 0%,rgba(18,10,36,.82) 45%,rgba(10,6,24,.94) 100%),var(--r105-road-bg) center top/cover no-repeat,#120c2a}
@@ -32,19 +32,19 @@ html[data-polish-edition] .r105-road-node{position:relative;display:grid;grid-te
 html[data-polish-edition] .r105-road-node .rd-stone{position:relative;display:grid;place-items:center;width:42px;height:42px;margin:0 1px;border-radius:14px;transform:rotate(45deg) scale(.82);
  background:linear-gradient(145deg,#5a4880,#2b2050);border:1.5px solid rgba(255,236,255,.3);box-shadow:0 4px 14px rgba(8,4,20,.5)}
 html[data-polish-edition] .r105-road-node .rd-stone i{font-style:normal;transform:rotate(-45deg);font-size:15px;font-weight:800;color:#f1e3f7}
-html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone{background:linear-gradient(145deg,#ffe9b0,#ffc27e);border-color:#fff2cc;box-shadow:0 0 0 4px rgba(255,217,138,.18),0 6px 20px rgba(255,190,110,.35)}
-html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone i{color:#3a2410}
-html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone{background:linear-gradient(145deg,#a8f0e0,#6fc6b8);border-color:#e6fff8;box-shadow:0 0 0 3px rgba(127,243,225,.16),0 4px 14px rgba(8,4,20,.5)}
-html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone i{color:#0f3a35}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone{background:linear-gradient(145deg,#ff5fb8,#7b3cff);border-color:#ffd6f0;box-shadow:0 0 0 4px rgba(255,46,154,.22),0 6px 22px rgba(180,107,255,.5)}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone i{color:#fff}
+html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone{background:linear-gradient(145deg,#4d2ca8,#2a1566);border-color:#b46bff;box-shadow:0 0 0 3px rgba(180,107,255,.22),0 4px 14px rgba(8,4,20,.5)}
+html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone i{color:#f3eaff}
 html[data-polish-edition] .r105-road-node[data-state=locked] .rd-stone{background:#241a3d;border-color:rgba(255,236,255,.14);box-shadow:none}
 html[data-polish-edition] .r105-road-node[data-state=locked] .rd-stone::after{content:'';width:9px;height:9px;border-radius:2px;background:rgba(255,236,255,.28);transform:rotate(-45deg)}
 html[data-polish-edition] .r105-road-node .rd-card{position:relative;display:grid;grid-template-columns:76px minmax(0,1fr);align-items:stretch;gap:12px;width:100%;min-height:92px;margin:0;padding:8px 12px 8px 8px;text-align:left;cursor:pointer;overflow:hidden;
  border-radius:20px;border:1.5px solid transparent;color:#fbf4ff;font:inherit;clip-path:none;box-shadow:0 8px 22px rgba(8,4,20,.4);
- background:linear-gradient(135deg,rgba(40,28,70,.92),rgba(24,16,48,.92)) padding-box,linear-gradient(120deg,rgba(255,158,216,.55),rgba(255,217,138,.5) 35%,rgba(127,243,225,.5) 65%,rgba(183,140,255,.6)) border-box;
+ background:linear-gradient(135deg,rgba(40,28,70,.92),rgba(24,16,48,.92)) padding-box,linear-gradient(120deg,rgba(255,46,154,.5),rgba(180,107,255,.55) 50%,rgba(123,60,255,.6)) border-box;
  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 html[data-polish-edition] .r105-road-node .rd-card:active{transform:scale(.985)}
-html[data-polish-edition] .r105-road-node[data-state=open] .rd-card{background:linear-gradient(135deg,rgba(66,44,98,.94),rgba(34,24,66,.94)) padding-box,linear-gradient(120deg,#ff9ed8,#ffd98a 33%,#7ff3e1 66%,#b78cff) border-box;box-shadow:0 0 0 1px rgba(255,217,138,.18),0 10px 28px rgba(255,150,200,.22)}
-html[data-polish-edition] .r105-road-node[data-state=done] .rd-card{background:linear-gradient(135deg,rgba(40,60,78,.92),rgba(24,30,56,.92)) padding-box,linear-gradient(120deg,#7ff3e1,#b78cff 50%,#ff9ed8) border-box}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-card{background:linear-gradient(135deg,rgba(66,44,98,.94),rgba(34,24,66,.94)) padding-box,linear-gradient(120deg,#ff2e9a,#b46bff 50%,#7b3cff) border-box;box-shadow:0 0 0 1px rgba(180,107,255,.3),0 10px 28px rgba(123,60,255,.32)}
+html[data-polish-edition] .r105-road-node[data-state=done] .rd-card{background:linear-gradient(135deg,rgba(40,60,78,.92),rgba(24,30,56,.92)) padding-box,linear-gradient(120deg,#7b3cff,#b46bff 50%,#ff2e9a) border-box}
 html[data-polish-edition] .r105-road-node[data-state=locked] .rd-card{cursor:default;box-shadow:none;background:linear-gradient(135deg,rgba(30,22,52,.9),rgba(20,14,40,.9)) padding-box,linear-gradient(120deg,rgba(255,236,255,.2),rgba(255,236,255,.1)) border-box}
 html[data-polish-edition] .r105-road-node .rd-thumb{position:relative;display:block;width:76px;min-height:76px;align-self:stretch;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#5b3a86,#2a1e52);box-shadow:inset 0 0 0 1px rgba(255,236,255,.22)}
 html[data-polish-edition] .r105-road-node .rd-thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block;pointer-events:none}
@@ -86,7 +86,7 @@ html[data-polish-edition] .r105-road-result .road-portrait-img[hidden]{display:n
 @keyframes r105Portrait{from{transform:translateY(14px) scale(.92);opacity:0}to{transform:none;opacity:1}}
 html[data-polish-edition] .r105-road-result .box{grid-row:2;width:100%;max-width:none;margin:0;padding:14px 16px max(16px,calc(env(safe-area-inset-bottom) + 10px));gap:8px;
  border-radius:26px 26px 0 0;border:1.5px solid transparent;border-bottom:0;
- background:linear-gradient(180deg,rgba(34,22,62,.95),rgba(18,12,38,.97)) padding-box,linear-gradient(100deg,#ff9ed8,#ffd98a 30%,#7ff3e1 62%,#b78cff) border-box;box-shadow:0 -10px 34px rgba(8,4,20,.5)}
+ background:linear-gradient(180deg,rgba(34,22,62,.95),rgba(18,12,38,.97)) padding-box,linear-gradient(100deg,#ff2e9a,#b46bff 50%,#7b3cff) border-box;box-shadow:0 -10px 34px rgba(8,4,20,.5)}
 html[data-polish-edition] .r105-road-result .dream-identity{gap:4px;align-items:stretch;text-align:left}
 html[data-polish-edition] .r105-road-result .dream-kicker{font-size:12px;letter-spacing:.14em;text-align:left}
 html[data-polish-edition] .r105-road-result .road-headline{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
