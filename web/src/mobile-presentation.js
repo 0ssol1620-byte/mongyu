@@ -288,7 +288,7 @@ function camera(viewport,geo,opt={},run){
  return {width,height,scale,baseScale,zoom,offsetX,offsetY,left:-offsetX/scale,right:(width-offsetX)/scale,top:-offsetY/scale,bottom:(height-offsetY)/scale,follow:true,framing:'viewport-cover',target:{x:targetX,y:targetY}};
 }
 
-function title(c,opt={}){if(dreamEdition&&root.MongyuOpening)return root.MongyuOpening.drawLobby(c,opt);const w=opt.viewport.width,h=opt.viewport.height,wide=w>h*1.15,t=opt.reduced?0:opt.time||0;
+function title(c,opt={}){if(root.MONGYU_UI_EDITION===true&&root.MongyuLobbyScene?.enabled)return root.MongyuLobbyScene.draw(c,opt);if(dreamEdition&&root.MongyuOpening)return root.MongyuOpening.drawLobby(c,opt);const w=opt.viewport.width,h=opt.viewport.height,wide=w>h*1.15,t=opt.reduced?0:opt.time||0;
  c.save();atmosphere(c,0,0,w,h,t,0,opt.reduced?0:1);c.save();c.globalAlpha=.16;fieldDraw(c,0,0,w,h,{stage:2,poseTime:t,gain:opt.reduced?0:.5});c.restore();const x=wide?w*.65:w*.5,y=wide?h*.45:h*.47,r=Math.min(w*(wide?.21:.38),h*.245);
  // Four suspended corners, an eclipse, and a looping traveller: the game's motif.
  c.translate(x,y);const halo=c.createRadialGradient(0,0,r*.15,0,0,r*1.7);halo.addColorStop(0,'#d4b18d24');halo.addColorStop(1,'#d4b18d00');c.fillStyle=halo;c.fillRect(-r*1.7,-r*1.7,r*3.4,r*3.4);
