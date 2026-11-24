@@ -33,6 +33,12 @@ music={t['id']:{**t,'src':asset(p/'assets/music',t)} for t in tracks.values()}
 files=json.loads((p/'sources.json').read_text(encoding='utf-8'))
 assert files[-1]=='app.js' and len(files)==len(set(files))
 sources=[f'globalThis.MONGYU_PLAYABLE_RELEASE={json.dumps(release)};globalThis.MONGYU_DREAM_EDITION={json.dumps(dream_edition)};globalThis.MONGYU_SPECTRAL_EDITION={json.dumps(spectral_edition)};globalThis.MONGYU_ROUTE_EDITION={json.dumps(route_edition)};globalThis.MONGYU_STAGE_EDITION={json.dumps(stage_edition)};globalThis.MONGYU_STAGE_HUD={json.dumps(stage_hud)};globalThis.MONGYU_POLISH_EDITION={json.dumps(polish_edition)};globalThis.MONGYU_UI_EDITION={json.dumps(ui_edition)};', 'globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
+art={}
+if ui_edition and (p/'assets/art/manifest.json').is_file():
+    art_dir=p/'assets/art'
+    for name,item in json.loads((art_dir/'manifest.json').read_text(encoding='utf-8'))['images'].items():
+        art[name]={'src':asset(art_dir,item),'w':item['w'],'h':item['h'],'kind':item.get('kind','sprite')}
+sources.append('globalThis.MONGYU_EMBEDDED_ART='+json.dumps(art,separators=(',',':'))+';')
 if effects:sources.append('globalThis.MONGYU_EMBEDDED_EFFECTS='+json.dumps(effects,separators=(',',':'))+';')
 source_hashes={}
 for f in files:

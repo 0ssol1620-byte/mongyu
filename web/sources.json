@@ -69,6 +69,7 @@
   "course-run.js",
   "road-mode.js",
   "play-modes.js",
+  "art-assets.js",
   "ui-icons.js",
   "ui-kit.js",
   "lobby-scene.js",

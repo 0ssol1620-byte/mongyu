@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "images": {
+    "item-bubble": {
+      "file": "item-bubble.webp",
+      "mime": "image/webp",
+      "sha256": "fe57e86f8610e77aa90dbd90ba1693dff3b340c3eacf647be68c126b39df3570",
+      "bytes": 35668,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-crystal": {
+      "file": "item-crystal.webp",
+      "mime": "image/webp",
+      "sha256": "4945b7978a8132b3c2b10ca8b566e4380979c9a250f58aadadab258f15faf6dd",
+      "bytes": 24670,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-feather": {
+      "file": "item-feather.webp",
+      "mime": "image/webp",
+      "sha256": "d08bb09e7f364d9442c68cdedcebce70979be73761e933c569d8d45177e6c230",
+      "bytes": 22068,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-gate": {
+      "file": "item-gate.webp",
+      "mime": "image/webp",
+      "sha256": "333ad83933dae82a5b24c308cfe9d2079889354c145b952610e20d23c3b6093e",
+      "bytes": 37538,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-hourglass": {
+      "file": "item-hourglass.webp",
+      "mime": "image/webp",
+      "sha256": "aeda7f5ffd908c539264b199249d9078df803de81bf030c548c61df9b00af2d0",
+      "bytes": 45506,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-light": {
+      "file": "item-light.webp",
+      "mime": "image/webp",
+      "sha256": "9008503723d947a4e292b78b90018eaf647b3c89a611db32485ebba2ef3af2f8",
+      "bytes": 12864,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-lotus-pad": {
+      "file": "item-lotus-pad.webp",
+      "mime": "image/webp",
+      "sha256": "69293da9d3edd44c8a332cd85c815a1279d68943c7cb7a34dbca4fe71822cdd0",
+      "bytes": 32164,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-plate": {
+      "file": "item-plate.webp",
+      "mime": "image/webp",
+      "sha256": "50f587d25e05de853fe090339cc50479ee6fdc9e1a4d62ecbaf665d263c45308",
+      "bytes": 36658,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-portal": {
+      "file": "item-portal.webp",
+      "mime": "image/webp",
+      "sha256": "15d92cecfec9aab9b4bdedc88ec6fe98473ac6a99eb29a53fd85f043fa3b2bcf",
+      "bytes": 44848,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-ring": {
+      "file": "item-ring.webp",
+      "mime": "image/webp",
+      "sha256": "bbf69f6c4e8295f9512c099cd54889666e56661b948cc7256bc03e2efb226406",
+      "bytes": 22164,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-shard-broken": {
+      "file": "item-shard-broken.webp",
+      "mime": "image/webp",
+      "sha256": "d2595908be9f30066cff8544e29860f4639f4903382d7ad9fa3dc9dee3207cec",
+      "bytes": 33542,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "item-star": {
+      "file": "item-star.webp",
+      "mime": "image/webp",
+      "sha256": "7333edcd0fe13b1ef3f2743b25093818a9c0c068a0648e981c50acb177eead6b",
+      "bytes": 26398,
+      "w": 256,
+      "h": 256,
+      "kind": "sprite"
+    },
+    "lobby-psy": {
+      "file": "lobby-psy.webp",
+      "mime": "image/webp",
+      "sha256": "fb51cca429f92b67d8659bcc83739e27c9ade79ea18570f40dacb09ea181b5cb",
+      "bytes": 142182,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "pose-hurt": {
+      "file": "pose-hurt.webp",
+      "mime": "image/webp",
+      "sha256": "06f22ee8e38c277b7d2f8e46272714c2bc607a17aa7493e96230ffbee5af662d",
+      "bytes": 34250,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-joy": {
+      "file": "pose-joy.webp",
+      "mime": "image/webp",
+      "sha256": "09381f57a2fe36174bd4dd42efd894a459e572c53453011e731aebc945306f40",
+      "bytes": 31440,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-jump": {
+      "file": "pose-jump.webp",
+      "mime": "image/webp",
+      "sha256": "041f431f1c63afa576f17c5c7d04c2a7b613fdcf0aa0e8f38018786641555040",
+      "bytes": 31912,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-land": {
+      "file": "pose-land.webp",
+      "mime": "image/webp",
+      "sha256": "c735ee8eab1fe263f10cd261334df4cb496d3434c7404e801eb55facda306170",
+      "bytes": 32200,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-run-a": {
+      "file": "pose-run-a.webp",
+      "mime": "image/webp",
+      "sha256": "1b4ca75197982c68545ded0d953656aed41949b8fc4518f6a4c2e2af1a477a75",
+      "bytes": 32276,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-run-b": {
+      "file": "pose-run-b.webp",
+      "mime": "image/webp",
+      "sha256": "75cae2deb2c0410a7509450e79457a097e7521579b2e23ba7f31798f7f20016a",
+      "bytes": 29340,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-sleep": {
+      "file": "pose-sleep.webp",
+      "mime": "image/webp",
+      "sha256": "3f5cce6d2d9b5d85bde7e8f6f61e4dad5ff5e422b4261a7dcb9a6c45537ab5c0",
+      "bytes": 21688,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "pose-stand": {
+      "file": "pose-stand.webp",
+      "mime": "image/webp",
+      "sha256": "0bafd179233acd19f3cf260e3ca153a19165aee18125a5ae235eda93c5e35ae3",
+      "bytes": 27060,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    }
+  }
+}
