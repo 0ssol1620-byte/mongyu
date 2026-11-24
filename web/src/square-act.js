@@ -711,6 +711,9 @@ function drawWait(c,run,opts){
  c.save();
  // wall, ceiling band with lamps, carpet band
  const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,P.sky[0]);g.addColorStop(.5,P.sky[1]);g.addColorStop(1,P.sky[2]);c.fillStyle=g;c.fillRect(0,0,w,h);
+ const bare=run.options.bare===true;   // R105 chapter 9: no hotel, only a void, a few stars and one line to follow
+ if(bare){c.fillStyle=P.glow;for(let i=0;i<34;i++){const sx=(((i*97+13)%100)/100*w*1.4-run.x*.03*sc%(w*1.4)+w*1.4)%(w*1.4)-w*.2,sy=((i*53+7)%100)/100*yC*1.1;c.globalAlpha=.12+.22*((i*31)%7)/7;c.fillRect(sx,sy,i%5===0?2.4:1.4,i%5===0?2.4:1.4)}c.globalAlpha=1}
+ if(!bare){
  c.fillStyle=P.block[1];c.globalAlpha=.55;c.fillRect(0,yC,w,yF-yC);c.globalAlpha=1;
  // repeating door frames receding (same door, again and again): parallax 0.5, every 150 units
  const par=.5,period=150*sc;let off=((run.x*par*sc)%period+period)%period;
@@ -722,10 +725,13 @@ function drawWait(c,run,opts){
  // ceiling lamps
  c.save();c.globalCompositeOperation=MODE;for(let x=-((run.x*.9*sc)%(110*sc));x<w+110*sc;x+=110*sc){c.globalAlpha=.55;c.fillStyle=P.gold;c.fillRect(x,yC-3*sc,34*sc,4*sc);c.globalAlpha=.12;c.fillRect(x-6*sc,yC-3*sc,46*sc,40*sc)}c.restore();
  c.fillStyle=P.block[2];c.fillRect(0,yC-12*sc,w,10*sc);
+ }
  // carpet with a pattern that repeats exactly (the hotel never ends)
+ if(!bare){
  c.fillStyle=P.block[2];c.fillRect(0,yF,w,h-yF);c.fillStyle=P.block[0];c.globalAlpha=.7;c.fillRect(0,yF,w,10*sc);c.globalAlpha=1;
  c.fillStyle=P.rim2;c.globalAlpha=.35;{const per=40*sc,o2=((run.x*sc)%per+per)%per;for(let x=-o2;x<w+per;x+=per){c.fillRect(x,yF+22*sc,18*sc,4*sc);c.fillRect(x+20*sc,yF+40*sc,18*sc,4*sc)}}c.globalAlpha=1;
- c.save();c.globalCompositeOperation=MODE;c.strokeStyle=P.rim;c.globalAlpha=.9;c.lineWidth=1.8;c.beginPath();c.moveTo(0,yF);c.lineTo(w,yF);c.stroke();c.globalAlpha=.15+.06*beatP;c.lineWidth=7;c.stroke();c.restore();
+ }
+ c.save();c.globalCompositeOperation=MODE;c.strokeStyle=bare?P.glow:P.rim;c.globalAlpha=bare?1:.9;c.lineWidth=bare?2.6:1.8;c.beginPath();c.moveTo(0,yF);c.lineTo(w,yF);c.stroke();c.globalAlpha=.15+.06*beatP;c.lineWidth=bare?11:7;c.stroke();c.restore();
  // elevator doors: two sliding panels, a lamp that counts down the beats
  for(const d of C.doors){
   const sx=X(d.at);if(sx<-90||sx>w+90)continue;
@@ -771,7 +777,9 @@ const ACTS=Object.freeze({
  wait:o=>{const K=getWait();return new K(o)}
 });
 function register(Course){const C=Course||root.MongyuCourse;if(!enabled||!C?.registerAct)return false;for(const [type,f] of Object.entries(ACTS))C.registerAct(type,f);return true}
-const api=Object.freeze({enabled,ACTS,register,buildFlip,buildMirror,buildWait,FLIP,LEVELS,MIRROR,WAIT,get SquareRun(){return getSquare()},get FlipRun(){return getFlip()},get MirrorRun(){return getMirror()},get WaitRun(){return getWait()}});
+/* shared pieces for later act files (eye-act.js, liquid-act.js, rhythm-act.js) */
+const kit=Object.freeze({sideBase,hazardBlock,corridorGate,sideHud,palOf,dangerInk,skylineTile,lum,mixc,items,cvdOn,reducedMotion,clamp,num,SIDE:Object.freeze({PEAK:SIDE_PEAK,FL:SIDE_FL,W:SIDE_W})});
+const api=Object.freeze({enabled,ACTS,register,kit,buildFlip,buildMirror,buildWait,FLIP,LEVELS,MIRROR,WAIT,get SquareRun(){return getSquare()},get FlipRun(){return getFlip()},get MirrorRun(){return getMirror()},get WaitRun(){return getWait()}});
 root.MongyuSquareAct=api;if(typeof module!=='undefined')module.exports=api;
 if(enabled&&root.MongyuCourse?.registerAct)register(root.MongyuCourse);
 })(globalThis);

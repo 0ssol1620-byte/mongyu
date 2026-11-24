@@ -12,7 +12,8 @@ const SLOT=Object.freeze({id:'road',ruleId:'road',number:2,title:'꿈의 길'});
 
 /* ---------- act registry ---------- */
 const ACTS=new Map();
-function registerAct(type,factory){if(typeof type!=='string'||typeof factory!=='function')return false;ACTS.set(type,factory);return true}
+const LABELS=new Map();   // act type -> name shown in the HUD and the fail line (acts of later files give theirs to registerAct)
+function registerAct(type,factory,label){if(typeof type!=='string'||typeof factory!=='function')return false;ACTS.set(type,factory);if(typeof label==='string'&&label)LABELS.set(type,label);return true}
 function unregisterAct(type){return ACTS.delete(type)}
 /* Built-in acts are resolved lazily so modules that load later (or not at all) just make their acts unavailable. */
 const BUILTIN={
@@ -129,7 +130,7 @@ class CourseRun{
  get distance(){return this.child?.distance||0}
  get perfectStreak(){return this.child?.perfectStreak||0}
  get actName(){return this.actLabel(this.actIndex)}
- actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬',square:'사각 방',flip:'중력 뒤집기',mirror:'거울',wait:'엘리베이터'})[this.acts[i]?.type]||'구간'}
+ actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬',square:'사각 방',flip:'중력 뒤집기',mirror:'거울',wait:'엘리베이터'})[this.acts[i]?.type]||LABELS.get(this.acts[i]?.type)||'구간'}
  setViewport(width=390,height=844){this.viewport={width,height};this.child?.setViewport?.(width,height)}
  makeChild(i,carry){
   const a=this.acts[i];if(!a)return null;
@@ -322,4 +323,5 @@ const api=Object.freeze({enabled,CourseRun,registerAct,unregisterAct,hasAct,reso
 root.MongyuCourse=api;if(typeof module!=='undefined')module.exports=api;
 /* R105 chapter acts (square-act.js is loaded before this file, so the engine registers them here; square-act.js registers itself when loaded later). */
 try{root.MongyuSquareAct?.register?.(api)}catch(_){}
+for(const k of ['MongyuEyeAct','MongyuLiquidAct','MongyuRhythmAct']){try{root[k]?.register?.(api)}catch(_){}}   // R105 chapters 6-10 acts (loaded before this file)
 })(globalThis);
