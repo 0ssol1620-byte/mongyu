@@ -8,6 +8,7 @@
   "i18n-en-items.js",
   "i18n-en-psy.js",
   "i18n-en-screens.js",
+  "i18n-en-isle.js",
   "i18n-en-chapters.js",
   "i18n-en-boss.js",
   "content.js",
@@ -76,6 +77,7 @@
   "chapters.js",
   "square-act.js",
   "boss-act.js",
+  "ghost-run.js",
   "course-run.js",
   "psy-layer.js",
   "road-mode.js",
@@ -84,6 +86,7 @@
   "trip-palettes.js",
   "ui-icons.js",
   "ui-kit.js",
+  "dream-isle.js",
   "lobby-scene.js",
   "lobby-ui.js",
   "app.js"
