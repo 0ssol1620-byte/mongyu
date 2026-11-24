@@ -41,5 +41,5 @@ test('result sheets reset the HUD layout (static position, bottom sheet, landsca
  assert.match(text,/#squareResult \.result-actions\{\s*position:static;display:flex!important/);
  assert.match(text,/#squareResult \.box\{\s*position:relative;inset:auto;/);
  assert.match(text,/@media \(max-height:480px\)\{\s*html\[data-polish-edition\]\[data-ui-edition\]:root body\[data-restoration=true\] #squareResult\{flex-direction:row/);
- assert.match(text,/\.r104-dream-result \.box\{[^}]*border-radius:28px 28px 0 0/);
+ assert.match(text,/\.r104-dream-result(?::not\(\.r105-road-result\))? \.box\{[^}]*border-radius:28px 28px 0 0/);
 });
