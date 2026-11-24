@@ -143,11 +143,11 @@ test('lobby ui: road entry is feature-detected; modes go through MongyuModes.sta
  let c=load(['lobby-ui.js'],{MONGYU_UI_EDITION:true});
  assert.equal(c.MongyuLobbyUi.roadEntry(),'continue','no road module: falls back to the old 꿈속으로');
  const calls=[];
- c=load(['lobby-ui.js'],{MONGYU_UI_EDITION:true,MongyuRoad:{start:e=>{calls.push(['road',e]);return true}},MongyuModes:{startMode:(k,e)=>{calls.push([k,e]);return true}}});
+ c=load(['lobby-ui.js'],{MONGYU_UI_EDITION:true,MongyuRoad:{start:(id,e)=>{calls.push(['road',e,id]);return true}},MongyuModes:{startMode:(k,e)=>{calls.push([k,e]);return true}}});
  assert.equal(c.MongyuLobbyUi.roadEntry(),'api');
  const ev={isTrusted:true};
  c.MongyuLobbyUi.startRoad(ev);c.MongyuLobbyUi.startMode('daily',ev);
- assert.deepEqual(calls.map(x=>x[0]),['road','daily']);assert.ok(calls.every(x=>x[1]===ev),'the trusted event reaches the handlers (audio unlock)');
+ assert.deepEqual(calls.map(x=>x[0]),['road','daily']);assert.equal(calls[0][2],'c1','the CTA passes a course id (first run: course 1)');assert.ok(calls.every(x=>x[1]===ev),'the trusted event reaches the handlers (audio unlock)');
  c=load(['lobby-ui.js'],{MONGYU_UI_EDITION:true,MongyuRoad:{}});assert.equal(c.MongyuLobbyUi.roadEntry(),'continue');
 });
 
