@@ -45,7 +45,7 @@ class OpeningRun{
  constructor(options){
   this.options=options;this.openingCourse=true;this.mode='restoration';this.slot=options.slot;
   this.trip=root.MONGYU_UI_EDITION===true&&root.MongyuTrip&&root.MongyuTrip.face?(options.trip||'violet'):null;   // R105 TR: dark psychedelic look
-  this.settings={...options.settings};this.attempt=options.attempt;this.practice=options.practice===true;
+  this.settings={...options.settings};this.attempt=options.attempt;this.practice=options.practice===true;this.rubber=options.rubber===true;   // R105 POL: chapter 2 rubber floor (visual squash, see rubberSquash)
   /* R105 chain: this run is one act of a CourseRun. options.span=[a,b] runs sections a..b (floor=0, wall=1, ceiling=2); obstacles snap to the chain.bpm beat grid. */
   const chain=options.chain||null,span=chain?[clamp(Math.trunc(options.span?.[0]??0),0,2),clamp(Math.trunc(options.span?.[1]??2),0,2)]:null;
   if(span&&span[1]<span[0])span[1]=span[0];
@@ -682,13 +682,14 @@ function crystals(c,o,t,hot){
   const tip=[x+lean*hh,-hh],sl=[x-hw*.95,-hh*.5],sr=[x+hw*.95,-hh*.56],bl=[x-hw*.7,0],br=[x+hw*.7,0],mid=[x+lean*hh*.4,-hh*.35];
   facet(c,[bl,sl,tip,mid],hot?OB.crH[0]:OB.cr[0]);facet(c,[mid,tip,sr,br],hot?OB.crH[1]:OB.cr[1]);facet(c,[bl,mid,br],hot?OB.crH[2]:OB.cr[2]);
   c.beginPath();c.moveTo(mid[0],mid[1]);c.lineTo(tip[0],tip[1]);c.lineWidth=.7;c.strokeStyle=OB.line;c.stroke();
+  if(TI&&TI.light){c.save();c.lineJoin='round';c.lineWidth=1.6;c.strokeStyle=OB.line;c.beginPath();c.moveTo(bl[0],bl[1]);c.lineTo(sl[0],sl[1]);c.lineTo(tip[0],tip[1]);c.lineTo(sr[0],sr[1]);c.lineTo(br[0],br[1]);c.closePath();c.stroke();c.restore()}   // R105 POL: bold dark outline on light palettes
  }
 }
 function ornament(c,o,t,hot,i){
  const h=o.height,r=Math.min(o.width*.82,h*.42),cy=-h+r;
  c.fillStyle=hot?OB.stemH:OB.stem;c.fillRect(-1.2,cy,2.4,-cy);
  c.save();c.translate(0,cy);c.scale(.8+.2*Math.cos(t*1.7+i),1);c.rotate(t*1.15+i);
- for(let k=0;k<2;k++){c.save();c.rotate(k*Math.PI/4);c.fillStyle=hot?OB.plateH:OB.plate[k];c.fillRect(-r*.74,-r*.74,r*1.48,r*1.48);if(OB.edge){c.lineWidth=.6;c.strokeStyle=OB.edge;c.strokeRect(-r*.74,-r*.74,r*1.48,r*1.48)}c.restore()}
+ for(let k=0;k<2;k++){c.save();c.rotate(k*Math.PI/4);c.fillStyle=hot?OB.plateH:OB.plate[k];c.fillRect(-r*.74,-r*.74,r*1.48,r*1.48);if(OB.edge){c.lineWidth=TI&&TI.light?1.5:.6;c.strokeStyle=OB.edge;c.strokeRect(-r*.74,-r*.74,r*1.48,r*1.48)}c.restore()}
  c.beginPath();c.arc(0,0,r*.62,0,TAU);c.fillStyle=hot?OB.discH:OB.disc;c.fill();
  c.fillStyle=hot?OB.petalH:OB.petal;for(let k=0;k<4;k++){c.save();c.rotate(k*QUARTER);c.beginPath();c.ellipse(0,-r*.3,r*.13,r*.28,0,0,TAU);c.fill();c.restore()}
  c.beginPath();c.arc(0,0,r*.14,0,TAU);c.fillStyle=OB.hub;c.fill();
@@ -699,7 +700,7 @@ function shards(c,o,t,hot,i){
  const pieces=[[[-w*.42,0],[-w*.34,-h*.62],[-w*.02,-h],[w*.32,-h*.58],[w*.3,0]],[[-w*.95,-h*.18],[-w*.58,-h*.5],[-w*.52,-h*.12]],[[w*.5,-h*.3],[w*.78,-h*.62],[w*.98,-h*.22]]];
  pieces.forEach((pts,k)=>{const dx=k===1?-gap:k===2?gap:0,dy=k?-gap*.6:0;
   facet(c,pts.map(([x,y])=>[x+dx,y+dy]),hot?OB.shH:k?OB.sh[1]:OB.sh[0]);
-  c.beginPath();c.moveTo(pts[0][0]+dx,pts[0][1]+dy);for(const [x,y] of pts)c.lineTo(x+dx,y+dy);c.closePath();c.lineWidth=.7;c.strokeStyle=OB.shLine;c.stroke()});
+  c.beginPath();c.moveTo(pts[0][0]+dx,pts[0][1]+dy);for(const [x,y] of pts)c.lineTo(x+dx,y+dy);c.closePath();c.lineWidth=TI&&TI.light?1.5:.7;c.lineJoin='round';c.strokeStyle=OB.shLine;c.stroke()});
  c.save();c.globalCompositeOperation=LOP;c.beginPath();c.moveTo(-w*.2,-h*.15);c.lineTo(-w*.05,-h*.45);c.lineTo(-w*.16,-h*.62);c.moveTo(-w*.05,-h*.45);c.lineTo(w*.14,-h*.66);
  c.lineWidth=1.1;c.strokeStyle='rgba('+OB.spark+','+(.55+.35*Math.sin(t*2.2+i)).toFixed(3)+')';c.stroke();c.restore();
 }
@@ -709,14 +710,14 @@ function drawObstacles(c,run,reduced){
  for(let i=lo;i<hi;i++){
   const o=list[i],p=surface(o.at),hot=run.crash?.index===i&&(run.clock-run.poseAt)<.32,breath=1+(reduced?0:.035*Math.sin(t*2+i*1.3));
   c.save();c.translate(p.x,p.y);c.rotate(p.a);
-  c.save();c.globalCompositeOperation=LOP;glowAt(c,OB.glow,0,-o.height*.55,o.height*(hot?4.4:2.7)*breath,hot?.95:(TI?.62:.42)+(reduced?0:.12*Math.sin(t*2+i)));c.restore();
+  c.save();c.globalCompositeOperation=LOP;glowAt(c,OB.glow,0,-o.height*.55,o.height*(hot?4.4:2.7)*breath,TI&&TI.light&&!hot?.14:hot?.95:(TI?.62:.42)+(reduced?0:.12*Math.sin(t*2+i)));c.restore();
   c.scale(breath,breath);
   if(o.section===0)crystals(c,o,t,hot);else if(o.section===1)ornament(c,o,t,hot,i);else shards(c,o,t,hot,i);
   c.restore();
   if(i>=run.index){
    const q=offset(p,o.height+26),bob=reduced?0:Math.sin(t*2.4+i)*1.6,b=offset(p,o.height+26+bob);
-   c.save();c.globalCompositeOperation=LOP;glowAt(c,OB.gold,b.x,b.y,26,.8);c.restore();
-   if(!(root.MongyuItems?.drawLight?.(c,b.x,b.y,21,t,i,reduced,-(run.view?.rot||0)))){c.save();c.translate(b.x,b.y);c.rotate(p.a+Math.PI/4+(reduced?0:t*1.2+i));c.fillStyle=OB.goldHex;c.fillRect(-3.4,-3.4,6.8,6.8);c.fillStyle=OB.goldHex2;c.fillRect(-1.3,-1.3,2.6,2.6);c.restore()}
+   c.save();c.globalCompositeOperation=LOP;glowAt(c,OB.gold,b.x,b.y,26,TI&&TI.light?.18:.8);c.restore();
+   if(!(root.MongyuItems?.drawLight?.(c,b.x,b.y,21,t,i,reduced,-(run.view?.rot||0)))){c.save();c.translate(b.x,b.y);c.rotate(p.a+Math.PI/4+(reduced?0:t*1.2+i));c.fillStyle=OB.goldHex;c.fillRect(-3.4,-3.4,6.8,6.8);if(TI&&TI.light){c.lineWidth=1.3;c.strokeStyle=TI.tapLine;c.strokeRect(-3.4,-3.4,6.8,6.8)}c.fillStyle=OB.goldHex2;c.fillRect(-1.3,-1.3,2.6,2.6);c.restore()}
    void q;
   }
  }
@@ -755,6 +756,7 @@ function drawRunner(c,run,L,reduced){
  if(run.mods&&!run.outro){const mid=offset(foot,lift+1.5+L.body*.5);root.MongyuItems.drawAura(c,run,mid.x,mid.y,L.body*.7,run.clock||0,reduced)}
  return actor;
 }
+const rubberSquash=t=>1+.06*Math.sin(Math.PI*2*t/3.2);   // same rhythm as illusion-course RUBBER (period 3.2 s, +-6 %)
 function drawPolish(c,run,opts){
  const {width:w,height:h}=opts.viewport,reduced=!!opts.reduced;
  useTrip(run.trip);
@@ -765,6 +767,7 @@ function drawPolish(c,run,opts){
  drawFog(c,w,h,f,.18,.5,.1);
  drawSkyline(c,w,h,run,cam,f);
  drawFog(c,w,h,f,.42,.86,.16);
+ if(run.rubber&&!reduced){const sq=rubberSquash(run.clock||0);c.translate(0,cam.cy);c.scale(1,sq);c.translate(0,-cam.cy)}   // R105 POL: +-6 % vertical squash in a 3.2 s rhythm about the runner's height on screen
  c.translate(cam.cx,cam.cy);c.rotate(cam.rot);c.scale(cam.scale,cam.scale);c.translate(-cam.tx,-cam.ty);
  drawCourse(c,run,light,reduced,f);
  drawObstacles(c,run,reduced);

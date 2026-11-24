@@ -255,9 +255,11 @@ function drawChild(c,run,opts){
  const child=run.child;if(!child)return;
  const o=childOpts||(childOpts={});Object.assign(o,opts);o.chained=true;o.hud=false;o.time=child.time;
  try{
+  root.MongyuItems?.setLight?.(tripInk(child));   // R105 POL: collectibles are gold with a dark outline on light trips
   if(child.openingCourse)root.MongyuOpening.draw(c,child,o);
   else child.drawSelf(c,o);
  }catch(e){if(!child.__drawWarned){child.__drawWarned=true;try{root.console?.error?.('[MongyuCourse] act draw failed',run.acts[run.actIndex]?.type,e)}catch(_){}}}
+ try{root.MongyuItems?.setLight?.(null)}catch(_){}
 }
 /* Copy what is on the canvas right now (the previous frame: the act that just ended) so the gate can cross-fade from it. */
 function snapshot(c,p){
@@ -277,8 +279,8 @@ function gate(c,p,w,h){
  else if(!p.snap&&fade>0){c.save();c.globalAlpha=fade*.85;c.fillStyle='#1b1230';c.fillRect(0,0,w,h);c.restore()}
  const gk=fxv('gate');if(p.reduced||gk<=0)return;
  const inward=ease(clamp(u/.5,0,1)),outward=clamp((u-.5)/.5,0,1),alpha=1-outward*outward;
- c.save();c.globalCompositeOperation='lighter';
- const ti=tripInk(p),rings=ti?[[ti.rimRgb,0],[ti.rim2Rgb,.1],[ti.glowRgb,.2]]:[['127,243,225',0],['183,140,255',.1],['255,158,216',.2]];   // R105 TR: the trip's own hue family, no rainbow
+ const ti=tripInk(p);c.save();c.globalCompositeOperation=ti&&ti.light?'source-over':'lighter';   // R105 POL: light trips draw the gate rings as ink, additive light would vanish into the pale ground
+ const rings=ti?[[ti.rimRgb,0],[ti.rim2Rgb,.1],[ti.glowRgb,.2]]:[['127,243,225',0],['183,140,255',.1],['255,158,216',.2]];   // R105 TR: the trip's own hue family, no rainbow
  for(let i=0;i<rings.length;i++){
   const [rgb,delay]=rings[i],k=ease(clamp((u-delay*.6)/.5,0,1)),r=maxR+(min*.1-maxR)*k+outward*min*(.5+delay*2);
   c.globalAlpha=alpha*.85*gk;c.lineWidth=3+7*(1-inward)+outward*4;c.strokeStyle='rgba('+rgb+',.9)';
@@ -290,26 +292,30 @@ function gate(c,p,w,h){
  c.globalAlpha=1;c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();
 }
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
-function gaugeInk(run){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.ink?T.mix(T.ink(run.child?.trip||run.options?.trip||'violet').rim,'#ffffff',.45):'#bfe9ff'}
+/* R105 POL: canvas HUD text goes through the en phrase table too (the DOM translator cannot see canvas text). */
+const tr=s=>{try{const f=root.MongyuI18n?.tr;return typeof f==='function'?f(s):s}catch(_){return s}};
+/* R105 POL: HUD ink derived from the trip palette (dark ink on light trips). */
+function hudInk(run){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.hud?T.hud(run.child?.trip||run.options?.trip||'violet'):null}
+function gaugeInk(run){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.ink?(T.ink(run.child?.trip||run.options?.trip||'violet').light?T.hud(run.child?.trip||run.options?.trip).bar:T.mix(T.ink(run.child?.trip||run.options?.trip||'violet').rim,'#ffffff',.45)):'#bfe9ff'}
 function hud(c,run,w,h,show=1){
  if(run.state==='fail'||run.state==='clear'||show<=0)return;
  const tk=textK(),child=run.child,out=show*(run.outro?.kind==='fail'||run.crash?clamp(1-num(run.outro?.age)/FAIL_HUD,0,1):1);if(out<=0)return;
- c.save();c.globalAlpha=out;c.textAlign='center';const top=Math.max(14,h*.035),score=String(Math.floor(run.score));
- const label=run.name+' · '+(run.actIndex+1)+'/'+run.acts.length+' '+run.actName;
- c.font='600 '+Math.round(11*tk)+'px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.6)';c.strokeText(label,w/2,top+10);c.fillStyle='rgba(255,243,226,.88)';c.fillText(label,w/2,top+10);
- c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle='rgba(20,12,36,.55)';c.strokeText(score,w/2,top+52);c.fillStyle='#fff3d6';c.fillText(score,w/2,top+52);
+ c.save();c.globalAlpha=out;c.textAlign='center';const top=Math.max(14,h*.035),score=String(Math.floor(run.score)),H=hudInk(run)||{fill:'#fff3d6',sub:'rgba(255,243,226,.88)',stroke:'rgba(20,12,36,.55)',subStroke:'rgba(20,12,36,.6)',pill:'rgba(26,19,48,.66)',pillText:'#fbf4ff',pillLine:'rgba(255,236,255,.16)',track:'rgba(255,255,255,.14)',mark:'rgba(255,255,255,.45)',lit:'#ffd98a',shard:'rgba(255,236,190,.85)'};
+ const label=tr(run.name)+' · '+(run.actIndex+1)+'/'+run.acts.length+' '+tr(run.actName);
+ c.font='600 '+Math.round(11*tk)+'px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle=H.subStroke;c.strokeText(label,w/2,top+10);c.fillStyle=H.sub;c.fillText(label,w/2,top+10);
+ c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle=H.stroke;c.strokeText(score,w/2,top+52);c.fillStyle=H.fill;c.fillText(score,w/2,top+52);
  const streak=run.perfectStreak;
  if(streak>=2){const t='완벽 ×'+streak;c.font='800 '+Math.round(13*tk)+'px system-ui,sans-serif';const tw=c.measureText(t).width+22;rr(c,w/2-tw/2,top+62,tw,22,11);c.fillStyle='rgba(255,217,138,.9)';c.fill();c.fillStyle='#3a2410';c.fillText(t,w/2,top+77)}
  if(child?.mods)root.MongyuItems.drawChips(c,child,w/2,top+92);
- const coach=child?.coach&&num(child.time)<child.coach.until?child.coach.text:'';
- if(coach&&run.state==='play'&&!run.portal){c.font='700 '+Math.round(16*tk)+'px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
+ const coach=child?.coach&&num(child.time)<child.coach.until?tr(child.coach.text):'';
+ if(coach&&run.state==='play'&&!run.portal){c.font='700 '+Math.round(16*tk)+'px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle=H.pill;c.fill();c.strokeStyle=H.pillLine;c.lineWidth=1;c.stroke();c.fillStyle=H.pillText;c.fillText(coach,w/2,y+6)}
  // Progress gauge with a notch for each act gate (lit once passed).
  const gy=h*.86,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.progress();
- rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=gaugeInk(run);c.fill();
+ rr(c,x0,gy,gw,6,3);c.fillStyle=H.track;c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=gaugeInk(run);c.fill();
  root.MongyuGhost?.drawMarker?.(c,run,x0,gy,gw);   // R105 GAL: ghost dot on the gauge
- for(const b of run.boundaries()){c.save();c.translate(x0+gw*b,gy+3);c.rotate(Math.PI/4);c.fillStyle=frac>=b?'#ffd98a':'rgba(255,255,255,.45)';c.fillRect(-3.4,-3.4,6.8,6.8);c.restore()}
+ for(const b of run.boundaries()){c.save();c.translate(x0+gw*b,gy+3);c.rotate(Math.PI/4);c.fillStyle=frac>=b?H.lit:H.mark;c.fillRect(-3.4,-3.4,6.8,6.8);c.restore()}
  const total=run.carry.shardTotal+num(actShardTotal(child||{},null));
- if(total>0){c.font='700 11px system-ui,sans-serif';c.textAlign='right';c.fillStyle='rgba(255,236,190,.85)';c.fillText('◆ '+run.liveShards(),x0+gw,gy-8)}
+ if(total>0){c.font='700 11px system-ui,sans-serif';c.textAlign='right';c.fillStyle=H.shard;c.fillText('◆ '+run.liveShards(),x0+gw,gy-8)}
  c.restore();
 }
 function draw(c,run,opts){

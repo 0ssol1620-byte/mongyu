@@ -22,7 +22,7 @@ const PARAMS=Object.freeze({
  backdropScreen:.3,backdropLighten:.1,backdropMax:.4,breathPeriod:24,breathDepth:.18, // backdrop: screen alpha, lighten alpha, hard cap, breathing period (s) and depth
  parallaxX:.022,parallaxY:.016,parallaxPeriodX:61,parallaxPeriodY:47,zoom:1.12,       // slow drift as a fraction of the viewport
  huePeriod:48,rotatePeriod:64,moirePeriod:47,                                         // gradient-axis turn, mandala turn (both >= 40 s) and moire drift (>= 20 s)
- washScreen:.24,washBoost:.1,washCombo:.08,washMax:.5,                                 // palette edge wash: base alpha, extra with the combo level / at combo >= 3, cap
+ washScreen:.24,washBoost:.1,washCombo:.08,washMax:.5,washLight:.28,                                 // palette edge wash: base alpha, extra with the combo level / at combo >= 3, cap
  darkEdge:.3,                                                                          // dark vignette alpha at the corners (keeps the lane contrast)
  rippleAlpha:.07,rippleCombo:.08,rippleMax:.15,rippleBeats:6,                         // ripple: base alpha, extra at combo, hard cap, lifetime in beats
  mandalaAlpha:.1,mandalaCombo:.12,rings:4,
@@ -37,12 +37,14 @@ const FALLBACK={rim:'#7b3cff',rim2:'#ff2e9a',glow:'#b46bff',fog:'#5b2bd6',accent
 const hexRGB=h=>{const n=parseInt(h.slice(1),16);return [(n>>16)&255,(n>>8)&255,n&255]};
 const mixHex=(a,b,t)=>{const x=hexRGB(a),y=hexRGB(b);return '#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const rgba=(h,a)=>{const v=hexRGB(h);return 'rgba('+v[0]+','+v[1]+','+v[2]+','+a.toFixed(3)+')'};
+/* R105 POL: bloom family of the light palettes: hues 256 / 294 / 255 degrees (spread < 40), soft on pale ground. */
+const LIGHT_BLOOM=Object.freeze({rim:'#7b4cff',rim2:'#c83cd8',glow:'#a98cff',fog:'#8a6ae0',accent:'#a98cff',sky:['#07031a','#140a33','#2a1259']});
 const palCache=new Map();
 function paletteOf(key){
  key=key||'violet';let p=palCache.get(key);if(p)return p;
  let src=root.MongyuTrip?.get?.(key)||FALLBACK;
  const light=!!src.light;
- if(light)src=root.MongyuTrip.get('violet');   // light calm chapters: the overlay that blooms with the combo is always the violet/magenta family (no rainbow)
+ if(light)src=LIGHT_BLOOM;   // light calm chapters: the overlay that blooms with the combo is always one soft violet -> magenta family, hue spread <= 60 degrees (no rainbow, no pink-lime mix)
  const rc=hexRGB(src.rim),lum=(.2126*rc[0]+.7152*rc[1]+.0722*rc[2])/255;   // bright neons (lime, aqua) get a gentler wash so the scene stays dark
  p={key,light,k:.55+.45*clamp(1.2-lum,.35,1),rim:src.rim,rim2:src.rim2,glow:src.glow,fog:src.fog,accent:src.accent,sky:src.sky,rimL:mixHex(src.rim,'#ffffff',.22),glowL:mixHex(src.glow,'#ffffff',.18),rimD:mixHex(src.rim,'#000000',.3),rim2D:mixHex(src.rim2,'#000000',.34),glowD:mixHex(src.glow,'#000000',.4)};
  palCache.set(key,p);return p;
@@ -285,7 +287,7 @@ function render(ctx,run,opts){
  if(!pal.light){ctx.globalCompositeOperation='source-over';ctx.globalAlpha=PARAMS.darkEdge*master;ctx.fillStyle=darkEdge(ctx,W,H);ctx.fillRect(0,0,W,H)}
  // 1. course backdrop, duotone-tinted: screen + lighten over the dark scene, ornate frame only (the lane is masked)
  const id=pal.light?null:backdropId(run),b=id?bake(id,pal):null;
- const lv=pal.light?.1+.9*smooth(.08,.9,L):1,sc=pal.light?'source-over':'screen',lt=pal.light?'source-over':'lighter';   // light palettes: faint at base, blooming with the combo (fever)
+ const lv=pal.light?.06+.94*smooth(.45,1,L):1,sc=pal.light?'source-over':'screen',lt=pal.light?'source-over':'lighter';   // light palettes: faint at base, blooming with the combo (fever)
  if(b?.canvas){
   const pl=placement(b.iw,b.ih,W,H,t,variant),a=Math.min(PARAMS.backdropMax,(PARAMS.backdropScreen+PARAMS.backdropLighten)*pal.k*breath*(.88+.3*L))*master;
   ctx.globalCompositeOperation='screen';ctx.globalAlpha=a*PARAMS.backdropScreen/(PARAMS.backdropScreen+PARAMS.backdropLighten);
@@ -297,7 +299,7 @@ function render(ctx,run,opts){
  ensureWash(W,H);refreshWash(t,pal,L);
  if(wash){
   const boost=PARAMS.washBoost*L+PARAMS.washCombo*smooth(2.5,3.5,streak);
-  ctx.globalCompositeOperation='screen';ctx.globalCompositeOperation=sc;ctx.globalAlpha=Math.min(PARAMS.washMax,(PARAMS.washScreen+boost)*pal.k*pulse*master*(pal.light?lv*.8:1));ctx.drawImage(wash,0,0,W,H);
+  ctx.globalCompositeOperation='screen';ctx.globalCompositeOperation=sc;ctx.globalAlpha=Math.min(pal.light?PARAMS.washLight:PARAMS.washMax,(PARAMS.washScreen+boost)*pal.k*pulse*master*(pal.light?lv*.8:1));ctx.drawImage(wash,0,0,W,H);
  }
  // 3. NOM3 squares pulsing with the beat, outside the lane
  ctx.globalCompositeOperation=lt;

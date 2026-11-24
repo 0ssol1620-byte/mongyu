@@ -445,6 +445,7 @@ function drawCrystal(c,run,ob,i,pal,cam,t,reduced){
   c.beginPath();c.moveTo(x+lean*hh*.02,0);c.lineTo(tx,-hh);c.lineTo(x+wd*.8+lean*hh*.12,-hh*.7);c.lineTo(x+wd,0);c.closePath();c.fillStyle=rc;c.fill();
   c.beginPath();c.moveTo(tx-wd*.3,-hh*.78);c.lineTo(tx,-hh);c.lineTo(tx+wd*.28,-hh*.76);c.lineTo(tx,-hh*.66);c.closePath();c.fillStyle=tc;c.fill();
   c.lineWidth=TK?.6:.45;c.strokeStyle=TK?TK.dangerLine:'rgba(255,236,224,.55)';c.beginPath();c.moveTo(x-wd,0);c.lineTo(x-wd*.78+lean*hh*.12,-hh*.72);c.lineTo(tx,-hh);c.stroke();
+  if(TK&&TK.light){c.lineJoin='round';c.lineWidth=1.25;c.strokeStyle=TK.dangerLine;c.beginPath();c.moveTo(x-wd,0);c.lineTo(x-wd*.78+lean*hh*.12,-hh*.72);c.lineTo(tx,-hh);c.lineTo(x+wd*.8+lean*hh*.12,-hh*.7);c.lineTo(x+wd,0);c.closePath();c.stroke()}   // R105 POL: bold dark outline on light trips
  };
  if(TK){const d=TK;
   spike(-5.3,9.5,2.5,-.2+ob.lean,d.danger,d.dangerSide,d.dangerLine);spike(5.6,8,2.3,.22+ob.lean*.5,d.danger,d.dangerSide,d.dangerLine);
@@ -457,7 +458,7 @@ function drawCrystal(c,run,ob,i,pal,cam,t,reduced){
  c.restore();
  // additive halo so the crystals read at a glance
  c.save();c.globalCompositeOperation=TK&&TK.light?'source-over':'lighter';const gl=glow(TK?TK.dangerRgb:'255,120,100');
- if(gl){const s=k*ob.size*40;c.globalAlpha=((TK?.62:.4)+.2*pulse)*fade;c.drawImage(gl,bx-s/2,by-s*.62,s,s)}c.restore();
+ if(gl){const s=k*ob.size*40;c.globalAlpha=(TK&&TK.light?.16:(TK?.62:.4)+.2*pulse)*fade;c.drawImage(gl,bx-s/2,by-s*.62,s,s)}c.restore();
 }
 function drawShard(c,run,sh,i,pal,t,reduced){
  const th=thetaAt(sh.at),y=groundY(run.course,sh.at)+sh.h+(reduced?0:Math.sin(t*2.2+i)*1.2),sn=Math.sin(th),cs=Math.cos(th);
@@ -466,6 +467,7 @@ function drawShard(c,run,sh,i,pal,t,reduced){
  if(root.MongyuItems?.drawLight?.(c,PX,PY,k*big*15,t,i,reduced,0))return;
  c.save();c.translate(PX,PY);c.scale(k*big,k*big);const w=Math.max(.35,Math.abs(sp))*3;
  c.beginPath();c.moveTo(0,-4.6);c.lineTo(w,0);c.lineTo(0,4.6);c.lineTo(-w,0);c.closePath();c.fillStyle=TK?TK.tap:'#ffe08a';c.fill();
+ if(TK&&TK.light){c.lineJoin='round';c.lineWidth=1.3;c.strokeStyle=TK.tapLine;c.stroke()}
  c.beginPath();c.moveTo(0,-4.6);c.lineTo(w,0);c.lineTo(0,.6);c.closePath();c.fillStyle='#fff7d0';c.fill();c.restore();
 }
 /* R105 pickup billboard on the ramp (lane lo near the ground, lane hi at the jump apex). */
@@ -556,19 +558,20 @@ function drawSpeedLines(c,w,h,run,cam,t,reduced,cp){
  }
  c.restore();
 }
+const hudInk=run=>root.MongyuTrip?.hud?.(run&&run.trip)||HUD0;const HUD0={fill:'#fff3d6',sub:'rgba(255,243,226,.88)',stroke:'rgba(20,12,36,.55)',subStroke:'rgba(20,12,36,.6)',combo:'#ffe39a',pill:'rgba(26,19,48,.66)',pillText:'#fbf4ff',pillLine:'rgba(255,236,255,.16)',track:'rgba(255,255,255,.13)',bar:'#bfe9ff',mark:'rgba(255,255,255,.42)',lit:'#ffd98a'};   // R105 POL: HUD ink from the trip palette
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function hud(c,run,w,h,reduced){
  if(run.state==='fail'||run.state==='clear')return;
  const fade=run.outro?1-Math.min(1,run.outro.age/.35):1;if(fade<=0)return;
- c.save();c.globalAlpha=fade;c.textAlign='center';const top=Math.max(14,h*.035),C=run.course;
- c.font='600 11px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.6)';c.strokeText(VARIANTS[run.variant].name,w/2,top+10);c.fillStyle='rgba(255,243,226,.85)';c.fillText(VARIANTS[run.variant].name,w/2,top+10);
- c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle='rgba(20,12,36,.55)';c.strokeText(String(run.score),w/2,top+52);c.fillStyle='#fff3d6';c.fillText(String(run.score),w/2,top+52);
- if(run.perfectStreak>=2){c.font='800 14px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.55)';const txt='완벽 ×'+run.perfectStreak;c.strokeText(txt,w/2,top+72);c.fillStyle='#ffe39a';c.fillText(txt,w/2,top+72)}
+ c.save();c.globalAlpha=fade;const H=hudInk(run);c.textAlign='center';const top=Math.max(14,h*.035),C=run.course;
+ c.font='600 11px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle=H.subStroke;c.strokeText(VARIANTS[run.variant].name,w/2,top+10);c.fillStyle=H.sub;c.fillText(VARIANTS[run.variant].name,w/2,top+10);
+ c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle=H.stroke;c.strokeText(String(run.score),w/2,top+52);c.fillStyle=H.fill;c.fillText(String(run.score),w/2,top+52);
+ if(run.perfectStreak>=2){c.font='800 14px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle=H.stroke;const txt='완벽 ×'+run.perfectStreak;c.strokeText(txt,w/2,top+72);c.fillStyle=H.combo;c.fillText(txt,w/2,top+72)}
  const coach=run.coach&&run.time<run.coach.until&&run.intro<=0?run.coach.text:'';
- if(coach&&run.state==='play'){c.font='700 16px system-ui,sans-serif';const mw=c.measureText(coach),tw=Math.min(w-48,((mw&&mw.width)||coach.length*16)+36),y=h*.8;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
+ if(coach&&run.state==='play'){c.font='700 16px system-ui,sans-serif';const mw=c.measureText(coach),tw=Math.min(w-48,((mw&&mw.width)||coach.length*16)+36),y=h*.8;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle=H.pill;c.fill();c.strokeStyle=H.pillLine;c.lineWidth=1;c.stroke();c.fillStyle=H.pillText;c.fillText(coach,w/2,y+6)}
  const gy=h*.9,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.distance/C.L;
- rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle='#bfe9ff';c.fill();
- for(let i=0;i<C.obstacles.length;i++){const x=x0+gw*C.obstacles[i].at/C.L;c.save();c.translate(x,gy+3);c.rotate(Math.PI/4);c.fillStyle=i<run.index?'#ffd98a':'rgba(255,255,255,.4)';c.fillRect(-2.8,-2.8,5.6,5.6);c.restore()}
+ rr(c,x0,gy,gw,6,3);c.fillStyle=H.track;c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=H.bar;c.fill();
+ for(let i=0;i<C.obstacles.length;i++){const x=x0+gw*C.obstacles[i].at/C.L;c.save();c.translate(x,gy+3);c.rotate(Math.PI/4);c.fillStyle=i<run.index?H.lit:H.mark;c.fillRect(-2.8,-2.8,5.6,5.6);c.restore()}
  c.restore();
 }
 function drawPopups(c,run,cam,reduced){

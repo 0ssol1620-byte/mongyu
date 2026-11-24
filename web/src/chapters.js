@@ -41,7 +41,7 @@ const withItems=c=>{
 const freeze=c=>Object.freeze({...c,acts:Object.freeze(c.acts),fallback:c.fallback?Object.freeze(c.fallback):null});
 
 /* ---------- chapter 2: 잊혀진 유년기 (c2, bpm 88) — toys, swings, chalkboards; a slow, rubbery, small-scale feel (palette key c2, light sage) ---------- */
-const a2=mk('c2');
+const a2=(type,opts,weight)=>mk('c2')(type,type==='bridge'||type==='floor-wall'?{rubber:true,...opts}:opts,weight);   // R105 POL: rubber floor / toy-size scale cue in chapter 2 (bridge and floor-wall acts)
 const CH2=[
  {id:'c6',title:'빈 놀이터',subtitle:'그네가 돌아오는 간격',bpm:88,seed:606,glow:['#c6ddb4','#c67746'],
   acts:[a2('bridge',{preset:'intro',tone:0},12),a2('bridge',{preset:'garden',tone:1},25),a2('align',{variant:'dawn'},4),a2('bridge',{preset:'calm',tone:1},13)],fallback:null},

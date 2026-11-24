@@ -44,8 +44,8 @@ function ink(key){
  key=tripKey(key);const cvd=cvdOn(),id=key+(cvd?'|cvd':''),hit=inkCache.get(id);if(hit)return hit;
  const p=P[key],light=!!p.light;let danger=key==='violet'?'#ff5a36':p.danger,gold=p.gold;   // violet: the magenta rim2 sits next to #ff4d5e, so its danger leans orange-red
  if(cvd){const [r,,b]=hex(danger);if(b<=r)danger=light?'#2748b8':'#8fb4ff';gold=light?'#b98a00':'#ffe14d'}
- const v=Object.freeze({danger,dangerTop:mix(danger,'#ffffff',.38),dangerSide:mix(danger,'#000000',.42),dangerLine:light?mix(danger,'#000000',.6):mix(danger,'#ffffff',.82),dangerRgb:rgb(danger),
-  tap:gold,tapDeep:mix(gold,'#ff9a1f',.3),tapRgb:rgb(gold),aurora:p.aurora,auroraRgb:rgb(p.aurora),rim:p.rim,rimRgb:rgb(p.rim),rim2:p.rim2,rim2Rgb:rgb(p.rim2),glow:p.glow,glowRgb:rgb(p.glow),fogRgb:rgb(p.fog),accent:p.accent,accentRgb:rgb(p.accent),cvd,light});
+ const v=Object.freeze({danger,dangerTop:mix(danger,'#ffffff',light?.2:.38),dangerSide:mix(danger,'#000000',light?.5:.42),dangerLine:light?mix(danger,'#000000',.72):mix(danger,'#ffffff',.82),dangerRgb:rgb(danger),
+  tap:gold,tapDeep:mix(gold,'#ff9a1f',.3),tapLine:light?mix(gold,'#000000',.68):mix(gold,'#ffffff',.7),tapRgb:rgb(gold),aurora:p.aurora,auroraRgb:rgb(p.aurora),rim:p.rim,rimRgb:rgb(p.rim),rim2:p.rim2,rim2Rgb:rgb(p.rim2),glow:p.glow,glowRgb:rgb(p.glow),fogRgb:rgb(p.fog),accent:p.accent,accentRgb:rgb(p.accent),cvd,light});
  inkCache.set(id,v);return v;
 }
 function face(key){
@@ -56,7 +56,18 @@ function face(key){
  v=Object.freeze({tint,top:mix(p.block[0],p.rim,.26*tint),front:mix(p.block[1],p.rim,.07*tint),side:p.block[2],deep:mix(p.block[2],'#000000',.35),edge:mix(p.rim,'#ffffff',.28),edge2:mix(p.rim2,'#ffffff',.2),glow:p.glow});
  faceCache.set(key,v);return v;
 }
+/* R105 POL: HUD ink of a trip (score, labels, gauge). Dark trips keep the cream text with a dark outline; light trips use the palette's ink with a pale outline, so the HUD reads on pale ground.
+   hud(key) -> {fill (score), sub (labels), stroke/subStroke (text outline), combo, pill/pillText (coach pill), track/bar/mark/lit (gauge), chip}. */
+const hudCache=new Map();
+function hud(key){
+ key=tripKey(key);let v=hudCache.get(key);if(v)return v;const p=P[key];
+ v=p.light?Object.freeze({light:true,fill:p.ink,sub:'rgba(42,36,52,.82)',stroke:'rgba(255,255,255,.82)',subStroke:'rgba(255,255,255,.75)',combo:'#7a4a00',pill:'rgba(42,36,52,.84)',pillText:'#fbf6ee',pillLine:'rgba(255,255,255,.22)',
+   track:'rgba(42,36,52,.2)',bar:p.rim,mark:'rgba(42,36,52,.42)',lit:mix(p.gold,'#000000',.2),shard:'rgba(42,36,52,.82)'}):
+  Object.freeze({light:false,fill:'#fff3d6',sub:'rgba(255,243,226,.88)',stroke:'rgba(20,12,36,.55)',subStroke:'rgba(20,12,36,.6)',combo:'#ffe39a',pill:'rgba(26,19,48,.66)',pillText:'#fbf4ff',pillLine:'rgba(255,236,255,.16)',
+   track:'rgba(255,255,255,.13)',bar:'#bfe9ff',mark:'rgba(255,255,255,.42)',lit:'#ffd98a',shard:'rgba(255,236,190,.85)'});
+ hudCache.set(key,v);return v;
+}
 const active=()=>root.MONGYU_UI_EDITION===true;
-const api=Object.freeze({enabled:root.MONGYU_UI_EDITION===true,keys:KEYS,get,mix,css,hex,rgb,ink,face,active,cvdOn,palettes:P});
+const api=Object.freeze({enabled:root.MONGYU_UI_EDITION===true,keys:KEYS,get,mix,css,hex,rgb,ink,face,hud,active,cvdOn,palettes:P});
 root.MongyuTrip=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
