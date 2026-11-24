@@ -31,6 +31,8 @@ function setShake(x,y){const c=host?.canvas;if(!c?.style)return;if(!shaking)c.cl
 function impactPoint(r){
  const O=root.MongyuOpening,vp=viewport();
  if(r.openingCourse&&O?.project&&r.crash){const o=O.OBSTACLES[r.crash.index],p=o&&O.project(r,o.at,o.height*.6);if(p)return p}
+ /* Dream-mode acts (helix, penrose, illusion, course) expose the runner's screen position as run.view.actor. */
+ if(r.mode==='dream'&&r.view?.actor&&Number.isFinite(r.view.actor.x)&&Number.isFinite(r.view.actor.y))return {x:r.view.actor.x,y:r.view.actor.y};
  /* Native memories: the character's screen position from the square-art renderer (workstream E), when available. */
  if(!r.openingCourse){const A=root.MongyuSquareArt;let p=null;try{p=typeof A?.actorScreen==='function'?A.actorScreen(r):A?.actorScreen}catch(_){p=null}
   if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))return {x:p.x,y:p.y}}

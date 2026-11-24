@@ -124,7 +124,7 @@ class CourseRun{
  makeChild(i,carry){
   const a=this.acts[i];if(!a)return null;
   const chain={index:i,count:this.acts.length,first:i===0,last:i===this.acts.length-1,carry:{points:carry.points,shards:carry.shards,perfectStreak:carry.perfectStreak,hearts:carry.hearts},bpm:this.bpm,seed:this.seed+i*7919};
-  const child=resolveAct(a.type)({...a.opts,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed});
+  const child=resolveAct(a.type)({...a.opts,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed,hud:false});
   child.setViewport?.(this.viewport.width,this.viewport.height);return child;
  }
  /* Enter act i with the given carried state. A snapshot of the carry is kept: a fail restarts the act from exactly that state. */
