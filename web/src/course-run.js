@@ -52,7 +52,8 @@ const act=(type,opts={},weight)=>({type,opts,weight});
 /* R105 items: at = fraction of the act's own path (each act turns it into its distance), lane lo = on the path, hi = needs the upper half of a jump (memory star). */
 const gift=(at,kind)=>({at,kind,lane:'lo'}),star=at=>({at,kind:'memory-star',lane:'hi'});
 const CHAPTER1=Object.freeze({
- id:'ch1',number:1,title:'새벽 계단의 탑',subtitle:'새벽빛이 계단을 따라 오른다',
+ id:'ch1',number:1,title:'자각몽의 정원',subtitle:'접힌 길 위의 우아한 한 걸음',trip:'c1',bpm:[96,104],
+ intro:Object.freeze(['꿈인 줄 알면서 걷네.','나는 꽤 우아한 것 같아.']),ending:'문이 열렸어. 우아함은 비밀이야.',
  courses:Object.freeze([
   {id:'c1',title:'첫 걸음',subtitle:'접힌 길에서 달리기를 배워요',bpm:96,seed:101,glow:['#ffb083','#e9b2ff'],
    acts:[act('floor-wall',{span:[0,2],tutorial:true},10),act('bridge',{preset:'intro',tone:0},12),act('bridge',{preset:'garden',tone:1,items:[gift(.36,'bubble'),star(.852)]},25)],
@@ -69,9 +70,14 @@ const CHAPTER1=Object.freeze({
   {id:'c5',title:'새벽의 탑',subtitle:'오르고, 숨 돌리고, 내려와 문을 연다',bpm:100,seed:505,glow:['#ffeca5','#ff9ed8'],
    acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{items:[gift(.563,'bubble')]},16),act('align',{},7),act('bridge',{preset:'dawn',tone:1,items:[star(.764)]},14),act('helix-down',{items:[gift(.555,'time')]},14)],
    fallback:[act('floor-wall',{span:[0,1]},7),act('bridge',{preset:'stairs',tone:0},20),act('bridge',{preset:'calm',tone:1},11),act('bridge',{preset:'dawn',tone:2},18),act('floor-wall',{span:[1,2]},9)]}
- ].map(c=>Object.freeze(c)))
+ ].map(c=>Object.freeze({trip:'c1',chapter:1,...c})))
 });
-const courseById=id=>CHAPTER1.courses.find(c=>c.id===id)||null;
+/* R105 chapters 2-5 come from chapters.js (loaded before this file); without it only chapter 1 exists. Course ids: c1-c5, then c6-c25 in order. */
+const CHAPTERS=Object.freeze([CHAPTER1,...(root.MongyuChapters?.chapters||[])]);
+const COURSES=Object.freeze(CHAPTERS.flatMap(ch=>ch.courses));
+const allCourses=()=>COURSES;
+const courseById=id=>COURSES.find(c=>c.id===id)||null;
+const chapterOf=id=>CHAPTERS.find(ch=>ch.courses.some(c=>c.id===id))||null;
 /* Plays the ideal act list when every type is registered, else the course's fallback list, else whatever is available. */
 function playableActs(course){
  const ideal=course.acts||[],missing=ideal.filter(a=>!hasAct(a.type));
@@ -123,7 +129,7 @@ class CourseRun{
  get distance(){return this.child?.distance||0}
  get perfectStreak(){return this.child?.perfectStreak||0}
  get actName(){return this.actLabel(this.actIndex)}
- actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬'})[this.acts[i]?.type]||'구간'}
+ actLabel(i){return ({'floor-wall':'면 갈아타기',bridge:'착시 다리','helix-up':'나선 오르막','helix-down':'나선 내리막',penrose:'펜로즈 계단',align:'시점 정렬',square:'사각 방',flip:'중력 뒤집기',mirror:'거울',wait:'엘리베이터'})[this.acts[i]?.type]||'구간'}
  setViewport(width=390,height=844){this.viewport={width,height};this.child?.setViewport?.(width,height)}
  makeChild(i,carry){
   const a=this.acts[i];if(!a)return null;
@@ -309,6 +315,8 @@ function draw(c,run,opts){
  return null;
 }
 
-const api=Object.freeze({enabled,CourseRun,registerAct,unregisterAct,hasAct,resolveAct,playableActs,CHAPTER1,courseById,BRIDGES,TONES,stars,goals,SLOT,PORTAL,PORTAL_REDUCED,draw});
+const api=Object.freeze({enabled,CourseRun,registerAct,unregisterAct,hasAct,resolveAct,playableActs,CHAPTER1,CHAPTERS,allCourses,chapterOf,courseById,BRIDGES,TONES,stars,goals,SLOT,PORTAL,PORTAL_REDUCED,draw});
 root.MongyuCourse=api;if(typeof module!=='undefined')module.exports=api;
+/* R105 chapter acts (square-act.js is loaded before this file, so the engine registers them here; square-act.js registers itself when loaded later). */
+try{root.MongyuSquareAct?.register?.(api)}catch(_){}
 })(globalThis);

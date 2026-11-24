@@ -136,3 +136,39 @@ html[data-polish-edition] .r105-road-result .dream-note:empty{display:none}
 /* Reduced motion: no pulses, pops or fades. */
 html[data-polish-edition] .r105-road-result[data-reduced=true],html[data-polish-edition] .r105-road-result[data-reduced=true] .road-star[data-on=true],html[data-polish-edition] .r105-road-result[data-reduced=true] .road-portrait-img{animation:none}
 @media (prefers-reduced-motion:reduce){html[data-polish-edition] .r105-road,html[data-polish-edition] .r105-road-node .rd-stone,html[data-polish-edition] .road-star[data-on=true],html[data-polish-edition] .road-portrait-img{animation:none!important}}
+
+/* Chapters (R105 CP): a row of chapter tabs under the header, the chapter's intro monologue, then that chapter's five courses. --r105-ch / --r105-ch2 / --r105-ch-glow come from the chapter's trip palette. */
+html[data-polish-edition] .r105-chapter-tabs{position:relative;display:flex;flex:0 0 auto;gap:8px;margin:0;padding:2px 16px 8px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+html[data-polish-edition] .r105-chapter-tabs::-webkit-scrollbar{display:none}
+html[data-polish-edition] .r105-chapter-tabs[hidden]{display:none}
+html[data-polish-edition] .r105-chapter-tabs .ch-tab{flex:1 0 58px;display:grid;grid-template-rows:auto auto;justify-items:center;align-content:center;gap:1px;min-width:58px;min-height:52px;margin:0;padding:5px 6px;border-radius:16px;scroll-snap-align:center;cursor:pointer;font:inherit;clip-path:none;
+ color:#e9daf0;background:rgba(28,18,52,.72);border:1.5px solid rgba(255,236,255,.18);box-shadow:none}
+html[data-polish-edition] .r105-chapter-tabs .ch-num{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-size:15px;font-weight:800;line-height:1;color:#fff4fb;background:rgba(255,255,255,.1)}
+html[data-polish-edition] .r105-chapter-tabs .ch-num svg{width:15px;height:15px}
+html[data-polish-edition] .r105-chapter-tabs .ch-n{font-size:12px;line-height:1.1;font-variant-numeric:tabular-nums;color:#d8c6e4}
+html[data-polish-edition] .r105-chapter-tabs .ch-tab[aria-selected=true]{color:#fff;border-color:var(--r105-ch,#ffd98a);background:linear-gradient(180deg,rgba(60,40,96,.9),rgba(30,20,58,.92));box-shadow:0 0 0 1px var(--r105-ch,#ffd98a),0 0 16px rgba(255,255,255,.08)}
+html[data-polish-edition] .r105-chapter-tabs .ch-tab[aria-selected=true] .ch-num{color:#1c1030;background:var(--r105-ch,#ffd98a)}
+html[data-polish-edition] .r105-chapter-tabs .ch-tab[data-state=locked]{opacity:.7}
+html[data-polish-edition] .r105-chapter-tabs .ch-tab:focus-visible{outline:2px solid #ffe2a1;outline-offset:2px}
+html[data-polish-edition] .r105-chapter-intro{position:relative;flex:0 0 auto;display:flex;flex-direction:column;gap:3px;margin:0;padding:2px 22px 6px;text-align:center}
+html[data-polish-edition] .r105-chapter-intro[hidden]{display:none}
+html[data-polish-edition] .r105-chapter-intro p{margin:0}
+html[data-polish-edition] .r105-chapter-intro .ch-sub{font-size:12px;letter-spacing:.12em;color:var(--r105-ch,#ffd98a);opacity:.95}
+html[data-polish-edition] .r105-chapter-intro .ch-text{font-size:14px;line-height:1.45;white-space:pre-line;color:#f1e6f7;text-shadow:0 1px 8px rgba(10,6,22,.8)}
+html[data-polish-edition] .r105-chapter-intro .ch-lock{align-self:center;max-width:100%;padding:6px 14px;border-radius:14px;font-size:13px;line-height:1.4;color:#f1e6f7;background:rgba(20,12,40,.7);border:1px solid rgba(255,236,255,.2)}
+html[data-polish-edition] .r105-chapter-intro .ch-text[hidden],html[data-polish-edition] .r105-chapter-intro .ch-lock[hidden]{display:none}
+html[data-polish-edition] .r105-road[data-chapter] .r105-road-list::before{background:repeating-linear-gradient(180deg,var(--r105-ch,#ffd98a) 0 7px,transparent 7px 13px)}
+html[data-polish-edition] .r105-road-result .road-ending{margin:2px 0 0;padding:2px 0 2px 10px;font-size:14px;line-height:1.45;text-align:left;color:#f4e8fa;border-left:2px solid var(--r105-ch,#ffd98a)}
+html[data-polish-edition] .r105-road-result .road-ending[hidden]{display:none}
+@media (max-height:640px){
+ html[data-polish-edition] .r105-chapter-intro .ch-text{font-size:13px;line-height:1.35}
+ html[data-polish-edition] .r105-chapter-tabs .ch-tab{min-height:46px}
+}
+@media (max-width:359px){
+ html[data-polish-edition] .r105-chapter-tabs{gap:6px;padding:2px 12px 8px}
+ html[data-polish-edition] .r105-chapter-tabs .ch-tab{flex:1 0 50px;min-width:50px;padding:5px 3px}
+ html[data-polish-edition] .r105-chapter-intro{padding:2px 14px 6px}
+}
+@media (max-height:440px){
+ html[data-polish-edition] .r105-chapter-intro .ch-text{display:none}
+}

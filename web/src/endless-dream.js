@@ -22,6 +22,17 @@ const PALETTES=[
 const INK={danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',dangerLine:'#ffe1c8',tap:'#ffeca5',tapDeep:'#ffd98a'};
 const INK_CVD={danger:'#7f8cff',dangerTop:'#b5bcff',dangerSide:'#4b55c4',dangerLine:'#eef0ff',tap:'#ffe14d',tapDeep:'#ffc928'};
 function ink(){try{const d=root.document?.documentElement;return d&&d.dataset&&d.dataset.cvd==='on'?INK_CVD:INK}catch(_){return INK}}
+/* R105 dark look for the square act: a MongyuTrip palette turned into the room palette, meaning colours (neon) and a beat pulse (<= +-5%). Pure data, cached per key. */
+const themes=new Map();
+function tripTheme(key){
+ let t=themes.get(key||'violet');if(t)return t;
+ const T=root.MongyuTrip,P=T?.get?.(key||'violet');if(!P)return null;
+ const mixc=(a,b,k)=>T.mix(a,b,k);
+ const palette={name:P.name,sky:[P.sky[0],P.sky[2]],arch:[P.block[0],P.block[1],P.block[2]],mist:P.fog};
+ const inkN={danger:P.danger,dangerTop:mixc(P.danger,'#ffffff',.45),dangerSide:mixc(P.danger,'#000000',.5),dangerLine:'#f4ffff',tap:P.gold,tapDeep:mixc(P.gold,P.glow,.35)};
+ const lum=c=>{const n=parseInt(String(c).slice(1,7),16)||0;return (.2126*(n>>16&255)+.7152*(n>>8&255)+.0722*(n&255))/255},light=lum(P.sky[1])>.5;
+ t=Object.freeze({key:key||'violet',P,light,mode:light?'source-over':'lighter',palette,ink:inkN,rim:P.rim,rim2:P.rim2,glow:P.glow,accent:P.accent});themes.set(key||'violet',t);return t;
+}
 
 /* ---------- deterministic RNG and date seeds ---------- */
 function rng(seed){let a=seed>>>0;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
@@ -57,13 +68,16 @@ const TYPES={low:{w:11,h:14},mid:{w:12,h:20},tall:{w:10,h:26}};
 function speedFor(lap){return Math.min(MAX_SPEED,START_SPEED+LAP_SPEED*lap)}
 function difficulty(lap){return clamp(lap/6,0,1)}
 /* Generates the obstacles of one straight side (index = lap*4+side). Pure function of (seed, index). */
-function generateSide(seed,index){
- const lap=Math.floor(index/4),side=index%4,r=rng(seed^Math.imul(index+1,0x9E3779B1)),d=difficulty(lap),speed=speedFor(lap);
- const base=index*SIDE,out=[];
- const minGap=speed*(FLIGHT+.16),slack=speed*(.62-.34*d);
+/* opt (R105 square act): lapBase raises the difficulty/speed as if lapBase laps were already run, beat (bpm) snaps every hazard to the half-beat grid (gaps only grow), calm widens the gaps. */
+function generateSide(seed,index,opt){
+ const lapBase=opt?.lapBase|0,lap=Math.floor(index/4)+lapBase,side=index%4,r=rng(seed^Math.imul(index+1,0x9E3779B1)),d=difficulty(lap),speed=Math.min(opt?.maxSpeed||MAX_SPEED,speedFor(lap));
+ const base=index*SIDE,out=[],step=opt?.beat>0?speed*30/opt.beat:0,calm=opt?.calm>0?opt.calm:1;
+ const minGap=speed*(FLIGHT+.16)*calm,slack=speed*(.62-.34*d)*calm;
  let v=index===0?175:46+r()*28;
  const end=L-44;
  while(v<=end){
+  if(step>0)v=Math.ceil((base+v)/step-1e-9)*step-base;
+  if(v>end)break;
   const roll=r();let o;
   if(lap>=1&&roll<.14+.1*d){const len=Math.round(32+r()*(10+10*d));if(v+len>end)break;o={kind:'pit',at:base+v+len/2,start:base+v,end:base+v+len,len};v+=len}
   else if(lap>=2&&roll<.27+.12*d){o={kind:'double',at:base+v+13,parts:[base+v,base+v+26],w:11,h:14};v+=26}
@@ -106,7 +120,7 @@ class EndlessRun{
   this.openingCourse=false;this.polish=true;this.settings={...(options.settings||{})};
   this.date=options.date instanceof Date?options.date:new Date();
   this.seed=(options.seed??(this.daily?dailySeed(this.date):(Date.now()^Math.floor(Math.random()*4294967296))))>>>0;
-  this.attempt=options.attempt||1;this.setViewport(options.viewport?.width,options.viewport?.height);this.reset();
+  this.attempt=options.attempt||1;this.lapBase=options.lapBase|0;this.beatBpm=options.beatBpm>0?options.beatBpm:0;this.maxSpeed=options.maxSpeed||MAX_SPEED;this.calm=options.calm>0?options.calm:1;this.setViewport(options.viewport?.width,options.viewport?.height);this.reset();
  }
  reset(){
   this.state='ready';this.time=0;this.clock=0;this.updates=0;this.inputCount=0;this.jumps=0;this.hits=0;this.hearts=1;
@@ -114,12 +128,19 @@ class EndlessRun{
   this.obstacles=[];this.generated=0;this.index=0;this.clears=0;this.shards=0;this.perfects=0;this.perfectStreak=0;this.bestStreak=0;
   this.perfectPoints=0;this.score=0;this.lap=0;this.side=0;this.crash=null;this.hitStop=0;this.outro=null;this.result=null;
   this.coach={kind:'start',text:COACH.start,until:3};this.seen=new Set();this.crossedAt=-10;this.pickedAt=-10;this.fx=[];
+  this.fl=FLIGHT;this.pkH=PEAK;this.shardReach=12;
   this.ensure();
  }
  setViewport(width=390,height=844){this.viewport={width,height}}
- get speed(){return speedFor(Math.floor(this.distance/LAP))}
+ get speed(){return Math.min(this.maxSpeed,speedFor(Math.floor(this.distance/LAP)+this.lapBase))}
+ /* Hooks for wrappers (the square act): time scale, jump length and height, hit absorption. Defaults leave the endless modes unchanged. */
+ pace(dt){return dt}
+ flightTime(){return FLIGHT}
+ peakHeight(){return PEAK}
+ absorb(o){return false}
+ genOpt(){return this.lapBase||this.beatBpm||this.calm!==1||this.maxSpeed!==MAX_SPEED?{lapBase:this.lapBase,beat:this.beatBpm,maxSpeed:this.maxSpeed,calm:this.calm}:undefined}
  ensure(){
-  while(this.generated*SIDE<this.distance+2.2*SIDE){this.obstacles.push(...generateSide(this.seed,this.generated));this.generated++}
+  while(this.generated*SIDE<this.distance+2.2*SIDE){this.obstacles.push(...generateSide(this.seed,this.generated,this.genOpt()));this.generated++}
   // Drop obstacles far behind so long runs stay bounded.
   let drop=0;while(drop<this.index&&this.obstacles[drop].at<this.distance-500)drop++;
   if(drop>32){this.obstacles.splice(0,drop);this.index-=drop}
@@ -134,10 +155,10 @@ class EndlessRun{
  action(){
   if(this.state!=='play'||this.outro||this.hitStop>0)return false;
   this.inputCount++;
-  if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
+  if(this.flight!==null){if(this.flight>=this.fl-BUFFER)this.buffer=BUFFER;return false}
   return this.jump();
  }
- jump(){this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
+ jump(){this.fl=this.flightTime();this.pkH=this.peakHeight();this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
  drainEvents(){return this.events.splice(0)}
  setCoach(kind,hold,text){this.coach={kind,text:text||COACH[kind],until:this.time+hold}}
  tick(dt){
@@ -146,11 +167,11 @@ class EndlessRun{
   if(this.hitStop>0){this.hitStop=Math.max(0,this.hitStop-dt);return}
   if(this.outro){this.outro.age+=dt;if(this.outro.age>=this.outro.duration)this.finish('fail');return}
   this.time+=dt;
-  const speed=this.speed;
-  this.distance+=speed*dt;this.ensure();
+  const speed=this.speed,sdt=this.pace(dt);
+  this.distance+=speed*sdt;this.ensure();
   this.buffer=Math.max(0,this.buffer-dt);
   if(this.flight!==null){
-   this.flight+=dt;const phase=Math.min(1,this.flight/FLIGHT);this.height=4*PEAK*phase*(1-phase);
+   this.flight+=sdt;const phase=Math.min(1,this.flight/this.fl);this.height=4*this.pkH*phase*(1-phase);
    if(phase===1){this.flight=null;this.height=0;this.events.push('land');if(this.buffer>0)this.jump()}
   }
   const lap=Math.floor(this.distance/LAP),side=sideOf(this.distance);
@@ -162,21 +183,21 @@ class EndlessRun{
   const o=this.obstacles[this.index];
   if(o){
    if(!this.seen.has(o.kind)&&o.at-this.distance<speed*1.1&&COACH[o.kind]&&this.lap>0){this.seen.add(o.kind);this.setCoach(o.kind,1.2)}
-   if(this.collide(o)){this.crashAt(o);return}
+   if(this.collide(o)){if(this.absorb(o))o.absorbed=true;else{this.crashAt(o);return}}
    if(this.distance>this.passPoint(o)){
     this.index++;this.clears++;this.crossedAt=this.time;
-    const lead=o.at-this.lastJump,ideal=speed*FLIGHT/2,perfect=this.lastJump>o.at-speed*FLIGHT&&Math.abs(lead-ideal)<=10*speed/START_SPEED;
+    const lead=o.at-this.lastJump,ideal=speed*this.fl/2,perfect=!o.absorbed&&this.lastJump>o.at-speed*this.fl&&Math.abs(lead-ideal)<=10*speed/START_SPEED;
     if(perfect){this.perfects++;this.perfectStreak++;this.bestStreak=Math.max(this.bestStreak,this.perfectStreak);this.perfectPoints+=20*Math.min(5,this.perfectStreak);if(this.perfectStreak===1)this.setCoach('perfect',.6)}
     else this.perfectStreak=0;
     this.events.push(perfect?'perfect':'pass');
    }
-   if(o.shard&&!o.picked&&Math.abs(this.distance-o.at)<12&&this.height>=PEAK-16){o.picked=true;this.shards++;this.pickedAt=this.time}
+   if(o.shard&&!o.picked&&Math.abs(this.distance-o.at)<this.shardReach&&this.height>=this.pkH-16){o.picked=true;this.shards++;this.pickedAt=this.time}
   }
   this.score=Math.floor(this.distance/10)+this.clears*10+this.perfectPoints+this.shards*25;
  }
  passPoint(o){return o.kind==='pit'?o.end:o.kind==='double'?o.parts[1]+o.w+FOOT:o.at+o.w+FOOT}
  collide(o){
-  const s=this.distance;
+  const s=this.distance;if(o.absorbed)return false;
   if(o.kind==='pit')return this.flight===null&&s>o.start+3&&s<o.end-3;
   const parts=o.kind==='double'?o.parts:[o.at];
   for(const at of parts)if(Math.abs(s-at)<=o.w+FOOT&&this.height<o.h)return true;
@@ -266,9 +287,10 @@ function islands(){
 let starPath=null;
 function stars(){if(starPath||typeof Path2D==='undefined')return starPath;starPath=new Path2D();for(let i=0;i<60;i++){const x=(i*211)%900-450,y=(i*137)%900-450,r=.7+(i%4)*.4;starPath.moveTo(x+r,y);starPath.arc(x,y,r,0,TAU)}return starPath}
 function diamond(c,x,y,r,rot,fill){c.save();c.translate(x,y);c.rotate(rot);c.fillStyle=fill;c.fillRect(-r,-r,r*2,r*2);c.restore()}
-function blockArt(c,run,o,at,k,t,reduced){
- const p=surface(at),w=o.w,h=o.h;
+function blockArt(c,run,o,at,k,t,reduced,pulse=1){
+ const p=surface(at),w=o.w*pulse,h=o.h*pulse;
  c.save();c.translate(p.x,p.y);c.rotate(p.a);
+ if(run.theme&&!o.absorbed){c.save();c.globalCompositeOperation=run.theme.mode;c.globalAlpha=run.theme.light?.12:.22;c.fillStyle=k.danger;c.fillRect(-w-4,-h-5,w*2+8,h+5);c.restore()}
  const crashed=run.crash&&!run.crash.fall&&Math.abs(run.crash.at-at)<w+FOOT+2;
  // Thick block: shadow, front face, top face, side bevel, window seam.
  c.fillStyle='rgba(10,6,22,.35)';c.fillRect(-w-2,-1,w*2+6,3);
@@ -291,8 +313,25 @@ function pitArt(c,o,p0,k,palette,t){
 }
 const auroraInk=new WeakMap();
 function auroraGlow(c){let g=auroraInk.get(c);if(g)return g;g=c.createRadialGradient(0,0,0,0,0,1);g.addColorStop(0,'rgba(170,246,232,.55)');g.addColorStop(.45,'rgba(138,184,255,.22)');g.addColorStop(1,'rgba(183,140,255,0)');auroraInk.set(c,g);return g}
+/* Neon outline of the room (two strokes, no shadowBlur) and nested squares that breathe outward with the beat. */
+function neonRim(c,paths,th,beatP,reduced){
+ c.save();c.globalCompositeOperation=th.mode;
+ c.globalAlpha=.16+.05*beatP;c.lineWidth=7;c.strokeStyle=th.glow;c.stroke(paths.lip);
+ c.globalAlpha=.85;c.lineWidth=1.6;c.strokeStyle=th.rim;c.stroke(paths.lip);
+ c.globalAlpha=.55;c.lineWidth=1;c.strokeStyle=th.rim2;c.stroke(paths.outer);c.restore();
+}
+function nestedSquares(c,th,beatP,reduced,t){
+ const cx=CENTER.x,cy=CENTER.y,half=L/2+R;
+ c.save();c.globalCompositeOperation=th.mode;c.lineWidth=1.2;
+ for(let i=0;i<5;i++){
+  const k=.2+i*.17+(reduced?0:.012*Math.sin(t*.6+i)),hw=half*k,a=(.07+.05*beatP*(1-i*.15))*(1-i*.1);
+  c.globalAlpha=Math.max(0,a);c.strokeStyle=i%2?th.rim2:th.rim;c.strokeRect(cx-hw,cy-hw,hw*2,hw*2);
+ }
+ c.restore();
+}
 function draw(c,run,opts){
- const {width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,k=ink(),palette=paletteAt(run),paths=room();
+ const {width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,th=run.theme||null,k=th?(ink()===INK_CVD?{...th.ink,...INK_CVD}:th.ink):ink(),palette=th?th.palette:paletteAt(run),paths=room();
+ const beatP=th&&run.beatBpm>0&&!reduced?.5+.5*Math.cos((t*run.beatBpm/60%1)*TAU):0,pulse=1+.05*(beatP*2-1)*(th&&!reduced?1:0);
  const foot=surface(run.distance);
  let rot=0,scale=clamp(Math.min(w/318,h/600),.72,2.4),cx,cy,tx,ty;
  if(reduced){
@@ -315,6 +354,7 @@ function draw(c,run,opts){
  c.fillStyle=palette.sky[0];c.globalAlpha=.72;c.fill(paths.inner);c.globalAlpha=1;c.fillStyle='rgba(8,5,20,.2)';c.fill(paths.inner);
  c.strokeStyle=palette.mist;c.globalAlpha=.18;c.lineWidth=1.2;c.stroke(paths.deep);
  c.beginPath();for(let i=0;i<4;i++){c.moveTo(paths.corners[i][0],paths.corners[i][1]);c.lineTo(paths.deepCorners[i][0],paths.deepCorners[i][1])}c.stroke();
+ if(th)nestedSquares(c,th,beatP,reduced,t);
  c.globalAlpha=.06;c.fillStyle=palette.mist;c.fill(paths.deep);c.globalAlpha=.1;c.fill(paths.moon);c.globalAlpha=.16;c.strokeStyle=palette.mist;c.lineWidth=1.4;c.stroke(paths.moonRing);c.globalAlpha=1;
  // Thick wall: shadow face, side face, bright top face, windows.
  c.fillStyle=palette.arch[2];c.fill(paths.mass,'evenodd');c.fillStyle=palette.arch[1];c.globalAlpha=.35;c.fill(paths.lower);c.globalAlpha=1;
@@ -322,6 +362,7 @@ function draw(c,run,opts){
  c.fillStyle=palette.arch[2];c.globalAlpha=.65;c.fill(paths.windows);c.globalAlpha=1;
  c.strokeStyle=palette.arch[2];c.lineWidth=2.2;c.stroke(paths.outer);
  c.fillStyle=palette.arch[0];c.fill(paths.lip,'evenodd');
+ if(th)neonRim(c,paths,th,beatP,reduced);
  c.strokeStyle=palette.arch[0];c.globalAlpha=.4;c.lineWidth=.8;c.stroke(paths.rail);c.stroke(paths.rails);c.globalAlpha=1;
  // Lit windows: a warm glow per lap completed (the room "remembers" the run).
  if(run.lap>0){c.fillStyle=k.tapDeep;c.globalAlpha=Math.min(.55,.12*run.lap);c.fill(paths.windows);c.globalAlpha=1}
@@ -330,10 +371,12 @@ function draw(c,run,opts){
  for(let i=Math.max(0,run.index-6);i<run.obstacles.length;i++){
   const o=run.obstacles[i];if(o.at<lo)continue;if(o.at>hi)break;
   if(o.kind==='pit')pitArt(c,o,null,k,palette,t);
-  else if(o.kind==='double'){blockArt(c,run,o,o.parts[0],k,t,reduced);blockArt(c,run,o,o.parts[1],k,t,reduced)}
-  else blockArt(c,run,o,o.at,k,t,reduced);
+  else if(o.kind==='double'){blockArt(c,run,o,o.parts[0],k,t,reduced,pulse);blockArt(c,run,o,o.parts[1],k,t,reduced,pulse)}
+  else blockArt(c,run,o,o.at,k,t,reduced,pulse);
   if(o.shard&&!o.picked){const sp=offset(surface(o.at),PEAK+8);diamond(c,sp.x,sp.y,3.6,Math.PI/4+(reduced?0:t*1.6+i),k.tap);c.globalAlpha=.25;diamond(c,sp.x,sp.y,6,Math.PI/4,k.tapDeep);c.globalAlpha=1}
  }
+
+ if(run.drawWorld)run.drawWorld(c,{t,reduced,up:-rot,foot,k,th});
  // Runner.
  const pose=run.crash?(run.crash.fall?'jump':'hurt'):run.flight!==null?'jump':'run';
  let actor=offset(foot,run.height+1.5),angle=foot.a;
@@ -343,13 +386,14 @@ function draw(c,run,opts){
   else{const back=Math.min(1,age*3)*10;actor={x:actor.x-Math.cos(foot.a)*back,y:actor.y-Math.sin(foot.a)*back}}
  }
  const contact=offset(foot,.8);c.save();c.translate(contact.x,contact.y);c.rotate(foot.a);c.globalAlpha=.4*(1-clamp(run.height/PEAK,0,.8));c.fillStyle='#fff6dc';c.beginPath();c.ellipse(0,0,7,1.6,0,0,TAU);c.fill();c.restore();c.globalAlpha=1;
- if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{...actor,bodyHeight:46,renderAngle:angle,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/FLIGHT,pose},{poseTime:t,onDark:true},reduced);
+ if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{...actor,bodyHeight:46,renderAngle:angle,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/run.fl,pose},{poseTime:t,onDark:true},reduced);
  else{c.fillStyle='#fff3e0';c.fillRect(actor.x-5,actor.y-30,10,30)}
+ if(run.drawAura)run.drawAura(c,actor.x,actor.y-20,{t,reduced});
  // Pass sparkle and shard pickup.
  if(!reduced&&run.time-run.crossedAt<.3){const age=(run.time-run.crossedAt)/.3;c.globalAlpha=1-age;for(let i=0;i<6;i++){const a=i*Math.PI/3;diamond(c,actor.x+Math.cos(a)*(10+age*20),actor.y-18+Math.sin(a)*(10+age*20),1.4,0,k.tap)}c.globalAlpha=1}
  if(run.time-run.pickedAt<.45){const age=(run.time-run.pickedAt)/.45;c.save();c.translate(actor.x,actor.y-24);c.scale(1+age*2,1+age*2);c.fillStyle=auroraGlow(c);c.globalAlpha=1-age;c.beginPath();c.arc(0,0,1,0,TAU);c.fill();c.restore();c.globalAlpha=1}
  c.restore();
- hud(c,run,w,h,k,reduced);
+ if(run.hudOff!==true)hud(c,run,w,h,k,reduced);
  return null;
 }
 function roundRectPath(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
@@ -380,7 +424,7 @@ function hud(c,run,w,h,k,reduced){
  for(let i=1;i<4;i++){c.fillStyle='rgba(20,12,36,.6)';c.fillRect(w/2-gw/2+gw*i/4-1,gy,2,6)}
  c.restore();
 }
-const api=Object.freeze({enabled,islands,EndlessRun,generateSide,surface,offset,speedFor,rng,hash,dayKey,weekKey,dailySeed,recordRun,readRecords,summary,draw,
+const api=Object.freeze({enabled,islands,EndlessRun,generateSide,tripTheme,surface,offset,speedFor,rng,hash,dayKey,weekKey,dailySeed,recordRun,readRecords,summary,draw,
  PALETTES,INK,INK_CVD,ink,LAP,SIDE,L,R,FLIGHT,PEAK,RECORD_KEY,inCorner});
 root.MongyuEndless=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
