@@ -71,7 +71,7 @@ const DOCK=[
  {id:'modes',icon:'moon',key:'lobby.modes',label:'다른 꿈'},
  {id:'wardrobe',icon:'wardrobe',key:'lobby.wardrobe',label:'옷장',target:'shopOpen'},
  {id:'story',icon:'story',key:'lobby.story',label:'이야기',target:'storyOpen'},
- {id:'isle',icon:'isle',key:'lobby.isle',label:'꿈의 섬',soon:true}
+ {id:'isle',icon:'isle',key:'lobby.isle',label:'꿈의 섬'}
 ];
 /* Each mode card carries its own small drawn vignette, so the three do not read as one repeated template. */
 const ART={
@@ -104,7 +104,7 @@ function mount(){
  for(const d of DOCK){
   const b=el('button',{type:'button',class:'r105-dock-btn','data-dock':d.id,id:'r105Dock-'+d.id},dock);
   if(d.target)b.setAttribute('data-target',d.target);
-  if(d.target==='restorationOpen'||d.target==='storyOpen'||d.target==='shopOpen'||d.id==='modes')b.setAttribute('aria-haspopup','dialog');
+  if(d.target==='restorationOpen'||d.target==='storyOpen'||d.target==='shopOpen'||d.id==='modes'||d.id==='isle')b.setAttribute('aria-haspopup','dialog');
   const i=el('span',{class:'r105-dock-ic','aria-hidden':'true'},b);svgInto(i,d.icon,26);
   el('span',{class:'r105-dock-label'},b,L(d.key,d.label));
   if(d.soon){b.setAttribute('aria-disabled','true');b.setAttribute('data-soon','1');el('span',{class:'r105-soon','aria-hidden':'true'},b,L('lobby.soonBadge','곧'))}
@@ -152,6 +152,10 @@ function mount(){
 function onDock(d,btn,event){
  if(d.soon){toast(L('lobby.soon','곧 열려요'));return}
  if(d.id==='modes'){openSheet(btn);return}
+ if(d.id==='isle'){   // R105 GAL: 꿈의 섬 opens its own screen (dream-isle.js)
+  if(typeof root.MongyuDreamIsle?.open!=='function'){toast(L('lobby.soon','곧 열려요'));return}
+  root.MongyuDreamIsle.open(event);return;
+ }
  if(d.target){
   const src=$(d.target);
   if(!src||src.hidden||src.disabled){toast(L('lobby.notYet','아직 열 수 없어요'));return}

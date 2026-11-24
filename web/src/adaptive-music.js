@@ -184,7 +184,7 @@ function roadPieceOf(run,over){
 function isRoadRun(run){return !!run&&(run.courseRun===true||run.dreamMode==='road'||run.mode==='road')}
 /* Everything the music needs to know about the run: piece id, course, act, tempo (act > course > piece). */
 function contextOf(run,over){
- over=over||{};const road=isRoadRun(run)||!!over.trip||(over.chapter!=null&&Number.isFinite(+over.chapter)&&!over.piece);
+ over=over||{};const road=isRoadRun(run)||!!over.trip||over.boss!=null||(over.chapter!=null&&Number.isFinite(+over.chapter)&&!over.piece);
  const act=over.act||(run?.acts?.[run.actIndex]?.type)||'';
  const course=over.course||run?.id||'';
  let piece;
@@ -194,7 +194,7 @@ function contextOf(run,over){
  const cfg=arrangement(piece,course);
  const candidates=[over.bpm,run?.acts?.[run.actIndex]?.opts?.bpm,run?.child?.chain?.bpm,run?.child?.bpm,run?.bpm];
  let bpm=cfg.bpm;for(const b of candidates){const v=Number(b);if(Number.isFinite(v)&&v>=40&&v<=220){bpm=v;break}}
- return {road:!!cfg.road,piece,course:String(course||''),act,actIndex:run?.actIndex|0,acts:run?.acts?.length|0,bpm,trip:cfg.trip||null,fever:over.fever||run?.fever?.state||run?.feverState||null,shepDir:shepDirOf(act),cfg};
+ return {road:!!cfg.road,piece,course:String(course||''),act,actIndex:run?.actIndex|0,acts:run?.acts?.length|0,bpm,trip:cfg.trip||null,track:cfg.road?trackKeyOf(run,over):null,fever:over.fever||run?.fever?.state||run?.feverState||null,shepDir:shepDirOf(act),cfg};
 }
 function keyOf(cfg,section=0){
  const n=cfg.loops.length,s=mod(section,n),tonic=(cfg.pc+(cfg.shift[s]||0))%12,minor=MINOR[cfg.mode];
@@ -422,7 +422,7 @@ function swellBuffer(ctx,seconds,tonic){
    Pad voices run through a heartbeat "pump" gain, a slow low-pass and a stereo chorus; arpeggios through a phaser; the Shepard bank has its own bus. */
 function createSession(ctx,destination,cfg,{bar0=0,start,fadeIn=1.2,closed=false,section=0,bpm}={}){
  const r=resources(ctx),t0=start??ctx.currentTime+.08,bpm0=bpm||cfg.bpm,spb=60/bpm0;
- const S={ctx,cfg,r,spb,bpm:bpm0,barDur:spb*4,t0,bar0,nextBar:bar0,nextTime:t0,section,level:0,ducked:false,goal:false,spans:[],scheduled:0,nodes:new Set(),upper:[],stopped:false,bass:null,
+ const S={ctx,dest:destination,cfg,r,spb,bpm:bpm0,barDur:spb*4,t0,bar0,nextBar:bar0,nextTime:t0,section,level:0,ducked:false,goal:false,spans:[],scheduled:0,nodes:new Set(),upper:[],stopped:false,bass:null,
   beatNo:bar0*4,anchors:[{time:t0,beat:bar0*4,spb}],shep:{},shepDir:0,buses:new Map(),key:keyOf(cfg,section),baseTonic:keyOf(cfg,0).tonic,peakVoices:0};
  const node=n=>{S.nodes.add(n);return n};S.node=node;
  S.out=node(ctx.createGain());S.out.gain.value=1.1*(cfg.gain||1);/* compensates the compressor's automatic makeup gain (about +4.3 dB at these settings) */
@@ -635,7 +635,7 @@ function scheduleBar(S,level,section,tripState){
   if(tripState.bpm&&Math.abs(tripState.bpm-S.bpm)>.01){S.bpm=tripState.bpm;S.spb=60/S.bpm;S.barDur=S.spb*4}
   anchor(S,t);
   if(!S.goal){
-   for(let i=0;i<4;i++)setStem(S,i,i<level?S.stemLevels[i]:0,t,i<level?S.spb*.3:S.spb*.5);
+   for(let i=0;i<4;i++)setStem(S,i,S.trackMode?(i===0?S.stemLevels[0]*TRACK_HEART:0):i<level?S.stemLevels[i]:0,t,i<level?S.spb*.3:S.spb*.5);
    S.level=level;S.padLp.frequency.setTargetAtTime(S.padCut*(.9+.2*level+(tripState.dropout?-.35:0)),t,S.spb);
    const events=tripBarEvents(cfg,bar,{...tripState,level});
    for(const e of events){if(S.only&&!S.only.includes(e.inst))continue;
@@ -661,6 +661,7 @@ function scheduleBar(S,level,section,tripState){
 function duck(S,t){
  const f=S.duck.frequency;try{if(f.cancelAndHoldAtTime)f.cancelAndHoldAtTime(t);else{f.cancelScheduledValues(t);f.setValueAtTime(S.ducked?CLOSED:OPEN,t)}}catch(_){}
  f.exponentialRampToValueAtTime(CLOSED,t+.12);S.ducked=true;
+ trackClose(S,t);
  for(let i=1;i<4;i++)setStem(S,i,i===1&&S.cfg.road?S.stemLevels[1]*.4:0,t,.04);setStem(S,0,S.stemLevels[0]*.8,t,.08);
  for(const d of [1,-1]){const b=S.shep[d];if(b&&!b.dead)b.gain.gain.setTargetAtTime(.25,t,.05)}
  for(const u of S.upper)if(u.at>t+.01){try{u.src.stop(t)}catch(_){}u.span[1]=t}
@@ -668,6 +669,7 @@ function duck(S,t){
 }
 function rebuild(S,t){
  const f=S.duck.frequency;try{f.cancelScheduledValues(t)}catch(_){}f.setValueAtTime(CLOSED,t);f.exponentialRampToValueAtTime(OPEN,t+S.barDur);S.ducked=false;
+ trackOpen(S,t,S.barDur);
 }
 /* Goal: rhythm/melody stems fade out, the tonic resolution chord rings on its own bus. */
 function goalChord(S,t,section){
@@ -681,7 +683,7 @@ function goalChord(S,t,section){
 /* Aurora wave (surge): a short sparkling arpeggio and a bright pad on the surge bus, quantised to the next eighth of the beat grid. */
 /* An essential cue (pickup, perfect, gate, shield) dips the decoration stems for a moment; the base pulse never moves. */
 function cueDuck(S,t,depth=.4,hold=.28){
- if(!S?.deco||S.goal)return;const g=S.deco.gain;try{g.cancelScheduledValues(t);g.setTargetAtTime(1-depth,t,.015);g.setTargetAtTime(1,t+hold,.12)}catch(_){}
+ if(!S?.deco)return;trackDip(S,t,hold);if(S.goal)return;const g=S.deco.gain;try{g.cancelScheduledValues(t);g.setTargetAtTime(1-depth,t,.015);g.setTargetAtTime(1,t+hold,.12)}catch(_){}
 }
 function surgeLayer(S,t,seconds=4){
  if(S.goal)return;const key=S.key,steps=Math.max(4,Math.floor(seconds/(S.spb/2))),scale=key.scale,line=[0,1,2,3,4,5,6,5,4,3,2,1];
@@ -694,9 +696,194 @@ function gateSwell(S,end,now){
 }
 function disposeSession(S,fade=0){
  if(!S||S.stopped)return;S.stopped=true;const ctx=S.ctx,t=ctx.currentTime;
- const hold=fade>=2?1:0;try{S.master.gain.cancelScheduledValues(t);if(fade>0){S.master.gain.setValueAtTime(S.master.gain.value,t);S.master.gain.setTargetAtTime(0,t+hold,fade/4)}else S.master.gain.setValueAtTime(0,t)}catch(_){}
+ const hold=fade>=2?1:0;for(const m of [S.master,S.tb?.master])try{if(!m)continue;m.gain.cancelScheduledValues(t);if(fade>0){m.gain.setValueAtTime(m.gain.value,t);m.gain.setTargetAtTime(0,t+hold,fade/4)}else m.gain.setValueAtTime(0,t)}catch(_){}
  const kill=()=>{for(const n of S.nodes){try{if(n.stop)n.stop()}catch(_){}try{n.onended=null}catch(_){}try{n.disconnect()}catch(_){}}S.nodes.clear();S.spans=[]};
  S.kill=kill;if(fade>0){S.killAt=t+hold+fade+.1;if(typeof setTimeout==='function'){const id=setTimeout(()=>{if(!S.done){S.done=true;kill()}},(hold+fade+.4)*1000);id?.unref?.()}}else kill();
+}
+
+/* ---------- R105 track mode: embedded Suno loops (MONGYU_EMBEDDED_AUDIO) under the synthesized reactive layer ----------
+   A road run whose trip key maps to a track (c1..c10, legacy violet/aqua/ember/toxic/heart, boss:n) plays the matching mp3 loop through Web Audio
+   (decodeAudioData, lazily after the first user gesture, cached per AudioContext). Until it is decoded (or when decoding fails) the synthesized piece plays
+   as before. Once the track runs, the synth session keeps only its reactive layer (the Heartline pulse at a lower level, surge / Shepard-Risset / goal
+   voices, the crash filter, cue ducking), re-keyed to the track's tonal centre (manifest keyTonic/keyMode) and locked to the track's beat grid.
+   Loops are AudioBufferSourceNode loops (loopStart/loopEnd in decoded-buffer seconds; the files carry periodic padding so decoder delay never opens a seam).
+   playbackRate = act bpm / track bpm (within +-8 %) keeps the track on the course's beat grid. */
+const TRACK_HEART=.5,TRACK_DELAY=1105/48000,TRACK_RATE_SPAN=.08,TRACK_DIP=.79,FEVER_RATIOS=[1,1.5,4/3,.75,2/3,2,.5];
+const LEGACY_TRACK=Object.freeze({violet:'c1',aqua:'c2',ember:'c3',toxic:'c8',heart:'c5'});
+const CHAPTER_TRACK=Object.freeze({1:'c1',2:'c2',3:'c3',4:'c8',5:'c5'});
+const TRACK_IDS=Object.freeze(['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10']);
+/* A trip key (c1..c10, violet, aqua, ember, toxic, heart) -> track id, else null. */
+function trackIdOf(key){if(key==null)return null;key=String(key);return TRACK_IDS.includes(key)?key:LEGACY_TRACK[key]||null}
+function bossTrackOf(n){const k=Math.trunc(Number(n));return k>=1&&k<=5?'boss'+k:null}
+/* Which track a run plays: setContext({boss}) / ({track}) / ({trip}) / ({chapter}) first, then a boss act, then the course's own trip key; a road run with none is 'violet' (c1). */
+function trackKeyOf(run,over){
+ over=over||{};
+ if(over.boss!=null)return bossTrackOf(over.boss);
+ if(over.track!=null)return TRACK_IDS.includes(String(over.track))||/^boss[1-5]$/.test(String(over.track))?String(over.track):null;
+ if(over.trip&&trackIdOf(over.trip))return trackIdOf(over.trip);
+ if(over.chapter!=null&&Number.isFinite(+over.chapter)&&+over.chapter>=1)return CHAPTER_TRACK[clamp(+over.chapter|0,1,5)];
+ const act=run?.acts?.[run.actIndex],o=run?.options||{};
+ if(act&&/^boss/i.test(act.type||'')){const n=act.opts?.boss??/\d+/.exec(act.type)?.[0];const b=bossTrackOf(n);if(b)return b}
+ if(Number.isFinite(+o.chapter)&&+o.chapter>=1&&!(o.trip||run?.trip))return CHAPTER_TRACK[clamp(+o.chapter|0,1,5)];
+ for(const k of [o.trip,run?.trip,run?.child?.options?.trip]){const id=trackIdOf(k);if(id)return id}
+ return isRoadRun(run)||run==null?'c1':null;
+}
+const audioTable=()=>root.MONGYU_EMBEDDED_AUDIO||null;
+function trackEntry(id){const t=id&&audioTable()?.[id];return t&&typeof t.src==='string'&&t.loopEnd>t.loopStart?t:null}
+/* Effective tempo of a loop (its whole bars at the exact loop length) and the playbackRate that puts it on `bpm` (null rate when it would leave +-8 %). */
+function trackBpmOf(entry){const L=entry.loopEnd-entry.loopStart,n=(entry.bars||0)*(entry.beatsPerBar||4);return n>0&&L>0?n*60/L:Number(entry.bpm)||100}
+function trackRateFor(entry,bpm){
+ const nat=trackBpmOf(entry),want=Number(bpm);
+ if(!(want>=40&&want<=220))return {rate:1,bpm:nat,locked:false};
+ const r=want/nat;return Math.abs(r-1)<=TRACK_RATE_SPAN?{rate:r,bpm:want,locked:true}:{rate:1,bpm:nat,locked:false};
+}
+/* The fever layer is a different tempo from every chapter: choose the musically related ratio (1, 3:2, 4:3, 3:4, 2:3, 2, 1:2) whose rate is closest to 1 and within +-8 %. */
+function feverRateFor(entry,bpm){
+ const nat=trackBpmOf(entry);let best=null;
+ for(const ratio of FEVER_RATIOS){const r=bpm*ratio/nat,d=Math.abs(r-1);if(d<=TRACK_RATE_SPAN&&(!best||d<best.d))best={rate:r,d,ratio}}
+ return best?{rate:best.rate,ratio:best.ratio,locked:true}:{rate:1,ratio:nat/bpm,locked:false};
+}
+/* Fever on/off decision: the run's fever state when it has one (LUCID/OVERLOAD on, everything else off), otherwise a surge or a long perfect streak. */
+function feverWanted(fever,{surge=false,streak=0,crashed=false}={}){
+ if(crashed)return false;
+ if(fever)return fever==='LUCID'||fever==='OVERLOAD';
+ return !!surge||streak>=6;
+}
+function trackCfgFor(cfg,entry){
+ const minor=entry.keyMode==='minor',name=minor?'i9':'I9',loop=[name,name,name,name],tonic=Number.isFinite(+entry.keyTonic)?+entry.keyTonic:cfg.pc;
+ return Object.freeze({...cfg,pc:mod(tonic,12),mode:minor?'minor':'major',loops:[loop,loop,loop,loop],shift:[0,0,0,0],drops:{},bpm:Math.round(trackBpmOf(entry)*100)/100,trackMode:true});
+}
+function b64ToBuffer(src){
+ const i=src.indexOf(','),bin=root.atob(i>=0?src.slice(i+1):src),n=bin.length,u=new Uint8Array(n);
+ for(let k=0;k<n;k++)u[k]=bin.charCodeAt(k);return u.buffer;
+}
+/* Per AudioContext decode cache: id -> {status:'decoding'|'ready'|'failed', buffer, ms, error, promise}. Never throws. */
+const decodeCache=new WeakMap();
+function decodeTrack(ctx,id){
+ let m=decodeCache.get(ctx);if(!m){m=new Map();decodeCache.set(ctx,m)}
+ let st=m.get(id);if(st)return st;
+ st={id,status:'decoding',buffer:null,ms:0,error:null,promise:null};m.set(id,st);
+ const entry=audioTable()?.[id],t0=clock();
+ const done=(ok,v)=>{if(st.status!=='decoding')return;if(ok){st.buffer=v;st.status='ready'}else{st.status='failed';st.error=String(v&&v.message||v||'decode failed')}st.ms=clock()-t0;st.resolve?.(st)};
+ st.promise=new Promise(r=>{st.resolve=r});
+ if(!entry||typeof entry.src!=='string'||typeof ctx.decodeAudioData!=='function'||typeof root.atob!=='function'){done(false,'unavailable');return st}
+ try{const r=ctx.decodeAudioData(b64ToBuffer(entry.src),b=>done(true,b),e=>done(false,e));if(r&&typeof r.then==='function')r.then(b=>done(true,b),e=>done(false,e))}catch(e){done(false,e)}
+ return st;
+}
+let SAFE=null;
+function ceilingCurve(){
+ if(SAFE)return SAFE;const n=2049;SAFE=new Float32Array(n);
+ for(let i=0;i<n;i++){const v=(i/(n-1))*2-1,x=Math.abs(v),y=x<.6?x:.6+.29*Math.tanh((x-.6)/.29);SAFE[i]=v<0?-y:y}
+ return SAFE;
+}
+/* Equal-power fade of `param` between from and to over [t,t+d]: sin for a rise, cos for a fall. */
+function eqFade(param,from,to,t,d){
+ try{param.cancelScheduledValues(t)}catch(_){}
+ const n=24,c=new Float32Array(n),up=to>=from;
+ for(let i=0;i<n;i++){const x=i/(n-1)*Math.PI/2;c[i]=up?from+(to-from)*Math.sin(x):to+(from-to)*Math.cos(x)}
+ try{param.setValueAtTime(from,t);param.setValueCurveAtTime(c,t,Math.max(.02,d))}catch(_){try{param.setValueAtTime(from,t);param.linearRampToValueAtTime(to,t+Math.max(.02,d))}catch(__){}}
+}
+/* The track chain: layer levels -> cue-duck gain -> crash low-pass -> master (fades with the session) -> soft ceiling -> the music bus. */
+function trackBus(S){
+ if(S.tb)return S.tb;
+ const ctx=S.ctx,n=S.node,mix=n(ctx.createGain()),duckGain=n(ctx.createGain()),lp=n(ctx.createBiquadFilter()),master=n(ctx.createGain());
+ lp.type='lowpass';lp.Q.value=.5;lp.frequency.value=S.ducked?CLOSED:OPEN;master.gain.value=0;
+ mix.connect(duckGain);duckGain.connect(lp);lp.connect(master);let tail=master;
+ if(ctx.createWaveShaper){const sh=n(ctx.createWaveShaper());sh.curve=ceilingCurve();sh.oversample='2x';master.connect(sh);tail=sh}
+ tail.connect(S.dest);
+ return S.tb={mix,duck:duckGain,lp,master,level:{}};
+}
+function layerLevel(S,name){const tb=trackBus(S);if(tb.level[name])return tb.level[name];const g=S.node(S.ctx.createGain());g.gain.value=name==='main'?1:0;g.connect(tb.mix);return tb.level[name]=g}
+function layerPos(a,t,ls,le){let p=a.off+(t-a.t)*a.rate;if(p>=le)p=ls+((p-ls)%(le-ls));return p}
+/* One looping source into a layer: sources fade through their own gain so a re-phase or a chapter switch can crossfade. */
+function layerSource(S,layer,buf,entry,at,offset,rate,fadeIn){
+ const ctx=S.ctx,src=S.node(ctx.createBufferSource()),g=S.node(ctx.createGain());
+ src.buffer=buf;src.loop=true;src.loopStart=entry.loopStart;src.loopEnd=entry.loopEnd;
+ try{src.playbackRate.setValueAtTime(rate,at)}catch(_){try{src.playbackRate.value=rate}catch(__){}}
+ src.connect(g);g.connect(layerLevel(S,layer));
+ if(fadeIn>0.01)eqFade(g.gain,0,1,at,fadeIn);else{try{g.gain.setValueAtTime(1,at)}catch(_){}}
+ src.start(at,offset);
+ return {src,g,a:{t:at,off:offset,rate}};
+}
+function layerStop(v,t,fade){
+ if(!v)return;try{if(fade>0.01)eqFade(v.g.gain,1,0,t,fade);else v.g.gain.setValueAtTime(0,t)}catch(_){}
+ try{v.src.stop(t+Math.max(.02,fade)+.05)}catch(_){}
+}
+function trackHead(entry,fromIntro){return (fromIntro&&entry.introEnd>0?0:entry.loopStart)+TRACK_DELAY}
+/* Start the main loop at `at` (the beat grid of the synth session). Returns the track state, which also keeps the session's reactive layer in sync. */
+function trackStart(S,id,{at,fromIntro=false,fadeIn=.4,bpm}={}){
+ const entry=trackEntry(id),st=decodeTrack(S.ctx,id);if(!entry||st.status!=='ready')return null;
+ const lock=trackRateFor(entry,bpm),v=layerSource(S,'main',st.buffer,entry,at,trackHead(entry,fromIntro),lock.rate,fadeIn);
+ const tr={id,entry,buf:st.buffer,v,rate:lock.rate,bpm:lock.bpm,locked:lock.locked,ls:entry.loopStart,le:entry.loopEnd,spbBuf:(entry.loopEnd-entry.loopStart)/Math.max(1,(entry.bars||1)*(entry.beatsPerBar||4)),
+  startedAt:at,fever:null,feverOn:false,fever_buf:null,rephases:0,retempos:0,restarts:0};
+ trackBus(S).master.gain.cancelScheduledValues(at-.05);eqFade(S.tb.master.gain,0,1,at-.001,Math.max(.05,fadeIn));
+ return tr;
+}
+function trackEnter(S,tr,at){
+ S.tr=tr;S.trackMode=true;S.cfg0=S.cfg0||S.cfg;S.cfg=trackCfgFor(S.cfg0,tr.entry);S.only=['heart'];S.key=keyOf(S.cfg,0);S.baseTonic=S.key.tonic;
+ S.nextBpm=tr.bpm;
+}
+/* Crossfade to a different chapter's track (1.5 s) or restart the same one from its head. */
+function trackSwitch(S,id,{at,fromIntro=false,fadeOut=1.5,bpm}={}){
+ const old=S.tr,nt=trackStart(S,id,{at,fromIntro,fadeIn:fadeOut,bpm});if(!nt)return null;
+ if(old){layerStop(old.v,at,fadeOut);if(old.fever)layerStop(old.fever,at,fadeOut)}
+ nt.restarts=(old?.restarts|0)+1;S.tr=nt;S.trackMode=true;S.cfg=trackCfgFor(S.cfg0||S.cfg,nt.entry);S.key=keyOf(S.cfg,0);S.baseTonic=S.key.tonic;S.nextBpm=nt.bpm;return nt;
+}
+/* Tempo change at an act gate: new playbackRate from time t, positions re-anchored so beat math stays exact. */
+function trackRetempo(S,bpm,t){
+ const tr=S.tr;if(!tr)return;const lock=trackRateFor(tr.entry,bpm);
+ if(Math.abs(lock.rate-tr.rate)<1e-6&&lock.bpm===tr.bpm)return;
+ const a=tr.v.a;a.off=layerPos(a,t,tr.ls,tr.le);a.t=t;a.rate=lock.rate;try{tr.v.src.playbackRate.setValueAtTime(lock.rate,t)}catch(_){}
+ if(tr.fever){const fr=feverRateFor(tr.fever.entry,lock.bpm),fa=tr.fever.v.a;fa.off=layerPos(fa,t,tr.fever.entry.loopStart,tr.fever.entry.loopEnd);fa.t=t;fa.rate=fr.rate;try{tr.fever.v.src.playbackRate.setValueAtTime(fr.rate,t)}catch(_){}}
+ tr.rate=lock.rate;tr.bpm=lock.bpm;tr.locked=lock.locked;tr.retempos++;S.nextBpm=lock.bpm;
+}
+/* Act gate: put a track beat on the new act's beat 0 (time t) by hopping to the nearest beat of the loop (at most half a beat) under a 120 ms crossfade, hidden by the gate swell. */
+function trackRephase(S,t){
+ const tr=S.tr;if(!tr)return false;
+ const a=tr.v.a,pos=layerPos(a,t,tr.ls,tr.le),beats=(pos-tr.ls-TRACK_DELAY)/tr.spbBuf,b0=Math.round(beats);let p2=tr.ls+TRACK_DELAY+b0*tr.spbBuf;
+ if(p2>=tr.le)p2=tr.ls+(p2-tr.le);if(p2<0)p2+=tr.spbBuf;
+ if(Math.abs(p2-pos)<.012)return false;
+ const nv=layerSource(S,'main',tr.buf,tr.entry,t,p2,tr.rate,.12);layerStop(tr.v,t,.12);tr.v=nv;tr.rephases++;return true;
+}
+/* Fever layer: crossfade the chapter track out and the fever loop in over two beats, on the next beat; back out (four beats) on RECOVERY. */
+function feverCross(S,on,at){
+ const tr=S.tr;if(!tr)return false;const spb=S.spb;
+ if(on){
+  const st=decodeTrack(S.ctx,'fever'),entry=trackEntry('fever');if(!entry||st.status!=='ready')return false;
+  const fr=feverRateFor(entry,tr.bpm),v=layerSource(S,'fever',st.buffer,entry,at,entry.loopStart+TRACK_DELAY,fr.rate,0);
+  tr.fever={v,entry,rate:fr.rate,locked:fr.locked,ratio:fr.ratio};tr.feverOn=true;
+  eqFade(layerLevel(S,'fever').gain,0,1,at,spb*2);eqFade(layerLevel(S,'main').gain,1,0,at,spb*2);
+ }else if(tr.fever){
+  const d=spb*4,f=tr.fever;tr.feverOn=false;eqFade(layerLevel(S,'fever').gain,1,0,at,d);eqFade(layerLevel(S,'main').gain,0,1,at,d);
+  layerStop(f.v,at+d,.02);tr.fever=null;
+ }
+ return true;
+}
+/* Crash: the track's own low-pass closes in ~120 ms and reopens over a bar; cues dip it by about 2 dB. */
+function trackClose(S,t){
+ const f=S.tb?.lp.frequency;if(!f)return;try{if(f.cancelAndHoldAtTime)f.cancelAndHoldAtTime(t);else{f.cancelScheduledValues(t);f.setValueAtTime(OPEN,t)}}catch(_){}
+ try{f.exponentialRampToValueAtTime(CLOSED,t+.12)}catch(_){}
+}
+function trackOpen(S,t,dur){const f=S.tb?.lp.frequency;if(!f)return;try{f.cancelScheduledValues(t);f.setValueAtTime(CLOSED,t);f.exponentialRampToValueAtTime(OPEN,t+dur)}catch(_){}}
+function trackDip(S,t,hold){const g=S.tb?.duck.gain;if(!g)return;try{g.cancelScheduledValues(t);g.setTargetAtTime(TRACK_DIP,t,.015);g.setTargetAtTime(1,t+hold,.12)}catch(_){}}
+/* Where the track is, in beats from its loop head (for tests and the HUD): null without a running track. */
+function trackBeat(S,t){const tr=S?.tr;if(!tr)return null;const a=tr.v.a;return (layerPos(a,t??S.ctx.currentTime,tr.ls,tr.le)-tr.ls-TRACK_DELAY)/tr.spbBuf}
+
+/* One-shot Suno effects (sfx-*): played through the host's sfx bus (volume / mute are the app's) with a small polyphony cap; the synth effects stay as the fallback. */
+const SFX_GAIN=Object.freeze({'gate-clear':.9,star:.55,portal:.8,recover:.8,unlock:.85,discovery:.85});
+const SFX_VOICES=3;
+const sfxLive=new Set();
+function playSfx(name,{gain=1}={}){
+ try{
+  const entry=audioTable()?.['sfx-'+name];if(!entry||!enabled)return false;
+  const host=hostOf(),a=host?.audio?.()||screenAudio();if(!a?.context||!a.sfx)return false;
+  const s=host?.settings?.()||{};if(s.mute||Number(s.sfxVolume)<=0)return false;
+  const ctx=a.context,st=decodeTrack(ctx,'sfx-'+name);if(st.status!=='ready')return false;
+  if(sfxLive.size>=SFX_VOICES){const old=sfxLive.values().next().value;try{old.src.stop()}catch(_){}sfxLive.delete(old)}
+  const src=ctx.createBufferSource(),g=ctx.createGain();src.buffer=st.buffer;g.gain.value=Math.min(1,gain*(SFX_GAIN[name]||1));src.connect(g);g.connect(a.sfx);
+  const v={src,g};sfxLive.add(v);src.onended=()=>{sfxLive.delete(v);try{g.disconnect()}catch(_){}};
+  src.start(ctx.currentTime+.005,TRACK_DELAY);M.stats.sfx=(M.stats.sfx|0)+1;return true;
+ }catch(_){return false}
 }
 
 /* ---------- live controller ---------- */
@@ -748,9 +935,10 @@ function stepMacro(run,S){
 }
 function beginRun(run){
  const ctx=contextOf(run,override),recentCrash=M.lastEnd&&M.lastEnd.kind==='crash'&&now()-M.lastEnd.at<45&&M.chapter===ctx.piece;
- endSession(0);
+ const prevTrack=session?.tr?.id||null;M.xfade=!!prevTrack&&!!ctx.track&&prevTrack!==ctx.track;
+ endSession(M.xfade?1.5:0);
  Object.assign(M,{run,ctx,chapter:ctx.piece,section:sectionOf(run),jumpOk:false,jumpAt:null,shards:0,melody:false,climax:false,crashed:false,recover:false,bar:0,goal:false,jumpStep:0,lastJump:-9,rebuildStart:!!recentCrash,macro:null,child:null,attempt:0,portal:null,surgeAt:-9,pHist:null,rate:0,voiceWarm:null,voiceQueue:null});
- M.cfg=ctx.cfg;M.applied=M.section;queueWarm();
+ M.cfg=ctx.cfg;M.applied=M.section;M.feverIn=false;M.feverLast=null;M.trackTried=0;queueWarm();
 }
 function endRun(){endSession(.25);M.run=null;M.chapter=null;M.cfg=null;M.ctx=null;M.warm=[];M.macro=null}
 function endSession(fade){
@@ -762,7 +950,7 @@ function crash(){
  if(session&&!session.goal)duck(session,session.ctx.currentTime);
 }
 function goal(){
- if(M.goal)return;M.goal=true;M.stats.goals++;
+ if(M.goal)return;M.goal=true;M.stats.goals++;playSfx('gate-clear');
  if(session){const S=session,t=S.ctx.currentTime,eighth=S.spb/2,k=Math.ceil((t+.03-S.t0)/eighth);goalChord(S,Math.max(t+.03,S.t0+k*eighth),M.applied)}
 }
 function ensureSession(host,run){
@@ -771,7 +959,8 @@ function ensureSession(host,run){
  const ctx=audio.context;if(session&&session.ctx!==ctx)endSession(0);
  if(!session){
   M.macro=null;M.ctx=contextOf(run,override);M.cfg=M.ctx.cfg;
-  session=createSession(ctx,audio.music,M.cfg,{bar0:M.bar,fadeIn:M.bar>0?.5:1.4,closed:M.rebuildStart||M.crashed,section:M.applied,bpm:M.ctx?.road?M.ctx.bpm:undefined});
+  session=createSession(ctx,audio.music,M.cfg,{bar0:M.bar,fadeIn:M.xfade?1.5:M.bar>0?.5:1.4,closed:M.rebuildStart||M.crashed,section:M.applied,bpm:M.ctx?.road?M.ctx.bpm:undefined});
+  session.fresh=!M.rebuildStart&&!M.xfade;session.xfade=!!M.xfade;M.xfade=false;
   if(M.rebuildStart){M.rebuildStart=false;rebuild(session,session.t0);M.stats.rebuilds++}
   M.stats.sessions++;M.child=run.child||null;M.attempt=run.attempt|0;M.portal=run.portal||null;
   if(!timer&&typeof setInterval==='function'){timer=setInterval(update,45);timer?.unref?.()}
@@ -783,6 +972,7 @@ function resync(run,reason){
  const S=session;if(!S||S.goal||!M.cfg?.road)return;
  const ctx=contextOf(run,override),t=S.ctx.currentTime,p=run.portal;
  let swap;if(p&&!p.swapped)swap=t+Math.max(0,p.duration*.5-p.age);else swap=t-Math.max(0,Number(run.child?.time)||0);
+ if(S.tr){trackResync(S,run,ctx,swap,reason);return}
  const spb=60/ctx.bpm,k=Math.ceil((S.nextTime-swap)/spb-1e-6),grid=swap+k*spb;
  if(grid<S.nextTime-1e-6||grid>S.nextTime+spb*1.01)return;
  const gap=grid-S.nextTime;
@@ -791,6 +981,7 @@ function resync(run,reason){
 }
 function pump(run){
  const S=session;if(!S||S.goal)return;
+ if(M.cfg?.road)trackStep(run,S);
  while(S.nextTime<S.ctx.currentTime+LOOKAHEAD){
   if(M.crashed&&M.recover){M.crashed=false;M.recover=false;if(S.ducked){rebuild(S,S.nextTime);M.stats.rebuilds++}}
   if(M.section!==M.applied)M.applied=M.section;
@@ -800,7 +991,7 @@ function pump(run){
    const actType=run.acts?.[run.actIndex]?.type||'',dir=override?.shep===undefined?shepDirOf(actType):override.shep;
    const portalOpen=run.portal&&!run.portal.swapped;
    st.shepDir=portalOpen&&dir===0?S.shepDir:dir;S.shepDir=st.shepDir;
-   st.shep=st.shepDir&&!M.crashed?(S.level>=1?.9:0):0;st.bpm=S.nextBpm||M.ctx?.bpm||S.cfg.bpm;
+   st.shep=st.shepDir&&!M.crashed?(S.level>=1?(S.trackMode?.3:.9):0):0;st.bpm=S.nextBpm||M.ctx?.bpm||S.cfg.bpm;
    out=scheduleBar(S,level,M.applied,st);
    if(level!==before)M.stats.transitions.push({bar:out.bar,time:+out.time.toFixed(3),from:before,to:level,section:st.section});
    if(st.newSection)M.stats.sections.push({bar:out.bar,time:+out.time.toFixed(3),section:st.section,progress:+st.progress.toFixed(3)});
@@ -815,11 +1006,50 @@ function pump(run){
  }
  M.stats.notes=S.scheduled;const v=voicesAt(S,S.ctx.currentTime);M.stats.maxVoices=Math.max(M.stats.maxVoices,v,S.peakVoices);
 }
+/* Track mode per tick: start the track once it is decoded (the synth piece plays until then, and keeps playing if decoding fails), switch to another chapter's track,
+   cross to / from the fever layer, preload the fever and effect buffers when idle. */
+function trackStep(run,S){
+ const want=M.ctx?.track,entry=want&&trackEntry(want);
+ if(!entry||S.goal)return;
+ const ctx=S.ctx,st=decodeTrack(ctx,want),t=ctx.currentTime;
+ if(st.status==='failed'){S.trackFailed=want;return}
+ if(st.status!=='ready')return;
+ if(!S.tr){
+  /* first start: on the session's own downbeat when the session is brand new, else on the next bar line (the synth fallback was playing); a fresh course start plays the intro */
+  const at=S.scheduled===0||S.nextBar===S.bar0?Math.max(S.t0,t+.02):Math.max(S.nextTime,t+.02);
+  const tr=trackStart(S,want,{at,fromIntro:!!S.fresh&&entry.kind==='intro-loop',fadeIn:S.xfade||S.scheduled>0?1.5:.4,bpm:M.ctx.bpm});
+  if(!tr)return;trackEnter(S,tr,at);S.fresh=false;M.stats.tracks=(M.stats.tracks|0)+1;if(M.ctx.bpm)S.nextBpm=tr.bpm;return;
+ }
+ if(S.tr.id!==want){const at=Math.max(S.nextTime,t+.02);if(trackSwitch(S,want,{at,fromIntro:true,bpm:M.ctx.bpm}))M.stats.trackSwitches=(M.stats.trackSwitches|0)+1;return}
+ /* fever crossfade */
+ const fever=feverOf(run),streak=run.perfectStreak|0,wantFever=feverWanted(fever,{surge:surgeActive(),streak,crashed:M.crashed});
+ if(fever==='RECOVERY'&&M.feverLast&&M.feverLast!=='RECOVERY'&&M.feverLast!=='NORMAL'&&M.feverLast!=='FLOW')playSfx('recover');
+ M.feverLast=fever;
+ const fe=trackEntry('fever');
+ if(fe&&!S.tr.feverOn&&wantFever){
+  const fs=decodeTrack(ctx,'fever');if(fs.status==='ready'){const nb=api.nextBeatTime(1),at=nb===null||nb<t+.03?t+.05:nb;if(feverCross(S,true,at)){M.feverIn=true;M.stats.feverIn=(M.stats.feverIn|0)+1}}
+ }else if(S.tr.feverOn&&!wantFever){
+  const nb=api.nextBeatTime(1),at=nb===null||nb<t+.03?t+.05:nb;if(feverCross(S,false,at)){M.feverIn=false;M.stats.feverOut=(M.stats.feverOut|0)+1}
+ }
+ /* preloads once the main track runs: the fever loop and the effect samples (small, decoded in parallel off the main thread) */
+ if(fe)decodeTrack(ctx,'fever');
+ const tab=audioTable();for(const k of PRELOAD)if(tab?.[k])decodeTrack(ctx,k);
+}
+const PRELOAD=Object.freeze(['sfx-gate-clear','sfx-portal','sfx-star','sfx-recover','sfx-unlock','sfx-discovery']);
+/* Act gate / retry / tempo change while a track plays: hop to the nearest beat so the track's beats sit on the act's own beat grid; a same-object retry restarts from the loop head. */
+function trackResync(S,run,ctx,swap,reason){
+ const t=S.ctx.currentTime,at=Math.max(swap,t+.02);M.ctx=ctx;M.stats.resyncs++;if(reason==='gate')M.stats.gates++;
+ if(reason==='retry'){const tr=S.tr;if(tr)trackSwitch(S,tr.id,{at,fromIntro:false,fadeOut:.12,bpm:ctx.bpm});S.nextTime=Math.max(at,S.nextTime);M.stats.trackRestarts=(M.stats.trackRestarts|0)+1;return}
+ trackRetempo(S,ctx.bpm,at);
+ const spb=60/(S.tr.bpm||ctx.bpm),k=Math.ceil((S.nextTime-at)/spb-1e-6),grid=at+k*spb;
+ if(grid>=S.nextTime-1e-6&&grid<=S.nextTime+spb*1.01){S.nextTime=grid;S.nextBpm=S.tr.bpm}
+ trackRephase(S,at);
+}
 /* Watch the first-class run fields a CourseRun exposes (child, attempt, portal) without needing any hook inside course-run.js. */
 function watchRun(run){
  if(!M.cfg?.road||!session)return;
  const child=run.child||null,attempt=run.attempt|0,portal=run.portal||null;
- if(portal&&portal!==M.portal){M.portal=portal;resync(run,'gate')}
+ if(portal&&portal!==M.portal){M.portal=portal;playSfx('portal');resync(run,'gate')}
  else if(child&&child!==M.child){resync(run,portal?'gate':'act')}
  else if(attempt!==M.attempt&&session)resync(run,'retry');
  M.child=child;M.attempt=attempt;if(!portal)M.portal=null;
@@ -847,10 +1077,13 @@ function onEvent({run,event}){
   case 'jump':{const t=now();M.jumpStep=t-M.lastJump<2.4?Math.min(5,M.jumpStep+1):0;M.lastJump=t;if(!run.openingCourse)M.jumpAt=t;else M.pendingLand=true;break}
   case 'land':if(M.pendingLand&&!M.crashed)M.jumpOk=true;M.pendingLand=false;break;
   case 'pass':case 'perfect':M.shards++;M.jumpOk=true;break;
-  case 'kick':case 'morph':case 'boss-damage':case 'room-clear':case 'portal':case 'item':M.shards++;break;
+  case 'item':M.shards++;if((run.child?.lastItem||run.lastItem)?.kind==='memory-star')playSfx('star');break;
+  case 'kick':case 'morph':case 'boss-damage':case 'room-clear':case 'portal':M.shards++;break;
   case 'surge':{M.surgeAt=session?session.ctx.currentTime:-9;M.stats.surges++;
    if(session&&!session.goal){const S=session,t=S.ctx.currentTime;let at=api.nextBeatTime(.5);if(at===null)at=t+.05;else if(at<t+.03)at+=S.spb/2;surgeLayer(S,at,4)}break}
   case 'goal-qualified':M.climax=true;break;
+  case 'unlock':playSfx('unlock');break;
+  case 'discovery':playSfx('discovery');break;
   case 'hit':M.pendingLand=false;crash();break;
   case 'pause':endSession(0);break;
   case 'fail':M.lastEnd={kind:'crash',at:now()};endSession(.35);break;
@@ -885,7 +1118,7 @@ function warmStep(host){
  try{M.voiceQueue.shift()()}catch(_){}
 }
 function tuning(kind,step,variant){
- if(!M.cfg)return null;const key=keyOf(M.cfg,M.cfg.road?(session?.loop??0):M.applied);
+ if(!M.cfg)return null;const key=session?.trackMode&&session.key?session.key:keyOf(M.cfg,M.cfg.road?(session?.loop??0):M.applied);
  return {tonic:key.tonic,third:key.third,scale:key.scale,step,variant,key:key.name};
 }
 /* Effects for the pickups: the item scripts call host.sound('square-room' | 'aurora-shimmer' | 'chain' | 'perfect-chime' | 'square-portal' | 'impact-glass')
@@ -909,6 +1142,79 @@ if(enabled&&bus){
  bus.on('attach',host=>{try{host.refreshMusic?.()}catch(_){}});
  if(typeof root.document?.addEventListener==='function')root.document.addEventListener('visibilitychange',()=>{if(hidden())endSession(0);else update()});
 }
+
+/* ---------- screen music (lobby, menus, story): a small player on its own AudioContext, because the app's graph only exists while a run is playing ----------
+   title: the lobby; menu: wardrobe / route map / story journal / memories / settings ...; story: story scenes and chapter ending screens (low level).
+   It starts after the first trusted user gesture, follows the music volume / mute settings, fades out when a run starts or the page is hidden, and crossfades
+   (1.2 s) between screens. Without an active run only; a run's own session owns the sound while it plays. */
+const SCREEN_GAIN=Object.freeze({title:.708,menu:.708,story:.5});
+const MENU_SCREENS=Object.freeze(['wardrobePanel','roadScreen','storyJournal','settings','memories','journey','r34Map','collection']);
+const STORY_SCREENS=Object.freeze(['restorationScene','finaleEpilogue','r34Ending']);
+const SC={ctx:null,master:null,sfx:null,cur:null,gestured:false,timer:null,want:null,stats:{ticks:0,starts:0,switches:0,fades:0,errors:0}};
+function shownEl(id){
+ try{const d=root.document,el=d?.getElementById?.(id);if(!el||el.hidden)return false;
+  if(typeof el.getClientRects==='function'&&el.getClientRects().length===0)return false;
+  const cs=typeof root.getComputedStyle==='function'?root.getComputedStyle(el):null;return !(cs&&(cs.visibility==='hidden'||cs.display==='none'));
+ }catch(_){return false}
+}
+/* A cleared course's result sheet is a chapter-ending moment: the road result panel with at least one star lit. */
+function roadEnding(){
+ if(!shownEl('roadResult'))return false;
+ try{const d=root.document,s=d.getElementById('roadResultStars');const label=String(s?.getAttribute?.('aria-label')||'');const m=/(\d)/.exec(label);return !m||+m[1]>0}catch(_){return false}
+}
+/* Which screen track the current screen wants (null = none). Pure apart from DOM reads, so tests drive it with a fake document. */
+function screenWanted(){
+ if(!enabled||!root.document||hidden())return null;
+ const run=hostOf()?.activeRun?.();
+ for(const id of STORY_SCREENS)if(shownEl(id))return 'story';
+ if(run&&!['clear','fail','result','ended'].includes(run.state))return null;/* a run that is playing / paused / in a transition owns the sound */
+ if(roadEnding())return 'story';
+ for(const id of MENU_SCREENS)if(shownEl(id))return 'menu';
+ return shownEl('r105Lobby')?'title':null;
+}
+function screenCtx(){
+ if(SC.ctx&&SC.ctx.state!=='closed')return SC.ctx;
+ const C=root.AudioContext||root.webkitAudioContext;if(!C)return null;
+ try{
+  const ctx=new C(),n=(f)=>ctx.createGain();SC.ctx=ctx;SC.master=n();SC.sfx=n();SC.master.connect(ctx.destination);SC.sfx.connect(ctx.destination);
+  SC.master.gain.value=0;SC.sfx.gain.value=0;SC.cur=null;return ctx;
+ }catch(e){SC.stats.errors++;return null}
+}
+/* The sound bus pair playSfx falls back to when no run is on screen. */
+function screenAudio(){return SC.ctx&&SC.ctx.state!=='closed'&&SC.sfx?{context:SC.ctx,sfx:SC.sfx,music:SC.master}:null}
+function screenLevels(){
+ const s=hostOf()?.settings?.()||{};const mute=!!s.mute;
+ const vol=v=>mute?0:Number.isFinite(+v)?Math.max(0,Math.min(1,+v)):1;
+ return {music:vol(s.musicVolume),sfx:vol(s.sfxVolume)};
+}
+function screenTick(){
+ if(!enabled)return;SC.stats.ticks++;
+ try{
+  let want=screenWanted();const lv=screenLevels();
+  if(!SC.gestured||lv.music<=0)want=null;
+  if(want&&!trackEntry(want))want=null;
+  SC.want=want;
+  const ctx=want||SC.ctx?(SC.gestured?screenCtx():SC.ctx):null;if(!ctx)return;
+  if(ctx.state==='suspended'&&SC.gestured){try{Promise.resolve(ctx.resume()).catch(()=>{})}catch(_){}}
+  const t=ctx.currentTime;
+  try{SC.master.gain.setTargetAtTime(lv.music,t,.05);SC.sfx.gain.setTargetAtTime(lv.sfx,t,.05)}catch(_){}
+  const cur=SC.cur;
+  if(cur&&cur.id!==want){eqFade(cur.g.gain,cur.level,0,t,cur.id==='story'||want==='story'?1:1.2);try{cur.src.stop(t+1.4)}catch(_){}SC.cur=null;SC.stats.fades++;if(want)SC.stats.switches++}
+  if(want&&!SC.cur){
+   const st=decodeTrack(ctx,want);if(st.status!=='ready')return;
+   const e=trackEntry(want),src=ctx.createBufferSource(),g=ctx.createGain(),level=SCREEN_GAIN[want]??.7;
+   src.buffer=st.buffer;src.loop=true;src.loopStart=e.loopStart;src.loopEnd=e.loopEnd;src.connect(g);g.connect(SC.master);
+   eqFade(g.gain,0,level,t+.02,1.2);src.start(t+.02,(e.introEnd>0?0:e.loopStart)+TRACK_DELAY);SC.cur={id:want,src,g,level};SC.stats.starts++;
+  }
+ }catch(e){SC.stats.errors++}
+}
+function screenGesture(e){if(e&&e.isTrusted===false)return;SC.gestured=true;screenTick()}
+function screenBoot(){
+ const d=root.document;if(!enabled||!d||typeof d.addEventListener!=='function'||!audioTable())return;
+ for(const type of ['pointerdown','touchend','keydown','click'])d.addEventListener(type,screenGesture,{capture:true,passive:true});
+ if(typeof setInterval==='function'&&!SC.timer)SC.timer=setInterval(screenTick,250);
+}
+screenBoot();
 
 /* Offline render (tests/tools). piece: 'opening' | 1..10 | 'r1'..'r5'. For road pieces plan:true plays the whole macro plan (intro, A, B, climax, resolve)
    with stems following the section, then the goal chord; shep=+1/-1 turns the Shepard bank on throughout. */
@@ -941,15 +1247,19 @@ async function renderOffline({chapter='opening',level=4,seconds=20,section=0,sam
  for(const k of ['crash','goal'])if(marks[k]!==null&&!done[k]){if(k==='crash')duck(S,marks[k]);else goalChord(S,marks[k],section)}
  const clk1=clock(),buffer=await ctx.startRendering();return {buffer,ms:{schedule:Math.round(clk1-clk0),render:Math.round(clock()-clk1)},notes:S.scheduled,peakVoices:S.peakVoices,sections,bars:S.nextBar,spb:S.spb,cfg:{bpm:S.bpm,key:keyOf(cfg,0).name,title:cfg.title}};
 }
+function trackInfo(){
+ const S=session,tr=S?.tr;if(!tr)return {want:M.ctx?.track||null,active:false,failed:S?.trackFailed||null};
+ return {want:M.ctx?.track||null,active:true,id:tr.id,kind:tr.entry.kind,rate:tr.rate,bpm:tr.bpm,locked:tr.locked,beat:+(trackBeat(S)||0).toFixed(3),fever:tr.feverOn,feverRate:tr.fever?.rate||null,feverLocked:tr.fever?.locked||null,rephases:tr.rephases,retempos:tr.retempos,restarts:tr.restarts,key:S.key?.name||null};
+}
 function inspect(){
  const S=session;
- return {enabled,active:!!S,chapter:M.chapter,piece:M.ctx?.piece||null,road:!!M.cfg?.road,course:M.ctx?.course||null,act:M.ctx?.act||'',key:M.cfg?keyOf(M.cfg,S?.loop??M.applied).name:null,bpm:S?S.bpm:M.cfg?.bpm||0,section:M.applied,macro:M.macro?{name:M.macro.name,bars:M.macro.bars}:null,
+ return {enabled,active:!!S,chapter:M.chapter,piece:M.ctx?.piece||null,road:!!M.cfg?.road,course:M.ctx?.course||null,act:M.ctx?.act||'',key:S?.trackMode&&S.key?S.key.name:M.cfg?keyOf(M.cfg,S?.loop??M.applied).name:null,bpm:S?S.bpm:M.cfg?.bpm||0,section:M.applied,macro:M.macro?{name:M.macro.name,bars:M.macro.bars}:null,
   level:S?S.level:0,ducked:!!S?.ducked,goal:M.goal,jumpOk:M.jumpOk,shards:M.shards,melody:M.melody,climax:M.climax,crashed:M.crashed,bar:S?S.nextBar:M.bar,
-  voices:S?voicesAt(S,S.ctx.currentTime):0,scheduled:S?S.scheduled:0,duckHz:S?S.duck.frequency.value:0,shepDir:S?.shepDir||0,fever:M.fever||null,surging:surgeActive(),override:override?{...override}:null,stats:JSON.parse(JSON.stringify(M.stats))};
+  voices:S?voicesAt(S,S.ctx.currentTime):0,scheduled:S?S.scheduled:0,duckHz:S?S.duck.frequency.value:0,shepDir:S?.shepDir||0,fever:M.fever||null,surging:surgeActive(),track:trackInfo(),screen:{want:SC.want,playing:SC.cur?.id||null,gestured:SC.gestured,stats:{...SC.stats}},override:override?{...override}:null,stats:JSON.parse(JSON.stringify(M.stats))};
 }
 const api={
  enabled,ARRANGEMENTS,TRIPS,SCALES,CHORDS,SECTIONS,MAX_VOICES,SHEP,arrangement,chapterOf,roadChapterOf,contextOf,isRoadRun,keyOf,chordAt,phrase,barEvents,tripBarEvents,tripLevel,macroPlan,sectionAtProgress,isDropout,goalEvents,safe,
- FEVER_LEVEL,BLUE_KEYS,roadPieceOf,shepWindow,shepFreq,shepLoudness,shepDirOf,registerShepardAct,renderOffline,inspect,sfxTuning,update,
+ FEVER_LEVEL,BLUE_KEYS,TRACK_IDS,LEGACY_TRACK,CHAPTER_TRACK,SCREEN_GAIN,MENU_SCREENS,STORY_SCREENS,trackIdOf,trackKeyOf,bossTrackOf,trackEntry,trackBpmOf,trackRateFor,feverRateFor,feverWanted,trackCfgFor,decodeTrack,playSfx,roadPieceOf,shepWindow,shepFreq,shepLoudness,shepDirOf,registerShepardAct,renderOffline,inspect,sfxTuning,update,
  /* Steer the music without course-run.js cooperation: setContext({chapter:1..5, trip:'violet'.., course:'c7', act:'penrose', bpm:104, shep:-1|0|1, piece:'r3'}). */
  /* fever:'NORMAL'|'FLOW'|'LUCID'|'OVERLOAD'|'RECOVERY' maps onto the stems (1,2,3,4,2). */
  setContext(ctx){override=ctx&&typeof ctx==='object'?{...ctx}:null;if(M.run){const c=contextOf(M.run,override);M.ctx=c;if(c.piece!==M.chapter||c.cfg!==M.cfg){M.chapter=c.piece;M.cfg=c.cfg;M.macro=null;if(session)endSession(.25)}}return override},
@@ -957,7 +1267,7 @@ const api={
  getContext(){return M.ctx?{piece:M.ctx.piece,course:M.ctx.course,act:M.ctx.act,bpm:M.ctx.bpm,trip:M.ctx.trip,road:M.ctx.road,shepDir:M.ctx.shepDir}:null},
  get intensity(){return session&&!session.stopped?(session.goal?0:session.level):0},
  get bpm(){return session?session.bpm:M.cfg?.bpm||0},
- get key(){return M.cfg?keyOf(M.cfg,session?.loop??M.applied).name:null},
+ get key(){return session?.trackMode&&session.key?session.key.name:M.cfg?keyOf(M.cfg,session?.loop??M.applied).name:null},
  get secondsPerBeat(){return session?session.spb:M.cfg?60/M.cfg.bpm:0},
  get section(){return M.macro?M.macro.name:null},
  /* Current musical position in beats (fractional) on the AudioContext clock; 0 when idle. Exact across tempo changes (anchored per bar). */
@@ -973,7 +1283,10 @@ const api={
  _setClock(fn){clockOverride=typeof fn==='function'?fn:null},
  _reset(){endSession(0);for(const S of lingering)S.kill?.();lingering=[];override=null;Object.assign(M,{run:null,chapter:null,cfg:null,ctx:null,section:0,applied:0,lastEnd:null,warm:[],macro:null,voiceWarm:null,voiceQueue:null,stats:{bars:0,notes:0,ducks:0,rebuilds:0,goals:0,sessions:0,resyncs:0,gates:0,surges:0,maxVoices:0,transitions:[],sections:[]}})},
  _session:()=>session,
- _internals:{cueDuck,createSession,scheduleBar,play,duck,goalChord,rebuild,surgeLayer,shepStep,resync,voicesAt,peakIn,admit,stepMacro}
+ trackInfo,
+ /* Screen music (lobby/menu/story) for tests: tick() runs one pass, wanted() asks which track the DOM wants, gesture() marks the first user gesture. */
+ _screens:{tick:screenTick,wanted:screenWanted,gesture:()=>{SC.gestured=true;screenTick()},state:()=>({...SC,stats:{...SC.stats}}),reset(){try{SC.cur?.src?.stop?.()}catch(_){}SC.cur=null;SC.ctx=null;SC.master=null;SC.sfx=null;SC.gestured=false;SC.want=null}},
+ _internals:{trackStart,trackEnter,trackSwitch,trackRetempo,trackRephase,feverCross,trackStep,trackBeat,layerPos,cueDuck,createSession,scheduleBar,play,duck,goalChord,rebuild,surgeLayer,shepStep,resync,voicesAt,peakIn,admit,stepMacro}
 };
 Object.freeze(api);
 root.MongyuAdaptiveMusic=api;if(typeof module!=='undefined')module.exports=api;

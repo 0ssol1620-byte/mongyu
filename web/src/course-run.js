@@ -193,7 +193,7 @@ class CourseRun{
   const child=this.child;if(child.state!=='play'&&child.state!=='ready')return;
   child.tick(dt);
   for(const e of child.drainEvents?.()||[]){if(e==='perfect')this.carry.perfects++;if(!['start','clear','fail','pause','resume'].includes(e))this.events.push(e)}
-  this.sync(child);
+  this.sync(child);root.MongyuGhost?.tick?.(this);   // R105 GAL: ghost sampling (presentation only)
   if(child.state==='fail')this.failAct(child);
   else if(child.state==='clear')this.clearAct(child);
  }
@@ -303,6 +303,7 @@ function hud(c,run,w,h,show=1){
  // Progress gauge with a notch for each act gate (lit once passed).
  const gy=h*.86,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.progress();
  rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=gaugeInk(run);c.fill();
+ root.MongyuGhost?.drawMarker?.(c,run,x0,gy,gw);   // R105 GAL: ghost dot on the gauge
  for(const b of run.boundaries()){c.save();c.translate(x0+gw*b,gy+3);c.rotate(Math.PI/4);c.fillStyle=frac>=b?'#ffd98a':'rgba(255,255,255,.45)';c.fillRect(-3.4,-3.4,6.8,6.8);c.restore()}
  const total=run.carry.shardTotal+num(actShardTotal(child||{},null));
  if(total>0){c.font='700 11px system-ui,sans-serif';c.textAlign='right';c.fillStyle='rgba(255,236,190,.85)';c.fillText('◆ '+run.liveShards(),x0+gw,gy-8)}
