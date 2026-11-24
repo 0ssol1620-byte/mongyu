@@ -48,6 +48,7 @@ function mount(){
   ui.endless=el('button',{id:'dreamEndlessOpen',type:'button','data-glyph':'∞'},row,'무한 꿈');
   ui.daily=el('button',{id:'dreamDailyOpen',type:'button','data-glyph':'✧'},row,'오늘의 도전');
   ui.illusion=el('button',{id:'dreamIllusionOpen',type:'button','data-glyph':'◈'},row,'착시 정원');
+  if(root.MongyuRoad?.enabled){ui.road=el('button',{id:'dreamRoadOpen',type:'button','data-glyph':'☾'},row,'꿈의 길');ui.road.onclick=e=>root.MongyuRoad.open(e)}
   if(cont&&cont.parentNode===actions)cont.after(row);else actions.prepend(row);
   ui.row=row;
   ui.endless.onclick=e=>startMode('endless',e);ui.daily.onclick=e=>startMode('daily',e);ui.illusion.onclick=e=>startMode('illusion',e);
@@ -106,6 +107,7 @@ function sync(){
 function newRun(kind,attempt=1){
  const viewport=host?.viewport?.()||{width:390,height:844},settings=host?.settings?.()||{};
  if(kind==='illusion')return new root.MongyuIllusion.IllusionRun({viewport,settings,attempt});
+ if(kind==='road')return root.MongyuRoad.newRun(null,attempt);
  return new root.MongyuEndless.EndlessRun({daily:kind==='daily',viewport,settings,attempt});
 }
 function startMode(kind,event){
@@ -118,16 +120,18 @@ function retry(event){
  const run=host?.activeRun?.();
  if(!isDream(run))return false;
  hidePanel();
+ if(run.dreamMode==='road')return root.MongyuRoad.retry(run,event);
  const next=newRun(run.dreamMode,(run.attempt||1)+1);
  if(run.dreamMode==='illusion'){next.skipIntro=true;next.reset()}
  return host.startRun(next,event);
 }
 
 /* ---------- results ---------- */
-function hidePanel(){if(ui?.panel){ui.panel.hidden=true;ui.note.textContent=''}resultFor=null}
+function hidePanel(){if(ui?.panel){ui.panel.hidden=true;ui.note.textContent=''}root.MongyuRoad?.hideResult?.();resultFor=null}
 function fmt(n){return Math.max(0,Math.floor(n||0)).toLocaleString('ko-KR')}
 function onEnd(run){
  const r=run.result;if(!r)return;
+ if(run.dreamMode==='road'){resultFor=run;root.MongyuRoad.onEnd(run);return}
  const S=root.MongyuShare;
  if(run.dreamMode==='illusion'){record=recordIllusion(r)}
  else{record=root.MongyuEndless.recordRun(storage(),{daily:run.daily,score:r.score},run.date&&run.daily?run.date:new Date())}
@@ -165,8 +169,8 @@ function onEnd(run){
 function captionInfo(run){
  const r=run?.result;
  if(isDream(run)){
-  const title=run.dreamMode==='illusion'?'착시 정원':run.dreamMode==='daily'?'오늘의 도전':'무한 꿈';
-  return {run,title,subtitle:fmt(r?.score)+'점'+(run.dreamMode==='illusion'?'':' · '+fmt(r?.meters)+'m')};
+  const road=run.dreamMode==='road',title=road?'꿈의 길 · '+run.name:run.dreamMode==='illusion'?'착시 정원':run.dreamMode==='daily'?'오늘의 도전':'무한 꿈';
+  return {run,title,subtitle:fmt(r?.score)+'점'+(road||run.dreamMode==='illusion'?'':' · '+fmt(r?.meters)+'m')};
  }
  const world=$('restorationResultWorld')?.textContent?.trim(),heading=$('squareHeading')?.textContent?.trim();
  return {run,title:world||(run?.openingCourse?'접힌 빛':'몽유'),subtitle:heading||''};

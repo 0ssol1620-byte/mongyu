@@ -1,1 +1,77 @@
 /* R105 road mode styles. Only shipped in polish builds; scope selectors under html[data-polish-edition]. */
+
+/* Title: 꿈의 길 sits as a gold first line inside the 새로운 꿈 capsule, the three older modes stay on the second line. */
+html[data-polish-edition] .r104-modes-row{flex-wrap:wrap;width:min(100%,306px);border-radius:24px;row-gap:0}
+html[data-polish-edition] .r104-modes-row #dreamRoadOpen{order:-1;flex:1 0 100%;min-height:42px;margin:2px 0 3px;font-size:15px;letter-spacing:.08em;color:#fff1cf;
+ background:linear-gradient(90deg,rgba(255,217,138,0),rgba(255,217,138,.16) 50%,rgba(255,217,138,0));border-bottom:1px solid rgba(255,217,138,.22);border-radius:999px 999px 0 0}
+html[data-polish-edition] .r104-modes-row #dreamRoadOpen::before{color:var(--mongyu-tap);margin-right:7px}
+html[data-polish-edition] .r104-modes-row #dreamRoadOpen::after{display:none}
+html[data-polish-edition] .r104-modes-row #dreamEndlessOpen::after{display:none}
+
+/* 꿈의 길 campaign screen: five courses climbing a stone road, bottom (1) to top (5). */
+html[data-polish-edition] .r105-road{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;color:#fbf4ff;
+ background:radial-gradient(120% 50% at 50% 0,rgba(255,176,150,.2),rgba(255,176,150,0) 70%),linear-gradient(180deg,#34234f 0%,#21163f 38%,#120c2a 100%);
+ font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;animation:r105RoadIn .28s ease both}
+html[data-polish-edition] .r105-road[hidden]{display:none}
+html[data-polish-edition] .r105-road::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;
+ background-image:radial-gradient(1.2px 1.2px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 78% 9%,#fff9,transparent),radial-gradient(1.4px 1.4px at 44% 31%,#ffe9c8a0,transparent),radial-gradient(1px 1px at 90% 44%,#fff7,transparent),radial-gradient(1.2px 1.2px at 24% 62%,#fff6,transparent),radial-gradient(1px 1px at 66% 78%,#fff6,transparent)}
+html[data-polish-edition] .r105-road-head{position:relative;display:flex;align-items:center;gap:6px;padding:max(14px,calc(env(safe-area-inset-top) + 8px)) 16px 8px}
+html[data-polish-edition] .r105-road-back{flex:0 0 auto;width:44px;height:44px;margin:0;padding:0;border-radius:50%;font-size:26px;line-height:1;font-weight:400;color:#f1e3f7;
+ background:rgba(36,26,64,.7);border:1px solid rgba(255,236,255,.18);box-shadow:none;clip-path:none;cursor:pointer}
+html[data-polish-edition] .r105-road-back:focus-visible,html[data-polish-edition] .r105-road-node .rd-card:focus-visible{outline:2px solid #ffe2a1;outline-offset:2px}
+html[data-polish-edition] .r105-road-titles{flex:1;min-width:0;text-align:center;margin-right:44px}
+html[data-polish-edition] .r105-road-kicker{margin:0;font-size:12px;letter-spacing:.2em;color:#e2cbe9;opacity:.85}
+html[data-polish-edition] .r105-road h1{margin:2px 0 0;font-size:22px;line-height:1.25;font-weight:800;color:#fff4fb;text-shadow:0 2px 12px rgba(10,6,22,.7)}
+html[data-polish-edition] .r105-road-summary{margin:2px 0 0;font-size:12px;color:#ffdfa6;opacity:.92;font-variant-numeric:tabular-nums}
+html[data-polish-edition] .r105-road-scroll{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;padding:10px 16px max(28px,calc(env(safe-area-inset-bottom) + 18px));-webkit-overflow-scrolling:touch}
+html[data-polish-edition] .r105-road-list{position:relative;list-style:none;margin:0;padding:0;display:flex;flex:1 0 auto;flex-direction:column-reverse;justify-content:space-between;gap:12px;max-height:760px}
+html[data-polish-edition] .r105-road-list::before{content:'';position:absolute;left:21px;top:34px;bottom:34px;width:2px;transform:translateX(-1px);
+ background:repeating-linear-gradient(180deg,rgba(255,217,138,.55) 0 7px,transparent 7px 13px);opacity:.7}
+html[data-polish-edition] .r105-road-node{position:relative;display:grid;grid-template-columns:44px 1fr;align-items:center;gap:10px;margin:0;padding:0}
+html[data-polish-edition] .r105-road-node .rd-stone{position:relative;display:grid;place-items:center;width:42px;height:42px;margin:0 1px;border-radius:14px;transform:rotate(45deg) scale(.82);
+ background:linear-gradient(145deg,#5a4880,#2b2050);border:1.5px solid rgba(255,236,255,.3);box-shadow:0 4px 14px rgba(8,4,20,.5)}
+html[data-polish-edition] .r105-road-node .rd-stone i{font-style:normal;transform:rotate(-45deg);font-size:15px;font-weight:800;color:#f1e3f7}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone{background:linear-gradient(145deg,#ffe9b0,#ffc27e);border-color:#fff2cc;box-shadow:0 0 0 4px rgba(255,217,138,.18),0 6px 20px rgba(255,190,110,.35)}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone i{color:#3a2410}
+html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone{background:linear-gradient(145deg,#a8f0e0,#6fc6b8);border-color:#e6fff8;box-shadow:0 0 0 3px rgba(127,243,225,.16),0 4px 14px rgba(8,4,20,.5)}
+html[data-polish-edition] .r105-road-node[data-state=done] .rd-stone i{color:#0f3a35}
+html[data-polish-edition] .r105-road-node[data-state=locked] .rd-stone{background:#241a3d;border-color:rgba(255,236,255,.14);box-shadow:none}
+html[data-polish-edition] .r105-road-node[data-state=locked] .rd-stone::after{content:'';width:9px;height:9px;border-radius:2px;background:rgba(255,236,255,.28);transform:rotate(-45deg)}
+html[data-polish-edition] .r105-road-node .rd-card{display:flex;flex-direction:column;align-items:stretch;gap:3px;width:100%;min-height:78px;margin:0;padding:11px 14px 10px;text-align:left;cursor:pointer;
+ border-radius:18px;background:rgba(36,26,64,.72);border:1px solid rgba(255,236,255,.15);box-shadow:0 8px 22px rgba(8,4,20,.35);clip-path:none;color:#fbf4ff;font:inherit;
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+html[data-polish-edition] .r105-road-node .rd-card:active{transform:scale(.985)}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-card{border-color:rgba(255,217,138,.55);background:linear-gradient(135deg,rgba(70,48,100,.86),rgba(40,28,70,.86));box-shadow:0 0 0 1px rgba(255,217,138,.2),0 10px 28px rgba(255,190,110,.2)}
+html[data-polish-edition] .r105-road-node[data-state=locked] .rd-card{opacity:.55;cursor:default;border-style:dashed;box-shadow:none}
+html[data-polish-edition] .r105-road-node .rd-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+html[data-polish-edition] .r105-road-node .rd-name{font-size:18px;font-weight:800;letter-spacing:.01em;color:#fff4fb}
+html[data-polish-edition] .r105-road-node .rd-stars{display:inline-flex;gap:2px;font-size:17px;line-height:1}
+html[data-polish-edition] .r105-road-node .rd-stars .rd-s{color:#4d3d6c}
+html[data-polish-edition] .r105-road-node .rd-stars .rd-s[data-on=true]{color:#ffd98a;text-shadow:0 0 10px rgba(255,200,120,.55)}
+html[data-polish-edition] .r105-road-node .rd-desc{font-size:13px;line-height:1.4;color:#e6d6ee}
+html[data-polish-edition] .r105-road-node .rd-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#bda8cc;font-variant-numeric:tabular-nums}
+html[data-polish-edition] .r105-road-node .rd-meta .rd-best{color:#ffdfa6;font-weight:700}
+@keyframes r105RoadIn{from{opacity:0}to{opacity:1}}
+html[data-polish-edition] .r105-road-node[data-state=open] .rd-stone{animation:r105Beat 2.4s ease-in-out infinite}
+@keyframes r105Beat{0%,100%{transform:rotate(45deg) scale(.82)}50%{transform:rotate(45deg) scale(.88)}}
+
+/* Result: the dream-result sheet plus stars. */
+html[data-polish-edition] .r105-road-result .road-stars{display:flex;justify-content:center;gap:8px;margin:6px 0 2px}
+html[data-polish-edition] .r105-road-result .road-stars[hidden],html[data-polish-edition] .r105-road-result .road-goals[hidden]{display:none}
+html[data-polish-edition] .road-star{font-size:40px;line-height:1;color:#43355f;transition:color .2s}
+html[data-polish-edition] .road-star::before{content:'★'}
+html[data-polish-edition] .road-star[data-on=true]{color:#ffd98a;text-shadow:0 0 18px rgba(255,200,120,.7);animation:r105StarPop .5s cubic-bezier(.2,1.4,.4,1) both}
+html[data-polish-edition] .road-star:nth-child(2){margin-top:-4px}
+@keyframes r105StarPop{0%{transform:scale(.3) rotate(-30deg);opacity:0}70%{transform:scale(1.25) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+html[data-polish-edition] .road-goals{display:flex;justify-content:center;gap:6px;list-style:none;margin:0 0 4px;padding:0;flex-wrap:wrap}
+html[data-polish-edition] .road-goals li{padding:2px 9px;border-radius:999px;font-size:11px;font-weight:650;color:#8d79a8;border:1px solid rgba(255,236,255,.12);background:rgba(30,20,54,.5)}
+html[data-polish-edition] .road-goals li[data-on=true]{color:#3a2410;border-color:transparent;background:linear-gradient(90deg,#ffe7a8,#ffc58c)}
+html[data-polish-edition] .r105-road-result .dream-score #roadResultScore{font-size:52px;line-height:1.05;font-weight:800;font-variant-numeric:tabular-nums;
+ background:linear-gradient(180deg,#fffaf0 18%,#ffe3a6 58%,#f7b77a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 10px rgba(255,190,120,.3))}
+html[data-polish-edition] .r105-road-result .dream-actions #roadPrimary{min-height:52px;font-size:17px;color:#2e1c0c;border:0;background:linear-gradient(180deg,#ffeec2,#ffcf8a);box-shadow:0 8px 24px rgba(255,190,110,.28)}
+html[data-polish-edition] .r105-road-result .dream-actions #roadToRoad{background:none;border-color:transparent;color:#d9c6e2;min-height:40px;font-size:14px}
+html[data-polish-edition] .r105-road-result .dream-actions button[hidden]{display:none}
+
+/* Reduced motion: no pulses, pops or fades. */
+html[data-polish-edition] .r105-road-result[data-reduced=true],html[data-polish-edition] .r105-road-result[data-reduced=true] .road-star[data-on=true]{animation:none}
+@media (prefers-reduced-motion:reduce){html[data-polish-edition] .r105-road,html[data-polish-edition] .r105-road-node .rd-stone,html[data-polish-edition] .road-star[data-on=true]{animation:none!important}}

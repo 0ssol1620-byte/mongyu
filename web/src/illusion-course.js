@@ -39,18 +39,19 @@ const PLAN=[
 const DIRS={x:[1,0,0],z:[0,0,-1],stair:[1/C,.5/C,0]};
 function project(p){return {x:(p[0]-p[2])*C,y:(p[0]+p[2])*S-p[1]}}
 const add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k];
-function build(){
+function build(plan=PLAN,grid=0){
  let p=[0,0,0],s=0,section=0;
+ const sn=(v,min)=>Math.max(min,Math.round(v/grid)*grid);
  const walks=[],gaps=[],blocks=[],segments=[],shards=[];
- for(let i=0;i<PLAN.length;i++){
-  const [kind,len,o]=PLAN[i],d=DIRS[kind];
+ for(let i=0;i<plan.length;i++){
+  const [kind,len0,o]=plan[i],d=DIRS[kind],len=grid?sn(len0,grid*(o.blocks?3:1)):len0;
   if(o.section!==undefined)section=o.section;
   const p1=add(p,d,len),walk={index:i,kind,p0:p,p1,len,s0:s,s1:s+len,section,tower:!!o.tower,finish:!!o.finish};
   walks.push(walk);segments.push({s0:s,s1:s+len,a:project(p),b:project(p1),walk});
-  for(const at of o.blocks||[]){const b={at:s+at,p:add(p,d,at),dir:kind,picked:false};blocks.push(b);shards.push({at:s+at,p:add(add(p,d,at),[0,PEAK+6,0]),kind:'block'})}
+  for(const at0 of o.blocks||[]){const at=grid?clamp(sn(at0,grid),grid,len-grid):at0;const b={at:s+at,p:add(p,d,at),dir:kind,picked:false};blocks.push(b);shards.push({at:s+at,p:add(add(p,d,at),[0,PEAK+6,0]),kind:'block'})}
   s+=len;p=p1;
   if(o.gap){
-   const g=o.gap,end=add(p,d,g),pivot=add(p,d,g/2),gap={index:gaps.length,dir:kind,s0:s,s1:s+g,len:g,start:p,end,pivot,lift:o.lift||0,tutorial:!!o.tutorial,section,turnAt:null};
+   const g=grid?sn(o.gap,grid*2):o.gap,end=add(p,d,g),pivot=add(p,d,g/2),gap={index:gaps.length,dir:kind,s0:s,s1:s+g,len:g,start:p,end,pivot,lift:o.lift||0,tutorial:!!o.tutorial,section,turnAt:null};
    gaps.push(gap);segments.push({s0:s,s1:s+g,a:project(p),b:project(end),gap});
    shards.push({at:s+g/2,p:add(pivot,[0,PEAK*.55,0]),kind:'gap',gap:gap.index});
    s+=g;p=end;
@@ -61,29 +62,34 @@ function build(){
 }
 const COURSE=build();
 const FINISH=COURSE.finish;
-function point(s){
- const segs=COURSE.segments;let lo=0,hi=segs.length-1;
- s=clamp(s,0,FINISH);
+function point(s,course=COURSE){
+ const segs=course.segments;let lo=0,hi=segs.length-1;
+ s=clamp(s,0,course.finish);
  while(lo<hi){const mid=(lo+hi)>>1;if(segs[mid].s1<s)lo=mid+1;else hi=mid}
  const g=segs[lo],t=(s-g.s0)/Math.max(1e-6,g.s1-g.s0);
  return {x:g.a.x+(g.b.x-g.a.x)*t,y:g.a.y+(g.b.y-g.a.y)*t,seg:g};
 }
-function sectionAt(s){let k=0;for(const w of COURSE.walks)if(s>=w.s0)k=w.section;return k}
+function sectionAt(s,course=COURSE){let k=0;for(const w of course.walks)if(s>=w.s0)k=w.section;return k}
 const COACH={intro:'금빛 표식을 탭하면 건축이 돌아요',slow:'지금 금빛 표식을 탭!',joined:'길이 이어졌다!',marker:'금빛 표식 · 탭',illusion:'보이는 대로 이어진 길',fall:'다리가 아직 돌지 않았어',block:'산호빛 블록은 점프',finish:'오로라의 문!',early:'조금 일찍 눌렀어',late:'한 박자 늦었어'};
 const reducedMotion=()=>{try{return root.MongyuPolish?.host?.settings?.()?.reduced===true}catch(_){return false}};
 
 class IllusionRun{
  constructor(options={}){
   this.options=options;this.mode='dream';this.dreamMode='illusion';this.openingCourse=false;this.polish=true;
+  /* R105: options.plan/options.sections give a chained act its own course; options.chain marks it as one act of a CourseRun. */
+  this.chain=options.chain||null;this.chained=!!this.chain;this.sections=options.sections||SECTIONS;
+  this.cs=options.plan?makeCourse(options.plan,this.chain?.bpm?SPEED*60/this.chain.bpm:0):DEFAULT;
   this.settings={...(options.settings||{})};this.attempt=options.attempt||1;this.skipIntro=!!options.skipIntro;
   this.setViewport(options.viewport?.width,options.viewport?.height);this.reset();
  }
+
  reset(){
+  const {COURSE}=this.cs,chain=this.chain;
   this.state='ready';this.time=0;this.clock=0;this.updates=0;this.inputCount=0;this.jumps=0;this.hits=0;this.hearts=1;
   this.distance=0;this.height=0;this.flight=null;this.buffer=0;this.lastJump=-Infinity;this.events=[];
-  this.turns=COURSE.gaps.map(()=>null);this.blockIndex=0;this.gapIndex=0;this.clears=0;this.solved=0;this.shards=COURSE.shards.map(()=>false);this.shardCount=0;
-  this.perfects=0;this.points=0;this.score=0;this.crash=null;this.hitStop=0;this.outro=null;this.result=null;this.timeScale=1;
-  this.intro=this.skipIntro||reducedMotion()?0:INTRO;this.slowChance='pending';this.coach={kind:'intro',text:COACH.intro,until:this.intro+2.2};
+  this.turns=COURSE.gaps.map(()=>null);this.blockIndex=0;this.gapIndex=0;this.clears=0;this.solved=0;this.shards=COURSE.shards.map(()=>false);this.shardCount=0;this.shardTotal=COURSE.shards.length;
+  this.perfects=0;this.perfectStreak=chain?.carry?.perfectStreak||0;this.points=chain?.carry?.points||0;this.score=this.points;this.crash=null;this.hitStop=0;this.outro=null;this.result=null;this.timeScale=1;
+  this.intro=this.skipIntro||chain||reducedMotion()?0:INTRO;this.slowChance=chain&&this.options.tutorial!==true||!COURSE.gaps.length?'done':'pending';this.coach=chain?null:{kind:'intro',text:COACH.intro,until:this.intro+2.2};
   this.crossedAt=-10;this.turnFlash=-10;this.section=0;this.cam=null;this.blockCoached=false;this.coached=new Set();
  }
  setViewport(width=390,height=844){this.viewport={width,height}}
@@ -96,6 +102,7 @@ class IllusionRun{
  cancelInput(){this.buffer=0}
  /* The gap whose marker is actionable now (approaching, bridge not yet turned). */
  activeGap(){
+  const {COURSE}=this.cs;
   for(let i=this.gapIndex;i<COURSE.gaps.length;i++){
    const g=COURSE.gaps[i],ahead=g.s0-this.distance;
    if(ahead>WINDOW)return null;
@@ -118,6 +125,7 @@ class IllusionRun{
  setCoach(kind,hold){this.coach={kind,text:COACH[kind],until:this.time+hold}}
  tick(dt){
   if(this.state!=='play')return;
+  const {COURSE,FINISH}=this.cs;
   this.updates++;this.clock+=dt;
   if(this.hitStop>0){this.hitStop=Math.max(0,this.hitStop-dt);return}
   if(this.outro){this.outro.age+=dt;if(this.outro.age>=this.outro.duration)this.finish(this.outro.kind);return}
@@ -130,7 +138,7 @@ class IllusionRun{
    this.flight+=dt;const phase=Math.min(1,this.flight/FLIGHT);this.height=4*PEAK*phase*(1-phase);
    if(phase===1){this.flight=null;this.height=0;this.events.push('land');if(this.buffer>0)this.jump()}
   }
-  const section=sectionAt(this.distance);if(section!==this.section){this.section=section;this.events.push('corner')}
+  const section=sectionAt(this.distance,COURSE);if(section!==this.section){this.section=section;this.events.push('corner')}
   // Gaps: walking onto an unturned bridge is a fall.
   const g=COURSE.gaps[this.gapIndex];
   if(g){
@@ -148,7 +156,7 @@ class IllusionRun{
    if(gapS>BLOCK+FOOT){
     this.blockIndex++;this.clears++;this.crossedAt=this.time;
     const lead=b.at-this.lastJump,perfect=Math.abs(lead-SPEED*FLIGHT/2)<=8;
-    this.points+=60+(perfect?40:0);if(perfect)this.perfects++;this.events.push(perfect?'perfect':'pass');
+    this.points+=60+(perfect?40:0);if(perfect){this.perfects++;this.perfectStreak++}else this.perfectStreak=0;this.events.push(perfect?'perfect':'pass');
    }
   }
   // Shards: gold diamonds over blocks (collect at the top of a jump) and over bridges (collect while crossing).
@@ -157,10 +165,12 @@ class IllusionRun{
    if(sh.kind==='gap'||this.height>=PEAK-14){this.shards[i]=true;this.shardCount++;this.points+=25}
   }
   this.score=this.points+Math.floor(this.distance/10);
+  if(this.distance>=FINISH&&this.chain&&this.chain.last===false){this.points+=100;this.score=this.points+Math.floor(this.distance/10);this.finish('clear');return}
   if(this.distance>=FINISH){this.points+=300;this.score+=300;this.setCoach('finish',2);this.outro={kind:'clear',age:0,duration:CLEAR_OUTRO};this.events.push('portal')}
  }
+
  pace(dt){
-  const first=COURSE.gaps[0];let target=1;
+  const first=this.cs.COURSE.gaps[0];let target=1;
   if(this.slowChance==='pending'&&this.distance>=first.s0-90){this.slowChance=this.turns[0]===null?'active':'done'}
   if(this.slowChance==='active'){target=.22;if(!this.coach||this.coach.kind!=='slow')this.setCoach('slow',99)}
   if(this.slowChance==='done'&&this.coach?.kind==='slow'){this.setCoach('joined',1.4)}
@@ -179,16 +189,18 @@ class IllusionRun{
   this.events.push('hit');this.hitStop=reducedMotion()?0:HIT_STOP;this.outro={kind:'fail',age:0,duration:FAIL_OUTRO};this.setCoach(early?'early':'late',2.2);
  }
  finish(state){
+  const {COURSE,FINISH}=this.cs;
   this.state=state;this.outro=null;
   this.result={mode:'illusion',state,score:this.score,distance:Math.floor(this.distance),progress:this.distance/FINISH,solved:this.solved,gaps:COURSE.gaps.length,
    clears:this.clears,blocks:COURSE.blocks.length,shards:this.shardCount,shardTotal:COURSE.shards.length,time:this.time,attempt:this.attempt,
    reason:state==='clear'?'오로라의 문을 지났어요.':this.crash?.kind==='fall'?'다리를 돌리기 전에 건넜어요':'산호빛 블록에 부딪혔어요'};
+  if(this.chain)Object.assign(this.result,{points:this.points,perfectStreak:this.perfectStreak,perfects:this.perfects,hits:this.hits});
   this.events.push(state);
  }
  status(){
-  const sec=SECTIONS[this.section];
-  return {mode:this.mode,dreamMode:'illusion',state:this.state,time:this.time,hearts:this.hearts,score:this.score,best:0,progress:this.distance/FINISH,
-   roomTitle:'착시 정원 · '+sec.name,roomIndex:this.section,roomCount:SECTIONS.length,instruction:'탭: 금빛 표식 근처면 건축 회전, 아니면 점프',cue:null,result:this.result};
+  const sec=this.sections[this.section]||this.sections[0];
+  return {mode:this.mode,dreamMode:'illusion',state:this.state,time:this.time,hearts:this.hearts,score:this.score,best:0,progress:this.distance/this.cs.FINISH,
+   roomTitle:'착시 정원 · '+sec.name,roomIndex:this.section,roomCount:this.sections.length,instruction:'탭: 금빛 표식 근처면 건축 회전, 아니면 점프',cue:null,result:this.result};
  }
  drawSelf(ctx,opts){return draw(ctx,this,opts)}
 }
@@ -207,7 +219,7 @@ function walkBox(w){
  return [a[0],b[0],a[1]-THICK,a[1],a[2]-WIDE,a[2]+WIDE];
 }
 /* Precomputed draw lists (static architecture). */
-const ART=(()=>{
+function buildArt(COURSE){
  const pillars=[],sides=[],tops=[],windows=[];
  for(const w of COURSE.walks){
   const [x0,x1,y0,y1,z0,z1]=walkBox(w);
@@ -224,7 +236,11 @@ const ART=(()=>{
  pillars.sort((a,b)=>(a.x0+a.z0)-(b.x0+b.z0));
  for(const p of pillars)for(let k=0;k<3;k++)windows.push({x:p.x1,y:p.top-26-k*34,z:(p.z0+p.z1)/2,p});
  return {pillars,sides,tops,windows};
-})();
+}
+const ART=buildArt(COURSE);
+/* Per-run course (R105 chained acts pass options.plan); the default plan reuses the module constants. */
+function makeCourse(plan,grid=0){const course=build(plan,grid);return {COURSE:course,FINISH:course.finish,ART:buildArt(course)}}
+const DEFAULT={COURSE,FINISH,ART};
 function inView(view,a,b,margin=60){return Math.max(a.x,b.x)>view.l-margin&&Math.min(a.x,b.x)<view.r+margin&&Math.max(a.y,b.y)>view.t-margin&&Math.min(a.y,b.y)<view.b+margin}
 function pillar(c,p,arch,mist){
  const fade=[1,.7,.42,.18],seg=70;
@@ -251,20 +267,20 @@ function gapTheta(g,progress){const base=g.dir==='x'?0:-Math.PI/2;return base+(1
 function lerpColor(a,b,t){const pa=parseInt(a.slice(1),16),pb=parseInt(b.slice(1),16),m=(s)=>Math.round(((pa>>s)&255)+((((pb>>s)&255)-((pa>>s)&255))*t));return 'rgb('+m(16)+','+m(8)+','+m(0)+')'}
 const skyCache=new WeakMap();
 function palette(run){
- const s=run.distance;let i=0;for(const w of COURSE.walks)if(s>=w.s0)i=w.section;
+ const {COURSE}=run.cs,SECTIONS=run.sections,s=run.distance;let i=0;for(const w of COURSE.walks)if(s>=w.s0)i=w.section;
  const next=COURSE.walks.find(w=>w.section===i+1);let t=0;if(next)t=clamp((s-(next.s0-260))/260,0,1);
  if(!t)return SECTIONS[i];
  const a=SECTIONS[i],b=SECTIONS[i+1];
  return {name:a.name,sky:[lerpColor(a.sky[0],b.sky[0],t),lerpColor(a.sky[1],b.sky[1],t)],arch:a.arch.map((c,k)=>lerpColor(c,b.arch[k],t)),mist:lerpColor(a.mist,b.mist,t)};
 }
 function draw(c,run,opts){
- const {width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,k=root.MongyuEndless?.ink?.()||{danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',tap:'#ffeca5',tapDeep:'#ffd98a',dangerLine:'#ffe1c8'};
- const pal=palette(run),me=point(run.distance);
+ const {COURSE,FINISH,ART}=run.cs,SECTIONS=run.sections,{width:w,height:h}=opts.viewport,reduced=!!opts.reduced,t=run.clock,k=root.MongyuEndless?.ink?.()||{danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',tap:'#ffeca5',tapDeep:'#ffd98a',dangerLine:'#ffe1c8'};
+ const pal=palette(run),me=point(run.distance,COURSE);
  let actor={x:me.x,y:me.y-run.height};
  // Camera: follow the runner with a lead; the intro starts wide and eases in.
  let scale=clamp(Math.min(w/290,h/600),.7,2.4),focus={x:me.x+70,y:me.y-20};
- if(run.intro>0){const k2=ease(1-run.intro/INTRO);scale*=.5+.5*k2;const far=point(Math.min(FINISH,520));focus={x:focus.x+(far.x-focus.x)*(1-k2),y:focus.y+(far.y-focus.y)*(1-k2)}}
- const finale=run.outro?.kind==='clear'?ease(clamp(run.outro.age/1.4,0,1)):run.state==='clear'?1:0;
+ if(run.intro>0){const k2=ease(1-run.intro/INTRO);scale*=.5+.5*k2;const far=point(Math.min(FINISH,520),COURSE);focus={x:focus.x+(far.x-focus.x)*(1-k2),y:focus.y+(far.y-focus.y)*(1-k2)}}
+ const midAct=run.chain&&run.chain.last===false,finale=midAct?0:run.outro?.kind==='clear'?ease(clamp(run.outro.age/1.4,0,1)):run.state==='clear'?1:0;
  if(finale>0){const gate=project(COURSE.walks[COURSE.walks.length-1].p1);scale*=1-.3*finale;focus={x:focus.x+(gate.x-40-focus.x)*finale,y:focus.y+(gate.y-90-focus.y)*finale}}
  if(!run.cam||run.cam.reset||Math.abs(run.cam.t-t)>.5)run.cam={x:focus.x,y:focus.y,t};
  const lag=finale>0?1:Math.min(1,Math.max(0,t-run.cam.t)*(reduced?20:4.5));run.cam.x+=(focus.x-run.cam.x)*lag;run.cam.y+=(focus.y-run.cam.y)*lag;run.cam.t=t;
@@ -283,7 +299,7 @@ function draw(c,run,opts){
  // Pillars fade into the mist.
  for(const p of ART.pillars){const a=project([p.x0,p.top,p.z1]),b=project([p.x1,p.top-280,p.z0]);if(!inView(view,a,b,40))continue;pillar(c,p,pal.arch,pal.mist)}
  // Lit windows on pillars (gold glow when the course is complete).
- const lit=run.outro?.kind==='clear'?clamp(run.outro.age/1.2,0,1):run.state==='clear'?1:0;
+ const lit=midAct?0:run.outro?.kind==='clear'?clamp(run.outro.age/1.2,0,1):run.state==='clear'?1:0;
  for(const wd of ART.windows){const p=project([wd.x,wd.y,wd.z]);if(p.x<view.l-20||p.x>view.r+20||p.y<view.t-20||p.y>view.b+20)continue;
   c.fillStyle=lit>0?k.tapDeep:'rgba(20,12,36,.45)';c.globalAlpha=lit>0?.35+.6*lit:1;c.beginPath();c.moveTo(p.x-1.5,p.y-6.5);c.lineTo(p.x+1.5,p.y-8.2);c.lineTo(p.x+1.5,p.y+2);c.lineTo(p.x-1.5,p.y+3.7);c.closePath();c.fill()}
  c.globalAlpha=1;
@@ -345,7 +361,7 @@ function draw(c,run,opts){
  c.restore();
  // Completion bloom.
  if(lit>0){c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.12*lit;c.fillStyle=pal.mist;c.fillRect(0,0,w,h);c.restore()}
- hud(c,run,w,h,k);
+ if(!run.chained)hud(c,run,w,h,k);
  return null;
 }
 const HAND=(()=>{if(typeof Path2D==='undefined')return null;return new Path2D('M-2.3 0V-11.6a2.3 2.3 0 0 1 4.6 0V-5.2a2 2 0 0 1 3.8 .4a2 2 0 0 1 3.7 .6a1.9 1.9 0 0 1 3.5 1V3.4c0 3.6-2.6 6.4-6.2 6.4H1.6c-2 0-3.4-.9-4.6-2.4L-6.6 2.6a1.9 1.9 0 0 1 2.9-2.4z')})();
@@ -356,6 +372,7 @@ function finger(c,x,y,t,reduced){
 const CURTAINS=[[-22,15,200,'127,243,225',0],[-8,18,240,'138,184,255',1.7],[7,17,220,'183,140,255',3.1],[21,14,186,'255,158,216',4.4]];
 const auroraInks=new WeakMap();
 function aurora(c,p,run,reduced){
+ const FINISH=run.cs.FINISH;
  let ink=auroraInks.get(c);
  if(!ink){ink=CURTAINS.map(([,,height,rgb])=>{const g=c.createLinearGradient(0,0,0,-height);g.addColorStop(0,'rgba(255,252,240,.9)');g.addColorStop(.06,'rgba('+rgb+',.8)');g.addColorStop(.35,'rgba('+rgb+',.32)');g.addColorStop(1,'rgba('+rgb+',0)');return g});auroraInks.set(c,ink)}
  const near=clamp((run.distance-(FINISH-700))/500,0,1),outro=run.outro?.kind==='clear'?clamp(run.outro.age/.6,0,1):run.state==='clear'?1:0,strength=.45+.4*near+.3*outro,t=(reduced?.2:1)*run.clock;
@@ -372,6 +389,7 @@ function aurora(c,p,run,reduced){
 }
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function hud(c,run,w,h,k){
+ const {COURSE,FINISH}=run.cs,SECTIONS=run.sections;
  if(run.state==='fail'||run.state==='clear')return;
  const fade=run.outro?1-Math.min(1,run.outro.age/.35):1;if(fade<=0)return;
  c.save();c.globalAlpha=fade;c.textAlign='center';const top=Math.max(14,h*.035);
@@ -385,6 +403,6 @@ function hud(c,run,w,h,k){
  for(const g of COURSE.gaps){const x=x0+gw*g.s0/FINISH;c.save();c.translate(x,gy+3);c.rotate(Math.PI/4);c.fillStyle=run.turns[g.index]!==null?k.tapDeep:'rgba(255,255,255,.4)';c.fillRect(-3.2,-3.2,6.4,6.4);c.restore()}
  c.restore();
 }
-const api=Object.freeze({enabled,IllusionRun,COURSE,FINISH,SPEED,FLIGHT,PEAK,WINDOW,TURN,ALIGNED,BLOCK,BLOCK_H,FOOT,point,project,draw,SECTIONS,COACH});
+const api=Object.freeze({enabled,IllusionRun,COURSE,FINISH,SPEED,FLIGHT,PEAK,WINDOW,TURN,ALIGNED,BLOCK,BLOCK_H,FOOT,point,project,draw,SECTIONS,COACH,makeCourse,build});
 root.MongyuIllusion=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

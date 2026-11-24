@@ -18,6 +18,7 @@ const SPEED=122,FLIGHT=.66,PEAK=46,FOOT=5,BUFFER=.09,CLEAN_BONUS=10;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 /* R104 polish timing. Perfect = takeoff lead puts the jump apex (SPEED*FLIGHT/2 ≈ 40.3 ahead) within ±10 units (≈82ms) of the obstacle centre. */
 const PERFECT_LEAD=SPEED*FLIGHT/2,PERFECT_TOLERANCE=10,HIT_STOP=.12,CRASH_OUTRO=.72,CLEAR_OUTRO=2.3,FINISH_SLOW=18,FINISH_SCALE=.35;
+const CHAIN_ENDS=[FLOOR+8,WALL_START+WALL+8,FINISH],CHAIN_BONUS=150;
 const SLOW_START=70,SLOW_HOLD=20,SLOW_SCALE=.25,SLOW_QUEUE=56,FINISH_BONUS=500;
 const COACH=Object.freeze({slow:'지금 탭!',wall:'벽도 바닥이야',perfect:'완벽!',early:'조금 일찍 눌렀어. 장애물 바로 앞에서!',late:'한 박자 늦었어. 조금만 더 빨리!'});
 const reducedMotion=()=>{try{return root.MongyuPolish?.host?.settings?.()?.reduced===true}catch(_){return false}};
@@ -30,6 +31,11 @@ function surface(s){
 }
 function offset(p,h){return {x:p.x+Math.sin(p.a)*h,y:p.y-Math.cos(p.a)*h}}
 function sectionAt(s){return s>=CEILING_START?2:s>=WALL_START?1:0}
+/* Beat grid for chained acts: obstacle positions become multiples of one beat (SPEED*60/bpm) from the act start, at least two beats in. */
+function gridObstacles(bpm,start){
+ const beat=SPEED*60/clamp(bpm,40,240);let last=-1;
+ return OBSTACLES.map(o=>{const n=Math.max(2,Math.round((o.at-start)/beat),last+1);last=n;return Object.freeze({...o,at:start+n*beat})});
+}
 function obstacleHeight(o,gap){
  const relative=Math.max(0,Math.abs(gap)-FOOT)/o.width;
  return o.height*clamp((1-relative)/.72,0,1);
@@ -39,19 +45,25 @@ class OpeningRun{
  constructor(options){
   this.options=options;this.openingCourse=true;this.mode='restoration';this.slot=options.slot;
   this.settings={...options.settings};this.attempt=options.attempt;this.practice=options.practice===true;
-  this.checkpoint=this.practice?clamp(Math.trunc(options.section||0),0,2):0;
+  /* R105 chain: this run is one act of a CourseRun. options.span=[a,b] runs sections a..b (floor=0, wall=1, ceiling=2); obstacles snap to the chain.bpm beat grid. */
+  const chain=options.chain||null,span=chain?[clamp(Math.trunc(options.span?.[0]??0),0,2),clamp(Math.trunc(options.span?.[1]??2),0,2)]:null;
+  if(span&&span[1]<span[0])span[1]=span[0];
+  this.chain=chain;this.span=span;this.endAt=span?CHAIN_ENDS[span[1]]:FINISH;this.midAct=!!chain&&chain.last===false;
+  this.obstacles=chain&&chain.bpm?gridObstacles(chain.bpm,SECTIONS[span[0]].start):OBSTACLES;
+  this.checkpoint=this.practice?clamp(Math.trunc(options.section||0),0,2):span?span[0]:0;
   this.familyIndex=0;this.state='ready';this.time=0;this.updates=0;this.inputCount=0;
   this.score=0;this.clean=0;this.jumps=0;this.hits=0;this.hearts=1;
   this.flight=null;this.buffer=0;this.held=false;this.events=[];
   this.distance=SECTIONS[this.checkpoint].start;
   this.firstIndex=this.checkpoint*2;
-  this.endIndex=this.practice?this.firstIndex+2:OBSTACLES.length;
+  this.endIndex=this.practice?this.firstIndex+2:span?span[1]*2+2:OBSTACLES.length;
   this.index=this.firstIndex;this.mapChanges=sectionAt(this.distance);
   this.height=0;this.result=null;this.crossedAt=-10;this.lastJump=-Infinity;
   this.polish=root.MONGYU_POLISH_EDITION===true;
   if(this.polish){
-   this.clock=0;this.hitStop=0;this.outro=null;this.timeScale=1;this.coach=null;this.perfectStreak=0;this.bestStreak=0;this.points=0;this.wallCoached=false;
-   this.tutorial=!this.practice&&(options.attempt===1||options.tutorial===true);this.slowChance=this.tutorial?'pending':'off';
+   this.clock=0;this.hitStop=0;this.outro=null;this.timeScale=1;this.coach=null;this.perfectStreak=chain?.carry?.perfectStreak||0;this.bestStreak=0;this.points=chain?.carry?.points||0;this.wallCoached=!!chain&&chain.first===false;
+   if(chain)this.score=this.points;
+   this.tutorial=!this.practice&&(chain?options.tutorial===true:options.attempt===1||options.tutorial===true);this.slowChance=this.tutorial?'pending':'off';
    this.pose=undefined;this.poseAt=0;this.saves=[];
    const resume=!this.practice&&options.resume;
    if(resume){
@@ -78,7 +90,7 @@ class OpeningRun{
   this.inputCount++;
   if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
   if(this.polish&&this.slowChance==='active'){
-   if(this.distance<OBSTACLES[0].at-SLOW_QUEUE){this.slowChance='queued';return true}
+   if(this.distance<this.obstacles[0].at-SLOW_QUEUE){this.slowChance='queued';return true}
    this.slowChance='done';
   }
   return this.jump();
@@ -99,7 +111,7 @@ class OpeningRun{
    if(this.polish){this.points=0;this.perfectStreak=0;this.pose=undefined;this.poseAt=this.clock}
   }
   const step=(this.practice ? .78 : 1)*dt;
-  this.distance=Math.min(FINISH,this.distance+SPEED*step);
+  this.distance=Math.min(this.endAt,this.distance+SPEED*step);
   this.buffer=Math.max(0,this.buffer-step);
   if(this.flight!==null){
    this.flight+=step;
@@ -111,7 +123,7 @@ class OpeningRun{
   const sector=sectionAt(this.distance);
   if(this.polish&&!this.saves[sector])this.saves[sector]=this.snapshot();
   if(sector!==this.mapChanges){this.mapChanges=sector;this.events.push('corner')}
-  const obstacle=OBSTACLES[this.index];
+  const obstacle=this.obstacles[this.index];
   if(obstacle){
    const gap=this.distance-obstacle.at,reach=obstacle.width+FOOT;
    if(this.height<obstacleHeight(obstacle,gap)){
@@ -132,11 +144,12 @@ class OpeningRun{
     else{this.score+=100+(clean?CLEAN_BONUS:0);this.events.push(clean?'perfect':'pass')}
    }
   }
-  if(this.polish)this.score=this.points+Math.floor(this.distance-SECTIONS[this.checkpoint].start);
-  if(this.polish&&!this.practice&&this.distance>=FINISH){
+  if(this.polish)this.score=this.points+Math.floor((this.distance-SECTIONS[this.checkpoint].start)/(this.chain?10:1));
+  if(this.polish&&!this.practice&&this.distance>=this.endAt&&this.midAct){this.points+=CHAIN_BONUS;this.score+=CHAIN_BONUS;this.finish('clear');return}
+  if(this.polish&&!this.practice&&this.distance>=this.endAt){
    this.points+=FINISH_BONUS;this.score+=FINISH_BONUS;this.outro={kind:'clear',age:0,duration:CLEAR_OUTRO};this.pose='joy';this.poseAt=this.clock;return;
   }
-  if(this.distance>=FINISH||this.practice&&this.index===this.endIndex)this.finish('clear');
+  if(this.distance>=this.endAt||this.practice&&this.index===this.endIndex)this.finish('clear');
  }
  /* R104: real-time pacing on top of the simulation clock. Returns the simulated step (0 = frozen this tick).
     run.time only advances by simulated steps, so distance===time*SPEED still holds for validResult. */
@@ -144,10 +157,10 @@ class OpeningRun{
   this.clock+=dt;
   if(this.hitStop>0){this.hitStop=Math.max(0,this.hitStop-dt);return 0}
   if(this.outro){this.outro.age+=dt;if(this.outro.age>=this.outro.duration&&this.state==='play')this.finish(this.outro.kind);return 0}
-  const first=OBSTACLES[0];let target=1;
+  const first=this.obstacles[0];let target=1;
   if(this.slowChance==='pending'&&this.index===0&&this.distance>=first.at-SLOW_START)this.slowChance=this.flight===null?'active':'done';
   if(this.slowChance==='active'){target=SLOW_SCALE;this.setCoach('slow',.5)}
-  if(!this.practice&&this.index===this.endIndex&&this.distance>=FINISH-FINISH_SLOW&&!reducedMotion())target=FINISH_SCALE;
+  if(!this.practice&&!this.midAct&&this.index===this.endIndex&&this.distance>=this.endAt-FINISH_SLOW&&!reducedMotion())target=FINISH_SCALE;
   this.timeScale+=(target-this.timeScale)*Math.min(1,dt*(target<this.timeScale?9:7));
   if(Math.abs(target-this.timeScale)<.004)this.timeScale=target;
   let step=dt*this.timeScale;
@@ -156,7 +169,7 @@ class OpeningRun{
  }
  setCoach(kind,hold){this.coach={kind,text:COACH[kind],until:this.time+hold}}
  coachCourse(){
-  if(this.slowChance==='queued'&&this.distance>=OBSTACLES[0].at-SLOW_QUEUE){this.slowChance='done';if(this.flight===null)this.jump()}
+  if(this.slowChance==='queued'&&this.distance>=this.obstacles[0].at-SLOW_QUEUE){this.slowChance='done';if(this.flight===null)this.jump()}
   if(!this.wallCoached&&!this.practice&&this.distance>=FLOOR&&this.distance<WALL_START&&(!this.coach||this.time>=this.coach.until||this.distance>=WALL_START-30)){this.wallCoached=true;this.setCoach('wall',1.5)}
  }
  scorePass(obstacle,clean){
@@ -189,13 +202,14 @@ class OpeningRun{
    bestCombo:this.index-this.firstIndex,
    openingProof:{course:COURSE,passed:this.index,clean:this.clean,distance:this.distance},
    reason:this.crash?SECTIONS[this.crash.section].name+' '+(this.crash.index%2+1)+'번째 장애물에서 충돌':'빛의 문을 통과했어요.'};
+  if(this.chain)Object.assign(this.result,{points:this.points,perfectStreak:this.perfectStreak,shards:this.index-this.firstIndex,shardTotal:this.endIndex-this.firstIndex});
   this.events.push(state);
  }
  status(){
   const section=SECTIONS[this.mapChanges],crash=this.crash;
   const prompt=crash&&this.practice?'잠시 후 '+section.name+' 처음부터':this.time-this.crossedAt<.65?'빛 회수':this.index===this.firstIndex?'장애물 앞에서 탭':this.distance>=FLOOR&&this.distance<WALL_START+72?'벽에서도 같은 타이밍으로 탭':'';
   return {mode:this.mode,state:this.state,time:this.time,hearts:this.hearts,score:this.score,best:0,
-   progress:this.distance/FINISH,roomTitle:'접힌 빛',roomIndex:this.mapChanges,roomCount:SECTIONS.length,
+   progress:this.chain?clamp((this.distance-SECTIONS[this.checkpoint].start)/(this.endAt-SECTIONS[this.checkpoint].start),0,1):this.distance/FINISH,roomTitle:'접힌 빛',roomIndex:this.mapChanges,roomCount:SECTIONS.length,
    instruction:'탭하여 점프 · 빛 '+this.index+' / '+OBSTACLES.length,
    cue:prompt?{id:'opening',text:prompt}:null,result:this.result,
    opening:{section:section.name,passed:this.index-this.firstIndex,total:this.endIndex-this.firstIndex,clean:this.clean,
@@ -366,8 +380,8 @@ function ribbon(c,x,width,height,t,phase,narrow){
  c.closePath();c.fill();
 }
 function aurora(c,run,reduced){
- const p=surface(FINISH),ink=auroraInk(c),t=(reduced?.18:1)*(run.clock??run.time),outro=run.outro?.kind==='clear'?clamp(run.outro.age/.5,0,1):0;
- const strength=(.58+.42*clamp((run.distance-FINISH+520)/420,0,1))*(1+outro*.35);
+ const fin=run.endAt||FINISH,p=surface(fin),ink=auroraInk(c),t=(reduced?.18:1)*(run.clock??run.time),outro=run.outro?.kind==='clear'?clamp(run.outro.age/.5,0,1):0;
+ const strength=(.58+.42*clamp((run.distance-fin+520)/420,0,1))*(1+outro*.35);
  c.save();c.translate(p.x,p.y);c.rotate(p.a);c.globalCompositeOperation='lighter';
  c.globalAlpha=Math.min(1,strength);c.fillStyle=ink.halo;c.fillRect(-150,-240,300,300);
  for(let i=0;i<CURTAINS.length;i++){
@@ -391,7 +405,7 @@ function finger(c,x,y,t,reduced){
  c.restore();
 }
 function tapHint(c,run,index,reduced,rot=0){
- const o=OBSTACLES[index],spot=o.at-(index===0?SLOW_HOLD+3:PERFECT_LEAD),gap=spot-run.distance,active=index===0&&(run.slowChance==='active'||run.slowChance==='queued');
+ const o=run.obstacles[index],spot=o.at-(index===0?SLOW_HOLD+3:PERFECT_LEAD),gap=spot-run.distance,active=index===0&&(run.slowChance==='active'||run.slowChance==='queued');
  if(!active&&(gap>240||gap<-12))return;
  const t=run.clock??run.time,fade=active?1:clamp((240-gap)/70,0,1)*clamp((gap+12)/12,0,1),near=active?1:clamp(1-Math.abs(gap)/30,0,1);
  const p=surface(spot),pulse=reduced?0:Math.sin(t*5.4);
@@ -663,8 +677,9 @@ function shards(c,o,t,hot,i){
 }
 function drawObstacles(c,run,reduced){
  const t=reduced?0:(run.clock||0);
- for(let i=0;i<OBSTACLES.length;i++){
-  const o=OBSTACLES[i],p=surface(o.at),hot=run.crash?.index===i&&(run.clock-run.poseAt)<.32,breath=1+(reduced?0:.035*Math.sin(t*2+i*1.3));
+ const list=run.obstacles,lo=run.chain?run.firstIndex:0,hi=run.chain?run.endIndex:list.length;
+ for(let i=lo;i<hi;i++){
+  const o=list[i],p=surface(o.at),hot=run.crash?.index===i&&(run.clock-run.poseAt)<.32,breath=1+(reduced?0:.035*Math.sin(t*2+i*1.3));
   c.save();c.translate(p.x,p.y);c.rotate(p.a);
   c.save();c.globalCompositeOperation='lighter';glowAt(c,CORAL,0,-o.height*.55,o.height*(hot?4.4:2.7)*breath,hot?.95:.42+(reduced?0:.12*Math.sin(t*2+i)));c.restore();
   c.scale(breath,breath);
