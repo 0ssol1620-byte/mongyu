@@ -7,7 +7,11 @@ const doc=root.document;
 const KEY='mongyu.r105.road';
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const fmt=n=>Math.max(0,Math.floor(n||0)).toLocaleString('ko-KR');
-const GOAL_TEXT=['완주','빛 조각 전부','무피격'];
+const GOAL_TEXT=['끝까지 가기','빛 조각 모으기','안 부딪히기'];
+/* Generated art (R105 UI edition only): data-URI sources of the embedded WebP table, or null when absent (tests, older builds). */
+const artSrc=id=>{try{return root.MONGYU_UI_EDITION===true&&root.MONGYU_EMBEDDED_ART?.[id]?.src||null}catch(_){return null}};
+const icon=(name,size)=>{try{return root.MongyuIcons?.svg?.(name,{size:size||22})||''}catch(_){return ''}};
+const setIcon=(node,name,size)=>{const svg=icon(name,size);if(svg)node.innerHTML=svg};
 const bits=g=>[!!(g&1),!!(g&2),!!(g&4)];
 const pop=g=>bits(g).filter(Boolean).length;
 
@@ -53,36 +57,42 @@ function mount(){
  // Campaign screen.
  const screen=el('section',{id:'roadScreen',class:'r105-road',role:'dialog','aria-modal':'true','aria-labelledby':'roadHeading',hidden:''});
  const head=el('header',{class:'r105-road-head'},screen);
- ui.back=el('button',{id:'roadBack',type:'button',class:'r105-road-back','aria-label':'처음으로'},head,'‹');
+ ui.back=el('button',{id:'roadBack',type:'button',class:'r105-road-back','aria-label':'처음으로'},head);setIcon(ui.back,'back',24);if(!ui.back.firstChild)ui.back.textContent='‹';
  const titles=el('div',{class:'r105-road-titles'},head);
  ui.kicker=el('p',{class:'r105-road-kicker'},titles);
  ui.heading=el('h1',{id:'roadHeading'},titles);
  ui.summary=el('p',{id:'roadSummary',class:'r105-road-summary'},titles);
  const scroll=el('div',{class:'r105-road-scroll',id:'roadScroll'},screen);ui.scroll=scroll;
  ui.list=el('ol',{id:'roadList',class:'r105-road-list'},scroll);
+ {const bg=artSrc('lobby-psy');if(bg){const st=screen.style,v='url('+bg+')';if(st.setProperty)st.setProperty('--r105-road-bg',v);else st['--r105-road-bg']=v}}
  stage.appendChild(screen);ui.screen=screen;
  ui.back.onclick=()=>close();
  screen.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();close()}});
- // Result panel: same sheet as the dream result, plus three stars and a count-up score.
+ // Result panel: portrait up top, a compact sheet in the bottom third (score + stars, goal chips, buttons). The stage behind stays visible like a poster.
  const panel=el('section',{id:'roadResult',class:'r104-dream-result r105-road-result',role:'region','aria-labelledby':'roadResultHeading',hidden:''});
+ const share=el('div',{class:'road-share',role:'group','aria-label':'공유'},panel);
+ ui.poster=el('button',{id:'roadPoster',type:'button',class:'road-icon-btn','aria-label':'포스터 저장'},share);setIcon(ui.poster,'poster',22);if(!ui.poster.firstChild)ui.poster.textContent='포스터';
+ ui.clip=el('button',{id:'roadClip',type:'button',class:'road-icon-btn','aria-label':'영상 저장'},share);setIcon(ui.clip,'video',22);if(!ui.clip.firstChild)ui.clip.textContent='영상';
+ ui.stage=el('div',{class:'road-portrait','aria-hidden':'true'},panel);
+ ui.portrait=el('img',{class:'road-portrait-img',alt:'',draggable:'false',hidden:''},ui.stage);
  const box=el('div',{class:'box'},panel),id=el('div',{class:'dream-identity'},box);
  ui.rKicker=el('p',{class:'dream-kicker',id:'roadResultKicker'},id);
- ui.rBadge=el('span',{class:'dream-badge',id:'roadResultBadge',hidden:''},id,'새 최고 기록');
- ui.rHeading=el('h1',{id:'roadResultHeading'},id);
- ui.stars=el('div',{class:'road-stars',role:'img',id:'roadResultStars'},id);
+ const hl=el('div',{class:'road-headline'},id);
+ ui.rHeading=el('h1',{id:'roadResultHeading'},hl);
+ ui.rBadge=el('span',{class:'dream-badge',id:'roadResultBadge',hidden:''},hl,'새 최고 기록');
+ const row=el('div',{class:'road-scorerow'},id);
+ ui.stars=el('div',{class:'road-stars',role:'img',id:'roadResultStars'},row);
  ui.starNodes=[0,1,2].map(()=>el('span',{class:'road-star','data-on':'false'},ui.stars));
+ const line=el('p',{class:'dream-score'},row);ui.score=el('span',{id:'roadResultScore'},line);el('span',{class:'score-unit'},line,'점');
  ui.starGoals=el('ul',{class:'road-goals','aria-hidden':'true'},id);
  ui.goalNodes=GOAL_TEXT.map(t=>el('li',{'data-on':'false'},ui.starGoals,t));
- const line=el('p',{class:'dream-score'},id);ui.score=el('span',{id:'roadResultScore'},line);el('span',{class:'score-unit'},line,'점');
  ui.detail=el('p',{id:'roadResultDetail',class:'dream-detail'},id);
  const acts=el('div',{class:'dream-actions'},box);
- ui.primary=el('button',{id:'roadPrimary',type:'button','data-primary':'true'},acts,'다음 코스');
- ui.again=el('button',{id:'roadAgain',type:'button'},acts,'다시 달리기');
- const share=el('div',{class:'dream-share',role:'group','aria-label':'공유'},acts);
- ui.poster=el('button',{id:'roadPoster',type:'button'},share,'포스터 저장');
- ui.clip=el('button',{id:'roadClip',type:'button'},share,'영상 저장');
- ui.toRoad=el('button',{id:'roadToRoad',type:'button'},acts,'꿈의 길로');
- ui.note=el('p',{id:'roadShareNote',class:'dream-note',role:'status','aria-live':'polite'},acts);
+ ui.primary=el('button',{id:'roadPrimary',type:'button','data-primary':'true'},acts,'다음 꿈');
+ const sec=el('div',{class:'road-secondary'},acts);
+ ui.again=el('button',{id:'roadAgain',type:'button'},sec,'다시 달리기');
+ ui.toRoad=el('button',{id:'roadToRoad',type:'button'},sec,'꿈의 길로');
+ ui.note=el('p',{id:'roadShareNote',class:'dream-note',role:'status','aria-live':'polite'},panel);
  stage.appendChild(panel);ui.panel=panel;
  ui.poster.onclick=()=>exportPoster();ui.clip.onclick=()=>exportClip();
  ui.toRoad.onclick=()=>toRoad();
@@ -92,7 +102,7 @@ function render(){
  const d=read(),list=courses(),ch=C()?.CHAPTER1;
  ui.kicker.textContent=(ch?.number||1)+'장';ui.heading.textContent=ch?.title||'꿈의 길';
  const stars=totalStars(d),open=list.findIndex((c,i)=>unlocked(i,d)&&entry(d,c.id).stars<1);
- ui.summary.textContent='별 '+stars+' / '+list.length*3+'  ·  '+(open>=0?'다음은 '+list[open].title:'모든 길을 걸었어요');
+ ui.summary.textContent='별 '+stars+' / '+list.length*3+'  ·  '+(open>=0?'다음 길은 '+list[open].title:'모든 길을 걸었어요');
  ui.list.replaceChildren();
  list.forEach((course,i)=>{
   const e=entry(d,course.id),isOpen=unlocked(i,d),state=!isOpen?'locked':e.stars>0?'done':'open',playable=C().playableActs(course).acts;
@@ -101,11 +111,17 @@ function render(){
   const stone=el('span',{class:'rd-stone','aria-hidden':'true'},li);el('i',{},stone,!isOpen?'':String(i+1));
   const card=el('button',{type:'button',class:'rd-card','data-course':course.id},li);
   if(!isOpen){card.setAttribute('aria-disabled','true');card.setAttribute('aria-label',course.title+', 잠김. 앞 코스를 완주하면 열려요.')}
-  const top=el('span',{class:'rd-row'},card);el('span',{class:'rd-name'},top,course.title);
-  const st=el('span',{class:'rd-stars','aria-label':'별 '+e.stars+' / 3'},top);
-  bits(e.g|0).forEach(on=>el('span',{class:'rd-s','data-on':String(on)},st,'★'));
-  el('span',{class:'rd-desc'},card,!isOpen?'앞 코스를 완주하면 열려요':course.subtitle);
-  const meta=el('span',{class:'rd-meta'},card);
+  // Thumbnail: the course backdrop (lobby art when a course has none); locked courses are dimmed behind a padlock.
+  const thumb=el('span',{class:'rd-thumb','aria-hidden':'true'},card),src=artSrc('course-'+course.id)||artSrc('lobby-psy');
+  if(src){const img=el('img',{class:'rd-thumb-img',alt:'',draggable:'false'},thumb);img.src=src}
+  if(!isOpen){const lock=el('span',{class:'rd-lock'},thumb);setIcon(lock,'lock',26);if(!lock.firstChild)lock.textContent='잠김'}
+  else if(state==='done'){const ok=el('span',{class:'rd-done'},thumb);setIcon(ok,'check',16)}
+  const body=el('span',{class:'rd-body'},card);
+  const top=el('span',{class:'rd-row'},body);el('span',{class:'rd-name'},top,course.title);
+  const st=el('span',{class:'rd-stars',role:'img','aria-label':'별 '+e.stars+' / 3'},top);
+  bits(e.g|0).forEach(on=>{const sp=el('span',{class:'rd-s','data-on':String(on),'aria-hidden':'true'},st);setIcon(sp,'star',16);if(!sp.firstChild)sp.textContent='★'});
+  el('span',{class:'rd-desc'},body,!isOpen?'앞 코스를 완주하면 열려요':course.subtitle);
+  const meta=el('span',{class:'rd-meta'},body);
   el('span',{},meta,playable.length+'구간 · 약 '+seconds+'초');
   if(isOpen&&e.clears>0)el('span',{class:'rd-best'},meta,'최고 '+fmt(e.best));
   else if(isOpen&&e.plays>0)el('span',{class:'rd-best'},meta,'도전 '+Math.round((e.bestProgress||0)*100)+'%');
@@ -114,7 +130,7 @@ function render(){
 }
 function open(event){
  if(!doc)return false;mount();if(!ui)return false;
- hideResult();render();ui.screen.hidden=false;doc.body.dataset.road='open';
+ hideResult();render();ui.screen.hidden=false;try{root.setTimeout(()=>root.MongyuPsy?.warm?.(),350)}catch(_){}doc.body.dataset.road='open';
  const d=read(),list=courses();let target=0;
  for(let i=0;i<list.length;i++)if(unlocked(i,d)&&entry(d,list[i].id).stars<1){target=i;break}else if(entry(d,list[i].id).stars>=1)target=i;
  const node=ui.list.querySelector('[data-course="'+list[target]?.id+'"] .rd-card');
@@ -127,6 +143,7 @@ function toRoad(){hideResult();const h=$('pauseHome')||$('squareHome');try{h?.cl
 /* ---------- starting runs ---------- */
 function newRun(id,attempt=1){
  const Co=C(),h=hostApi(),d=read(),course=Co.courseById(id||d.last||'c1')||courses()[0];
+ try{root.MongyuPsy?.warm?.(['course-'+course.id])}catch(_){}
  return new Co.CourseRun({...course,viewport:h?.viewport?.()||{width:390,height:844},settings:h?.settings?.()||{},attempt});
 }
 function start(id,event){const h=hostApi();if(!h?.startRun)return false;hideResult();close();return h.startRun(newRun(id),event)}
@@ -147,14 +164,19 @@ function countUp(node,to,calm){
  root.requestAnimationFrame(step);
 }
 function hideResult(){if(ui?.panel){ui.panel.hidden=true;ui.note.textContent=''}clearTimers();resultFor=null}
+/* Result copy follows docs/R105_VOICE_TONE_KO.md: the headline is a short monologue, everything under it speaks in the system voice. */
 function onEnd(run){
  const r=run.result;if(!r||!doc)return;mount();if(!ui)return;
  clearTimers();resultFor=run;const rec=record(r),calm=reduced(),clear=r.state==='clear';
  const list=courses(),index=list.findIndex(c=>c.id===r.courseId),course=list[index],next=list[index+1]||null,goals=r.goals||C().goals(r);
  ui.panel.dataset.reduced=String(calm);ui.panel.dataset.state=r.state;
- ui.rKicker.textContent='꿈의 길 · '+C().CHAPTER1.number+'장 · 코스 '+(index+1);
+ ui.rKicker.textContent=C().CHAPTER1.number+'장 · '+(course?.title||r.name||'꿈의 길');
  ui.rBadge.hidden=!rec.newBest;
- ui.rHeading.textContent=clear?r.name+' 완주':r.actName+'에서 길이 끊겼다';
+ ui.rHeading.textContent=clear?'빛의 문이 열렸어':'꿈이 접혔네';
+ // Portrait: pose-joy when the gate opened, pose-hurt otherwise (generated art; nothing is shown when the table is missing).
+ const pose=artSrc(clear?'pose-joy':'pose-hurt');
+ if(pose){ui.portrait.src=pose;ui.portrait.hidden=false}else{ui.portrait.removeAttribute('src');ui.portrait.hidden=true}
+ ui.portrait.dataset.pose=clear?'joy':'hurt';
  ui.stars.setAttribute('aria-label',clear?'별 '+goals.filter(Boolean).length+' / 3':'별 없음');
  ui.starNodes.forEach(n=>{n.dataset.on='false'});ui.goalNodes.forEach((n,i)=>{n.dataset.on='false';n.dataset.new=String(!!rec.newGoals[i]&&clear)});
  ui.stars.hidden=!clear;ui.starGoals.hidden=!clear;
@@ -162,17 +184,18 @@ function onEnd(run){
  countUp(ui.score,r.score,calm);
  const lines=[];
  if(clear){
-  lines.push('빛 조각 '+r.shards+' / '+r.shardTotal+(r.deaths?' · 넘어짐 '+r.deaths+'번':' · 한 번도 안 넘어졌다')+(r.bestStreak>1?' · 완벽 ×'+r.bestStreak:''));
-  if(rec.best)lines.push((rec.newBest?'새 최고 ':'최고 ')+fmt(rec.best)+'점 · 별 '+rec.stars+' / 3');
-  if(rec.unlockedNext)lines.push('새 코스가 열렸어요 · '+rec.unlockedNext.title);
+  lines.push('오로라의 문을 지났어요');
+  lines.push('빛 조각 '+r.shards+' / '+r.shardTotal+(r.deaths?' · 넘어짐 '+r.deaths+'번':' · 한 번도 안 넘어졌어요')+(r.bestStreak>1?' · 완벽 ×'+r.bestStreak:''));
+  if(rec.unlockedNext)lines[0]='새 길이 열렸어요 · '+rec.unlockedNext.title;
+  else if(rec.best&&!rec.newBest)lines[0]='최고 '+fmt(rec.best)+'점 · 별 '+rec.stars+' / 3';
  }else{
-  lines.push(r.actCount+'구간 중 '+(r.actIndex+1)+'번째 · 길의 '+Math.round((r.progress||0)*100)+'%');
-  const cp=run.carries?.[run.actIndex];lines.push('빛 조각 '+r.shards+'개'+(cp?' · 이 구간은 '+fmt(cp.points+cp.bonus)+'점에서 다시 시작해요':''));
+  lines.push(r.actName+'에서 길이 끊겼어요');
+  const cp=run.carries?.[run.actIndex];lines.push('길의 '+Math.round((r.progress||0)*100)+'% · 빛 조각 '+r.shards+'개'+(cp&&cp.points+cp.bonus>0?' · 이 구간은 '+fmt(cp.points+cp.bonus)+'점부터':''));
  }
- if(!rec.saved)lines.push('기록은 이번 실행에만 남습니다.');
+ if(!rec.saved)lines.push('기록을 저장하지 못했어요. 이번 플레이에만 남아요.');
  ui.detail.textContent=lines.join('\n');
  if(clear){
-  if(next){ui.primary.textContent='다음 코스 · '+next.title;ui.primary.onclick=e=>start(next.id,e)}
+  if(next){ui.primary.textContent='다음 꿈 · '+next.title;ui.primary.onclick=e=>start(next.id,e)}
   else{ui.primary.textContent='꿈의 길로';ui.primary.onclick=()=>toRoad()}
   ui.again.textContent='다시 달리기';ui.again.onclick=e=>retry(run,e,true);
   ui.toRoad.hidden=!next;
@@ -180,7 +203,7 @@ function onEnd(run){
   ui.primary.textContent='이 구간부터 다시';ui.primary.onclick=e=>retry(run,e);
   ui.again.textContent='처음부터';ui.again.onclick=e=>retry(run,e,true);ui.toRoad.hidden=false;
  }
- ui.again.hidden=false;
+ ui.again.hidden=false;ui.toRoad.onclick=()=>toRoad();
  const S=root.MongyuShare,exportable=S?.supported?.export!==false;
  ui.poster.hidden=!clear||!exportable;ui.clip.hidden=!clear||!exportable||!S?.supported?.video;ui.clip.disabled=true;ui.note.textContent='';
  if(S&&!ui.clip.hidden)S.clip(run).then(blob=>{if(resultFor===run){ui.clip.disabled=!blob;ui.clip.hidden=!blob}});

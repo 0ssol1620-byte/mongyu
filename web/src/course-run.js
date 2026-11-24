@@ -285,7 +285,7 @@ function hud(c,run,w,h,show=1){
 function draw(c,run,opts){
  const {width:w,height:h}=opts.viewport,p=run.portal;
  if(p&&!p.snapped)snapshot(c,p);
- if(run.child)drawChild(c,run,opts);
+ if(run.child){drawChild(c,run,opts);root.MongyuPsy?.draw?.(c,run,opts)}
  else{c.fillStyle='#1b1230';c.fillRect(0,0,w,h)}
  if(p)gate(c,p,w,h);
  hud(c,run,w,h,p?clamp((p.age/p.duration-.45)/.4,0,1):1);
