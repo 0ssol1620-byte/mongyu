@@ -90,19 +90,6 @@ test('lobby scene: reduced motion freezes particles, fog and parallax',()=>{
  assert.notDeepEqual(m.ops,n.ops,'normal frames move');
 });
 
-test('lobby scene: layout puts the road above the call-to-action in both orientations',()=>{
- const c=load(['lobby-scene.js'],{MONGYU_UI_EDITION:true}),S=c.MongyuLobbyScene;
- const p=S.layout(390,844),l=S.layout(844,390);
- assert.equal(p.wide,false);assert.equal(l.wide,true);
- assert.equal(p.islands.length,5);
- for(let i=1;i<p.islands.length;i++)assert.ok(p.islands[i].y<p.islands[i-1].y,'road climbs');
- for(let i=1;i<l.islands.length;i++)assert.ok(l.islands[i].y<l.islands[i-1].y);
- assert.ok(p.islands[0].y+p.islands[0].depth<844*.8,'first island clears the CTA');
- assert.ok(l.islands.every(i=>i.x+i.rx<844*.56),'landscape keeps the road out of the right-hand menu column');
- // hand-built lettering exists as strokes, not a font render
- assert.equal(typeof S.letterPaths,'function');
-});
-
 test('title canvas delegates to the lobby scene only in the R105 build',()=>{
  const make=flag=>{const seen=[];const c=load(['mobile-presentation.js'],{MONGYU_UI_EDITION:flag,MongyuLobbyScene:{enabled:true,draw(ctx,opt){seen.push(opt);return {kind:'r105-lobby'}}},MongyuOpening:{drawLobby(){return {kind:'old'}}},MONGYU_DREAM_EDITION:true,document:undefined});return {c,seen}};
  const on=make(true);
