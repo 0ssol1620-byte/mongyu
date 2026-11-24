@@ -187,7 +187,7 @@ class CourseRun{
   const child=this.child;if(child.state!=='play'&&child.state!=='ready')return;
   child.tick(dt);
   for(const e of child.drainEvents?.()||[]){if(e==='perfect')this.carry.perfects++;if(!['start','clear','fail','pause','resume'].includes(e))this.events.push(e)}
-  this.sync(child);
+  this.sync(child);root.MongyuGhost?.tick?.(this);   // R105 GAL: ghost sampling (presentation only)
   if(child.state==='fail')this.failAct(child);
   else if(child.state==='clear')this.clearAct(child);
  }
