@@ -13,13 +13,20 @@ const configs=Object.freeze({
  'tutorial-progress':[.13,500,750,.01,.4],'tutorial-complete':[.26,520,1040,.01,.55],'tutorial-retry':[.13,280,200,.04,.2],
  'arcade-perfect':[.14,720,1080,.01,.55],
  'impact-glass':[.3,2600,3900,.22,.95],'impact-chime-fall':[.62,1560,520,.02,.85],
- 'aurora-shimmer':[1.2,620,1320,.07,.95],'perfect-chime':[.24,990,1480,.01,.75]
+ 'aurora-shimmer':[1.2,620,1320,.07,.95],'perfect-chime':[.24,990,1480,.01,.75],
+ 'ui-tap':[.12,520,400,.02,.3],'ui-open':[.42,520,784,.02,.6],'ui-close':[.3,660,440,.02,.5]
 });
+/* R105 menu sounds: soft synthesized tones (no samples), rendered by renderUi() below. */
+const UI_KINDS=Object.freeze(['ui-tap','ui-open','ui-close']);
 const caches=new WeakMap();
 function sample(kind){return root.MONGYU_EMBEDDED_EFFECTS?.[kind]}
 function buffer(context,kind){
  const spec=configs[kind],clip=sample(kind);if(!spec&&!clip)return null;
  let cache=caches.get(context);if(!cache){cache=new Map();caches.set(context,cache)}if(cache.has(kind))return cache.get(kind);
+ if(UI_KINDS.includes(kind)&&root.MONGYU_UI_EDITION===true){
+  const rate=context.sampleRate||48000,data=renderUi(kind,rate),b=context.createBuffer(1,data.length,rate);
+  if(b.copyToChannel)b.copyToChannel(data,0);else b.getChannelData(0).set(data);cache.set(kind,b);return b;
+ }
  if(clip){
   const raw=root.atob(clip.src),count=raw.length/2,b=context.createBuffer(1,count,clip.rate),data=b.getChannelData(0);
   for(let i=0;i<count;i++){
@@ -88,6 +95,20 @@ function finishData(out,rate,peak){
  let max=0;for(const x of out)max=Math.max(max,Math.abs(x));if(max>0){const k=peak/max;for(let i=0;i<out.length;i++)out[i]*=k}
  out[0]=0;out[out.length-1]=0;return out;
 }
+/* R105 menu tones: a dry wooden "tok" for taps, a two-note rising bell for opening, a falling one for closing.
+   Fixed pitches (C5 / G5 / E5 / A4 family) so they sit under any adaptive-music key. Mono Float32Array. */
+function renderUi(kind,rate=48000){
+ const seconds={'ui-tap':.14,'ui-open':.5,'ui-close':.36}[kind]||.2,out=new Float32Array(Math.ceil(seconds*rate));
+ if(kind==='ui-tap'){
+  addSine(out,rate,mtof(84),1,0,.0012,.03,{to:mtof(76),tau:.014});addSine(out,rate,mtof(96),.18,0,.001,.014);
+  addNoise(out,rate,.16,0,.0008,.004,{lp:3200,hp:700,seed:31});
+ }else if(kind==='ui-open'){
+  addBell(out,rate,mtof(79),.8,0,.2,.6);addBell(out,rate,mtof(86),.7,.07,.26,.55);addSine(out,rate,mtof(55),.2,0,.01,.12);
+ }else{
+  addBell(out,rate,mtof(84),.7,0,.16,.5);addBell(out,rate,mtof(76),.7,.06,.22,.45);
+ }
+ return finishData(out,rate,{'ui-tap':.05,'ui-open':.045,'ui-close':.04}[kind]||.04);
+}
 /* t = {tonic:0-11, third:3|4, scale:[5 pentatonic offsets], step, variant}. Returns mono Float32Array or null. */
 function renderTuned(kind,t,rate=48000){
  if(!TUNED.includes(kind)||!t)return null;
@@ -147,5 +168,5 @@ function observe(run){
  if(run.lastResult?.effects?.some(e=>e.kind==='audio-cue-request'&&e.role==='start-countdown'))events.push('start');
  return events;
 }
-const api=Object.freeze({configs,buffer,voice,observe,sample,TUNED,renderTuned,tunedBuffer,pluckData});root.MongyuSFX=api;if(typeof module!=='undefined')module.exports=api;
+const api=Object.freeze({configs,buffer,voice,observe,sample,TUNED,renderTuned,tunedBuffer,pluckData,UI_KINDS,renderUi});root.MongyuSFX=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
