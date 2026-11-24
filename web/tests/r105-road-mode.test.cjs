@@ -77,7 +77,7 @@ test('result panel: clear shows stars and the next course; fail offers a checkpo
  const run={dreamMode:'road',id:'c1',name:'첫 걸음',attempt:1,state:'clear',result:clearResult(Course,'c1'),carries:[],actIndex:2};
  Road.onEnd(run);
  const panel=$('roadResult');assert.equal(panel.hidden,false);
- assert.match($('roadResultHeading').textContent,/완주/);assert.match($('roadPrimary').textContent,/다음 코스/);assert.match($('roadResultDetail').textContent,/새 코스가 열렸어요/);
+ assert.equal($('roadResultHeading').textContent,'빛의 문이 열렸어');assert.match($('roadPrimary').textContent,/다음 꿈/);assert.match($('roadResultDetail').textContent,/새 길이 열렸어요/);
  assert.equal($('dreamResult')?.hidden??true,true);
  $('roadPrimary').click();assert.equal(started.at(-1).id,'c2');assert.equal(panel.hidden,true);
  // fail
@@ -85,7 +85,7 @@ test('result panel: clear shows stars and the next course; fail offers a checkpo
  for(let i=0;i<120*60&&failing.state==='play';i++){if(!tapped&&failing.child.slowChance==='active'){tapped=true;failing.action()}failing.tick(1/120)}
  assert.equal(failing.state,'fail');
  Road.onEnd(failing);
- assert.equal($('roadResultHeading').textContent.includes('길이 끊겼다'),true);assert.equal($('roadPrimary').textContent,'이 구간부터 다시');
+ assert.equal($('roadResultHeading').textContent,'꿈이 접혔네');assert.match($('roadResultDetail').textContent,/길이 끊겼어요/);assert.equal($('roadPrimary').textContent,'이 구간부터 다시');
  $('roadPrimary').click();const again=started.at(-1);assert.equal(again.actIndex,0);assert.equal(again.attempt,2);assert.equal(again.deaths,1);
  assert.equal(Road.read().courses.c1.stars,3)});
 
