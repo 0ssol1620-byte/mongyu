@@ -77,6 +77,9 @@ class HelixRun{
   this.coach=this.teaching()?{kind:'intro',text:COACH.intro,until:this.intro+4.2}:null;
   this.fx=this.fx||Array.from({length:40},()=>({on:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,age:0,life:1,size:1,kind:0}));for(const p of this.fx)p.on=false;
   this.cam=null;this.view={actor:null,body:0};
+  /* R105 items: fl/pk = length and peak factor of the current jump (feather doubles it); mods/itemList from MongyuItems.setup. */
+  this.fl=FLIGHT;this.pk=1;this.mods=null;this.itemList=null;
+  if(ch||this.options.items)root.MongyuItems?.setup?.(this,{items:this.options.items,start:0,len:C.L,beatAt:b=>C.sAt(b*C.beat)});
  }
  teaching(){const ch=this.chain;return !ch||ch.first!==false||this.options.tutorial===true}
  setViewport(width=390,height=844){this.viewport={width,height}}
@@ -91,10 +94,10 @@ class HelixRun{
   if(this.state!=='play'||this.outro||this.hitStop>0)return false;
   if(this.intro>0){this.intro=0;return true}
   this.inputCount++;
-  if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
+  if(this.flight!==null){if(this.flight>=this.fl-BUFFER)this.buffer=BUFFER;return false}
   return this.jump();
  }
- jump(){this.flight=0;this.lastJump=this.distance;this.lastJumpTime=this.time;this.jumps++;this.buffer=0;this.events.push('jump');this.burst(2,this.distance,0,5);if(this.slow==='active'||this.slow==='pending'&&this.index===0)this.slow='done';return true}
+ jump(){this.fl=root.MongyuItems?.applyJump?root.MongyuItems.applyJump(this,FLIGHT):FLIGHT;this.flight=0;this.lastJump=this.distance;this.lastJumpTime=this.time;this.jumps++;this.buffer=0;this.events.push('jump');this.burst(2,this.distance,0,5);if(this.slow==='active'||this.slow==='pending'&&this.index===0)this.slow='done';return true}
  drainEvents(){return this.events.splice(0)}
  setCoach(kind,hold){this.coach={kind,text:COACH[kind],until:this.time+hold}}
  popup(text,perfect){const p=this.popups.find(q=>!q.on)||this.popups.reduce((a,b)=>a.at<b.at?a:b);p.on=true;p.at=this.clock;p.text=text;p.perfect=perfect}
@@ -110,7 +113,9 @@ class HelixRun{
   }
  }
  fxStep(dt){for(const p of this.fx){if(!p.on)continue;p.age+=dt;if(p.age>=p.life){p.on=false;continue}const g=p.kind===1?-70:p.kind===3?4:p.kind===0?-18:-6,d=Math.pow(p.kind===1?.25:.08,dt);p.vx*=d;p.vz*=d;p.vy=p.vy*Math.pow(.3,dt)+g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt}}
- tick(dt){
+ /* R105: settle() applies the surge x2 and its trigger after every tick, whichever way tick0 returns. */
+ tick(dt){this.tick0(dt);if(this.mods)root.MongyuItems.settle(this)}
+ tick0(dt){
   if(this.state!=='play')return;
   this.updates++;this.clock+=dt;this.fxStep(dt);
   if(this.hitStop>0){this.hitStop=Math.max(0,this.hitStop-dt);return}
@@ -119,16 +124,18 @@ class HelixRun{
   const C=this.course;dt=this.pace(dt);if(!dt)return;
   this.time+=dt;this.speed=C.speedAt(this.distance);this.distance=Math.min(C.L,this.distance+this.speed*dt);this.buffer=Math.max(0,this.buffer-dt);
   if(this.flight!==null){
-   this.flight+=dt;const ph=Math.min(1,this.flight/FLIGHT);this.height=4*PEAK*ph*(1-ph);
+   this.flight+=dt;const ph=Math.min(1,this.flight/this.fl);this.height=4*PEAK*this.pk*ph*(1-ph);
    if(ph===1){this.flight=null;this.height=0;this.events.push('land');this.burst(2,this.distance,0,4);if(this.buffer>0)this.jump()}
   }
   const ob=C.obstacles[this.index];
   if(ob){
    const gap=this.distance-ob.at,reach=reachFor(this.speed);
-   if(Math.abs(gap)<=reach&&this.height<OB_H){this.hit(ob);return}
-   if(gap>reach){
+   if(Math.abs(gap)<=reach&&this.height<OB_H){
+    if(this.mods&&root.MongyuItems.applyHit(this)){this.index++;this.perfectStreak=0;this.burst(1,ob.at,6,8);this.burst(0,ob.at,8,3)}
+    else{this.hit(ob);return}
+   }else if(gap>reach){
     this.index++;this.passes++;this.crossedAt=this.time;
-    const eta=(ob.at-this.lastJump)/Math.max(1,this.speed),perfect=this.lastJump>=ob.at-FLIGHT*this.speed*1.2&&Math.abs(eta-FLIGHT/2)<=PERFECT_WINDOW,clean=this.height>=OB_H+5;
+    const eta=(ob.at-this.lastJump)/Math.max(1,this.speed),perfect=this.lastJump>=ob.at-this.fl*this.speed*1.2&&Math.abs(eta-this.fl/2)<=PERFECT_WINDOW,clean=this.height>=OB_H+5;
     if(clean)this.clean++;
     this.perfectStreak=perfect?this.perfectStreak+1:0;this.bestStreak=Math.max(this.bestStreak,this.perfectStreak);if(perfect)this.perfects++;
     const gain=PASS+(clean?CLEAN:0)+(perfect?PERFECT*Math.min(5,this.perfectStreak):0);this.points+=gain;
@@ -140,6 +147,7 @@ class HelixRun{
    if(this.shardGot[i])continue;const sh=C.shards[i],d=Math.abs(this.distance-sh.at);if(d>9)continue;
    if(sh.air?this.height>=PEAK-13:this.height<=11){this.shardGot[i]=1;this.shardCount++;this.points+=SHARD;this.burst(0,sh.at,sh.h,6)}
   }
+  if(this.mods)root.MongyuItems.collect(this,this.distance,this.height,PEAK,9);
   if(!this.halfway&&this.distance>=C.L/2){this.halfway=true;this.events.push('corner')}
   this.score=this.points+Math.floor(this.distance/10);
   if(this.distance>=C.L)this.reach();
@@ -150,7 +158,7 @@ class HelixRun{
   if(this.slow==='active'){if(!ob||this.distance>ob.at-this.speed*.28){this.slow='done'}else{target=.42;if(this.coach?.kind!=='slow')this.setCoach('slow',1.2)}}
   if(this.slow!=='active'&&this.coach?.kind==='slow')this.coach=null;
   this.timeScale+=(target-this.timeScale)*Math.min(1,dt*9);if(Math.abs(target-this.timeScale)<.004)this.timeScale=target;
-  return dt*this.timeScale;
+  return this.mods?root.MongyuItems.applyPace(this,dt*this.timeScale):dt*this.timeScale;
  }
  hit(ob){
   this.hits++;this.hearts=0;this.perfectStreak=0;
@@ -436,9 +444,16 @@ function drawShard(c,run,sh,i,pal,t,reduced){
  const th=thetaAt(sh.at),y=groundY(run.course,sh.at)+sh.h+(reduced?0:Math.sin(t*2.2+i)*1.2),sn=Math.sin(th),cs=Math.cos(th);
  proj(RC*sn,y,RC*cs);if(PX<-30||PX>V.cx*2+30)return;const k=PK,big=sh.air?1.35:1,sp=reduced?.4:Math.cos(t*2+i*1.7);
  const gl=glow('255,222,140');if(gl){c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.55;const s=k*22*big;c.drawImage(gl,PX-s/2,PY-s/2,s,s);c.restore()}
+ if(root.MongyuItems?.drawLight?.(c,PX,PY,k*big*15,t,i,reduced,0))return;
  c.save();c.translate(PX,PY);c.scale(k*big,k*big);const w=Math.max(.35,Math.abs(sp))*3;
  c.beginPath();c.moveTo(0,-4.6);c.lineTo(w,0);c.lineTo(0,4.6);c.lineTo(-w,0);c.closePath();c.fillStyle='#ffe08a';c.fill();
  c.beginPath();c.moveTo(0,-4.6);c.lineTo(w,0);c.lineTo(0,.6);c.closePath();c.fillStyle='#fff7d0';c.fill();c.restore();
+}
+/* R105 pickup billboard on the ramp (lane lo near the ground, lane hi at the jump apex). */
+function drawPickup(c,run,it,t,reduced){
+ const th=thetaAt(it.at),y=groundY(run.course,it.at)+(it.lane==='hi'?30:12),sn=Math.sin(th),cs=Math.cos(th);
+ proj(RC*sn,y,RC*cs);if(PX<-40||PX>V.cx*2+40)return;const k=PK*.62;
+ root.MongyuItems.drawItem(c,it,()=>({x:PX,y:PY,s:k}),t,reduced,0);
 }
 function drawCloud(c,cl,pal,cam,t,reduced){
  if(!cloudSprite)return;const th=cl.th+(reduced?0:t*.01),sn=Math.sin(th),cs=Math.cos(th);proj(cl.r*sn,cl.y,cl.r*cs);
@@ -485,9 +500,10 @@ function drawRunner(c,run,pal,cam,t,reduced){
  c.globalAlpha=alpha;
  const body=RUN_H*k;run.view.body=body;run.view.actor={x:fx,y:fy-body*.55};
  const pose=run.pose||(run.intro>0||run.state==='ready'?'stand':run.flight!==null?'jump':'run');
- const q={x:fx,y:fy-lift*k-1,bodyHeight:body,renderAngle:ang*.8+spin,strideDistance:run.distance,nativeState:0,height:lift*k,jumpProgress:run.flight===null?0:run.flight/FLIGHT,pose,poseAt:run.poseAt};
+ const q={x:fx,y:fy-lift*k-1,bodyHeight:body,renderAngle:ang*.8+spin,strideDistance:run.distance,nativeState:0,height:lift*k,jumpProgress:run.flight===null?0:run.flight/run.fl,pose,poseAt:run.poseAt};
  const M=root.MongyuMobile;if(M?.sprite)M.sprite(c,q,{poseTime:run.clock,onDark:true},reduced);
  c.globalAlpha=1;
+ if(run.mods&&!run.outro)root.MongyuItems.drawAura(c,run,fx,fy-lift*k-body*.5,body*.7,run.clock,reduced);
 }
 function drawParticles(c,run,pal,reduced){
  c.save();c.globalCompositeOperation='lighter';
@@ -569,6 +585,7 @@ function draw(c,run,opts){
  const sMin=run.distance-PER_TURN*.8*DS,sMax=run.distance+PER_TURN*1.5*DS;
  for(let i=0;i<C.obstacles.length&&m<MAXI-8;i++){const ob=C.obstacles[i];if(ob.at<sMin||ob.at>sMax)continue;const th=thetaAt(ob.at);KIND[m]=1;IDS[m]=i;KEYS_I[m]=depthKey(RC,th,eb(th));m++}
  for(let i=0;i<C.shards.length&&m<MAXI-8;i++){if(run.shardGot[i])continue;const sh=C.shards[i];if(sh.at<sMin||sh.at>sMax)continue;const th=thetaAt(sh.at);KIND[m]=2;IDS[m]=i;KEYS_I[m]=depthKey(RC,th,eb(th));m++}
+ if(run.itemList)for(let i=0;i<run.itemList.length&&m<MAXI-8;i++){const it=run.itemList[i];if(it.got&&t-it.gotAt>.5)continue;if(it.at<sMin||it.at>sMax)continue;const th=thetaAt(it.at);KIND[m]=7;IDS[m]=i;KEYS_I[m]=depthKey(RC,th,eb(th));m++}
  if(cloudSprite)for(let i=0;i<g.clouds.length&&m<MAXI-8;i++){const cl=g.clouds[i];if(Math.abs(cl.y-V.yc)>340)continue;KIND[m]=3;IDS[m]=i;KEYS_I[m]=depthKey(cl.r,cl.th+(reduced?0:t*.01),0);m++}
  const thR=thetaAt(Math.min(C.L,run.distance)),keyR=depthKey(RC,thR,eb(thR)-.1);
  {const L=C.L;if(L>=sMin&&L<=sMax+DS*20){const th=thetaAt(L),kg=depthKey(RC,th,eb(th)+.2);KIND[m]=4;IDS[m]=0;KEYS_I[m]=C.L-run.distance<90?Math.max(kg,keyR+.5):kg;m++}}
@@ -586,6 +603,7 @@ function draw(c,run,opts){
    case 4:drawGate(c,run,pal,cam,t,reduced,w,h);break;
    case 5:drawRunner(c,run,pal,cam,t,reduced);break;
    case 6:drawTower(c,w,h,pal,cam,run,reduced);break;
+   case 7:drawPickup(c,run,run.itemList[id],t,reduced);break;
   }
  }
  drawParticles(c,run,pal,reduced);
