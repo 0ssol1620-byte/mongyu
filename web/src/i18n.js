@@ -6,7 +6,7 @@ const enabled=root.MONGYU_UI_EDITION===true;
 const KEY='mongyu.lang',LANGS=['ko','en'];
 const HANGUL=/[ㄱ-ㆎ가-힣]/;
 const SKIP_TAGS={SCRIPT:1,STYLE:1,CANVAS:1,TEXTAREA:1,NOSCRIPT:1};
-const ATTRS=['aria-label','title','placeholder','alt'];
+const ATTRS=['aria-label','title','placeholder','alt','data-r105-label'];
 const tables={ko:Object.create(null),en:Object.create(null)};
 const legacy={ko:{phrases:new Map(),patterns:[]},en:{phrases:new Map(),patterns:[]}};
 const listeners=new Set();
