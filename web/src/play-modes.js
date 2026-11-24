@@ -12,6 +12,7 @@
 (function(root){'use strict';
 const enabled=root.MONGYU_POLISH_EDITION===true;
 const doc=root.document;
+const UI105=root.MONGYU_UI_EDITION===true;
 const CVD_KEY='mongyu.r104.cvd',ILLUSION_KEY='mongyu.r104.illusion';
 const COLORS={tap:'#ffeca5',tapDeep:'#ffd98a',danger:'#ff8a73',dangerTop:'#ffb59f',dangerSide:'#c75a55',goal:'#7ff3e1'};
 const COLORS_CVD={tap:'#ffe14d',tapDeep:'#ffc928',danger:'#7f8cff',dangerTop:'#b5bcff',dangerSide:'#4b55c4',goal:'#bfe9ff'};
@@ -71,6 +72,7 @@ function mount(){
  const panel=el('section',{id:'dreamResult',class:'r104-dream-result',role:'region','aria-labelledby':'dreamResultHeading',hidden:''});
  const box=el('div',{class:'box'},panel);
  const id=el('div',{class:'dream-identity'},box);
+ if(UI105&&root.MongyuArt?.image){const wrap=el('span',{class:'r105-portrait','aria-hidden':'true'},id);ui.portrait=wrap;wrap.appendChild(el('img',{alt:'',decoding:'async'}))}
  ui.kicker=el('p',{id:'dreamResultKicker',class:'dream-kicker'},id);
  ui.badge=el('span',{id:'dreamResultBadge',class:'dream-badge',hidden:''},id,'새 최고 기록');
  ui.heading=el('h1',{id:'dreamResultHeading'},id);
@@ -84,6 +86,7 @@ function mount(){
  ui.clip=el('button',{id:'dreamClip',type:'button'},share,'영상 저장');
  ui.home=el('button',{id:'dreamHome',type:'button'},acts,'처음으로');
  ui.note=el('p',{id:'dreamShareNote',class:'dream-note',role:'status','aria-live':'polite'},acts);
+ if(UI105){for(const [n,name] of [[ui.retry,'retry'],[ui.poster,'poster'],[ui.clip,'video'],[ui.home,'home']])n.setAttribute('data-r105-icon',name);for(const [n,name] of [[ui.barPoster,'poster'],[ui.barClip,'video']])n?.setAttribute('data-r105-icon',name)}
  stage.appendChild(panel);ui.panel=panel;
  ui.retry.onclick=e=>retry(e);ui.home.onclick=e=>{($('pauseHome')||$('squareHome'))?.click();hidePanel()};
  ui.poster.onclick=()=>exportPoster(ui.note);ui.clip.onclick=()=>exportClip(ui.note);
@@ -138,7 +141,8 @@ function onEnd(run){
  resultFor=run;
  const kicker=run.dreamMode==='daily'?'오늘의 도전 · '+root.MongyuEndless.dayKey(run.date).slice(5).replace('-','.'):run.dreamMode==='endless'?'무한 꿈':'착시 정원';
  ui.kicker.textContent=kicker;
- ui.heading.textContent=run.dreamMode==='illusion'?(r.state==='clear'?'오로라의 문을 열었다':'정원이 접혔다'):(r.laps>0?r.laps+'바퀴를 돌았다':'꿈이 접혔다');
+ ui.heading.textContent=run.dreamMode==='illusion'?(r.state==='clear'?(UI105?'오로라의 문이 열렸어':'오로라의 문을 열었다'):(UI105?'정원이 접혔네':'정원이 접혔다')):(r.laps>0?(UI105?r.laps+'바퀴 돌았어':r.laps+'바퀴를 돌았다'):(UI105?'꿈이 접혔네':'꿈이 접혔다'));
+ if(UI105&&ui.portrait){const a=root.MongyuArt.image(r.state==='clear'||r.laps>0?'pose-joy':'pose-hurt');if(a)ui.portrait.firstChild.setAttribute('src',a.src)}
  ui.score.textContent=fmt(r.score);
  ui.badge.hidden=!record.newBest;
  const lines=[];
@@ -150,7 +154,7 @@ function onEnd(run){
   if(run.daily)lines.push(record.firstTry?'오늘의 첫 기록':'오늘 최고 '+fmt(record.dayBest)+'점');
   else if(record.best)lines.push('최고 '+fmt(record.best)+'점');
  }
- if(!record.saved)lines.push('기록은 이번 실행에만 남습니다.');
+ if(!record.saved)lines.push(UI105?'저장하지 못했어요. 이번 플레이에만 남아요.':'기록은 이번 실행에만 남습니다.');
  ui.detail.textContent=lines.join('\n');
  // Weekly board: daily = each day's best this week, endless = top five runs this week.
  ui.board.replaceChildren();
