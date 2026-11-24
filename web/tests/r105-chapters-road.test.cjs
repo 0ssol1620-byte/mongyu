@@ -85,7 +85,8 @@ test('backdrop: chapter-N art when present, else the dark lobby; course thumbnai
  assert.match(bg(),/LOBBYTRIP/,'chapter 2 has no art yet');
  const img=i=>$('roadList').children[i].querySelector('.rd-thumb-img');assert.equal(img(0).src,ART['lobby-trip'].src);
  Road.selectChapter(2);assert.match(bg(),/CHAPTER3/);assert.equal($('roadList').children[0].querySelector('.rd-thumb-img').src,ART['chapter-3'].src);
- Road.selectChapter(0);assert.equal(img(0).src,ART['course-c1'].src,'a course with its own backdrop keeps it');assert.equal(img(1).src,ART['lobby-trip'].src);
+ Road.selectChapter(0);assert.equal(img(0).src,ART['course-c1'].src,'no chapter-1 art yet: the course backdrop is used');assert.equal(img(1).src,ART['lobby-trip'].src);
+ ART['chapter-1']={src:'data:image/webp;base64,CHAPTER1'};Road.render();assert.equal(img(0).src,ART['chapter-1'].src,'chapter art wins over course art');
  const accent=()=>$('roadScreen').style.getPropertyValue?.('--r105-ch')||$('roadScreen').style['--r105-ch'];
  assert.equal(accent(),p.ctx.MongyuTrip.get('c1').rim);Road.selectChapter(3);assert.equal(accent(),p.ctx.MongyuTrip.get('c4').rim);
  const bare=page({art:{}});bare.Road.open();assert.equal(bare.$('roadList').children.length,5);assert.equal(bare.$('roadList').children[0].querySelector('.rd-thumb-img'),null);

@@ -171,8 +171,8 @@ function render(){
   const card=el('button',{type:'button',class:'rd-card','data-course':course.id},li);
   const why=k===0&&gi>0?'앞 장을 완주하면 열려요':'앞 코스를 완주하면 열려요';
   if(!isOpen){card.setAttribute('aria-disabled','true');card.setAttribute('aria-label',course.title+', 잠김. '+why+'.')}
-  // Thumbnail: the course backdrop (else the chapter art, else the lobby art); locked courses are dimmed behind a padlock.
-  const thumb=el('span',{class:'rd-thumb','aria-hidden':'true'},card),src=artSrc('course-'+course.id)||backdrop(ch.number);
+  // Thumbnail: the chapter's own art (chapter-N), else the course backdrop, else the dark lobby; locked courses are dimmed behind a padlock.
+  const thumb=el('span',{class:'rd-thumb','aria-hidden':'true'},card),src=artSrc('chapter-'+ch.number)||artSrc('course-'+course.id)||backdrop(ch.number);
   if(src){const img=el('img',{class:'rd-thumb-img',alt:'',draggable:'false'},thumb);img.src=src}
   if(!isOpen){const lock=el('span',{class:'rd-lock'},thumb);setIcon(lock,'lock',26);if(!lock.firstChild)lock.textContent='잠김'}
   else if(state==='done'){const ok=el('span',{class:'rd-done'},thumb);setIcon(ok,'check',16)}
