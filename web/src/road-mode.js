@@ -46,13 +46,15 @@ function nextCourseId(d=read()){
  for(let i=0;i<list.length;i++){const e=entry(d,list[i].id);if(unlocked(i,d)&&e.stars<1){target=i;break}else if(e.stars>=1)target=i}
  return list[target]?.id||'c1';
 }
-function record(r){
+function record(r,ghost){
  const d=read(),list=courses(),index=list.findIndex(c=>c.id===r.courseId),c=entry(d,r.courseId);
  const prevStars=c.stars,prevBest=c.best,clear=r.state==='clear',next={...c};
  next.plays=(c.plays||0)+1;next.bestProgress=Math.max(c.bestProgress||0,r.progress||0);
  if(clear){
   const goals=C().goals(r);next.clears=(c.clears||0)+1;next.best=Math.max(c.best||0,r.score);next.bestShards=Math.max(c.bestShards||0,r.shards||0);
   next.g=(c.g|0)|(goals[0]?1:0)|(goals[1]?2:0)|(goals[2]?4:0);next.stars=pop(next.g);
+  if(r.time>0)next.bestTime=Math.round((c.bestTime>0?Math.min(c.bestTime,r.time):r.time)*100)/100;   // R105 GAL: fastest clear (seconds)
+  if(ghost&&ghost.samples&&(!(c.ghostTime>0)||!root.MongyuGhost?.normalize?.(c.ghost)||ghost.time<c.ghostTime)){next.ghost=ghost.samples;next.ghostTime=Math.round(ghost.time*100)/100}   // R105 GAL: fastest clear = ghost
  }
  d.courses[r.courseId]=next;d.plays=(d.plays||0)+1;d.last=r.courseId;
  const saved=write(d),newGoals=bits(next.g).map((on,i)=>on&&!bits(c.g|0)[i]);
@@ -227,7 +229,7 @@ function hideResult(){if(ui?.panel){ui.panel.hidden=true;ui.note.textContent=''}
 /* Result copy follows docs/R105_VOICE_TONE_KO.md: the headline is a short monologue, everything under it speaks in the system voice. */
 function onEnd(run){
  const r=run.result;if(!r||!doc)return;mount();if(!ui)return;
- clearTimers();resultFor=run;const rec=record(r),calm=reduced(),clear=r.state==='clear';
+ clearTimers();resultFor=run;const rec=record(r,root.MongyuGhost?.take?.(run)),calm=reduced(),clear=r.state==='clear';
  const list=courses(),index=list.findIndex(c=>c.id===r.courseId),course=list[index],next=list[index+1]||null,goals=r.goals||C().goals(r);
  ui.panel.dataset.reduced=String(calm);ui.panel.dataset.state=r.state;
  const chap=chapterOfId(r.courseId),lastOfChapter=!!chap&&chap.courses[chap.courses.length-1].id===r.courseId,nextChap=next&&chapterOfId(next.id)!==chap?chapterOfId(next.id):null;

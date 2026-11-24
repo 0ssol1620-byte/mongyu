@@ -1,0 +1,15 @@
+Use your built-in image generation tool to create ONE game asset sheet image (square 1:1, high resolution) and tell me the saved file path. No text, no labels.
+
+Style: premium mobile game icons, flat layered shapes with soft gradients and a subtle glow, clean edges, psychedelic color accents (iridescent magenta, cyan, violet, coral, gold), Korean-dreamlike motifs, consistent lighting from the upper left. All items on a perfectly flat solid pure magenta (#FF00FF) background, no shadows or gradients on the background, generous spacing, arranged in a clean 4x3 grid, each item centered in its cell, all the same visual weight:
+1 a glowing coral-red crystal spike cluster (danger obstacle)
+2 a rotating ornate dancheong-patterned disc plate (obstacle)
+3 a cracked broken memory shard with floating fragments (obstacle)
+4 a small gold light diamond shard (collectible)
+5 a translucent moon bubble with a crescent inside (shield power-up)
+6 a violet crescent moon hourglass with sand of stars (slow-time power-up)
+7 a soft pink cloud feather (long jump power-up)
+8 a glowing golden ring (air jump ring)
+9 a small bounce pad shaped like a lotus flower
+10 a memory star with a tiny spiral inside (hidden collectible)
+11 a tall aurora gate arch made of translucent teal-violet-pink curtains of light (goal)
+12 a swirling kaleidoscope portal disc (transition portal)
