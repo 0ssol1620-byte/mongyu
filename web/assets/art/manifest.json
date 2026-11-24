@@ -163,6 +163,15 @@
       "h": 1279,
       "kind": "bg"
     },
+    "lobby-trip": {
+      "file": "lobby-trip.webp",
+      "mime": "image/webp",
+      "sha256": "7689228f5d1d5330e7b3ef4948d0dcda2f657c68147df0ec1865f626071b11c9",
+      "bytes": 104500,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
     "pose-hurt": {
       "file": "pose-hurt.webp",
       "mime": "image/webp",
@@ -231,6 +240,78 @@
       "mime": "image/webp",
       "sha256": "0bafd179233acd19f3cf260e3ca153a19165aee18125a5ae235eda93c5e35ae3",
       "bytes": 27060,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-01": {
+      "file": "run-01.webp",
+      "mime": "image/webp",
+      "sha256": "01b3fbcc4e8eac1725cb0142800e02331c943babc714c58d01060bcda5d2e800",
+      "bytes": 48586,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-02": {
+      "file": "run-02.webp",
+      "mime": "image/webp",
+      "sha256": "c9a8c4924660f030d87b48aa98501c7dccbe10b42f2bae1fe048d74b2e831278",
+      "bytes": 48094,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-03": {
+      "file": "run-03.webp",
+      "mime": "image/webp",
+      "sha256": "09d689147b80c7aaec96c9b5e7b8ab8b9c3a8e584ff211de8f0e2383bd471804",
+      "bytes": 49542,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-04": {
+      "file": "run-04.webp",
+      "mime": "image/webp",
+      "sha256": "205603c9d18f58484aa719e27792f7419c4639025a34cf8c5042cd3f479d5c4f",
+      "bytes": 58370,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-05": {
+      "file": "run-05.webp",
+      "mime": "image/webp",
+      "sha256": "91257cd34ea2b7332ce0702738a92fb780c8c3e07da6765024025abdfa34c686",
+      "bytes": 49834,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-06": {
+      "file": "run-06.webp",
+      "mime": "image/webp",
+      "sha256": "cf7021854ca599cb43bf1d92ebeb09ef05cce1a94a96df844e9e91f854b09efd",
+      "bytes": 48018,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-07": {
+      "file": "run-07.webp",
+      "mime": "image/webp",
+      "sha256": "a3df905b1e9d66f8174345b314eaf6d9cd60c7d8634fd35ba2168dde3a1875b1",
+      "bytes": 48172,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "run-08": {
+      "file": "run-08.webp",
+      "mime": "image/webp",
+      "sha256": "baf93e773b0f229b67c64334206e46f95a4946549609eeece27f4c5d87fb1a1a",
+      "bytes": 57212,
       "w": 512,
       "h": 512,
       "kind": "sprite"
