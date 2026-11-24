@@ -6,6 +6,18 @@
 
 iPhone에서는 Safari로 링크를 열고 ‘꿈속으로’를 누르세요. 공유 메뉴에서 ‘홈 화면에 추가’를 선택하면 홈 화면에 아이콘을 만들 수 있습니다. 웹의 진행 기록은 접속한 주소의 브라우저 저장소에 남습니다. Android 8.0 이상의 R102 테스트 앱은 R103으로 업데이트할 수 있습니다.
 
+## R105 미리보기 (`work/r105-content`)
+
+[R105 플레이](https://0ssol1620-byte.github.io/mongyu/r105/) · [R105 기획](docs/MONGYU_R105_PLAN_KO.html) · [환각 아트 방향](docs/R105_PSYCHEDELIC_ART_KO.md) · [말투 가이드](docs/R105_VOICE_TONE_KO.md)
+
+환각적인 한국 꿈 로비, 챕터 1의 꿈의 길 코스 5개(나선 오르막·내리막, 펜로즈 계단, 시점 정렬 다리), 아이템(달빛 방울·별빛 시간·구름 깃털·오로라 파도·기억의 별), 코스별 환각 배경 층, 새 결과·이야기·옷장 화면, 한국어/영어 전환이 들어 있습니다.
+
+```sh
+python3 web/build.py --release R105
+python3 -m http.server 4173 --bind 127.0.0.1 --directory web
+# http://127.0.0.1:4173/MONGYU_R105.html
+```
+
 ## R104 미리보기 (`work/r104-phase1`)
 
 [R104 플레이](https://0ssol1620-byte.github.io/mongyu/r104/) · [기획서](docs/MONGYU_NOM3_MV_PLAN_KO.html) · [기획서 대조표](docs/R104_COMPLETION_KO.md)
