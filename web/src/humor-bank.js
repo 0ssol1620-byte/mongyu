@@ -3,12 +3,12 @@
    ko '' (empty) is a STORY row on purpose: silence is allowed (the director then keeps every other joke quiet for a while).
    Row fields: id, event, cls (STORY TEACH FIRST FAIL COMBO META RARE), priority, weight, cooldownSeconds, maxPerSession, oncePerProfile, group (once-per-profile is per group),
    exclusionTags, allow (tags this row may speak through), when {ch,course,act,streakMin,failEq,failMin,failMax,failEvery,cross,item,assist,assistItem,pausedMsMin,awayDaysMin,notFirstEver},
-   outputs {bubble,gesture,sfx,hint,result}, durationMs, delayMs, key (localization key). Events are produced by humor-director.js. */
+   outputs {bubble,gesture,sfx,hint,result}, durationMs, delayMs (queued, re-checked when due), graceMs (help lines may wait this long for a safe moment), key (localization key). Events are produced by humor-director.js. */
 (function(root){'use strict';
 if(root.MONGYU_UI_EDITION!==true)return;
 const CLASS=Object.freeze({STORY:90,TEACH:100,FIRST:50,FAIL:30,COMBO:25,META:20,RARE:10});
 /* Events the director derives from the course run (run-event bus + per-frame snapshot). */
-const EVENTS=Object.freeze(['run.start','run.retry','run.resume','jump.perfect','obstacle.pass','corner','morph','portal','act.enter','act.exit','item','surge','surge.end','shield.break','progress','course.clear']);
+const EVENTS=Object.freeze(['run.start','run.retry','run.resume','jump.perfect','obstacle.pass','corner','morph','portal','act.enter','act.exit','act.wait','item','surge','surge.end','shield.break','progress','course.clear']);
 /* Gesture names the CH/SIL owner may consume via MongyuHumor.on('gesture'). play-hud only animates the speech-bubble face. */
 const GESTURES=Object.freeze(['tiny_bow','shrug','head_tilt','hold_head','peek','nod','lie_down','straighten','knock','panic','stand_up','wave','stare','pretend','step_aside','look_back','stretch']);
 /* Existing synth names only (game-sfx.js configs). */
@@ -20,19 +20,19 @@ function row(id,event,cls,when,ko,en,o){
  const out=Object.freeze({bubble:o.bubble!==false&&ko!=='',gesture:o.gesture||'none',sfx:o.sfx||'none',hint:o.hint||null,result:o.result===true});
  rows.push(Object.freeze({id,event,cls,priority:o.priority||CLASS[cls],weight:o.weight||1,cooldownSeconds:o.cooldownSeconds??600,maxPerSession:o.maxPerSession??2,oncePerProfile:o.oncePerProfile===true,
   group:o.group||id,exclusionTags:Object.freeze(o.exclusionTags||DEFAULT_EXCLUSION),allow:Object.freeze(o.allow||[]),when:Object.freeze(when||{}),ko,en,outputs:out,
-  durationMs:o.durationMs||0,delayMs:o.delayMs||0,key:'humor.'+id}));
+  durationMs:o.durationMs||0,delayMs:o.delayMs||0,graceMs:o.graceMs||0,key:'humor.'+id}));
 }
 const G='tiny_bow';
 
 /* ---- FIRST: first start, first clean pass (once per profile, one of three) ---- */
-row('F01','run.start','FIRST',{},'일단 가 보자.',"Well. Let's go.",{oncePerProfile:true,group:'first-start',delayMs:2700,gesture:'nod'});
-row('F02','run.start','FIRST',{},'여기 길 맞지?','This is the road, right?',{oncePerProfile:true,group:'first-start',delayMs:2700,gesture:'head_tilt'});
-row('F03','run.start','FIRST',{},'나 준비 안 했는데.',"I didn't even stretch.",{oncePerProfile:true,group:'first-start',delayMs:2700,gesture:'shrug'});
+row('F01','run.start','FIRST',{},'일단 가 보자.',"Well. Let's go.",{oncePerProfile:true,group:'first-start',delayMs:2700,graceMs:4000,gesture:'nod'});
+row('F02','run.start','FIRST',{},'여기 길 맞지?','This is the road, right?',{oncePerProfile:true,group:'first-start',delayMs:2700,graceMs:4000,gesture:'head_tilt'});
+row('F03','run.start','FIRST',{},'나 준비 안 했는데.',"I didn't even stretch.",{oncePerProfile:true,group:'first-start',delayMs:2700,graceMs:4000,gesture:'shrug'});
 row('F04','obstacle.pass','FIRST',{},'원래 잘하잖아.','Been good at this forever.',{oncePerProfile:true,group:'first-pass',gesture:G});
-row('F05','obstacle.pass','FIRST',{},'봤냐.','You saw that, right?',{oncePerProfile:true,group:'first-pass',gesture:G});
+row('F05','obstacle.pass','FIRST',{},'봤지? 원래 이래.','You saw that, right?',{oncePerProfile:true,group:'first-pass',gesture:G});
 
 /* ---- COMBO: perfect jumps (J202 and the 6.6 sample HUM-JUMP-001) ---- */
-row('P01','jump.perfect','COMBO',{streakMin:2},'착지 점수 주세요.','Scores for the landing, please.',{gesture:G,cooldownSeconds:900});
+row('P01','jump.perfect','COMBO',{streakMin:2},'착지 점수 좀 줘.','Scores for the landing, please.',{gesture:G,cooldownSeconds:900});
 row('HUM-JUMP-001','jump.perfect','COMBO',{ch:[1,2,3],streakMin:3},'이 정도면 발레지.','Practically ballet.',{gesture:G,cooldownSeconds:45,maxPerSession:1,durationMs:1400});
 row('J202','jump.perfect','COMBO',{streakMin:2},'박수는 됐고.','Save the applause.',{gesture:G,cooldownSeconds:900});
 row('K01','jump.perfect','COMBO',{streakMin:4},'오늘 컨디션 좋네.','Good day for it.',{gesture:'nod'});
@@ -55,9 +55,18 @@ row('G02','act.enter','COMBO',{act:['flip']},'천장 출근이네.','Commuting o
 row('G03','act.enter','COMBO',{act:['flip']},'바닥이 변심했네.','The floor changed its mind.',{delayMs:1400,gesture:'shrug'});
 row('R01','act.enter','COMBO',{act:['mirror']},'쟤도 나야?','Is that me, too?',{delayMs:1400,gesture:'stare'});
 row('R03','act.enter','COMBO',{act:['mirror']},'쟤는 왜 안 늙어.',"Why doesn't he age?",{delayMs:1400,gesture:'stare'});
+row('R02','act.enter','COMBO',{act:['mirror']},'거울 속 나는 한 박자 늦네.',"Mirror me runs a beat late.",{delayMs:1400,gesture:'stare'});
+row('R05','act.enter','COMBO',{act:['mirror']},'내가 먼저 뛴 거야.',"I jumped first. Obviously.",{delayMs:1400,gesture:'tiny_bow'});
 row('R04','act.enter','COMBO',{act:['mirror']},'둘이니까 한 명 몫만 하자.','Two of us. One share of work.',{delayMs:1400,gesture:'step_aside'});
+row('Q01','act.enter','COMBO',{act:['square']},'네모 안에 갇혔네.',"Boxed in.",{delayMs:1400,gesture:'look_back'});
+row('Q02','act.enter','COMBO',{act:['square']},'방이 같이 도네.',"The room spins along.",{delayMs:1400,gesture:'head_tilt'});
+row('Q03','act.enter','COMBO',{act:['square']},'모서리가 많네.',"So many corners.",{delayMs:1400,gesture:'hold_head'});
+row('G04','act.enter','COMBO',{act:['flip']},'떨어지는 게 아니라 가는 거야.',"Not falling. Arriving.",{delayMs:1400,gesture:'pretend'});
 row('W01','act.enter','COMBO',{act:['wait']},'퇴근해도 돼?','Can I clock out?',{delayMs:1600,gesture:'stretch'});
 row('W02','act.enter','COMBO',{act:['wait']},'나 여기 있거든.',"I'm right here, you know.",{delayMs:1600,gesture:'wave'});
+row('WA1','act.wait','COMBO',{act:['wait']},'가만히 있는 게 일이네.',"Standing still is the job.",{delayMs:1300,gesture:'lie_down'});
+row('WA2','act.wait','COMBO',{act:['wait']},'재촉하면 더 늦게 와.',"Rushing only makes it slower.",{delayMs:1300,gesture:'nod'});
+row('WA3','act.wait','COMBO',{act:['wait']},'층이 알아서 오겠지.',"The floor will show up.",{delayMs:1300,gesture:'stretch'});
 row('W04','act.exit','COMBO',{act:['wait']},'이게 재능이지.',"That's talent.",{delayMs:1600,gesture:'lie_down'});
 row('L01','act.enter','COMBO',{ch:[5],act:['bridge','penrose','floor-wall']},'아까 왔던 데네.',"I've been here before.",{delayMs:1400,gesture:'head_tilt'});
 row('L03','act.enter','COMBO',{ch:[5],act:['bridge','penrose','floor-wall']},'집에 가긴 글렀네.',"Going home's off the table.",{delayMs:1400,gesture:'shrug'});
@@ -74,7 +83,7 @@ row('B01','shield.break','COMBO',{},'큰일 날 뻔했네.','That was close.',{d
 row('B03','shield.break','COMBO',{},'다행인 척 좀 할게.','Pretending to be relieved.',{delayMs:1800,gesture:'pretend'});
 row('I01','item','COMBO',{item:['bubble','time','feather']},'주는 건 받지.',"I take what I'm given.",{delayMs:2000,gesture:'nod'});
 row('I03','item','COMBO',{item:['bubble','time','feather']},'서랍에 넣어 둬야지.',"Into the drawer it goes.",{delayMs:2000,gesture:'nod'});
-row('A01','item','FAIL',{assistItem:true},'현명하네. 우리 둘 다.','Wise. Both of us.',{delayMs:2000,gesture:'nod',cooldownSeconds:900});
+row('A01','item','FAIL',{assistItem:true},'현명하네. 우리 둘 다 말이야.','Wise. Both of us.',{delayMs:2000,gesture:'nod',cooldownSeconds:900});
 row('A02','item','FAIL',{assistItem:true},'이게 문명이지.','This is civilization.',{delayMs:2000,gesture:'tiny_bow',cooldownSeconds:900});
 row('X01','item','RARE',{item:['memory-star']},'이런 게 있었네.','There was one of these.',{delayMs:2000,gesture:'peek'});
 row('X03','item','RARE',{item:['memory-star']},'못 본 척해.',"You didn't see this.",{delayMs:2000,gesture:'pretend'});
@@ -83,19 +92,19 @@ row('J214','portal','RARE',{},'문도 낯을 가리네.',"Even the door's shy.",
 /* ---- pause / return ---- */
 row('U01','run.resume','META',{pausedMsMin:3000},'다 쉬었냐.','Done resting?',{gesture:'stand_up',delayMs:900,cooldownSeconds:300});
 row('U03','run.resume','META',{pausedMsMin:3000},'다시 일하자.','Back to work.',{gesture:'stretch',delayMs:900,cooldownSeconds:300});
-row('V01','run.start','META',{awayDaysMin:1,notFirstEver:true},'왔네.',"Oh. You're here.",{delayMs:2700,gesture:'wave',maxPerSession:1});
+row('V01','run.start','META',{awayDaysMin:1,notFirstEver:true},'왔네. 기다린 건 아니야.',"Oh. You're here.",{delayMs:2700,gesture:'wave',maxPerSession:1});
 row('J212','run.start','META',{awayDaysMin:1,notFirstEver:true},'자리 안 뺏겼네.',"Nobody took my seat.",{delayMs:2700,gesture:'stand_up',maxPerSession:1});
 
 /* ---- 6.4 failure ladder: cumulative fails on one course. 1 / 3 / 5 (hint) / 7 / 10 / every 5 after 14. Never mocks the player; help is always an offer. ---- */
-const L={delayMs:2600,cooldownSeconds:120,maxPerSession:3,exclusionTags:['boss_climax','tutorial_critical']};
-row('T01','run.retry','FAIL',{failEq:[1]},'연습이었다.','Consider that practice.',{...L,gesture:'pretend'});
+const L={delayMs:2600,graceMs:12000,cooldownSeconds:120,maxPerSession:3,exclusionTags:['boss_climax']};
+row('T01','run.retry','FAIL',{failEq:[1]},'연습이었어.','Consider that practice.',{...L,gesture:'pretend'});
 row('T03','run.retry','FAIL',{failEq:[3]},'이 바닥이랑 정들겠네.','Getting attached to this floor.',{...L,gesture:'head_tilt'});
 row('T05a','run.retry','FAIL',{failEq:[5],assist:true},'방울 하나 놔뒀어. 써도 돼.','Left you a bubble. Use it.',{...L,gesture:'nod',sfx:'tutorial-progress',hint:'assist'});
 row('T05d','run.retry','FAIL',{failEq:[5]},'발자국 표시해 줄게.',"I'll mark where to jump.",{...L,gesture:'knock',hint:'footprint'});
 row('T05b','run.retry','FAIL',{failEq:[5]},'같이 생각한 걸로 하자.',"Let's say we thought of it together.",{...L,gesture:'nod'});
 row('T05c','run.retry','FAIL',{failEq:[5]},'숨 좀 쉬고 가자.','Breathe first. Then go.',{...L,gesture:'stretch'});
 row('T07','run.retry','FAIL',{failEq:[7]},'여기 그냥 살까.',"Maybe I'll just live here.",{...L,gesture:'shrug'});
-row('T10','run.retry','FAIL',{failEq:[10]},'천천히 가도 된다.',"Take it slow. It's fine.",{...L,gesture:'nod',cooldownSeconds:600});
+row('T10','run.retry','FAIL',{failEq:[10]},'천천히 가도 돼.',"Take it slow. It's fine.",{...L,gesture:'nod',cooldownSeconds:600});
 row('T15','run.retry','FAIL',{failEvery:[15,5]},'쉬어도 돼. 길은 안 도망가.',"Rest if you like. The road stays.",{...L,gesture:'lie_down',cooldownSeconds:900});
 
 /* ---- course endings: result-panel lines (bubble off; consumers read the 'line' event) and the J216 silence ---- */

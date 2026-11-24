@@ -12,8 +12,8 @@ const Bank=root.MongyuHumorBank||(typeof require==='function'&&enabled?(()=>{try
 const KEY='mongyu.r105.humor',LEVELS=['off','min','default'];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const num=v=>Number.isFinite(v)?v:0;
-const DEFAULTS=Object.freeze({gapMs:12000,maxPerMinute:3,historySize:20,dangerMs:700,passedMs:220,warmupMs:2600,minDwellMs:1200,maxDwellMs:2800,koMsPerChar:105,enMsPerChar:60,baseMs:850,pendingGraceMs:900,quietAfterSilenceMs:9000,logSize:60});
-const MIN_CLASSES=new Set(['STORY','TEACH','FAIL']),KNOWN_ACTS=new Set(['floor-wall','bridge','helix-up','helix-down','penrose','align']);
+const DEFAULTS=Object.freeze({gapMs:12000,maxPerMinute:3,historySize:20,dangerMs:700,passedMs:220,warmupMs:1300,minDwellMs:1200,maxDwellMs:2800,koMsPerChar:105,enMsPerChar:60,baseMs:850,pendingGraceMs:900,quietAfterSilenceMs:9000,logSize:60});
+const MIN_CLASSES=new Set(['STORY','TEACH','FAIL']),KNOWN_ACTS=new Set(['floor-wall','bridge','helix-up','helix-down','penrose','align','square','flip','mirror','wait']);
 const BYPASS_GAP=new Set(['STORY','TEACH','FAIL']),BYPASS_CAP=new Set(['STORY','TEACH']);
 const CROSS=[.2,.3,.35,.4,.5,.55,.6,.7,.75,.8,.85,.9];
 
@@ -35,6 +35,24 @@ function hazardEta(child){
   let at=null,speed=num(child.speed);
   if(child.openingCourse&&Array.isArray(child.obstacles)){at=child.obstacles[child.index]?.at;speed=122*(child.practice?.78:1)*(child.timeScale||1)}
   else if(child.cs?.COURSE){const C=child.cs.COURSE,g=C.gaps?.[child.gapIndex],b=C.blocks?.[child.blockIndex],cand=[];if(g&&child.turns&&child.turns[g.index]==null)cand.push(g.s0);if(b)cand.push(b.at);at=cand.length?Math.min(...cand):null;speed=num(root.MongyuIllusion?.SPEED)||68}
+  else if(child.dreamMode==='flip'&&child.course?.events){
+   /* gravity corridor: the tap beat of the next flip, and 0 while inside the crystal run that forces it */
+   const C=child.course,x=num(child.x),B=num(C.B)||100,e=C.events[child.next],cr=C.crystals?.find?.(c=>(c.start+c.len)*B>x&&c.beat>=(e?e.beat:0)-.01);
+   if(cr&&x>=cr.start*B)return 0;
+   at=e?e.beat*B:null;speed=num(C.speed);return at===null||!(speed>0)?Infinity:(at-x)/speed;
+  }
+  else if(child.dreamMode==='mirror'&&child.course?.events){
+   const C=child.course,x=num(child.x),B=num(C.B)||100,e=C.events[child.next];
+   if(!e)return Infinity;
+   const t=Math.min(e.tapBeat,e.m)*B;if(x>t&&x<=e.m*B+24)return 0;
+   speed=num(C.speed);return speed>0?(t-x)/speed:Infinity;
+  }
+  else if(child.dreamMode==='wait'&&child.course?.hazards){
+   const C=child.course,x=num(child.x),B=num(C.B)||100,h=C.hazards[child.next];
+   if(!h)return Infinity;
+   const t=Math.min(h.tapBeat*B,h.at);if(x>t&&x<=h.at+24)return 0;
+   speed=num(C.speed);return speed>0?(t-x)/speed:Infinity;
+  }
   else if(child.course?.obstacles){const i=Number.isInteger(child.blockIndex)?child.blockIndex:child.index;at=child.course.obstacles[i]?.at}
   if(!Number.isFinite(at)||!(speed>0))return Infinity;
   return (at-dist)/speed;
@@ -52,7 +70,7 @@ function create(opts={}){
  const bus=opts.bus===undefined?root.MongyuPolish:opts.bus;
  const storage=opts.storage===undefined?(()=>{try{return root.localStorage||null}catch(_){return null}})():opts.storage;
  const langOf=opts.lang||(()=>{try{return root.MongyuI18n?.lang?.()||'ko'}catch(_){return 'ko'}});
- const docOf=opts.doc||(()=>root.document||null);
+ const docOf=typeof opts.doc==='function'?opts.doc:()=>opts.doc??root.document??null;
  const listeners=new Map();
  const S={level:'default',readingScale:1,history:[],last:new Map(),counts:new Map(),seen:new Set(),fails:{},seed:0,runs:0,lastSeen:0,awayDays:0,
   lineAt:-1e12,stamps:[],quietUntil:0,pending:null,bubble:null,rng:null,run:null,tr:null,log:[],stats:{events:0,emitted:0,dropped:{},silence:0},portalAt:-1e12,gestureCount:0};
@@ -187,7 +205,7 @@ function create(opts={}){
   if(silent){
    if(e.cls==='STORY'&&text==='')S.quietUntil=Math.max(S.quietUntil,now+cfg.quietAfterSilenceMs);
    if(text==='')S.stats.silence++;
-  }else if(!e.outputs.result){S.bubble={id:e.id,until:now+ms,priority:e.priority}}
+  }else if(!e.outputs.result){S.bubble={id:e.id,text,from:now,until:now+ms,priority:e.priority,gesture:e.outputs.gesture}}
   if(e.priority>=90&&silent)S.quietUntil=Math.max(S.quietUntil,now+cfg.quietAfterSilenceMs);
   save();
   emit(text===''?'silence':'line',payload);
@@ -197,7 +215,6 @@ function create(opts={}){
   return payload;
  }
  function hide(reason){
-  S.pending=null;
   if(S.bubble){S.bubble=null;emit('hide',{reason});try{bus?.emit?.('humor-hide',{reason})}catch(_){}}
  }
  /* ---------- pipeline ---------- */
@@ -214,7 +231,7 @@ function create(opts={}){
   if(e.delayMs>0&&!e.outputs.result){
    /* queued lines are gated again when they come due (and dropped, not retried, if the moment is no longer safe) */
    if(S.pending&&S.pending.e.priority>=e.priority)return drop('pending');
-   S.pending={e,at:now+e.delayMs,expires:now+e.delayMs+cfg.pendingGraceMs,detail,run};return {queued:e.id};
+   S.pending={e,at:now+e.delayMs,expires:now+e.delayMs+(e.graceMs>0?e.graceMs:cfg.pendingGraceMs),detail,run};return {queued:e.id};
   }
   const g=gate(e,ctx,now);
   if(g)return drop(g);
@@ -223,7 +240,7 @@ function create(opts={}){
  /* Called every frame: flushes the queued line once it is due and still safe (otherwise it is dropped, never retried), hides the bubble on danger. */
  function tick(run){
   const now=clock(),p=S.pending;
-  if(S.level==='off'){if(p||S.bubble)hide('off');return}
+  if(S.level==='off'){if(p||S.bubble){S.pending=null;hide('off')}return}
   if(!p&&!S.bubble)return;
   const ctx=snapshot(run||S.run?.run||null,now);
   if(S.bubble&&now>=S.bubble.until)S.bubble=null;
@@ -233,10 +250,31 @@ function create(opts={}){
    if(now>=p.at){
     S.pending=null;
     if(S.level==='min'&&!MIN_CLASSES.has(p.e.cls))return;
-    const g=gate(p.e,ctx,now);if(g){drop(g);return}
+    const g=gate(p.e,ctx,now);
+    /* failure help (graceMs>0) waits out a coach line / a nearby hazard, but still speaks only at a safe moment and still expires */
+    if(g){if(p.e.graceMs>0&&now<p.expires&&/^(unsafe:(coach|danger|warmup)|busy)$/.test(g)){S.pending=p;return}drop(g);return}
     present(p.e,ctx,now,p.detail);
    }
   }
+ }
+ /* ---------- canvas bubble ----------
+    Road mode (body[data-r104-mode]) hides the DOM speech dock and draws its own canvas HUD, so the humor bubble is painted here, right after the act frame,
+    at the same spot as the coach pill (never over the gauge, which sits lower). The play-hud dock path stays for modes that show the DOM HUD. */
+ const canvasMode=()=>{try{return !!docOf()?.body?.hasAttribute?.('data-r104-mode')||docOf()?.body?.dataset?.r104Mode!==undefined}catch(_){return false}};
+ function drawBubble(c,vp,now,reduced){
+  const b=S.bubble;if(!b||!c||!vp||!b.text)return;
+  const w=vp.width,h=vp.height,age=now-b.from,left=b.until-now;
+  const a=clamp(Math.min(age/160,left/240),0,1);if(a<=0)return;
+  const lift=reduced?0:(1-clamp(age/220,0,1))*6;
+  c.save();c.globalAlpha=a;c.textAlign='center';
+  let size=16;c.font='700 '+size+'px system-ui,sans-serif';
+  const maxW=w-56;let tw=c.measureText(b.text).width;
+  while(tw>maxW-36&&size>12){size--;c.font='700 '+size+'px system-ui,sans-serif';tw=c.measureText(b.text).width}
+  const pw=Math.min(maxW,tw+36),y=h*.74+lift,x=w/2-pw/2,r=19;
+  c.beginPath();c.moveTo(x+r,y-19);c.arcTo(x+pw,y-19,x+pw,y+19,r);c.arcTo(x+pw,y+19,x,y+19,r);c.arcTo(x,y+19,x,y-19,r);c.arcTo(x,y-19,x+pw,y-19,r);c.closePath();
+  c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,226,170,.34)';c.lineWidth=1;c.stroke();
+  c.fillStyle='#fff1d6';c.fillText(b.text,w/2,y+size*.36);
+  c.restore();
  }
  /* ---------- run tracking (frame level) ---------- */
  function newRunState(run,now){
@@ -262,21 +300,22 @@ function create(opts={}){
    case 'portal':if(now-S.portalAt>1500){S.portalAt=now;handle('portal',{},run)}break;
    case 'item':handle('item',{item:run.lastItem?.kind,assist:!!run.lastItem?.assist},run);break;
    case 'surge':handle('surge',{},run);break;
+   case 'wait':handle('act.wait',{},run);break;
    case 'shield-break':handle('shield.break',{},run);break;
    case 'hit':hide('hit');break;
    case 'fail':{
-    const id=String(run.id||'');S.fails[id]=(S.fails[id]|0)+1;hide('fail');save();break}
+    const id=String(run.id||'');S.fails[id]=(S.fails[id]|0)+1;S.pending=null;hide('fail');save();break}
    case 'clear':{
-    const id=String(run.id||'');delete S.fails[id];hide('clear');save();
+    const id=String(run.id||'');delete S.fails[id];S.pending=null;hide('clear');save();
     handle('course.clear',{},run);break}
    default:break;
   }
  }
- function onFrame(run){
+ function onFrame(run,frame){
   if(!enabled||!run||!run.courseRun)return;
   const now=clock();
   let tr=S.tr;
-  if(!tr||tr.run!==run){tr=S.tr=newRunState(run,now);S.pending=null;if(S.bubble)hide('run')}
+  if(!tr||tr.run!==run){const changed=!!tr;tr=S.tr=newRunState(run,now);if(changed){S.pending=null;if(S.bubble)hide('run')}}
   /* pause -> play with the time spent paused */
   if(run.state==='pause'&&tr.pausedAt===null){tr.pausedAt=now;if(S.bubble)hide('pause')}
   if(run.state==='play'&&tr.pausedAt!==null){const pausedMs=now-tr.pausedAt;tr.pausedAt=null;tr.startedAt+=pausedMs;if(pausedMs>0)handle('run.resume',{pausedMs},run)}
@@ -294,14 +333,15 @@ function create(opts={}){
    tr.surge=surge;
   }
   tick(run);
+  if(frame&&frame.ctx&&S.bubble&&canvasMode())drawBubble(frame.ctx,frame.viewport,clock(),!!frame.reduced);
  }
  /* ---------- public ---------- */
  function setLevel(level){
   if(!LEVELS.includes(level))return false;
-  S.level=level;if(level==='off')hide('off');save();emit('level',{level});return true;
+  S.level=level;if(level==='off'){S.pending=null;hide('off')}save();emit('level',{level});return true;
  }
  function reset(){S.history.length=0;S.last.clear();S.counts.clear();S.stamps.length=0;S.lineAt=-1e12;S.quietUntil=0;S.pending=null;S.bubble=null;S.log.length=0;S.stats={events:0,emitted:0,dropped:{},silence:0};S.tr=null}
- load();
+ load();save();
  const api={
   config:cfg,entries,
   on,handle,tick,onRunEvent,onFrame,snapshot:(run)=>snapshot(run,clock()),hide,reset,
@@ -323,7 +363,7 @@ function start(){
  const bus=root.MongyuPolish;
  if(bus?.on){
   bus.on('run-event',d=>{try{inst.onRunEvent(d?.run,d?.event)}catch(e){try{root.console?.error?.('[MongyuHumor]',e)}catch(_){}}});
-  bus.on('frame',d=>{try{inst.onFrame(d?.run)}catch(e){try{root.console?.error?.('[MongyuHumor]',e)}catch(_){}}});
+  bus.on('frame',d=>{try{inst.onFrame(d?.run,d)}catch(e){try{root.console?.error?.('[MongyuHumor]',e)}catch(_){}}});
  }
  return inst;
 }
