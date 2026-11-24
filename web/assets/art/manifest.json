@@ -315,6 +315,150 @@
       "w": 512,
       "h": 512,
       "kind": "sprite"
+    },
+    "sil-hurt": {
+      "file": "sil-hurt.webp",
+      "mime": "image/webp",
+      "sha256": "1ea3f28e6f70dfac8d4c6ccc418f79fdb4088b22a9a846fe076298c9bbe65bb6",
+      "bytes": 21568,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-joy": {
+      "file": "sil-joy.webp",
+      "mime": "image/webp",
+      "sha256": "5d6309ffee43f7688f9f40f540fb047f36104ceac717a913f967f0c8890394fb",
+      "bytes": 17990,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-jump": {
+      "file": "sil-jump.webp",
+      "mime": "image/webp",
+      "sha256": "6effb4d9b1722210d22aa6d7c1f758cdfa250b0f6bcebaac640ecd2465d78eb4",
+      "bytes": 20154,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-land": {
+      "file": "sil-land.webp",
+      "mime": "image/webp",
+      "sha256": "07e8cb64e22067583cbdb5d5a84023f3f4917926f8fe706518ef068d7c66cd77",
+      "bytes": 26502,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-01": {
+      "file": "sil-run-01.webp",
+      "mime": "image/webp",
+      "sha256": "4721fce8837dbc410727afe39a1696c309b5894f2eca5d7a5b1f4e8585e882c7",
+      "bytes": 25300,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-02": {
+      "file": "sil-run-02.webp",
+      "mime": "image/webp",
+      "sha256": "f10a2c1de3939d72dc940f982195a94026e0e05f394755405a84f2edc9382101",
+      "bytes": 26612,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-03": {
+      "file": "sil-run-03.webp",
+      "mime": "image/webp",
+      "sha256": "42fae72e73939bb949a1be289989c3af6133896cee4a5caed0a576dbc9818b36",
+      "bytes": 20636,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-04": {
+      "file": "sil-run-04.webp",
+      "mime": "image/webp",
+      "sha256": "50969886f9aef402b9b214e534510cfff87cdaa250a7f6e1aa537c619c93e25a",
+      "bytes": 21312,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-a": {
+      "file": "sil-run-a.webp",
+      "mime": "image/webp",
+      "sha256": "7d9790839061f3365a43524b42b2da4533119de7fea3cb0d2f323c00e5c8f98f",
+      "bytes": 28352,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-run-b": {
+      "file": "sil-run-b.webp",
+      "mime": "image/webp",
+      "sha256": "a4f1560c6dccae1d04cdfcdcaecb8da8d36c0ac6ed59f930af7f882dea33c360",
+      "bytes": 28660,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-sleep": {
+      "file": "sil-sleep.webp",
+      "mime": "image/webp",
+      "sha256": "05f617b9929633136dfb06a161d12302469256f5ed1bf125705a28e740642942",
+      "bytes": 20268,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "sil-stand": {
+      "file": "sil-stand.webp",
+      "mime": "image/webp",
+      "sha256": "78ee5b0cf754f1a361f9cb24395ad6b71c9d8d7a70fc422a56b9dcfa0b24c7bf",
+      "bytes": 19982,
+      "w": 512,
+      "h": 512,
+      "kind": "sprite"
+    },
+    "trip-aqua": {
+      "file": "trip-aqua.webp",
+      "mime": "image/webp",
+      "sha256": "2a884950b3e94ff63ff632eaee2bfa69a1dfe1aa71a7fa47631c9e9bef0cfa04",
+      "bytes": 98158,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "trip-ember": {
+      "file": "trip-ember.webp",
+      "mime": "image/webp",
+      "sha256": "1f550ec405a32b7e565347147b65389934e56d8e0eabf4781bd62e5dff4539d7",
+      "bytes": 60616,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "trip-heart": {
+      "file": "trip-heart.webp",
+      "mime": "image/webp",
+      "sha256": "bd1cd9ec26ff9a6fb320c3f519786a9f13efcfdd1b5122d84d34af3e0b018b00",
+      "bytes": 70912,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
+    },
+    "trip-toxic": {
+      "file": "trip-toxic.webp",
+      "mime": "image/webp",
+      "sha256": "494f61584ec743e02520c035c4602fa76c57fce46ae44056f62f059c12fab3e3",
+      "bytes": 110530,
+      "w": 720,
+      "h": 1279,
+      "kind": "bg"
     }
   }
 }
