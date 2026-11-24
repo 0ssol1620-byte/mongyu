@@ -35,8 +35,13 @@ function roadEntry(){
  if($('roadOpen'))return 'button';
  return 'continue';
 }
-/* The course the 달리기 button enters: the first unlocked course without a star yet, else the last cleared one, else course 1. */
+/* The course the 달리기 button enters: MongyuRoad.nextCourseId() when the road module publishes it (it sees every chapter);
+   otherwise the first unlocked chapter-1 course without a star yet, else the last cleared one, else course 1. */
 function nextCourseId(){
+ try{
+  const R0=root.MongyuRoad;
+  if(R0&&typeof R0.nextCourseId==='function'){const id=R0.nextCourseId();if(typeof id==='string'&&id)return id}
+ }catch(_){}
  try{
   const R=root.MongyuRoad,list=root.MongyuCourse?.CHAPTER1?.courses||[],d=R.read();let target=0;
   for(let i=0;i<list.length;i++){const e=R.entry(d,list[i].id);if(R.unlocked(i,d)&&e.stars<1){target=i;break}else if(e.stars>=1)target=i}
@@ -70,7 +75,7 @@ const DOCK=[
 ];
 /* Each mode card carries its own small drawn vignette, so the three do not read as one repeated template. */
 const ART={
- endless:'<svg viewBox="0 0 96 64" aria-hidden="true" focusable="false"><defs><linearGradient id="r105e" x1="0" x2="1"><stop offset="0" stop-color="#7ff3e1"/><stop offset="1" stop-color="#ff9ed8"/></linearGradient></defs><path d="M48 32C40 18 30 14 22 18c-9 5-9 23 0 28 8 4 18 0 26-14s18-18 26-14c9 5 9 23 0 28-8 4-18 0-26-14z" fill="none" stroke="url(#r105e)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="32" r="3.2" fill="#fffaf0"/><circle cx="15" cy="11" r="1.4" fill="#dff2ff"/><circle cx="84" cy="52" r="1.6" fill="#dff2ff"/></svg>',
+ endless:'<svg viewBox="0 0 96 64" aria-hidden="true" focusable="false"><defs><linearGradient id="r105e" x1="0" x2="1"><stop offset="0" stop-color="#8d55ff"/><stop offset="1" stop-color="#ff3fb4"/></linearGradient></defs><path d="M48 32C40 18 30 14 22 18c-9 5-9 23 0 28 8 4 18 0 26-14s18-18 26-14c9 5 9 23 0 28-8 4-18 0-26-14z" fill="none" stroke="url(#r105e)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="32" r="3.2" fill="#fffaf0"/><circle cx="15" cy="11" r="1.4" fill="#dff2ff"/><circle cx="84" cy="52" r="1.6" fill="#dff2ff"/></svg>',
  daily:'<svg viewBox="0 0 96 64" aria-hidden="true" focusable="false"><path d="M8 52h80" stroke="#ffd98a" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/><path d="M48 8l6.4 14 15.2 1.8-11.3 10.4 3 15L48 41.6 34.7 49.2l3-15L26.4 23.8 41.6 22z" fill="#ffd98a" stroke="#ffeca5" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="20" r="2" fill="#fffaf0"/><circle cx="82" cy="14" r="1.6" fill="#fffaf0"/></svg>',
  illusion:'<svg viewBox="0 0 96 64" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M18 56V34a30 30 0 0 1 60 0v22" stroke="#ff9ed8"/><path d="M30 56V36a18 18 0 0 1 36 0v20" stroke="#dff2ff"/><path d="M42 56V38a6 6 0 0 1 12 0v18" stroke="#7ff3e1"/></g><path d="M10 56h76" stroke="#dff2ff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/></svg>'
 };

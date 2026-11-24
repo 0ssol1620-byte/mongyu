@@ -1,9 +1,11 @@
-/* R105 psychedelic lobby scene (workstream P). Replaces the old dawn-garden vector scene.
-   Back layer: the generated backdrop `lobby-psy` (cover-fit). The hollow white moon jar in that image is filled with a live
-   spiral + kaleidoscope drawn here: a per-pixel field on a small offscreen canvas (precomputed polar lookup, palette lookup per
-   frame), clipped to the moon circle. On top: ripples that leave the moon, drifting eyes, diamond sparkles, a slow hue breath
-   (composite 'hue', no canvas filter), the vector dreamer on a small floating slab with an iridescent rim, and iridescent
-   "몽유" lettering. Everything moves slowly (spiral turn >= 48 s, hue breath 26 s, nothing faster than ~0.4 Hz).
+/* R105 dark-psychedelic lobby scene (workstream LB). Back layer: the generated backdrop `lobby-trip` (blacklight violet, a glowing
+   moon-jar with its own mandala, stairs and stepping stones over a dark lake). Portrait: cover-fit. Landscape: the jar is fitted to
+   the height and the image edges melt into the dark base behind the right-hand menu column.
+   Live layers (all slow, low alpha, additive, palette = MongyuTrip.get('violet') only, no hue cycling):
+   a breathing glow of the jar (7.5 s period, +-6%), concentric ripples that leave the jar (violet / magenta family), two slowly
+   counter-rotating procedural mandala rings (64 s and 96 s per turn), slow blinks over the eyes at their image positions,
+   violet / cyan drifting motes, the dreamer on a stepping stone with a breathing scale, and a neon violet-to-magenta "몽유" logo with a
+   thin cyan contour. Nothing moves faster than ~0.3 Hz; reduced = one static frame.
    draw(ctx,{viewport:{width,height,dpr},time,reduced}) is what MongyuMobile.title delegates to. */
 (function(root){'use strict';
 const enabled=root.MONGYU_UI_EDITION===true;
@@ -12,42 +14,61 @@ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
 function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 
-/* Palette taken from the backdrop: hot magenta, violet, electric blue, cyan, acid lime, yellow, coral, on deep indigo. */
-const PAL=Object.freeze({
- indigo:'#1b0e5c',indigoDeep:'#12083f',
- band:Object.freeze(['#ff2fa3','#7a35ff','#2b7bff','#1fe3e0','#a6ff4a','#ffe04a','#ff8a4a']),
- rim:Object.freeze(['#6ff0ff','#a6ff6a','#ffe66a','#ff7ad9','#a98bff']),
- ice:'#dff2ff',gold:'#ffd98a'
-});
+/* Palette: the violet trip (rim #7b3cff, rim2 #ff2e9a, glow #b46bff, accent cyan #19e3ff) with a local fallback. */
+const FALLBACK={sky:['#07031a','#140a33','#2a1259'],block:['#2b1b5e','#170d3a','#0a0620'],rim:'#7b3cff',rim2:'#ff2e9a',glow:'#b46bff',accent:'#19e3ff',ink:'#f3eaff'};
+const pal=()=>{try{const t=root.MongyuTrip?.get?.('violet');if(t&&t.rim&&t.rim2&&t.glow)return t}catch(_){}return FALLBACK};
+const BASE='#0b0322';
+const hex3=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const rgba=(h,a)=>{const [r,g,b]=hex3(h);return 'rgba('+r+','+g+','+b+','+a+')'};
 
 /* ---------- backdrop geometry ---------- */
-/* Image space is the 720x1279 generated backdrop. The hollow jar moon was measured on the image: white disc centre (360,229), radius 105. */
-const IMG=Object.freeze({w:720,h:1279,moon:Object.freeze({x:360,y:229,r:105}),
- /* anchors in image space for the drifting overlays; chosen on the image's calm indigo pockets, away from its own eyes and gems */
- eyes:Object.freeze([{x:120,y:430,s:30,ph:.4},{x:628,y:318,s:26,ph:2.1},{x:355,y:455,s:22,ph:4.2},{x:560,y:935,s:30,ph:5.3}]),
- spark:Object.freeze([[96,150],[640,120],[40,330],[680,420],[206,330],[520,318],[120,620],[640,640],[250,520],[472,470],[60,880],[660,900],[170,960],[600,1000],[330,1080],[420,1040],[690,740],[30,760]])});
-/* where the backdrop sits on a w x h screen, plus the other anchors. s = uniform scale of the whole UI against a 390-wide phone. */
+/* Image space is the 720x1279 generated backdrop. Measured on the image: the jar is an ellipse, widest at y~205 (x 170..546),
+   neck lip at y~28, foot at y~376; the mandala star at (359,214). Eyes are almond shapes (centre, width, height). */
+const IMG=Object.freeze({w:720,h:1279,
+ moon:Object.freeze({x:358,y:207,rx:188,ry:165,r:188,top:28,bottom:376,star:Object.freeze({x:359,y:214})}),
+ eyes:Object.freeze([{x:99,y:124.5,w:74,h:21,ph:0},{x:626,y:124,w:70,h:20,ph:3.4},{x:564,y:649.5,w:64,h:19,ph:6.1}]),
+ stone:Object.freeze({x:343,y:748})});
+const CTA_H=58,DOCK_H=66,DOCK_B=14,CTA_GAP=14;
 function layout(w,h){
  const wide=w>h*1.15;
- let ps,ox,oy,s,title,hero;
+ let ps,ox,oy,s,title,hero,useSlab=false;
  if(!wide){
   s=clamp(Math.min(w/390,h/760),.72,1.55);
   ps=Math.max(w/IMG.w,h/IMG.h);
-  ox=(w-IMG.w*ps)*.5;oy=(h-IMG.h*ps)*.12;
-  const my=IMG.moon.y*ps+oy,mr=IMG.moon.r*ps;
-  const th=clamp(mr*.98,40,82);
-  title={x:w*.5,y:Math.max(th*.5+8,my-mr-th*.5+7),h:th};
-  hero={x:w*.31,y:h*.6,h:112*s};
+  const th=clamp(Math.min(w*.185,h*.085),42,76);
+  title={x:w*.5,y:th*.5+12,h:th};
+  ox=(w-IMG.w*ps)*.5;
+  oy=Math.max(0,th+12+6-IMG.moon.top*ps);                              // jar lip just below the logo
+  const ctaTop=h-(DOCK_B+DOCK_H+CTA_GAP)-CTA_H;
+  let sy=oy+IMG.stone.y*ps;const sx=ox+IMG.stone.x*ps;
+  const lim=ctaTop-26;
+  if(sy>lim){                                                         // tablet: slide the picture up first, then fall back to a slab
+   const shift=Math.min(sy-lim,Math.max(0,IMG.h*ps+oy-h)),ny=oy-shift;
+   if(ny+IMG.moon.top*ps>th+14){oy=ny;sy-=shift}
+   if(sy>lim){sy=lim;useSlab=true}
+  }
+  hero={x:sx,y:sy,h:104*s};
  }else{
   s=clamp(h/390,.62,1.45)*.92;
-  ps=Math.max(w/IMG.w*1.08,h/IMG.h);
-  ox=(w-IMG.w*ps)*1;oy=h*.4-IMG.moon.y*ps;oy=Math.min(0,Math.max(oy,h-IMG.h*ps));
-  const th=clamp(h*.17,40,70);
-  title={x:w*.175,y:h*.2,h:th};
-  hero={x:w*.2,y:h*.8,h:84*s};
+  const th=clamp(h*.15,38,56),colLeft=w-24-Math.min(280,w*.34);
+  title={x:Math.max(th+10,w*.1),y:h*.04+th*.5+10,h:th};
+  // fit the jar to the height, keep it left of the menu column, and shrink it a little if the logo would touch it
+  ps=clamp(h*.88/(IMG.moon.bottom-IMG.moon.top),.7,1.6);
+  for(let it=0;it<24;it++){
+   const rx=IMG.moon.rx*ps,ry=IMG.moon.ry*ps,cx=Math.min(w*.4,colLeft-4-rx),cy=h*.045+(IMG.moon.y-IMG.moon.top)*ps;
+   let hit=false;
+   for(let a=0;a<=8&&!hit;a++)for(let b=0;b<=4&&!hit;b++){
+    const x=title.x-th+a/8*th*2,y=title.y-th/2+b/4*th;hit=((x-cx)/rx)**2+((y-cy)/ry)**2<1.04;
+   }
+   if(!hit||ps<=.7)break;
+   ps*=.97;
+  }
+  ox=Math.min(w*.4,colLeft-4-IMG.moon.rx*ps)-IMG.moon.x*ps;oy=h*.045-IMG.moon.top*ps;
+  hero={x:w*.13,y:h-30*s-8,h:80*s};useSlab=true;
  }
- const moon={x:IMG.moon.x*ps+ox,y:IMG.moon.y*ps+oy,r:IMG.moon.r*ps};
- return {wide,w,h,s,ps,ox,oy,moon,title,hero,slab:{x:hero.x,y:hero.y,rx:hero.h*.5,depth:hero.h*.34}};
+ const moon={x:IMG.moon.x*ps+ox,y:IMG.moon.y*ps+oy,rx:IMG.moon.rx*ps,ry:IMG.moon.ry*ps,r:IMG.moon.rx*ps};
+ return {wide,w,h,s,ps,ox,oy,moon,title,hero,useSlab,slab:{x:hero.x,y:hero.y,rx:hero.h*.42,depth:hero.h*.22},
+  cta:{top:wide?h-(12+68+18)-56:h-(DOCK_B+DOCK_H+CTA_GAP)-CTA_H}};
 }
 const toScreen=(L,ix,iy)=>[L.ox+ix*L.ps,L.oy+iy*L.ps];
 
@@ -66,126 +87,83 @@ function sprite(wCss,hCss,ax,ay,dpr,paint){
  g.setTransform(dpr,0,0,dpr,0,0);g.translate(ax,ay);paint(g);
  return {canvas,ax,ay,w:wCss,h:hCss};
 }
-function blit(c,sp,x,y,alpha){
- if(!sp)return;
- if(alpha!==undefined&&alpha!==1){const old=c.globalAlpha;c.globalAlpha=old*alpha;c.drawImage(sp.canvas,x-sp.ax,y-sp.ay,sp.w,sp.h);c.globalAlpha=old}
- else c.drawImage(sp.canvas,x-sp.ax,y-sp.ay,sp.w,sp.h);
-}
 function linear(c,x0,y0,x1,y1,stops){const g=c.createLinearGradient(x0,y0,x1,y1);for(const [o,col] of stops)g.addColorStop(o,col);return g}
 function radial(c,x,y,r0,r1,stops){const g=c.createRadialGradient(x,y,r0,x,y,r1);for(const [o,col] of stops)g.addColorStop(o,col);return g}
+function glow(dpr,size,stops){const r=size/2;return sprite(size,size,r,r,dpr,g=>{g.fillStyle=radial(g,0,0,0,r,stops);g.fillRect(-r,-r,size,size)})}
 
-/* ---------- the moon: spiral + kaleidoscope field ---------- */
-const ARMS=2,PITCH=-.95,WEDGES=8,PAL_N=512,LIGHT_N=16;
-const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-/* 512 colours x (16 light levels + 16 seam levels): hard-edged bands with a thin dark linocut line between them. */
-function paletteTable(){
- const cols=PAL.band.map(hex),ink=hex(PAL.indigoDeep),T=new Uint32Array(PAL_N*32);
- for(let p=0;p<PAL_N;p++){
-  const u=p/PAL_N*cols.length,b=Math.floor(u),f=u-b,c0=cols[b%cols.length],c1=cols[(b+1)%cols.length];
-  // band edge: a short dark line on both sides of each boundary
-  const edge=Math.max(0,1-Math.min(f,1-f)/.06),k=edge*edge*(3-2*edge)*.62;
-  const base=f>.5?c1:c0,rgb=[0,1,2].map(i=>lerp(base[i],ink[i],k));
-  for(let l=0;l<LIGHT_N;l++){
-   const fac=.58+.42*l/(LIGHT_N-1);
-   T[p*32+l]=pack(rgb[0]*fac,rgb[1]*fac,rgb[2]*fac);
-   T[p*32+16+l]=pack(rgb[0]*.5+ink[0]*.3,rgb[1]*.5+ink[1]*.3,rgb[2]*.5+ink[2]*.3);
+/* ---------- mandala rings (procedural, baked once, rotated slowly) ---------- */
+const spriteDpr=(dpr,R)=>Math.min(dpr,Math.max(1,720/(R*2.2)));
+function ringOuter(dpr,R,P){
+ const d=spriteDpr(dpr,R),lw=1/d*1.15;
+ return sprite(R*2.2,R*2.2,R*1.1,R*1.1,d,g=>{
+  g.lineCap='round';g.lineJoin='round';g.shadowColor=rgba(P.glow,.85);g.shadowBlur=Math.max(3,R*.035);
+  g.lineWidth=lw;g.strokeStyle=rgba(P.rim,.95);g.beginPath();g.arc(0,0,R*.82,0,TAU);g.stroke();
+  g.strokeStyle=rgba(P.rim2,.8);g.lineWidth=lw*.8;g.beginPath();g.arc(0,0,R*.995,0,TAU);g.stroke();
+  // 24 lotus petals between the two circles
+  g.strokeStyle=rgba(P.rim2,.9);g.lineWidth=lw*1.2;
+  for(let i=0;i<24;i++){
+   const a=i/24*TAU;g.save();g.rotate(a);g.beginPath();g.moveTo(0,-R*.82);g.quadraticCurveTo(R*.062,-R*.9,0,-R*.985);g.quadraticCurveTo(-R*.062,-R*.9,0,-R*.82);g.stroke();g.restore();
   }
- }
- return T;
+  // 12 diamonds just inside, glow-coloured
+  g.strokeStyle=rgba(P.glow,.8);g.lineWidth=lw;
+  for(let i=0;i<12;i++){g.save();g.rotate(i/12*TAU+TAU/24);g.beginPath();g.moveTo(0,-R*.7);g.lineTo(R*.035,-R*.76);g.lineTo(0,-R*.82);g.lineTo(-R*.035,-R*.76);g.closePath();g.stroke();g.restore()}
+  // 48 beads on the outside
+  g.fillStyle=rgba(P.glow,.85);
+  for(let i=0;i<48;i++){const a=i/48*TAU;g.beginPath();g.arc(Math.sin(a)*R*1.045,-Math.cos(a)*R*1.045,(i%4===0?2.1:1.1)/d*1.1,0,TAU);g.fill()}
+ });
 }
-const pack=(r,g,b)=>((255<<24)|((b&255)<<16)|((g&255)<<8)|(r&255))>>>0;
-function buildSpiral(N){
- const W=TAU/WEDGES;
- let n=0;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const nx=(x+.5)/N*2-1,ny=(y+.5)/N*2-1;if(nx*nx+ny*ny<=1.06)n++}
- const idx=new Uint32Array(n),A=new Int32Array(n),B=new Int32Array(n),S=new Uint8Array(n);
- let k=0;
- for(let y=0;y<N;y++)for(let x=0;x<N;x++){
-  const nx=(x+.5)/N*2-1,ny=(y+.5)/N*2-1,r2=nx*nx+ny*ny;if(r2>1.06)continue;
-  const r=Math.sqrt(r2),ang=Math.atan2(ny,nx);
-  const v=ARMS*ang/TAU+PITCH*Math.log(r+.045);                   // log spiral, palette cycles along it
-  const fold=Math.abs(((ang+Math.PI)%W+W)%W-W/2)/(W/2);            // mirror-folded angle: 0 at the seams, 1 mid-wedge
-  const l=fold*.55+r*2.3;                                          // kaleidoscope light: rings and petals
-  idx[k]=y*N+x;A[k]=Math.round((v%1)*65536);B[k]=Math.round((l%1)*65536);S[k]=(fold<.022||fold>.99)&&r>.18?16:0;k++;
- }
- return {N,n,idx,A,B,S};
+function ringInner(dpr,R,P){
+ const d=spriteDpr(dpr,R),lw=1/d*1.1;
+ return sprite(R*2.2,R*2.2,R*1.1,R*1.1,d,g=>{
+  g.lineCap='round';g.shadowColor=rgba(P.rim2,.8);g.shadowBlur=Math.max(3,R*.03);
+  g.strokeStyle=rgba(P.rim,.9);g.lineWidth=lw;g.setLineDash([R*.045,R*.03]);g.beginPath();g.arc(0,0,R*.9,0,TAU);g.stroke();g.setLineDash([]);
+  g.strokeStyle=rgba(P.glow,.8);g.lineWidth=lw*.8;g.beginPath();g.arc(0,0,R*.74,0,TAU);g.stroke();
+  g.strokeStyle=rgba(P.rim2,.85);g.lineWidth=lw;
+  for(let i=0;i<36;i++){const a=i/36*TAU,l=i%3===0?.1:.045;g.beginPath();g.moveTo(Math.sin(a)*R*.9,-Math.cos(a)*R*.9);g.lineTo(Math.sin(a)*R*(.9+l),-Math.cos(a)*R*(.9+l));g.stroke()}
+  for(let i=0;i<12;i++){const a=i/12*TAU+TAU/24;g.beginPath();g.arc(Math.sin(a)*R*.82,-Math.cos(a)*R*.82,R*.016,0,TAU);g.stroke()}
+ });
 }
-function spiralState(Nwant,dpr){
- const N=clamp(Math.ceil(Nwant*Math.min(dpr,2)),96,320),canvas=makeCanvas(N,N);if(!canvas)return null;
- const g=canvas.getContext('2d');if(!g||typeof g.createImageData!=='function')return null;
- let img=null;try{img=g.createImageData(N,N)}catch(_){img=null}
- if(!img||!img.data)return null;
- return {N,canvas,g,img,u32:new Uint32Array(img.data.buffer),field:buildSpiral(N),pal:paletteTable(),step:-1,dpr};
+
+/* ---------- eyes: a dark lid with a neon lash line that closes over the picture's own eye ---------- */
+function lidPath(g,w,h){
+ const hw=w/2,hh=h/2;
+ g.beginPath();g.moveTo(-hw,0);g.quadraticCurveTo(0,-hh*2.05,hw,0);g.quadraticCurveTo(0,hh*2.05,-hw,0);g.closePath();
 }
-/* Shading LUT: soft cosine over the 16 light levels. */
-const LIGHT_LUT=(()=>{const a=new Uint8Array(256);for(let i=0;i<256;i++)a[i]=Math.round((.5+.5*Math.cos(i/256*TAU))*(LIGHT_N-1));return a})();
-function paintSpiral(S,t){
- const {u32,pal,field}=S,{idx,A,B,S:seam,n}=field;
- const turn=t/52,flow=t*.032;                                      // one full turn per 52 s; slow inward drift of the bands
- const pa=Math.round(((ARMS*turn+flow)%1+1)%1*65536)|0,pb=Math.round((((-t*.045)%1)+1)%1*65536)|0;
- for(let k=0;k<n;k++){
-  const p=((A[k]+pa)&0xFFFF)>>7,l=LIGHT_LUT[((B[k]+pb)&0xFFFF)>>8];
-  u32[idx[k]]=pal[(p<<5)|seam[k]|l];
- }
- S.g.putImageData(S.img,0,0);
+function drawLid(c,x,y,w,h,k,P){
+ // k 0..1: 0 open, 1 closed. The top lid sweeps down past the centre line, the lower lid rises a little; the lids are the
+ // surrounding skin colour, with a neon lash line along the closing edge that settles into a gentle downward curve.
+ if(k<=.015)return;
+ const hh=h*.62,top=-hh+hh*1.3*k,bot=hh-hh*1.3*k;
+ c.save();c.translate(x,y);lidPath(c,w*1.0,h*1.0);c.clip();
+ c.fillStyle=linear(c,0,-hh,0,hh,[[0,'rgba(34,10,80,.97)'],[1,'rgba(22,5,56,.97)']]);
+ c.fillRect(-w,-h*2,w*2,top+h*2);c.fillRect(-w,bot,w*2,h*2);
+ c.restore();
+ c.save();c.translate(x,y);c.lineCap='round';c.lineWidth=Math.max(1,h*.075);
+ c.strokeStyle=linear(c,-w/2,0,w/2,0,[[0,rgba(P.rim2,0)],[.2,rgba(P.rim2,.9*Math.min(1,k*3))],[.8,rgba(P.rim2,.9*Math.min(1,k*3))],[1,rgba(P.rim2,0)]]);
+ c.beginPath();c.moveTo(-w*.5,0);c.quadraticCurveTo(0,-hh*.8*(1-k)+h*.2*k,w*.5,0);c.stroke();
+ c.restore();
 }
 
 /* ---------- small sprites ---------- */
-function eyeSprite(dpr,w){
- const h=w*.52;
- return sprite(w*1.2,h*1.4,w*.6,h*.7,dpr,g=>{
-  const hw=w/2,hh=h/2;
-  g.beginPath();g.moveTo(-hw,0);g.quadraticCurveTo(0,-hh*1.9,hw,0);g.quadraticCurveTo(0,hh*1.9,-hw,0);g.closePath();
-  g.fillStyle='rgba(236,226,255,.95)';g.fill();g.lineWidth=Math.max(1.2,w*.07);g.lineJoin='round';g.strokeStyle='#1b0e5c';g.stroke();
-  g.save();g.clip();
-  g.fillStyle=radial(g,0,0,1,hh*.95,[[0,'#12083f'],[.34,'#12083f'],[.4,'#a6ff4a'],[.66,'#1fe3e0'],[.9,'#7a35ff'],[1,'#ff2fa3']]);
-  g.beginPath();g.arc(0,0,hh*.98,0,TAU);g.fill();
-  g.fillStyle='rgba(255,255,255,.9)';g.beginPath();g.arc(-hh*.3,-hh*.3,hh*.13,0,TAU);g.fill();
-  g.restore();
- });
-}
-function diamond(dpr,r,col){
- return sprite(r*3,r*3,r*1.5,r*1.5,dpr,g=>{
-  g.fillStyle=radial(g,0,0,0,r*1.5,[[0,'rgba(255,255,255,.6)'],[.4,col.replace(/[\d.]+\)$/,'.22)')],[1,col.replace(/[\d.]+\)$/,'0)')]]);g.fillRect(-r*1.5,-r*1.5,r*3,r*3);
-  g.beginPath();g.moveTo(0,-r);g.quadraticCurveTo(r*.14,-r*.14,r*.62,0);g.quadraticCurveTo(r*.14,r*.14,0,r);g.quadraticCurveTo(-r*.14,r*.14,-r*.62,0);g.quadraticCurveTo(-r*.14,-r*.14,0,-r);g.closePath();
-  g.fillStyle='#fff7ff';g.fill();
- });
-}
-function glow(dpr,size,stops){const r=size/2;return sprite(size,size,r,r,dpr,g=>{g.fillStyle=radial(g,0,0,0,r,stops);g.fillRect(-r,-r,size,size)})}
+function mote(dpr,r,col){return glow(dpr,r*2,[[0,rgba(col,.95)],[.3,rgba(col,.45)],[1,rgba(col,0)]])}
 
-/* ---------- floating slab ---------- */
-/* Hanging rock under a surface ellipse (centre 0,0; half width rx). */
-function rockProfile(rx,depth,seed){
- const r=rng(seed),n=9,left=[],right=[];
- for(let i=0;i<=n;i++){const u=i/n,x=lerp(-rx,0,u),edge=Math.pow(Math.abs(x)/rx,1.55),jag=(r()-.5)*depth*.13*(i>0&&i<n?1:0);left.push([x,depth*(1-edge)*(.92+r()*.1)+jag])}
- for(let i=1;i<=n;i++){const u=i/n,x=lerp(0,rx,u),edge=Math.pow(Math.abs(x)/rx,1.55),jag=(r()-.5)*depth*.13*(i<n?1:0);right.push([x,depth*(1-edge)*(.9+r()*.12)+jag])}
- return {left,right};
-}
-function slabSprite(dpr,S){
- const rx=S.rx,depth=S.depth,pad=rx*1.1,up=rx*1.2,down=rx*.9;
- return sprite((rx+pad)*2,up+depth+down,rx+pad,up,dpr,g=>{
-  const ry=rx*.2,prof=rockProfile(rx,depth,11),pts=[...prof.left,...prof.right];
-  // soft aura so the slab separates from the cream staircase behind it
-  g.fillStyle=radial(g,0,depth*.3,rx*.2,rx*1.1,[[0,'rgba(20,8,70,.55)'],[1,'rgba(20,8,70,0)']]);g.fillRect(-rx*1.15,-rx*1.15,rx*2.3,rx*1.15+depth+rx*.85);
-  g.beginPath();g.moveTo(-rx,0);for(const p of pts)g.lineTo(p[0],p[1]);g.lineTo(rx,0);g.ellipse(0,0,rx,ry,0,0,Math.PI,true);g.closePath();
-  g.fillStyle=linear(g,0,0,0,depth,[[0,'#8a63d9'],[.4,'#4f2fa0'],[1,'#22115e']]);g.fill();
-  g.save();g.clip();
-  g.fillStyle=linear(g,-rx,0,rx,0,[[0,'rgba(18,8,60,.5)'],[.55,'rgba(18,8,60,0)'],[1,'rgba(255,120,220,.22)']]);g.fillRect(-rx,0,rx*2,depth);
-  g.restore();
-  // iridescent rim down the underside edge
-  g.beginPath();g.moveTo(-rx,0);for(const p of pts)g.lineTo(p[0],p[1]);g.lineTo(rx,0);
-  g.lineWidth=1.8;g.lineCap='round';g.lineJoin='round';g.strokeStyle=linear(g,-rx,0,rx,depth,[[0,'#6ff0ff'],[.35,'#a98bff'],[.65,'#ff7ad9'],[1,'#ffe66a']]);g.stroke();
-  // top face: pale glaze with a thin rainbow lip
-  g.beginPath();g.ellipse(0,0,rx,ry,0,0,TAU);g.fillStyle=linear(g,0,-ry,0,ry,[[0,'#fff5ff'],[1,'#cdb4ff']]);g.fill();
-  g.beginPath();g.ellipse(0,0,rx,ry,0,0,TAU);g.lineWidth=1.6;g.strokeStyle=linear(g,-rx,0,rx,0,[[0,'#6ff0ff'],[.3,'#a6ff6a'],[.5,'#ffe66a'],[.75,'#ff7ad9'],[1,'#a98bff']]);g.stroke();
-  g.beginPath();g.ellipse(-rx*.1,ry*.05,rx*.62,ry*.5,0,0,TAU);g.strokeStyle='rgba(122,53,255,.28)';g.lineWidth=1;g.stroke();
-  const rp=rng(31);
-  for(let i=0;i<3;i++){const x=lerp(-rx*.4,rx*.45,rp()),y=depth*(.8+rp()*.28)+3,rr=2+rp()*2.6;g.beginPath();g.ellipse(x,y+rr*(i%2),rr,rr*.8,0,0,TAU);g.fillStyle=i%2?'#4b2c98':'#6a45c4';g.fill()}
+/* ---------- stepping slab (landscape and tablets, where the picture's stones are off screen) ---------- */
+function slabSprite(dpr,S,P){
+ const rx=S.rx,ry=rx*.27,depth=S.depth,pad=rx*.9;
+ return sprite((rx+pad)*2,ry*2+depth+pad*1.2,rx+pad,ry+pad*.5,dpr,g=>{
+  g.fillStyle=radial(g,0,depth*.4,rx*.3,rx*1.55,[[0,rgba(P.rim,.4)],[1,rgba(P.rim,0)]]);g.fillRect(-rx-pad,-ry-pad,(rx+pad)*2,ry*2+depth+pad*1.8);
+  g.beginPath();g.moveTo(-rx,0);g.lineTo(-rx*.84,depth);g.ellipse(0,depth,rx*.84,ry*.84,0,Math.PI,0,true);g.lineTo(rx,0);g.ellipse(0,0,rx,ry,0,0,Math.PI,false);g.closePath();
+  g.fillStyle=linear(g,0,0,0,depth+ry,[[0,'#3a1c82'],[.5,'#1d0b4e'],[1,'#0a0322']]);g.fill();
+  g.beginPath();g.ellipse(0,0,rx,ry,0,0,TAU);g.fillStyle=linear(g,-rx,0,rx,0,[[0,'#2a1066'],[.5,'#5a2cc0'],[1,'#3a1480']]);g.fill();
+  g.lineWidth=1.6;g.strokeStyle=linear(g,-rx,0,rx,0,[[0,P.rim],[1,P.rim2]]);g.shadowColor=rgba(P.glow,.9);g.shadowBlur=6;g.stroke();
+  g.shadowBlur=0;g.beginPath();g.ellipse(0,0,rx*.6,ry*.55,0,0,TAU);g.lineWidth=1;g.strokeStyle=rgba(P.glow,.45);g.stroke();
+  g.beginPath();g.ellipse(0,depth,rx*.84,ry*.84,0,0,Math.PI,false);g.lineWidth=1.3;g.strokeStyle=rgba(P.rim2,.7);g.stroke();
  });
 }
 
-/* ---------- hand-built lettering, iridescent ---------- */
+/* ---------- hand-built lettering: violet -> magenta neon, thin cyan contour, soft glow (fixed colours) ---------- */
 /* Strokes are authored in a 200x100 box: 몽 = ㅁ + ㅗ + ㅇ at x 0..92, 유 = ㅇ + ㅠ at x 108..200. */
-const LETTER_W=200,LETTER_H=100,STROKE=9.6;
+const LETTER_W=200,LETTER_H=100,STROKE=11;
 function letterPaths(g){
  const rr=(x,y,w,h,r)=>{g.moveTo(x+r,y);g.lineTo(x+w-r,y);g.quadraticCurveTo(x+w,y,x+w,y+r);g.lineTo(x+w,y+h-r);g.quadraticCurveTo(x+w,y+h,x+w-r,y+h);g.lineTo(x+r,y+h);g.quadraticCurveTo(x,y+h,x,y+h-r);g.lineTo(x,y+r);g.quadraticCurveTo(x,y,x+r,y)};
  g.beginPath();
@@ -197,43 +175,41 @@ function letterPaths(g){
  g.moveTo(108+29,54);g.quadraticCurveTo(108+30.5,72,108+28,91);
  g.moveTo(108+63,54);g.quadraticCurveTo(108+61.5,72,108+64,91);
 }
-function titleSprite(dpr,hCss){
- const k=hCss/LETTER_H,pad=22*Math.max(.6,k);
- const W=LETTER_W*k+pad*2+8*k,H=LETTER_H*k+pad*2+18*k;
+function titleSprite(dpr,hCss,P){
+ const k=hCss/LETTER_H,pad=26*Math.max(.6,k);
+ const W=LETTER_W*k+pad*2,H=LETTER_H*k+pad*2;
  const body=sprite(W,H,pad,pad,dpr,g=>{
   g.scale(k,k);g.lineCap='round';g.lineJoin='round';
-  // misregistered shadow: a solid violet copy and a thin hot-pink contour copy, both pushed down-right
-  g.save();g.translate(4.6,5.8);letterPaths(g);g.lineWidth=STROKE+6;g.strokeStyle='#4a16a8';g.stroke();g.restore();
-  g.save();g.translate(9,10.6);letterPaths(g);g.lineWidth=1.9;g.strokeStyle='#ff4fb8';g.stroke();g.restore();
-  g.save();g.translate(-3.2,-3.4);letterPaths(g);g.lineWidth=1.4;g.strokeStyle='rgba(111,240,255,.9)';g.stroke();g.restore();
-  letterPaths(g);g.lineWidth=STROKE+6;g.strokeStyle='#14083f';g.stroke();
-  letterPaths(g);g.lineWidth=STROKE;
-  g.strokeStyle=linear(g,0,0,LETTER_W,LETTER_H*1.1,[[0,'#30e6ff'],[.2,'#8cff6b'],[.4,'#ffe65a'],[.58,'#ff8f5a'],[.78,'#ff3fa4'],[1,'#a064ff']]);g.stroke();
-  g.save();g.translate(-1.6,-1.7);letterPaths(g);g.lineWidth=1.3;g.strokeStyle='rgba(255,255,255,.8)';g.stroke();g.restore();
+  // soft outer glow: a wide violet stroke with a blurred shadow, drawn first
+  g.save();g.shadowColor=rgba(P.glow,.9);g.shadowBlur=18*k+4;letterPaths(g);g.lineWidth=STROKE+5;g.strokeStyle=rgba(P.rim,.55);g.stroke();g.restore();
+  g.save();g.shadowColor=rgba(P.rim2,.8);g.shadowBlur=10*k+3;letterPaths(g);g.lineWidth=STROKE+5;g.strokeStyle=rgba(P.rim2,.35);g.stroke();g.restore();
+  // thin cyan contour, then the dark keyline, then the gradient body
+  letterPaths(g);g.lineWidth=STROKE+4.6;g.strokeStyle=P.accent;g.stroke();
+  letterPaths(g);g.lineWidth=STROKE+2.2;g.strokeStyle='#12043a';g.stroke();
+  letterPaths(g);g.lineWidth=STROKE;g.strokeStyle=linear(g,0,0,LETTER_W,LETTER_H*.35,[[0,'#8d55ff'],[.45,'#c43dff'],[1,'#ff3fb4']]);g.stroke();
+  // inner highlight in the same family
+  g.save();g.translate(-1.4,-1.6);letterPaths(g);g.lineWidth=1.3;g.strokeStyle='rgba(232,208,255,.7)';g.stroke();g.restore();
  });
- return {body,k,W,H,pad,star:{x:(108+68)*k,y:5*k}};
-}
-function sparkle(c,x,y,r,a){
- if(a<=0)return;
- c.save();c.translate(x,y);c.globalAlpha*=a;c.fillStyle='#fffaf0';
- c.beginPath();c.moveTo(0,-r);c.quadraticCurveTo(r*.12,-r*.12,r,0);c.quadraticCurveTo(r*.12,r*.12,0,r);c.quadraticCurveTo(-r*.12,r*.12,-r,0);c.quadraticCurveTo(-r*.12,-r*.12,0,-r);c.fill();
- c.restore();
+ return {body,k,W,H,pad};
 }
 
 /* ---------- per-viewport cache ---------- */
+const N_MOTES=26;
 function build(w,h,dpr){
- const L=layout(w,h),C={key:w+'x'+h+'@'+dpr,L,dpr};
- C.spiral=spiralState(Math.ceil(L.moon.r*2),dpr);
- C.slab=slabSprite(dpr,L.slab);
- C.title=titleSprite(dpr,L.title.h);
- C.eyes=IMG.eyes.map(e=>({spec:e,sp:eyeSprite(dpr,Math.max(18,e.s*L.ps*1.1))}));
- C.dia=[diamond(dpr,5,'rgba(255,160,230,0)'),diamond(dpr,7,'rgba(120,240,255,0)')];
- C.glow={white:glow(dpr,48,[[0,'rgba(255,255,255,.95)'],[.3,'rgba(255,230,255,.5)'],[1,'rgba(255,230,255,0)']]),
-  halo:glow(dpr,128,[[0,'rgba(255,120,220,.5)'],[.5,'rgba(255,120,220,.12)'],[1,'rgba(255,120,220,0)']])};
- // character rim light: render the dreamer offscreen once per frame, tint the silhouette, stamp it around the original
- const bh=L.hero.h,bw=Math.ceil(bh*1.25),bhh=Math.ceil(bh*1.3);
- C.hero={bw,bh:bhh,feetY:bhh-6,body:makeCanvas(Math.ceil(bw*dpr),Math.ceil(bhh*dpr)),rim:makeCanvas(Math.ceil(bw*dpr),Math.ceil(bhh*dpr))};
- for(const k of ['body','rim']){const cv=C.hero[k];if(cv){const g=cv.getContext('2d');if(g&&g.setTransform)g.setTransform(dpr,0,0,dpr,0,0);C.hero[k+'G']=g}}
+ const L=layout(w,h),P=pal(),C={key:w+'x'+h+'@'+dpr,L,dpr,P};
+ const R=L.moon.rx*1.3;
+ C.ringR=R;C.ringA=ringOuter(dpr,R,P);C.ringB=ringInner(dpr,R*.93,P);
+ C.title=titleSprite(dpr,L.title.h,P);
+ C.slab=L.useSlab?slabSprite(dpr,L.slab,P):null;
+ C.jarGlow=glow(dpr,Math.ceil(L.moon.rx*3.6),[[0,rgba(P.glow,.7)],[.32,rgba(P.rim,.32)],[.62,rgba(P.rim2,.1)],[1,rgba(P.rim2,0)]]);
+ C.floorGlow=glow(dpr,128,[[0,rgba(P.glow,.55)],[.45,rgba(P.rim,.2)],[1,rgba(P.rim,0)]]);
+ C.irisGlow=glow(dpr,48,[[0,rgba(P.rim2,.9)],[.4,rgba(P.rim2,.3)],[1,rgba(P.rim2,0)]]);
+ C.motes=[mote(dpr,8,P.glow),mote(dpr,8,P.accent),mote(dpr,8,P.rim2)];
+ const r=rng(77);C.mote=[];
+ for(let i=0;i<N_MOTES;i++){
+  const kind=i%5===0?1:i%7===0?2:0;                                  // mostly violet, some cyan, few magenta
+  C.mote.push({kind,x:r()*IMG.w,y:r(),sz:(.5+r()*.9),v:.012+r()*.02,sw:6+r()*18,ph:r()*TAU,fr:.12+r()*.2,a:.28+r()*.4});
+ }
  return C;
 }
 function ensure(w,h,dpr){
@@ -243,97 +219,111 @@ function ensure(w,h,dpr){
 }
 
 /* ---------- frame ---------- */
-const stats={frames:0,last:0,avg:0,max:0,built:0,spiral:0};
+const stats={frames:0,last:0,avg:0,max:0,built:0};
 function now(){return root.performance?.now?.()??Date.now()}
 function drawHero(c,C,t,reduced,x,y){
  const M=root.MongyuMobile;if(!M?.sprite)return;
- const H=C.hero,L=C.L,bg=H.bodyG,rg=H.rimG;
- if(!bg||!rg){try{M.sprite(c,{x,y,bodyHeight:L.hero.h,pose:'stand'},{poseTime:t,onDark:true},reduced)}catch(_){}return}
- bg.save();bg.setTransform(C.dpr,0,0,C.dpr,0,0);bg.clearRect(0,0,H.bw,H.bh);
- try{M.sprite(bg,{x:H.bw/2,y:H.feetY,bodyHeight:L.hero.h,pose:'stand'},{poseTime:t,onDark:true},reduced)}catch(_){}
- bg.restore();
- rg.save();rg.setTransform(C.dpr,0,0,C.dpr,0,0);rg.clearRect(0,0,H.bw,H.bh);rg.globalCompositeOperation='source-over';
- rg.drawImage(H.body,0,0,H.bw,H.bh);rg.globalCompositeOperation='source-in';
- rg.fillStyle=linear(rg,0,0,0,H.bh,[[0,'#6ff0ff'],[.38,'#a98bff'],[.62,'#ff7ad9'],[.85,'#ffe66a'],[1,'#a6ff6a']]);rg.fillRect(0,0,H.bw,H.bh);
- rg.restore();
- const dx=x-H.bw/2,dy=y-H.feetY,o=Math.max(1.6,L.s*2.1);
- c.save();c.globalAlpha=1;
- for(const [ox,oy] of [[-o,0],[o,0],[0,-o],[0,o],[-o*.7,-o*.7],[o*.7,-o*.7],[-o*.7,o*.7],[o*.7,o*.7]])c.drawImage(H.rim,dx+ox,dy+oy,H.bw,H.bh);
- c.globalAlpha=1;c.drawImage(H.body,dx,dy,H.bw,H.bh);c.restore();
+ const L=C.L,br=reduced?0:Math.sin(t*TAU/4.2);
+ c.save();c.translate(x,y);c.scale(1,1+.012*br);c.translate(-x,-y);
+ try{M.sprite(c,{x,y,bodyHeight:L.hero.h,pose:'stand'},{poseTime:t,onDark:true},reduced)}catch(_){}
+ c.restore();
+}
+function edgeFades(c,L,w,h){
+ const ix0=L.ox,ix1=L.ox+IMG.w*L.ps,iy0=L.oy,iy1=L.oy+IMG.h*L.ps;
+ if(ix1<w+.5){const f=Math.min(120,IMG.w*L.ps*.2),x0=ix1-f;c.fillStyle=linear(c,x0,0,ix1,0,[[0,rgba(BASE,0)],[1,rgba(BASE,1)]]);c.fillRect(x0,0,f+1,h)}
+ if(ix0>.5){const f=Math.min(120,IMG.w*L.ps*.2);c.fillStyle=linear(c,ix0,0,ix0+f,0,[[0,rgba(BASE,1)],[1,rgba(BASE,0)]]);c.fillRect(ix0-1,0,f+1,h)}
+ if(iy0>.5){const f=IMG.moon.top*L.ps*.95+6;c.fillStyle=linear(c,0,iy0,0,iy0+f,[[0,rgba(BASE,1)],[1,rgba(BASE,0)]]);c.fillRect(0,iy0-1,w,f+1)}
+ if(iy1<h-.5){c.fillStyle=BASE;c.fillRect(0,iy1-1,w,h-iy1+2)}
 }
 function draw(c,opts){
  const t0=now(),vp=opts.viewport,w=vp.width,h=vp.height,dpr=vp.dpr||1,reduced=!!opts.reduced;
  const t=reduced?0:(opts.time||0);
  const buildStart=!cache||cache.key!==w+'x'+h+'@'+dpr;
- const C=ensure(w,h,dpr),L=C.L,s=L.s,m=L.moon;
+ const C=ensure(w,h,dpr),L=C.L,s=L.s,m=L.moon,P=C.P;
  c.save();
  c.globalAlpha=1;c.globalCompositeOperation='source-over';
- // 1. backdrop, cover-fit with the moon jar always in view
+ // 1. backdrop
  const A=root.MongyuArt;
- c.fillStyle=PAL.indigo;c.fillRect(0,0,w,h);
- if(A?.ready&&A.ready('lobby-psy')){const im=A.image('lobby-psy');c.drawImage(im,L.ox,L.oy,IMG.w*L.ps,IMG.h*L.ps)}
- else A?.image?.('lobby-psy');
- // 2. the moon fill: live spiral clipped to the jar circle
- const sp=C.spiral;
- if(sp){
-  const step=reduced?0:Math.floor(t*24);
-  if(step!==sp.step){const a=now();paintSpiral(sp,reduced?0:t);sp.step=step;stats.spiral=now()-a}
-  c.save();c.beginPath();c.arc(m.x,m.y,m.r*1.012,0,TAU);c.clip();
-  c.imageSmoothingEnabled=true;c.drawImage(sp.canvas,m.x-m.r*1.03,m.y-m.r*1.03,m.r*2.06,m.r*2.06);
-  // depth: dark inner rim, bright core so the singularity reads as the moon's light
-  c.fillStyle=radial(c,m.x,m.y,m.r*.5,m.r*1.02,[[0,'rgba(18,8,63,0)'],[.78,'rgba(18,8,63,.18)'],[1,'rgba(18,8,63,.62)']]);c.fillRect(m.x-m.r,m.y-m.r,m.r*2,m.r*2);
-  const pulse=reduced?.5:.5+.5*Math.sin(t*TAU/9);
-  c.fillStyle=radial(c,m.x,m.y,0,m.r*.34,[[0,'rgba(255,250,255,'+(.62+pulse*.14).toFixed(2)+')'],[.5,'rgba(255,230,250,.22)'],[1,'rgba(255,230,250,0)']]);c.fillRect(m.x-m.r,m.y-m.r,m.r*2,m.r*2);
-  c.restore();
- }
- // 3. colour breathing over the whole backdrop: composite 'hue', 26 s period, never the filter property
- {
-  const hue=300+(reduced?0:Math.sin(t*TAU/26)*55);
-  c.globalCompositeOperation='hue';c.globalAlpha=.2;c.fillStyle='hsl('+hue.toFixed(1)+',85%,55%)';c.fillRect(0,0,w,h);
-  c.globalCompositeOperation='source-over';c.globalAlpha=1;
- }
- // 4. ripples leaving the moon: three thin rings, slow, alpha <= .25
+ c.fillStyle=BASE;c.fillRect(0,0,w,h);
+ if(A?.ready&&A.ready('lobby-trip')){const im=A.image('lobby-trip');c.drawImage(im,L.ox,L.oy,IMG.w*L.ps,IMG.h*L.ps)}
+ else A?.image?.('lobby-trip');
+ edgeFades(c,L,w,h);
+ // lake darkening so the menu reads: transparent at 58% of the height, deeper violet-black at the bottom
+ c.fillStyle=linear(c,0,h*.56,0,h,[[0,rgba(BASE,0)],[1,rgba(BASE,L.wide?.25:.5)]]);c.fillRect(0,h*.56,w,h*.44);
+ // 2. everything below is additive light
  c.globalCompositeOperation='lighter';
- for(let i=0;i<3;i++){
-  const u=reduced?(i===1?.42:-1):(t/11+i/3)%1;if(u<0)continue;
-  const a=.25*Math.pow(Math.sin(Math.PI*u),1.3);
-  c.globalAlpha=a;c.lineWidth=Math.max(1.4,2.2*s*(1-u*.5));c.strokeStyle=PAL.rim[(i*2)%5];
-  c.beginPath();c.arc(m.x,m.y,m.r*(1.04+u*1.2),0,TAU);c.stroke();
+ // 2a. the jar breathes: glow intensity +-6% around its base, 7.5 s period
+ {
+  const k=1+(reduced?0:.06*Math.sin(t*TAU/7.5)),g=C.jarGlow;
+  if(g){c.globalAlpha=.5*k;const sc=1;c.drawImage(g.canvas,m.x-g.w*sc/2,m.y-g.h*sc/2,g.w*sc,g.h*sc)}
  }
+ // 2b. ripples leaving the jar: four elliptical rings, 14 s lifetime, alpha <= .22, violet / magenta family
+ {
+  const cols=[P.rim,P.rim2,P.glow,P.rim2];
+  for(let i=0;i<4;i++){
+   const u=reduced?(i===1?.38:-1):(t/14+i/4)%1;if(u<0)continue;
+   const a=.22*Math.pow(Math.sin(Math.PI*u),1.2),e=1.08+u*.9;
+   c.globalAlpha=a;c.lineWidth=Math.max(1.2,2*s*(1-u*.55));c.strokeStyle=cols[i];
+   c.beginPath();c.ellipse(m.x,m.y+m.ry*.04,m.rx*e,m.ry*e*1.02,0,0,TAU);c.stroke();
+  }
+ }
+ // 2c. mandala rings around the jar: outer turns once per 64 s, inner the other way once per 96 s
+ if(C.ringA){
+  const a=reduced?0:t/64*TAU,sp=C.ringA,R=C.ringR;
+  c.save();c.translate(m.x,m.y+m.ry*.03);c.rotate(a);c.globalAlpha=.3;c.drawImage(sp.canvas,-sp.w/2,-sp.h/2,sp.w,sp.h);c.restore();
+  const sb=C.ringB;
+  if(sb){c.save();c.translate(m.x,m.y+m.ry*.03);c.rotate(reduced?0:-t/96*TAU);c.globalAlpha=.22;c.drawImage(sb.canvas,-sb.w/2,-sb.h/2,sb.w,sb.h);c.restore()}
+  void R;
+ }
+ // 2d. eyes: a slow glow in the iris, and every ~9 s a slow blink (1.4 s) over the picture's own lids
  c.globalAlpha=1;
- // 5. drifting eyes (slow fade in and out, rare slow blink) and diamond sparkles
- C.eyes.forEach((e,i)=>{
-  if(!e.sp)return;
-  const cyc=reduced?.55:Math.max(0,Math.sin(t*TAU/17+e.spec.ph))*.78;if(cyc<=.02)return;
-  const [ex,ey]=toScreen(L,e.spec.x,e.spec.y),dx=reduced?0:Math.sin(t*.13+e.spec.ph)*9*s,dy=reduced?0:Math.cos(t*.1+e.spec.ph*1.3)*6*s;
-  const bp=reduced?0:((t+e.spec.ph*3)%9)/9,q=bp>.93?(bp-.93)/.07:-1,o=clamp(q<0?1:Math.abs(2*q-1),.12,1);
-  c.globalAlpha=cyc;c.globalCompositeOperation='source-over';
-  c.drawImage(e.sp.canvas,ex+dx-e.sp.ax,ey+dy-e.sp.ay*o,e.sp.w,e.sp.h*o);
+ IMG.eyes.forEach((e,i)=>{
+  const [ex,ey]=toScreen(L,e.x,e.y),k=C.irisGlow,gs=e.w*L.ps*.75;
+  c.globalAlpha=reduced?.14:.14+.07*(.5+.5*Math.sin(t*TAU/6.3+e.ph));
+  c.drawImage(k.canvas,ex-gs/2,ey-gs/2,gs,gs);
  });
+ c.globalCompositeOperation='source-over';c.globalAlpha=1;
+ if(!reduced)IMG.eyes.forEach((e,i)=>{
+  const per=9.5+i*1.7,u=((t+e.ph*1.3)%per)/per,d=1.4/per;
+  if(u>d)return;const q=u/d,k=.5-.5*Math.cos(q*TAU);               // 0 -> 1 -> 0
+  const [ex,ey]=toScreen(L,e.x,e.y);drawLid(c,ex,ey,e.w*L.ps,e.h*L.ps,k,P);
+ });
+ // 2e. violet / cyan motes drifting up through the picture
  c.globalCompositeOperation='lighter';
- IMG.spark.forEach(([ix,iy],i)=>{
-  const [sx,sy]=toScreen(L,ix,iy);if(sx<-8||sx>w+8||sy<-8||sy>h+8)return;
-  const a=reduced?.6:Math.max(0,Math.sin(t*(.4+(i%5)*.09)+i*1.7))*.85;if(a<=.02)return;
-  const d=C.dia[i%2],sc=(i%3===0?1.15:.85)*s;
-  c.globalAlpha=a;c.drawImage(d.canvas,sx-d.w*sc/2,sy-d.h*sc/2+(reduced?0:Math.sin(t*.3+i)*3*s),d.w*sc,d.h*sc);
- });
- c.globalAlpha=1;c.globalCompositeOperation='source-over';
- // 6. the dreamer on a floating slab with an iridescent rim light
  {
-  const bob=reduced?0:Math.sin(t*TAU/6.5)*3*s,sl=L.slab;
-  c.globalCompositeOperation='lighter';c.globalAlpha=.55;const hs=sl.rx*3.4;if(C.glow.halo)c.drawImage(C.glow.halo.canvas,sl.x-hs/2,sl.y+bob-hs*.55,hs,hs);
-  c.globalCompositeOperation='source-over';c.globalAlpha=1;
-  if(C.slab)blit(c,C.slab,sl.x,sl.y+bob);
-  drawHero(c,C,t,reduced,sl.x,sl.y+bob-sl.rx*.02);
+  const top=IMG.moon.bottom*.5,span=IMG.h*.9-top;
+  for(let i=0;i<C.mote.length;i++){
+   const o=C.mote[i],u=reduced?(i*.37)%1:(o.y+t*o.v*1.0)%1,iy=top+(1-u)*span,ix=o.x+(reduced?0:Math.sin(t*.2+o.ph)*o.sw);
+   const [sx,sy]=toScreen(L,ix,iy);if(sx<-12||sx>w+12||sy<-12||sy>h+12)continue;
+   const a=Math.sin(Math.PI*u)*o.a*(reduced?1:.8+.2*Math.sin(t*TAU*o.fr+o.ph));if(a<=.02)continue;
+   const sp=C.motes[o.kind],z=(5+o.sz*7)*s;
+   c.globalAlpha=a;c.drawImage(sp.canvas,sx-z,sy-z,z*2,z*2);
+  }
  }
- // 7. lettering: soft dark plate so it reads on the busy crown, then the iridescent strokes
+ c.globalAlpha=1;c.globalCompositeOperation='source-over';
+ // 3. the dreamer on a stepping stone
  {
-  const T=C.title,tx=L.title.x-(LETTER_W*T.k)/2,ty=L.title.y-(LETTER_H*T.k)/2,fy=reduced?0:Math.sin(t*.8)*1.4;
-  c.save();c.translate(L.title.x,L.title.y);c.scale(1,.55);
-  c.fillStyle=radial(c,0,0,0,LETTER_W*T.k*.95,[[0,'rgba(14,6,50,.62)'],[.6,'rgba(14,6,50,.3)'],[1,'rgba(14,6,50,0)']]);c.fillRect(-LETTER_W*T.k,-LETTER_W*T.k,LETTER_W*T.k*2,LETTER_W*T.k*2);
+  const hx=L.hero.x,hy=L.hero.y,rx=L.slab.rx;
+  const pulse=reduced?.5:.5+.5*Math.sin(t*TAU/6);
+  c.globalCompositeOperation='lighter';
+  const fg=C.floorGlow,gz=rx*3.4;c.globalAlpha=.55+.1*pulse;c.drawImage(fg.canvas,hx-gz/2,hy-gz*.34,gz,gz*.62);
+  // small ripples on the water around the stone
+  for(let i=0;i<2;i++){
+   const u=reduced?(i?-1:.4):(t/9+i/2)%1;if(u<0)continue;
+   c.globalAlpha=.2*Math.sin(Math.PI*u);c.strokeStyle=i?P.rim2:P.rim;c.lineWidth=Math.max(1,1.4*s);
+   c.beginPath();c.ellipse(hx,hy+rx*.1,rx*(1.1+u*1.1),rx*(.28+u*.3),0,0,TAU);c.stroke();
+  }
+  c.globalCompositeOperation='source-over';c.globalAlpha=1;
+  if(C.slab)c.drawImage(C.slab.canvas,hx-C.slab.ax,hy-C.slab.ay,C.slab.w,C.slab.h);
+  drawHero(c,C,t,reduced,hx,hy);
+ }
+ // 4. logo: dark plate behind it, then the neon letters (fixed colours, no cycling)
+ {
+  const T=C.title,tx=L.title.x-(LETTER_W*T.k)/2,ty=L.title.y-(LETTER_H*T.k)/2;
+  c.save();c.translate(L.title.x,L.title.y);c.scale(1,.5);
+  c.fillStyle=radial(c,0,0,0,LETTER_W*T.k*.9,[[0,'rgba(11,3,34,.55)'],[.6,'rgba(11,3,34,.25)'],[1,'rgba(11,3,34,0)']]);c.fillRect(-LETTER_W*T.k,-LETTER_W*T.k,LETTER_W*T.k*2,LETTER_W*T.k*2);
   c.restore();
-  if(T.body)c.drawImage(T.body.canvas,tx-T.pad,ty-T.pad+fy,T.W,T.H);
-  sparkle(c,tx+T.star.x,ty+T.star.y+fy,(reduced?4:3.4+1.6*Math.max(0,Math.sin(t*1.4)))*T.k*1.1,1);
+  if(T.body)c.drawImage(T.body.canvas,tx-T.pad,ty-T.pad,T.W,T.H);
  }
  c.restore();
  const ms=now()-t0;stats.frames++;stats.last=ms;stats.max=Math.max(stats.max,ms);stats.avg+=(ms-stats.avg)*.05;if(buildStart)stats.built=ms;
@@ -342,7 +332,8 @@ function draw(c,opts){
 
 /* Reset sprites (e.g. after the character look changes). */
 function invalidate(){cache=null}
-const api=Object.freeze({enabled,draw,layout,invalidate,setFactory,stats,PAL,IMG,letterPaths,LETTER_W,LETTER_H,rng,
+const api=Object.freeze({enabled,draw,layout,invalidate,setFactory,stats,IMG,letterPaths,LETTER_W,LETTER_H,rng,
+ CTA_H,DOCK_H,DOCK_B,CTA_GAP,
  get cached(){return cache?cache.key:null}});
 root.MongyuLobbyScene=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);
