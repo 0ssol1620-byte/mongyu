@@ -35,11 +35,13 @@ function nativeModel(run,v){
 function model(run,O,status){return run?.openingCourse?openingModel(run,O):nativeModel(run,status)}
 /* Speech priority: coach (until run.time < coach.until) -> canvas dialogue -> section guide -> nothing.
    `coach` overrides run.coach (native runs: the HUD's own rule tutor). */
-function pickSpeech(run,dialogue,guide,coach){
+function pickSpeech(run,dialogue,guide,coach,humor){
  const c=coach||run?.coach;
  if(c&&typeof c.text==='string'&&c.text&&(!Number.isFinite(c.until)||num(run.time)<c.until))return {text:c.text,kind:String(c.kind||'coach'),source:'coach'};
  if(dialogue)return {text:String(dialogue),kind:'line',source:'dialogue'};
  if(guide)return {text:String(guide),kind:'guide',source:'guide'};
+ /* R105 HUM: the humor engine's own line comes last; it is only emitted when no coach/guide is on screen and no hazard is near. */
+ if(humor)return {text:String(humor),kind:'humor',source:'humor'};
  return null;
 }
 function shouldShow(run,doc){
@@ -134,6 +136,7 @@ function mount(doc,host){
  const s={run:null,show:null,score:null,ratio:-1,left:null,right:null,notchKey:'',notches:[],heartsKey:'',hearts:[],speechKey:'',speechKind:'',dockOn:false,lastSpeechAt:-1e9,streak:-1,kind:'',statusKey:'',status:null,frameSpeech:null,frameRun:null,
   bursts:[],heartsNow:null,lostAt:null,invincible:null,combo:-1};
  const tutor=createTutor(ruleStore(defaultStorage(host)));
+ const humor={text:'',until:0,gesture:'none'};
  const reduced=()=>!!host?.settings?.()?.reduced;
  const pop=(n,frames,ms)=>{if(!reduced()&&typeof n.animate==='function')try{n.animate(frames,{duration:ms,easing:'cubic-bezier(.2,.9,.3,1.15)'})}catch(_){}};
  const set=(n,key,value)=>{if(n[key]!==value)n[key]=value};
@@ -175,7 +178,7 @@ function mount(doc,host){
   const coach=run.nativeRuntime?tutor.step(run,v):null;
   const dialogue=(s.frameRun===run&&s.frameSpeech)||visibleText($('runnerSpeech'));
   const guide=run.openingCourse?openingGuide(run):(visibleText($('runLesson'))||visibleText($('hudCue')));
-  const speech=pickSpeech(run,dialogue,guide,coach);
+  const speech=pickSpeech(run,dialogue,guide,coach,humor.text&&now<humor.until?humor.text:'');
   if(speech){
    s.lastSpeechAt=now;const key=speech.kind+'|'+speech.text;
    if(key!==s.speechKey){const guide=speech.kind==='guide';if((s.speechKind==='guide')!==guide||!s.speechKind)face.innerHTML=guide?GUIDE:FACE;s.speechKey=key;s.speechKind=speech.kind;dock.dataset.kind=speech.kind;dock.dataset.source=speech.source;dockText.textContent=speech.text;
@@ -185,10 +188,15 @@ function mount(doc,host){
   }else if(s.dockOn&&now-s.lastSpeechAt>260){s.dockOn=false;s.speechKey='';dock.dataset.on='false'}
  }
  const off=root.MongyuPolish?.on?.('frame',d=>{s.frameRun=d?.run||null;s.frameSpeech=d?.speech?.text||null});
+ /* R105 HUM: MongyuHumor publishes 'humor-bubble' {text,durationMs,gesture} / 'humor-hide' / 'humor-gesture' on the polish bus. The bubble reuses the dock above the gauge (never over the playfield);
+    the face pops on a gesture. Richer gesture rendering (character poses) belongs to the CH/SIL owner: subscribe with MongyuHumor.on('gesture'). */
+ const offHumor=[root.MongyuPolish?.on?.('humor-bubble',d=>{if(!d||!d.text)return;humor.text=String(d.text);humor.until=num(root.performance?.now?.())+num(d.durationMs);humor.gesture=d.gesture||'none'}),
+  root.MongyuPolish?.on?.('humor-hide',()=>{humor.until=0}),
+  root.MongyuPolish?.on?.('humor-gesture',d=>{if(d&&d.gesture&&d.gesture!=='none'){hud.dataset.gesture=String(d.gesture);pop(face,[{transform:'scale(.86) rotate(-6deg)'},{transform:'scale(1.12) rotate(4deg)',offset:.5},{transform:'scale(1) rotate(0)'}],380)}})];
  let rafId=0;const raf=root.requestAnimationFrame?.bind(root);
  function loop(){rafId=raf(loop);try{update()}catch(error){root.console?.error?.('[MongyuPlayHud]',error)}}
  if(raf)rafId=raf(loop);
- return {element:hud,update,destroy(){if(rafId)root.cancelAnimationFrame?.(rafId);off?.();hud.remove();html.classList.remove('r104-hud-on')}};
+ return {element:hud,update,destroy(){if(rafId)root.cancelAnimationFrame?.(rafId);off?.();for(const o of offHumor)o?.();hud.remove();html.classList.remove('r104-hud-on')}};
 }
 let mounted=null;
 function start(host){if(mounted||!enabled||!root.document)return mounted;mounted=mount(root.document,host);return mounted}
