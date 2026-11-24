@@ -8,6 +8,7 @@ route_edition=release in ('R101','R102','R103','R104','R105')
 stage_edition=release in ('R102','R103','R104','R105')
 stage_hud=release in ('R103','R104','R105')
 polish_edition=release in ('R104','R105')
+ui_edition=release=='R105'
 p=Path(__file__).resolve().parent
 def digest(data): return hashlib.sha256(data).hexdigest()
 def asset(folder,item):
@@ -31,7 +32,7 @@ if dream_edition:
 music={t['id']:{**t,'src':asset(p/'assets/music',t)} for t in tracks.values()}
 files=json.loads((p/'sources.json').read_text(encoding='utf-8'))
 assert files[-1]=='app.js' and len(files)==len(set(files))
-sources=[f'globalThis.MONGYU_PLAYABLE_RELEASE={json.dumps(release)};globalThis.MONGYU_DREAM_EDITION={json.dumps(dream_edition)};globalThis.MONGYU_SPECTRAL_EDITION={json.dumps(spectral_edition)};globalThis.MONGYU_ROUTE_EDITION={json.dumps(route_edition)};globalThis.MONGYU_STAGE_EDITION={json.dumps(stage_edition)};globalThis.MONGYU_STAGE_HUD={json.dumps(stage_hud)};globalThis.MONGYU_POLISH_EDITION={json.dumps(polish_edition)};', 'globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
+sources=[f'globalThis.MONGYU_PLAYABLE_RELEASE={json.dumps(release)};globalThis.MONGYU_DREAM_EDITION={json.dumps(dream_edition)};globalThis.MONGYU_SPECTRAL_EDITION={json.dumps(spectral_edition)};globalThis.MONGYU_ROUTE_EDITION={json.dumps(route_edition)};globalThis.MONGYU_STAGE_EDITION={json.dumps(stage_edition)};globalThis.MONGYU_STAGE_HUD={json.dumps(stage_hud)};globalThis.MONGYU_POLISH_EDITION={json.dumps(polish_edition)};globalThis.MONGYU_UI_EDITION={json.dumps(ui_edition)};', 'globalThis.MONGYU_EMBEDDED_IMAGES='+json.dumps(images,separators=(',',':'))+';', 'globalThis.MONGYU_EMBEDDED_MUSIC='+json.dumps(music,separators=(',',':'))+';']
 if effects:sources.append('globalThis.MONGYU_EMBEDDED_EFFECTS='+json.dumps(effects,separators=(',',':'))+';')
 source_hashes={}
 for f in files:
@@ -39,12 +40,13 @@ for f in files:
 template=(p/'index.template.html').read_text(encoding='utf-8')
 assert template.count('<!--SCRIPTS-->')==1 and template.count('/*MOBILE_CSS*/')==1
 mobile_css=(p/'mobile.css').read_text(encoding='utf-8')
-if polish_edition:mobile_css+=chr(10)+chr(10).join((p/'css'/f'r104-{name}.css').read_text(encoding='utf-8') for name in ['story','juice','hud','world','modes','road'])
+if polish_edition:mobile_css+=chr(10)+chr(10).join((p/'css'/f'r104-{name}.css').read_text(encoding='utf-8') for name in ['story','juice','hud','world','modes','road','ui'])
 out=template.replace('/*MOBILE_CSS*/',mobile_css).replace('<!--SCRIPTS-->','\n'.join('<script>'+s+'</script>' for s in sources))
 assert "connect-src 'none'" in out and "default-src 'none'" in out
 assert not any(x in out for x in ['NOM3_ASSETS','Nom3Study','menu-7.png','nom1-0.png'])
 if dream_edition:out=out.replace('<html lang=', '<html data-dream-edition="true" lang=',1)
 if polish_edition:out=out.replace('<html ', '<html data-polish-edition="true" ',1)
+if ui_edition:out=out.replace('<html ', '<html data-ui-edition="true" ',1)
 if stage_hud:out=out.replace('<html ', '<html data-stage-hud="true" ',1)
 if stage_edition:out=out.replace('<html ', '<html data-stage-edition="true" ',1)
 if route_edition:out=out.replace('<html ', '<html data-route-edition="true" ',1)

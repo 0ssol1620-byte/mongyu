@@ -1,6 +1,9 @@
 [
   "assets.js",
   "polish-bus.js",
+  "i18n.js",
+  "i18n-ko.js",
+  "i18n-en.js",
   "content.js",
   "progression.js",
   "origin-records.js",
@@ -66,5 +69,9 @@
   "course-run.js",
   "road-mode.js",
   "play-modes.js",
+  "ui-icons.js",
+  "ui-kit.js",
+  "lobby-scene.js",
+  "lobby-ui.js",
   "app.js"
 ]
