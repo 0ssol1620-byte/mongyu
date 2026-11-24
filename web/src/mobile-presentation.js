@@ -324,8 +324,10 @@ function mount(host){const d=host.document,$=id=>d.getElementById(id);progress=h
  }
  for(const item of looks){const b=d.createElement('button');b.id='look-'+item.id;b.setAttribute('id',b.id);if(dreamEdition){
   const portrait=d.createElement('canvas');portrait.width=80;portrait.height=80;portrait.setAttribute('aria-hidden','true');
-  const c=portrait.getContext('2d');oval(c,40,40,34,34,'#302547');
-  sprite(c,{x:39,y:66,bodyHeight:51,pose:'stand'},{onDark:true},true,'walker',item);
+  const c=portrait.getContext('2d'),paint=()=>{c.clearRect(0,0,80,80);oval(c,40,40,34,34,'#302547');sprite(c,{x:39,y:66,bodyHeight:51,pose:'stand'},{onDark:true,rim:false,shadow:false},true,'walker',item)};
+  paint();
+  // The raster dreamer decodes asynchronously: repaint the portrait once it is ready.
+  if(polishEdition&&root.MongyuCharacter?.whenReady)root.MongyuCharacter.whenReady(paint);
   const name=d.createElement('span');name.textContent=item.name;b.append(portrait,name,d.createElement('small'));
  }else b.innerHTML=icon(item)+'<span>'+item.name+'</span><small></small>';b.onclick=()=>{if(!available(item.id,progress()))return;selected=item.id;try{const value=JSON.stringify({schema:1,selected});host.storage.setItem(KEY,value);saved=host.storage.getItem(KEY)===value}catch(_){saved=false}render();host.redraw()};$('wardrobeLooks').appendChild(b)}
  $('wardrobeClose').onclick=host.close;
