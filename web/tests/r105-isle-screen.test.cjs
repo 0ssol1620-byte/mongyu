@@ -106,7 +106,7 @@ test('lobby: the dock button is enabled (no soon badge) and opens the isle',()=>
 
 test('English: every isle line translates fully; the Korean voice has no developer words',()=>{
  const ctx={MONGYU_UI_EDITION:true,console,performance:{now:()=>0},navigator:{language:'en'}};vm.createContext(ctx);
- for(const f of ['i18n.js','i18n-en.js','i18n-en-lobby.js','i18n-en-psy.js','i18n-en-screens.js','i18n-en-chapters.js','i18n-en-isle.js'])vm.runInContext(fs.readFileSync(path.join(SRC,f),'utf8'),ctx,{filename:f});
+ for(const f of ['i18n.js','i18n-en.js','i18n-en-lobby.js','i18n-en-psy.js','i18n-en-screens.js','i18n-en-chapters.js','i18n-en-chapters2.js','i18n-en-isle.js'])vm.runInContext(fs.readFileSync(path.join(SRC,f),'utf8'),ctx,{filename:f});
  const T=ctx.MongyuI18n,p=page();seed(p.h,{c1:C(7,{memoryStars:1,bestTime:44.6}),c2:C(1)});p.Isle.open();
  const lines=new Set();
  walk(p.Isle.ui.screen,n=>{if(n.children?.length===0&&textOf(n)&&/[가-힣]/.test(textOf(n)))lines.add(textOf(n));const a=n.attrs?.['aria-label'];if(a&&/[가-힣]/.test(a))lines.add(a)});
