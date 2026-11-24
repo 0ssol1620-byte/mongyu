@@ -1,6 +1,51 @@
 {
   "version": 1,
   "images": {
+    "course-c1": {
+      "file": "course-c1.webp",
+      "mime": "image/webp",
+      "sha256": "28ece000b422ab794364e35b13d77676daf0e4c406516bfb26cd80f52a236e68",
+      "bytes": 59482,
+      "w": 540,
+      "h": 959,
+      "kind": "bg"
+    },
+    "course-c2": {
+      "file": "course-c2.webp",
+      "mime": "image/webp",
+      "sha256": "10184193d1c3690029a7efc7d0e5ec25a217cb7422fe63a34b38ba7c47f90c57",
+      "bytes": 84232,
+      "w": 540,
+      "h": 959,
+      "kind": "bg"
+    },
+    "course-c3": {
+      "file": "course-c3.webp",
+      "mime": "image/webp",
+      "sha256": "0a41a0cfebb27eebd91d4d9ee7e70ee8264ad7660c8dab623776280399e33b50",
+      "bytes": 83234,
+      "w": 540,
+      "h": 769,
+      "kind": "bg"
+    },
+    "course-c4": {
+      "file": "course-c4.webp",
+      "mime": "image/webp",
+      "sha256": "bfe050584410d4107b1556d2579c9187e7e91a534622b1573dc74eac5e9da31b",
+      "bytes": 60994,
+      "w": 540,
+      "h": 769,
+      "kind": "bg"
+    },
+    "course-c5": {
+      "file": "course-c5.webp",
+      "mime": "image/webp",
+      "sha256": "2ccd9176e7d18295e90de2ff03dcfe9994229e2a681aa780efd29dc0b735e76a",
+      "bytes": 74560,
+      "w": 540,
+      "h": 959,
+      "kind": "bg"
+    },
     "item-bubble": {
       "file": "item-bubble.webp",
       "mime": "image/webp",
