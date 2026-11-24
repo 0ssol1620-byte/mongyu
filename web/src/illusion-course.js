@@ -91,6 +91,9 @@ class IllusionRun{
   this.perfects=0;this.perfectStreak=chain?.carry?.perfectStreak||0;this.points=chain?.carry?.points||0;this.score=this.points;this.crash=null;this.hitStop=0;this.outro=null;this.result=null;this.timeScale=1;
   this.intro=this.skipIntro||chain||reducedMotion()?0:INTRO;this.slowChance=chain&&this.options.tutorial!==true||!COURSE.gaps.length?'done':'pending';this.coach=chain?null:{kind:'intro',text:COACH.intro,until:this.intro+2.2};
   this.crossedAt=-10;this.turnFlash=-10;this.section=0;this.cam=null;this.blockCoached=false;this.coached=new Set();
+  /* R105 items: fl/pk = length and peak factor of the current jump (feather doubles it); mods/itemList from MongyuItems.setup. */
+  this.fl=FLIGHT;this.pk=1;this.mods=null;this.itemList=null;
+  if(chain||this.options.items)root.MongyuItems?.setup?.(this,{items:this.options.items,start:0,len:this.cs.FINISH,beat:SPEED*60/(chain?.bpm||100)});
  }
  setViewport(width=390,height=844){this.viewport={width,height}}
  start(){if(this.state!=='ready')return false;this.state='play';this.events.push('start');return true}
@@ -117,13 +120,15 @@ class IllusionRun{
   this.inputCount++;
   const gap=this.activeGap();
   if(gap){this.turns[gap.index]=this.clock;this.turnFlash=this.clock;this.events.push('morph');if(this.slowChance==='active')this.slowChance='done';return true}
-  if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
+  if(this.flight!==null){if(this.flight>=this.fl-BUFFER)this.buffer=BUFFER;return false}
   return this.jump();
  }
- jump(){this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
+ jump(){this.fl=root.MongyuItems?.applyJump?root.MongyuItems.applyJump(this,FLIGHT):FLIGHT;this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
  drainEvents(){return this.events.splice(0)}
  setCoach(kind,hold){this.coach={kind,text:COACH[kind],until:this.time+hold}}
- tick(dt){
+ /* R105: settle() applies the surge x2 and its trigger after every tick, whichever way tick0 returns. */
+ tick(dt){this.tick0(dt);if(this.mods)root.MongyuItems.settle(this)}
+ tick0(dt){
   if(this.state!=='play')return;
   const {COURSE,FINISH}=this.cs;
   this.updates++;this.clock+=dt;
@@ -135,15 +140,20 @@ class IllusionRun{
   this.distance=Math.min(FINISH,this.distance+SPEED*dt);
   this.buffer=Math.max(0,this.buffer-dt);
   if(this.flight!==null){
-   this.flight+=dt;const phase=Math.min(1,this.flight/FLIGHT);this.height=4*PEAK*phase*(1-phase);
+   this.flight+=dt;const phase=Math.min(1,this.flight/this.fl);this.height=4*PEAK*this.pk*phase*(1-phase);
    if(phase===1){this.flight=null;this.height=0;this.events.push('land');if(this.buffer>0)this.jump()}
   }
+  if(this.mods)root.MongyuItems.collect(this,this.distance,this.height,PEAK,14);
   const section=sectionAt(this.distance,COURSE);if(section!==this.section){this.section=section;this.events.push('corner')}
   // Gaps: walking onto an unturned bridge is a fall.
   const g=COURSE.gaps[this.gapIndex];
   if(g){
    const progress=this.turnProgress(g.index);
-   if(this.flight===null&&this.distance>g.s0+3&&this.distance<g.s1-3&&progress<ALIGNED){this.fall(g);return}
+   if(this.flight===null&&this.distance>g.s0+3&&this.distance<g.s1-3&&progress<ALIGNED){
+    /* a moon bubble turns the bridge for you instead of letting you fall */
+    if(this.mods&&root.MongyuItems.applyHit(this)){this.turns[g.index]=this.clock-TURN;this.turnFlash=this.clock;this.events.push('morph')}
+    else{this.fall(g);return}
+   }
    if(this.distance>=g.s1){this.gapIndex++;this.solved++;this.points+=150;this.crossedAt=this.time;this.events.push('perfect');if(g.lift)this.setCoach('illusion',1.6)}
    else if(this.turns[g.index]===null&&g.s0-this.distance<WINDOW&&g.s0-this.distance>0&&!this.coached.has(g.index)&&!g.tutorial){this.coached.add(g.index);this.setCoach('marker',1.2)}
   }
@@ -152,10 +162,12 @@ class IllusionRun{
   if(b){
    if(!this.blockCoached&&b.at-this.distance<90){this.blockCoached=true;this.setCoach('block',1.3)}
    const gapS=this.distance-b.at;
-   if(Math.abs(gapS)<=BLOCK+FOOT&&this.height<BLOCK_H){this.hit(b);return}
+   if(Math.abs(gapS)<=BLOCK+FOOT&&this.height<BLOCK_H){
+    if(this.mods&&root.MongyuItems.applyHit(this)){this.blockIndex++;this.crossedAt=this.time;this.perfectStreak=0;return}
+    this.hit(b);return}
    if(gapS>BLOCK+FOOT){
     this.blockIndex++;this.clears++;this.crossedAt=this.time;
-    const lead=b.at-this.lastJump,perfect=Math.abs(lead-SPEED*FLIGHT/2)<=8;
+    const lead=b.at-this.lastJump,perfect=Math.abs(lead-SPEED*this.fl/2)<=8;
     this.points+=60+(perfect?40:0);if(perfect){this.perfects++;this.perfectStreak++}else this.perfectStreak=0;this.events.push(perfect?'perfect':'pass');
    }
   }
@@ -177,7 +189,7 @@ class IllusionRun{
   this.timeScale+=(target-this.timeScale)*Math.min(1,dt*8);if(Math.abs(target-this.timeScale)<.004)this.timeScale=target;
   let step=dt*this.timeScale;
   if(this.slowChance==='active')step=clamp((first.s0-HOLD-this.distance)/SPEED,0,step);
-  return step;
+  return this.mods?root.MongyuItems.applyPace(this,step):step;
  }
  fall(g){
   this.hits++;this.hearts=0;this.crash={kind:'fall',gap:g.index,at:this.distance,s:this.distance,early:false};
@@ -345,8 +357,11 @@ function draw(c,run,opts){
  for(let i=0;i<COURSE.shards.length;i++){
   if(run.shards[i])continue;const sh=COURSE.shards[i],p=project(sh.p);if(p.x<view.l-20||p.x>view.r+20)continue;
   if(sh.kind==='gap'&&run.turnProgress(sh.gap)<ALIGNED)continue;
+  if(root.MongyuItems?.drawLight?.(c,p.x,p.y,19,t,i,reduced,0))continue;
   c.save();c.translate(p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5));c.rotate(Math.PI/4+(reduced?0:t*1.4));c.fillStyle=k.tap;c.fillRect(-3,-3,6,6);c.restore();
  }
+ // R105 pickups: moon bubble, starlight hourglass, cloud feather, memory star.
+ if(run.itemList?.length)root.MongyuItems.drawItems(c,run,it=>{const q=point(it.at,COURSE);if(q.x<view.l-30||q.x>view.r+30)return null;return {x:q.x,y:q.y-(it.lane==='hi'?46:21),s:1}},t,reduced,0);
  // Finish gate: aurora curtains rising from the last walkway's end.
  aurora(c,project(COURSE.walks[COURSE.walks.length-1].p1),run,reduced);
  // Runner (falls into the mist when a bridge was not turned).
@@ -355,8 +370,9 @@ function draw(c,run,opts){
  if(run.outro?.kind==='clear')alpha=1-clamp(run.outro.age/.8,0,1);
  c.globalAlpha=.45*alpha;c.fillStyle='#fff6dc';c.beginPath();c.ellipse(me.x,me.y,6,2.2,0,0,TAU);if(!run.crash)c.fill();c.globalAlpha=alpha;
  const pose=run.crash?(run.crash.kind==='fall'?'jump':'hurt'):run.intro>0?'stand':run.flight!==null?'jump':'run';
- if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{x:actor.x,y:actor.y-1,bodyHeight:42,renderAngle:0,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/FLIGHT,pose},{poseTime:t,onDark:true},reduced);
+ if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,{x:actor.x,y:actor.y-1,bodyHeight:42,renderAngle:0,strideDistance:run.distance,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/run.fl,pose},{poseTime:t,onDark:true},reduced);
  c.globalAlpha=1;
+ if(run.mods&&!run.outro)root.MongyuItems.drawAura(c,run,actor.x,actor.y-21,27,t,reduced);
  if(!reduced&&run.time-run.crossedAt<.3){const age=(run.time-run.crossedAt)/.3;c.globalAlpha=1-age;c.fillStyle=k.tap;for(let i=0;i<6;i++){const a=i*Math.PI/3;c.fillRect(actor.x+Math.cos(a)*(9+age*18)-1.2,actor.y-18+Math.sin(a)*(9+age*18)-1.2,2.4,2.4)}c.globalAlpha=1}
  c.restore();
  // Completion bloom.

@@ -75,6 +75,9 @@ class OpeningRun{
    }
    this.saves[sectionAt(this.distance)]=this.snapshot();
   }
+  /* R105 items: fl/pk = length and peak factor of the current jump (feather doubles it); run.mods/itemList come from MongyuItems.setup. */
+  this.fl=FLIGHT;this.pk=1;
+  if(this.polish&&(chain||options.items))root.MongyuItems?.setup?.(this,{items:options.items,start:SECTIONS[this.checkpoint].start,len:this.endAt-SECTIONS[this.checkpoint].start,beat:SPEED*60/clamp(chain?.bpm||100,40,240)});
   this.setViewport(options.viewport?.width,options.viewport?.height);
  }
  setViewport(width=390,height=844){this.viewport={width,height}}
@@ -88,16 +91,18 @@ class OpeningRun{
   if(this.state!=='play'||this.recoverAt!==undefined)return false;
   if(this.polish&&(this.outro||this.hitStop>0))return false;
   this.inputCount++;
-  if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
+  if(this.flight!==null){if(this.flight>=this.fl-BUFFER)this.buffer=BUFFER;return false}
   if(this.polish&&this.slowChance==='active'){
    if(this.distance<this.obstacles[0].at-SLOW_QUEUE){this.slowChance='queued';return true}
    this.slowChance='done';
   }
   return this.jump();
  }
- jump(){this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
+ jump(){this.fl=root.MongyuItems?.applyJump?root.MongyuItems.applyJump(this,FLIGHT):FLIGHT;this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.events.push('jump');return true}
  drainEvents(){return this.events.splice(0)}
- tick(dt){
+ /* R105: settle() applies the surge x2 and its trigger after every tick, whichever way tick0 returns. */
+ tick(dt){this.tick0(dt);if(this.mods)root.MongyuItems.settle(this)}
+ tick0(dt){
   if(this.state!=='play')return;
   this.updates++;
   if(this.polish&&!(dt=this.pace(dt)))return;
@@ -115,11 +120,12 @@ class OpeningRun{
   this.buffer=Math.max(0,this.buffer-step);
   if(this.flight!==null){
    this.flight+=step;
-   const phase=Math.min(1,this.flight/FLIGHT);
-   this.height=4*PEAK*phase*(1-phase);
+   const phase=Math.min(1,this.flight/this.fl);
+   this.height=4*PEAK*this.pk*phase*(1-phase);
    if(phase===1){this.flight=null;this.events.push('land');if(this.buffer>0)this.jump()}
   }
   if(this.polish)this.coachCourse();
+  if(this.mods)root.MongyuItems.collect(this,this.distance,this.height,PEAK,10);
   const sector=sectionAt(this.distance);
   if(this.polish&&!this.saves[sector])this.saves[sector]=this.snapshot();
   if(sector!==this.mapChanges){this.mapChanges=sector;this.events.push('corner')}
@@ -127,6 +133,7 @@ class OpeningRun{
   if(obstacle){
    const gap=this.distance-obstacle.at,reach=obstacle.width+FOOT;
    if(this.height<obstacleHeight(obstacle,gap)){
+    if(this.mods&&root.MongyuItems.applyHit(this)){this.index++;this.crossedAt=this.time;this.perfectStreak=0;return}
     this.hits++;this.crash={index:this.index,section:sector,at:this.distance,early:obstacle.at-this.lastJump>55&&obstacle.at-this.lastJump<98};
     this.events.push('hit');
     if(this.polish){
@@ -165,7 +172,7 @@ class OpeningRun{
   if(Math.abs(target-this.timeScale)<.004)this.timeScale=target;
   let step=dt*this.timeScale;
   if(this.slowChance==='active')step=clamp((first.at-SLOW_HOLD-this.distance)/SPEED,0,step);
-  return step;
+  return this.mods?root.MongyuItems.applyPace(this,step):step;
  }
  setCoach(kind,hold){this.coach={kind,text:COACH[kind],until:this.time+hold}}
  coachCourse(){
@@ -173,7 +180,7 @@ class OpeningRun{
   if(!this.wallCoached&&!this.practice&&this.distance>=FLOOR&&this.distance<WALL_START&&(!this.coach||this.time>=this.coach.until||this.distance>=WALL_START-30)){this.wallCoached=true;this.setCoach('wall',1.5)}
  }
  scorePass(obstacle,clean){
-  const lead=obstacle.at-this.lastJump,perfect=Math.abs(lead-PERFECT_LEAD)<=PERFECT_TOLERANCE;
+  const lead=obstacle.at-this.lastJump,perfect=Math.abs(lead-SPEED*this.fl/2)<=PERFECT_TOLERANCE;
   this.perfectStreak=perfect?this.perfectStreak+1:0;this.bestStreak=Math.max(this.bestStreak,this.perfectStreak);
   this.points+=100+(clean?CLEAN_BONUS:0)+(perfect?50*Math.min(5,this.perfectStreak):0);
   if(perfect)this.setCoach('perfect',.7);
@@ -688,11 +695,15 @@ function drawObstacles(c,run,reduced){
   if(i>=run.index){
    const q=offset(p,o.height+26),bob=reduced?0:Math.sin(t*2.4+i)*1.6,b=offset(p,o.height+26+bob);
    c.save();c.globalCompositeOperation='lighter';glowAt(c,'255,226,150',b.x,b.y,26,.8);c.restore();
-   c.save();c.translate(b.x,b.y);c.rotate(p.a+Math.PI/4+(reduced?0:t*1.2+i));c.fillStyle='#ffeca5';c.fillRect(-3.4,-3.4,6.8,6.8);c.fillStyle='#fffbe8';c.fillRect(-1.3,-1.3,2.6,2.6);c.restore();
+   if(!(root.MongyuItems?.drawLight?.(c,b.x,b.y,21,t,i,reduced,-(run.view?.rot||0)))){c.save();c.translate(b.x,b.y);c.rotate(p.a+Math.PI/4+(reduced?0:t*1.2+i));c.fillStyle='#ffeca5';c.fillRect(-3.4,-3.4,6.8,6.8);c.fillStyle='#fffbe8';c.fillRect(-1.3,-1.3,2.6,2.6);c.restore()}
    void q;
   }
  }
  c.globalAlpha=1;
+}
+/* R105 pickups in the surface frame, kept upright under the rotating camera. */
+function drawPickups(c,run,reduced,rot){
+ root.MongyuItems.drawItems(c,run,it=>{if(Math.abs(it.at-run.distance)>480)return null;const p=offset(surface(it.at),it.lane==='hi'?46:20);return {x:p.x,y:p.y,s:1}},run.clock||0,reduced,-rot);
 }
 /* Character: knock-back tumble after a crash, obstacle-colour tint for ~80ms at impact. */
 let tintCanvas=null;
@@ -717,9 +728,10 @@ function drawRunner(c,run,L,reduced){
  const foot=surface(s),actor=offset(foot,lift+1.5),contact=offset(foot,1);
  c.save();c.translate(contact.x,contact.y);c.rotate(foot.a);ellipse(c,0,0,9*(1-Math.min(.6,lift/90)),2,'rgba(30,18,40,.28)');c.restore();
  const q={...actor,bodyHeight:L.body,renderAngle:foot.a+spin,strideDistance:run.distance,nativeState:0,height:lift,
-  jumpProgress:run.flight===null?0:run.flight/FLIGHT,pose:run.pose,poseAt:run.poseAt};
+  jumpProgress:run.flight===null?0:run.flight/run.fl,pose:run.pose,poseAt:run.poseAt};
  const draw=x=>root.MongyuMobile.sprite(x,q,{poseTime:run.clock??run.time,onDark:true},reduced);
  if(run.pose==='hurt'&&since<.1)tinted(c,draw,'#ff7a66',.72);else draw(c);
+ if(run.mods&&!run.outro){const mid=offset(foot,lift+1.5+L.body*.5);root.MongyuItems.drawAura(c,run,mid.x,mid.y,L.body*.7,run.clock||0,reduced)}
  return actor;
 }
 function drawPolish(c,run,opts){
@@ -734,6 +746,7 @@ function drawPolish(c,run,opts){
  c.translate(cam.cx,cam.cy);c.rotate(cam.rot);c.scale(cam.scale,cam.scale);c.translate(-cam.tx,-cam.ty);
  drawCourse(c,run,light,reduced);
  drawObstacles(c,run,reduced);
+ if(run.itemList?.length)drawPickups(c,run,reduced,cam.rot);
  if(run.tutorial)for(let i=0;i<3;i++)if(run.index===i)tapHint(c,run,i,reduced,cam.rot);
  aurora(c,run,reduced);
  const actor=drawRunner(c,run,L,reduced);

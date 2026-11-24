@@ -248,27 +248,36 @@ class PenroseRun extends ActRun{
   this.points=cr.points;this.basePoints=cr.points;this.score=this.points;this.crash=null;this.hitStop=0;this.outro=null;this.result=null;
   this.intro=this.skipIntro||reducedMotion()?0:INTRO;this.crossedAt=-10;this.cam=null;this.pose='run';this.climb=0;this.jumpCoached=false;
   this.coach=this.firstTime?{kind:'intro',text:COACH.intro,until:this.intro+3.2}:null;
+  /* R105 items: fl/pk = length and peak factor of the current jump (feather doubles it); mods/itemList from MongyuItems.setup. */
+  this.fl=FLIGHT;this.pk=1;this.mods=null;this.itemList=null;
+  if(this.chain||this.options.items){
+   const list=root.MongyuItems?.setup?.(this,{items:this.options.items,start:0,len:FINISH,beat:SPEEDS[0]*60/this.bpm});
+   if(list)for(const it of list){pathAt(it.at,ptmp);it.p=[ptmp.x,ptmp.top,ptmp.z];it.rank=ptmp.block.rank;it.lap=Math.floor(it.at/LAP)}
+  }
  }
  action(){
   if(this.state!=='play'||this.outro||this.hitStop>0)return false;
   if(this.intro>0){this.intro=0;this.coach={kind:'intro',text:COACH.intro,until:this.time+2};return true}
   this.inputCount++;
-  if(this.flight!==null){if(this.flight>=FLIGHT-BUFFER)this.buffer=BUFFER;return false}
+  if(this.flight!==null){if(this.flight>=this.fl-BUFFER)this.buffer=BUFFER;return false}
   return this.jump();
  }
- jump(){this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.pose='jump';this.events.push('jump');return true}
- tick(dt){
+ jump(){this.fl=root.MongyuItems?.applyJump?root.MongyuItems.applyJump(this,FLIGHT):FLIGHT;this.flight=0;this.lastJump=this.distance;this.jumps++;this.buffer=0;this.pose='jump';this.events.push('jump');return true}
+ /* R105: settle() applies the surge x2 and its trigger after every tick, whichever way tick0 returns. */
+ tick(dt){this.tick0(dt);if(this.mods)root.MongyuItems.settle(this)}
+ tick0(dt){
   if(this.state!=='play')return;
   this.updates++;this.clock+=dt;
   if(this.hitStop>0){this.hitStop=Math.max(0,this.hitStop-dt);return}
   if(this.outro){this.outro.age+=dt;if(this.outro.age>=this.outro.duration)this.finish(this.outro.kind);return}
   if(this.intro>0){this.intro=Math.max(0,this.intro-dt);return}
+  if(this.mods)dt=root.MongyuItems.applyPace(this,dt);
   this.time+=dt;this.invuln=Math.max(0,this.invuln-dt);
   const target=SPEEDS[this.lap];this.speed+=(target-this.speed)*Math.min(1,dt*(this.time<1.2?2.4:3));if(Math.abs(target-this.speed)<.02)this.speed=target;
   const before=this.distance;this.distance=Math.min(FINISH,this.distance+this.speed*dt);
   this.buffer=Math.max(0,this.buffer-dt);
   if(this.flight!==null){
-   this.flight+=dt;const ph=Math.min(1,this.flight/FLIGHT);this.height=4*PEAK*ph*(1-ph);
+   this.flight+=dt;const ph=Math.min(1,this.flight/this.fl);this.height=4*PEAK*this.pk*ph*(1-ph);
    if(ph===1){this.flight=null;this.height=0;this.pose='run';this.events.push('land');if(this.buffer>0)this.jump()}
   }
   // Lap seam: the loop closes; the stair has climbed one more spiral turn.
@@ -281,11 +290,12 @@ class PenroseRun extends ActRun{
    if(Math.abs(gap)<=BLOCK+FOOT&&this.height<BLOCK_H&&this.invuln<=0){this.hit(b);if(this.state!=='play'||this.outro)return}
    else if(gap>BLOCK+FOOT){
     this.blockIndex++;this.clears++;this.crossedAt=this.time;
-    const lead=b.at-this.lastJump,perfect=Math.abs(lead-this.speed*FLIGHT/2)<=this.speed*.065;
+    const lead=b.at-this.lastJump,perfect=Math.abs(lead-this.speed*this.fl/2)<=this.speed*.065;
     this.perfectStreak=perfect?this.perfectStreak+1:0;this.bestStreak=Math.max(this.bestStreak,this.perfectStreak);
     this.points+=60+(perfect?40+10*Math.min(5,this.perfectStreak):0);if(perfect)this.perfects++;this.events.push(perfect?'perfect':'pass');
    }
   }
+  if(this.mods)root.MongyuItems.collect(this,this.distance,this.height,PEAK,9);
   const sh=this.course.shards;
   for(let i=0;i<sh.length;i++){
    if(this.shards[i])continue;const s=sh[i],d=Math.abs(this.distance-s.at);if(d>9)continue;
@@ -295,6 +305,7 @@ class PenroseRun extends ActRun{
   if(this.distance>=FINISH&&before<FINISH){this.points+=300;this.score+=300;this.setCoach('finish',2);this.pose='joy';this.finishLine('clear')}
  }
  hit(b){
+  if(this.mods&&root.MongyuItems.applyHit(this)){this.blockIndex++;this.perfectStreak=0;this.crossedAt=this.time;return}
   this.hits++;this.hearts--;this.perfectStreak=0;
   const early=this.lastJump>b.at-120&&(this.flight===null||this.flight/FLIGHT>.5);
   this.events.push('hit');this.setCoach(early?'early':'late',2.2);
@@ -342,6 +353,7 @@ function drawPenrose(c,run,opts){
   // Coral blocks, gold shards and the runner.
   for(let j=0;j<obs.length;j++){const o=obs[j];if(o.rank!==i||o.lap!==run.lap)continue;coral(c,o,run,k,reduced)}
   if(run.intro<=0){for(let j=0;j<run.course.shards.length;j++){const s=run.course.shards[j];if(s.rank!==i||run.shards[j]||s.lap!==run.lap)continue;shard(c,s,t,j,reduced,k)}}
+  if(run.itemList&&run.intro<=0){for(let j=0;j<run.itemList.length;j++){const it=run.itemList[j];if(it.rank!==i||it.lap!==run.lap)continue;root.MongyuItems.drawItem(c,it,pickupAt,t,reduced,0)}}
   if(runnerRank===i&&!(run.intro>0))runner(c,run,me,t,reduced,dead);
  }
  if(run.intro>0)introOrb(c,run,t,k);
@@ -356,6 +368,8 @@ function drawPenrose(c,run,opts){
  hud(c,run,w,h,'펜로즈 계단 · '+(run.lap+1)+' / 2',{frac:run.distance/FINISH,marks:[{at:.5,lit:run.lap>=1}]},k);
  return null;
 }
+/* R105 pickup centre on the isometric stair (lane lo: runner chest height, hi: jump apex). */
+function pickupAt(it){const q=iso(it.p[0],it.p[1]+(it.lane==='hi'?34:15),it.p[2]);return {x:q.x,y:q.y,s:.7}}
 function quad8(c,q){c.beginPath();c.moveTo(q[0],q[1]);c.lineTo(q[2],q[3]);c.lineTo(q[4],q[5]);c.lineTo(q[6],q[7]);c.closePath()}
 function landMark(c,b,t,reduced,k){
  if(b.k%4!==0)return;
@@ -372,7 +386,7 @@ function coral(c,o,run,k,reduced){
  if(crashed&&run.outro&&!reduced){const age=clamp(run.outro.age/.6,0,1),p0=P(x,y+BLOCK_H*.5,z);c.globalAlpha=1-age;c.fillStyle=k.dangerTop;for(let i=0;i<9;i++){const a=i/9*TAU+.4,r=4+age*(16+(i%3)*8);c.fillRect(p0.x+Math.cos(a)*r-1.6,p0.y+Math.sin(a)*r*.6-age*10+age*age*14-1.6,3.2,3.2)}c.globalAlpha=1}
  const f=P(x1,y+BLOCK_H*.62,z);c.strokeStyle=k.dangerLine;c.globalAlpha=.6;c.lineWidth=.7;c.beginPath();c.moveTo(f.x,f.y-3);c.lineTo(f.x,f.y+3);c.stroke();c.globalAlpha=1;
 }
-function shard(c,s,t,i,reduced,k){const p=iso(s.p[0],s.p[1],s.p[2]);gem(c,p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5),Math.PI/4+(reduced?0:t*1.4),k,3)}
+function shard(c,s,t,i,reduced,k){const p=iso(s.p[0],s.p[1],s.p[2]);if(root.MongyuItems?.drawLight?.(c,p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5),12,t,i,reduced,0))return;gem(c,p.x,p.y+(reduced?0:Math.sin(t*2+i)*1.5),Math.PI/4+(reduced?0:t*1.4),k,3)}
 function runner(c,run,me,t,reduced,dead){
  const p=iso(me.x,me.y,me.z);let ax=p.x,ay=p.y-run.height,alpha=1;
  if(run.outro?.kind==='clear')alpha=1-clamp(run.outro.age/.8,0,1);
@@ -382,8 +396,9 @@ function runner(c,run,me,t,reduced,dead){
  c.globalAlpha=.4*alpha*(run.height>0?1-clamp(run.height/PEAK,0,1)*.45:1);c.fillStyle='#fff6dc';c.beginPath();c.ellipse(p.x,p.y,6,2.2,0,0,TAU);if(!run.crash)c.fill();
  c.globalAlpha=alpha*(blink?.45:1);
  const pose=run.crash?'hurt':run.state==='clear'||run.outro?.kind==='clear'?'joy':run.intro>0?'stand':run.flight!==null?'jump':'run';
- sprite(c,{x:ax,y:ay-1,bodyHeight:31,renderAngle:0,strideDistance:run.distance*2.2,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/FLIGHT,pose},t,reduced,me.dx<0||me.dz>0);
+ sprite(c,{x:ax,y:ay-1,bodyHeight:31,renderAngle:0,strideDistance:run.distance*2.2,nativeState:0,height:run.height,jumpProgress:run.flight===null?0:run.flight/run.fl,pose},t,reduced,me.dx<0||me.dz>0);
  c.globalAlpha=1;
+ if(run.mods&&!run.outro)root.MongyuItems.drawAura(c,run,ax,ay-15,21,t,reduced);
  if(!reduced&&run.time-run.crossedAt<.3){const age=(run.time-run.crossedAt)/.3;c.globalAlpha=1-age;c.fillStyle=ink().tap;for(let i=0;i<6;i++){const a=i*Math.PI/3;c.fillRect(ax+Math.cos(a)*(9+age*18)-1.2,ay-18+Math.sin(a)*(9+age*18)-1.2,2.4,2.4)}c.globalAlpha=1}
 }
 /* Intro: a light traces the loop once so the endless climb is seen before it is run. */

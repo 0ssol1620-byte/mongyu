@@ -49,23 +49,25 @@ const TONES=[
 
 /* ---------- chapter 1: 새벽 계단의 탑 ---------- */
 const act=(type,opts={},weight)=>({type,opts,weight});
+/* R105 items: at = fraction of the act's own path (each act turns it into its distance), lane lo = on the path, hi = needs the upper half of a jump (memory star). */
+const gift=(at,kind)=>({at,kind,lane:'lo'}),star=at=>({at,kind:'memory-star',lane:'hi'});
 const CHAPTER1=Object.freeze({
  id:'ch1',number:1,title:'새벽 계단의 탑',subtitle:'새벽빛이 계단을 따라 오른다',
  courses:Object.freeze([
   {id:'c1',title:'첫 걸음',subtitle:'접힌 길에서 달리기를 배워요',bpm:96,seed:101,glow:['#ffb083','#e9b2ff'],
-   acts:[act('floor-wall',{span:[0,2],tutorial:true},10),act('bridge',{preset:'intro',tone:0},12),act('bridge',{preset:'garden',tone:1},25)],
+   acts:[act('floor-wall',{span:[0,2],tutorial:true},10),act('bridge',{preset:'intro',tone:0},12),act('bridge',{preset:'garden',tone:1,items:[gift(.36,'bubble'),star(.852)]},25)],
    fallback:null},
   {id:'c2',title:'올라가는 길',subtitle:'탑을 감아 오르는 나선',bpm:100,seed:202,glow:['#e9b2ff','#ffd98a'],
-   acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{},16),act('bridge',{preset:'calm',tone:1},11),act('helix-up',{},16)],
+   acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{items:[gift(.37,'bubble'),star(.857)]},16),act('bridge',{preset:'calm',tone:1},11),act('helix-up',{items:[gift(.52,'time')]},16)],
    fallback:[act('floor-wall',{span:[0,1]},6),act('bridge',{preset:'ascent',tone:1},25),act('bridge',{preset:'stairs',tone:2},20)]},
   {id:'c3',title:'거울 정원',subtitle:'보이는 대로 이어지는 길',bpm:100,seed:303,glow:['#9be8da','#c9a2ff'],
-   acts:[act('bridge',{preset:'garden',tone:3},25),act('penrose',{},16),act('bridge',{preset:'dawn',tone:3},14),act('align',{},7)],
+   acts:[act('bridge',{preset:'garden',tone:3,items:[gift(.375,'bubble')]},25),act('penrose',{items:[gift(.55,'feather'),star(.884)]},16),act('bridge',{preset:'dawn',tone:3},14),act('align',{},7)],
    fallback:[act('bridge',{preset:'garden',tone:3},24),act('floor-wall',{span:[1,2]},7),act('bridge',{preset:'dawn',tone:3},17),act('bridge',{preset:'calm',tone:3},11)]},
   {id:'c4',title:'내려오는 길',subtitle:'소용돌이처럼 빨라지는 하강',bpm:104,seed:404,glow:['#ffa7d1','#ffd98a'],
-   acts:[act('helix-down',{},14),act('bridge',{preset:'descent',tone:2},22),act('floor-wall',{span:[0,2]},10)],
+   acts:[act('helix-down',{items:[gift(.595,'time')]},14),act('bridge',{preset:'descent',tone:2,items:[star(.4216),gift(.62,'feather')]},22),act('floor-wall',{span:[0,2]},10)],
    fallback:[act('bridge',{preset:'descent',tone:2},22),act('bridge',{preset:'stairs',tone:2},20),act('floor-wall',{span:[0,2]},10)]},
   {id:'c5',title:'새벽의 탑',subtitle:'오르고, 숨 돌리고, 내려와 문을 연다',bpm:100,seed:505,glow:['#ffeca5','#ff9ed8'],
-   acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{},16),act('align',{},7),act('bridge',{preset:'dawn',tone:1},14),act('helix-down',{},14)],
+   acts:[act('floor-wall',{span:[0,1]},7),act('helix-up',{items:[gift(.563,'bubble')]},16),act('align',{},7),act('bridge',{preset:'dawn',tone:1,items:[star(.764)]},14),act('helix-down',{items:[gift(.555,'time')]},14)],
    fallback:[act('floor-wall',{span:[0,1]},7),act('bridge',{preset:'stairs',tone:0},20),act('bridge',{preset:'calm',tone:1},11),act('bridge',{preset:'dawn',tone:2},18),act('floor-wall',{span:[1,2]},9)]}
  ].map(c=>Object.freeze(c)))
 });
@@ -81,12 +83,14 @@ function playableActs(course){
 /* Star goals: [완주, 빛 조각 전부, 무피격]. */
 function goals(result){
  if(!result||result.state!=='clear')return [false,false,false];
- return [true,result.shardTotal>0&&result.shards>=result.shardTotal,result.deaths===0];
+ /* R105: a moon bubble that took a hit (or the assist bubble) costs the no-hit star. */
+ return [true,result.shardTotal>0&&result.shards>=result.shardTotal,result.deaths===0&&!result.shielded];
 }
 function stars(result){return goals(result).filter(Boolean).length}
 
 /* ---------- the run ---------- */
-const emptyCarry=()=>({points:0,shards:0,shardTotal:0,perfectStreak:0,hearts:1,bonus:0,time:0,perfects:0,bestStreak:0});
+const emptyCarry=()=>({points:0,shards:0,shardTotal:0,perfectStreak:0,hearts:1,bonus:0,time:0,perfects:0,bestStreak:0,mods:null,shielded:false,assisted:false,memoryStar:false});
+const uiItems=()=>root.MONGYU_UI_EDITION===true&&!!root.MongyuItems?.enabled;
 const num=v=>Number.isFinite(v)?v:0;
 function actShards(child){
  if(Number.isFinite(child.shardCount))return child.shardCount;
@@ -112,7 +116,7 @@ class CourseRun{
  reset(){
   const resume=this.options.resume,idx=this.acts.length?clamp(Math.trunc(resume?.index)||0,0,this.acts.length-1):0;
   this.state='ready';this.events=[];this.updates=0;this.clock=0;this.inputCount=0;this.portal=null;this.result=null;this.outro=null;this.crash=null;this.coach=null;
-  this.deaths=Math.max(0,Math.trunc(resume?.deaths)||0);this.carries=[];this.carry={...emptyCarry(),...(resume?.carry||{})};
+  this.deaths=Math.max(0,Math.trunc(resume?.deaths)||0);this.failCounts={...(resume?.fails||{})};this.carries=[];this.assistActs=[];this.carry={...emptyCarry(),...(resume?.carry||{})};
   this.actIndex=idx;this.child=null;this.hearts=1;this.score=this.carry.points+this.carry.bonus;this.time=this.carry.time;this.pose=undefined;this._p=0;this._pAt=-1;
   this.beginAct(idx,this.carry);
  }
@@ -124,7 +128,14 @@ class CourseRun{
  makeChild(i,carry){
   const a=this.acts[i];if(!a)return null;
   const chain={index:i,count:this.acts.length,first:i===0,last:i===this.acts.length-1,carry:{points:carry.points,shards:carry.shards,perfectStreak:carry.perfectStreak,hearts:carry.hearts},bpm:this.bpm,seed:this.seed+i*7919};
-  const child=resolveAct(a.type)({...a.opts,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed,hud:false});
+  /* R105 items: mods/flags ride along in chain.carry; items:[{at|beat,kind}] belong to the act; 3 fails on this stretch put an assist bubble near its start. */
+  let items;
+  if(uiItems()){
+   chain.courseId=this.id;chain.carry.mods=carry.mods||null;chain.carry.shielded=!!carry.shielded;chain.carry.assisted=!!carry.assisted;chain.carry.memoryStar=!!carry.memoryStar;
+   items=a.opts.items;
+   if(this.options.assist!==false&&(this.failCounts[i]|0)>=3){items=[...(items||[]),{at:.04,kind:'bubble',lane:'lo',assist:true}];this.assistActs[i]=true}
+  }
+  const child=resolveAct(a.type)({...a.opts,items,viewport:{...this.viewport},settings:this.settings,attempt:this.attempt,chain,bpm:this.bpm,seed:chain.seed,hud:false});
   child.setViewport?.(this.viewport.width,this.viewport.height);return child;
  }
  /* Enter act i with the given carried state. A snapshot of the carry is kept: a fail restarts the act from exactly that state. */
@@ -148,7 +159,7 @@ class CourseRun{
  /* As a fresh run for the host (startRun): resumes at the start of the act where the player fell. */
  checkpointRun(){
   const carry={...(this.carries[this.actIndex]||this.carry)};
-  return new CourseRun({...this.options,attempt:this.attempt+1,viewport:{...this.viewport},settings:this.settings,resume:{index:this.actIndex,carry,deaths:this.deaths}});
+  return new CourseRun({...this.options,attempt:this.attempt+1,viewport:{...this.viewport},settings:this.settings,resume:{index:this.actIndex,carry,deaths:this.deaths,fails:{...this.failCounts}}});
  }
  inputDown(){return this.action()}
  inputUp(){this.child?.inputUp?.()}
@@ -184,24 +195,29 @@ class CourseRun{
   this.score=num(child.score??child.points)+this.carry.bonus;this.time=this.carry.time+num(child.time);
   this.coach=child.coach||null;this.hearts=child.hearts??1;this.crash=child.crash||null;this.outro=child.outro||null;
   this.carry.bestStreak=Math.max(this.carry.bestStreak,num(child.perfectStreak));
+  if(child.shielded||child.assisted)this.carry.shielded=true;
+  if(child.gotStar)this.carry.memoryStar=true;
+  if(child.lastItem)this.lastItem=child.lastItem;
  }
  clearAct(child){
   const r=child.result||{},points=num(r.points??child.points??child.score),bonus=Math.max(0,num(child.score)-num(child.points??r.points??child.score));
   const done={points,shards:this.carry.shards+num(r.shards??actShards(child)),shardTotal:this.carry.shardTotal+actShardTotal(child,r),perfectStreak:num(r.perfectStreak??child.perfectStreak),hearts:1,
-   bonus:this.carry.bonus+bonus,time:this.carry.time+num(child.time),perfects:this.carry.perfects,bestStreak:Math.max(this.carry.bestStreak,num(r.perfectStreak))};
+   bonus:this.carry.bonus+bonus,time:this.carry.time+num(child.time),perfects:this.carry.perfects,bestStreak:Math.max(this.carry.bestStreak,num(r.perfectStreak)),
+   mods:child.mods&&root.MongyuItems?.exportMods?root.MongyuItems.exportMods(child):this.carry.mods||null,shielded:!!this.carry.shielded||!!child.shielded||!!child.assisted,assisted:!!this.carry.assisted||!!child.assisted,memoryStar:!!this.carry.memoryStar||!!child.gotStar};
   if(this.actIndex>=this.acts.length-1){this.carry=done;this.score=done.points+done.bonus;this.time=done.time;this.finishCourse('clear',child);return}
   /* Aurora-gate transition into the next act. The next act is created now (frozen) and starts once the gate is half open. */
   this.beginAct(this.actIndex+1,done);this.score=done.points+done.bonus;this.time=done.time;
   const reduced=reducedMotion();this.portal={age:0,duration:reduced?PORTAL_REDUCED:PORTAL,swapped:false,reduced,snap:null,snapped:false};
   this.events.push('portal');
  }
- failAct(child){this.deaths++;this.finishCourse('fail',child)}
+ failAct(child){this.deaths++;this.failCounts[this.actIndex]=(this.failCounts[this.actIndex]|0)+1;this.finishCourse('fail',child)}
  finishCourse(state,child){
   const r=child?.result||{},c=this.carry,shards=c.shards+(state==='clear'?0:actShards(child||{}));
   this.state=state;this.portal=null;this.hearts=state==='fail'?0:1;
   const result={mode:'road',state,courseId:this.id,name:this.name,score:Math.floor(this.score),points:c.points||num(child?.points),bonus:c.bonus,time:this.time,attempt:this.attempt,
    actIndex:this.actIndex,actCount:this.acts.length,actName:this.actLabel(this.actIndex),shards:state==='clear'?c.shards:shards,shardTotal:c.shardTotal+(state==='clear'?0:actShardTotal(child||{},r)),
    deaths:this.deaths,perfects:c.perfects,bestStreak:c.bestStreak,progress:state==='clear'?1:this.progress(),fallback:this.usedFallback,
+   shielded:!!c.shielded,assisted:!!c.assisted,memoryStar:!!c.memoryStar,
    reason:state==='clear'?'오로라의 문을 지났어요.':(r.reason||'길이 끊겼어요')};
   result.goals=goals(result);result.stars=result.goals.filter(Boolean).length;this.result=result;this.events.push(state);
  }
@@ -219,7 +235,7 @@ class CourseRun{
  status(){
   return {mode:this.mode,dreamMode:'road',state:this.state,time:this.time,hearts:this.hearts,score:Math.floor(this.score),best:0,progress:this.progress(),
    roomTitle:this.name+' · '+this.actName,roomIndex:this.actIndex,roomCount:this.acts.length,instruction:'탭: 점프 · 금빛 표식 근처면 정렬',cue:null,result:this.result,
-   course:{id:this.id,act:this.actIndex,acts:this.acts.length,type:this.acts[this.actIndex]?.type||'',transition:!!this.portal}};
+   course:{id:this.id,act:this.actIndex,acts:this.acts.length,type:this.acts[this.actIndex]?.type||'',transition:!!this.portal,mods:root.MongyuItems?.summary?.(this.child)||null}};
  }
  drawSelf(c,opts){return draw(c,this,opts)}
 }
@@ -272,6 +288,7 @@ function hud(c,run,w,h,show=1){
  c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle='rgba(20,12,36,.55)';c.strokeText(score,w/2,top+52);c.fillStyle='#fff3d6';c.fillText(score,w/2,top+52);
  const streak=run.perfectStreak;
  if(streak>=2){const t='완벽 ×'+streak;c.font='800 13px system-ui,sans-serif';const tw=c.measureText(t).width+22;rr(c,w/2-tw/2,top+62,tw,22,11);c.fillStyle='rgba(255,217,138,.9)';c.fill();c.fillStyle='#3a2410';c.fillText(t,w/2,top+77)}
+ if(child?.mods)root.MongyuItems.drawChips(c,child,w/2,top+92);
  const coach=child?.coach&&num(child.time)<child.coach.until?child.coach.text:'';
  if(coach&&run.state==='play'&&!run.portal){c.font='700 16px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
  // Progress gauge with a notch for each act gate (lit once passed).
