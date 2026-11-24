@@ -44,7 +44,7 @@ function tick(run){
  if(!(t1>g.t0)&&g.s.length)return;
  while(g.s.length*STEP<=t1){
   if(g.s.length>=MAX){g.full=true;g.valid=false;g.s=[];return}
-  const b=g.s.length*STEP,u=t1>g.t0?clamp((b-g.t0)/(t1-g.t0),0,1):1;
+  const b=g.s.length*STEP,u=t1>g.t0?clamp((b-g.t0)/(t1-g.t0),0,1):0;
   g.s.push(Math.round((g.p0+(p1-g.p0)*u)*SCALE));
  }
  g.t0=t1;g.p0=p1;

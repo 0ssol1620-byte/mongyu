@@ -47,6 +47,7 @@ template=(p/'index.template.html').read_text(encoding='utf-8')
 assert template.count('<!--SCRIPTS-->')==1 and template.count('/*MOBILE_CSS*/')==1
 mobile_css=(p/'mobile.css').read_text(encoding='utf-8')
 if polish_edition:mobile_css+=chr(10)+chr(10).join((p/'css'/f'r104-{name}.css').read_text(encoding='utf-8') for name in ['story','juice','hud','world','modes','road','ui'])
+if ui_edition:mobile_css+=chr(10)+(p/'css'/'r105-isle.css').read_text(encoding='utf-8')
 out=template.replace('/*MOBILE_CSS*/',mobile_css).replace('<!--SCRIPTS-->','\n'.join('<script>'+s+'</script>' for s in sources))
 assert "connect-src 'none'" in out and "default-src 'none'" in out
 assert not any(x in out for x in ['NOM3_ASSETS','Nom3Study','menu-7.png','nom1-0.png'])
