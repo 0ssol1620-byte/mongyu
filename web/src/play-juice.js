@@ -13,8 +13,10 @@ function rand(){seed=seed*16807%2147483647;return (seed-1)/2147483646}
 function clock(){return (root.performance?.now?.()??Date.now())/1000}
 function settings(){try{return host?.settings?.()||{}}catch(_){return {}}}
 function reduced(){return settings().reduced===true}
+/* R105 ACC: effects strength (0..1), 1 outside the UI edition or without the profile. Presentation only. */
+const fx=ch=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.value(ch):1}catch(_){return 1}};
 function sound(kind){try{host?.sound?.(kind)}catch(_){}}
-function vibrate(ms){const r=host?.activeRun?.(),on=r?.settings?.vibration??settings().vibration;if(on!==false&&on!==0&&typeof root.navigator?.vibrate==='function')try{root.navigator.vibrate(ms)}catch(_){}}
+function vibrate(ms){const r=host?.activeRun?.(),on=r?.settings?.vibration??settings().vibration;if(on!==false&&on!==0&&typeof root.navigator?.vibrate==='function'){const k=fx('haptics');if(k<=0)return;try{root.navigator.vibrate(Math.max(4,Math.round(ms*(.4+.6*k))))}catch(_){}}}
 function viewport(){try{return host?.viewport?.()||{width:390,height:844}}catch(_){return {width:390,height:844}}}
 const glows=new Map();
 /* Soft round glow per ink, rendered once and blitted (cheaper and softer than per-particle gradients). */
@@ -27,7 +29,7 @@ function glow(ink){
 function spawn(){for(const p of pool)if(!p.on){p.on=true;return p}return null}
 function clearAll(){impact=null;bloom=null;for(const p of pool)p.on=false;for(const p of popups)p.on=false;popupPoints=run?.points||0;resetShake()}
 function resetShake(){if(shaking&&host?.canvas?.style){host.canvas.style.transform='';host.canvas.classList?.remove('juice-shake')}shaking=false}
-function setShake(x,y){const c=host?.canvas;if(!c?.style)return;if(!shaking)c.classList?.add('juice-shake');shaking=true;c.style.transform='translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px) scale(1.03)'}
+function setShake(x,y){const c=host?.canvas;if(!c?.style)return;if(!shaking)c.classList?.add('juice-shake');shaking=true;c.style.transform='translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px) scale('+Number((1+.03*fx('zoom')).toFixed(4))+')'}
 function impactPoint(r){
  const O=root.MongyuOpening,vp=viewport();
  if(r.openingCourse&&O?.project&&r.crash){const o=O.OBSTACLES[r.crash.index],p=o&&O.project(r,o.at,o.height*.6);if(p)return p}
@@ -114,10 +116,10 @@ function drawImpact(c,r,w,h,calm){
  if(t<.18){const u=t/.18,g=1-u;c.globalAlpha=g;c.fillStyle='rgba(255,248,236,.9)';c.beginPath();c.arc(x,y,6+u*10,0,Math.PI*2);c.fill();
   c.globalAlpha=g*.5;c.beginPath();c.ellipse(x,y,38*(1-u*.4),2.2,0,0,Math.PI*2);c.fill();c.beginPath();c.ellipse(x,y,2.2,30*(1-u*.4),0,0,Math.PI*2);c.fill()}
  c.restore();
- if(calm){if(t<.25){c.save();c.globalAlpha=.2*(1-t/.25);c.fillStyle='#c4b2ff';c.fillRect(0,0,w,h);c.restore()}}
+ if(calm){if(t<.25&&fx('flash')>0){c.save();c.globalAlpha=.2*Math.min(1,fx('flash')/.3)*(1-t/.25);c.fillStyle='#c4b2ff';c.fillRect(0,0,w,h);c.restore()}}
  else{
-  if(t<FLASH){c.save();c.globalAlpha=.85*(1-t/FLASH);c.fillStyle='#fffaf0';c.fillRect(0,0,w,h);c.restore()}
-  if(t<SHAKE){const k=Math.pow(1-t/SHAKE,2)*SHAKE_PX;setShake(Math.sin(t*97)*k,Math.cos(t*131)*k*.7)}else resetShake();
+  if(t<FLASH&&fx('flash')>0){c.save();c.globalAlpha=.85*fx('flash')*(1-t/FLASH);c.fillStyle='#fffaf0';c.fillRect(0,0,w,h);c.restore()}
+  if(t<SHAKE&&fx('shake')>0){const k=Math.pow(1-t/SHAKE,2)*SHAKE_PX*fx('shake');setShake(Math.sin(t*97)*k,Math.cos(t*131)*k*.7)}else resetShake();
  }
  return t<DIM_HOLD+DIM_OUT||ended;
 }

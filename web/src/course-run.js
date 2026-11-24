@@ -8,6 +8,9 @@ const TAU=Math.PI*2,PORTAL=.6,PORTAL_REDUCED=.22,FAIL_HUD=.35;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const reducedMotion=()=>{try{return root.MongyuPolish?.host?.settings?.()?.reduced===true}catch(_){return false}};
+/* R105 ACC: effects strength 0..1 for one channel (1 without the profile). Used by drawing code only, never by the simulation. */
+const fxv=ch=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.value(ch):1}catch(_){return 1}};
+const textK=()=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.get().text/100:1}catch(_){return 1}};
 const SLOT=Object.freeze({id:'road',ruleId:'road',number:2,title:'꿈의 길'});
 
 /* ---------- act registry ---------- */
@@ -272,34 +275,34 @@ function gate(c,p,w,h){
  const fade=u<.4?1:1-ease(clamp((u-.4)/.5,0,1));
  if(p.snap&&fade>0){c.save();c.setTransform(1,0,0,1,0,0);c.globalAlpha=fade;c.drawImage(p.snap,0,0);c.restore()}
  else if(!p.snap&&fade>0){c.save();c.globalAlpha=fade*.85;c.fillStyle='#1b1230';c.fillRect(0,0,w,h);c.restore()}
- if(p.reduced)return;
+ const gk=fxv('gate');if(p.reduced||gk<=0)return;
  const inward=ease(clamp(u/.5,0,1)),outward=clamp((u-.5)/.5,0,1),alpha=1-outward*outward;
  c.save();c.globalCompositeOperation='lighter';
  const ti=tripInk(p),rings=ti?[[ti.rimRgb,0],[ti.rim2Rgb,.1],[ti.glowRgb,.2]]:[['127,243,225',0],['183,140,255',.1],['255,158,216',.2]];   // R105 TR: the trip's own hue family, no rainbow
  for(let i=0;i<rings.length;i++){
   const [rgb,delay]=rings[i],k=ease(clamp((u-delay*.6)/.5,0,1)),r=maxR+(min*.1-maxR)*k+outward*min*(.5+delay*2);
-  c.globalAlpha=alpha*.85;c.lineWidth=3+7*(1-inward)+outward*4;c.strokeStyle='rgba('+rgb+',.9)';
+  c.globalAlpha=alpha*.85*gk;c.lineWidth=3+7*(1-inward)+outward*4;c.strokeStyle='rgba('+rgb+',.9)';
   c.beginPath();c.ellipse(cx,cy,r*.72,r,0,0,TAU);c.stroke();
-  c.globalAlpha=alpha*.3;c.lineWidth=14+10*(1-inward);c.strokeStyle='rgba('+rgb+',.4)';c.stroke();
+  c.globalAlpha=alpha*.3*gk;c.lineWidth=14+10*(1-inward);c.strokeStyle='rgba('+rgb+',.4)';c.stroke();
  }
  const glow=Math.sin(Math.PI*u),gr=min*(.2+.9*Math.sin(Math.PI*clamp(u,0,1))*.8),g=c.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,gr));
- g.addColorStop(0,'rgba(255,250,236,'+(.85*glow).toFixed(3)+')');g.addColorStop(.45,'rgba('+(ti?ti.glowRgb:'190,170,255')+','+(.28*glow).toFixed(3)+')');g.addColorStop(1,'rgba('+(ti?ti.glowRgb:'190,170,255')+',0)');
+ g.addColorStop(0,'rgba(255,250,236,'+(.85*glow*gk).toFixed(3)+')');g.addColorStop(.45,'rgba('+(ti?ti.glowRgb:'190,170,255')+','+(.28*glow*gk).toFixed(3)+')');g.addColorStop(1,'rgba('+(ti?ti.glowRgb:'190,170,255')+',0)');
  c.globalAlpha=1;c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();
 }
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function gaugeInk(run){const T=root.MONGYU_UI_EDITION===true&&root.MongyuTrip;return T&&T.ink?T.mix(T.ink(run.child?.trip||run.options?.trip||'violet').rim,'#ffffff',.45):'#bfe9ff'}
 function hud(c,run,w,h,show=1){
  if(run.state==='fail'||run.state==='clear'||show<=0)return;
- const child=run.child,out=show*(run.outro?.kind==='fail'||run.crash?clamp(1-num(run.outro?.age)/FAIL_HUD,0,1):1);if(out<=0)return;
+ const tk=textK(),child=run.child,out=show*(run.outro?.kind==='fail'||run.crash?clamp(1-num(run.outro?.age)/FAIL_HUD,0,1):1);if(out<=0)return;
  c.save();c.globalAlpha=out;c.textAlign='center';const top=Math.max(14,h*.035),score=String(Math.floor(run.score));
  const label=run.name+' · '+(run.actIndex+1)+'/'+run.acts.length+' '+run.actName;
- c.font='600 11px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.6)';c.strokeText(label,w/2,top+10);c.fillStyle='rgba(255,243,226,.88)';c.fillText(label,w/2,top+10);
+ c.font='600 '+Math.round(11*tk)+'px system-ui,sans-serif';c.lineWidth=3;c.strokeStyle='rgba(20,12,36,.6)';c.strokeText(label,w/2,top+10);c.fillStyle='rgba(255,243,226,.88)';c.fillText(label,w/2,top+10);
  c.font='800 40px system-ui,sans-serif';c.lineWidth=5;c.strokeStyle='rgba(20,12,36,.55)';c.strokeText(score,w/2,top+52);c.fillStyle='#fff3d6';c.fillText(score,w/2,top+52);
  const streak=run.perfectStreak;
- if(streak>=2){const t='완벽 ×'+streak;c.font='800 13px system-ui,sans-serif';const tw=c.measureText(t).width+22;rr(c,w/2-tw/2,top+62,tw,22,11);c.fillStyle='rgba(255,217,138,.9)';c.fill();c.fillStyle='#3a2410';c.fillText(t,w/2,top+77)}
+ if(streak>=2){const t='완벽 ×'+streak;c.font='800 '+Math.round(13*tk)+'px system-ui,sans-serif';const tw=c.measureText(t).width+22;rr(c,w/2-tw/2,top+62,tw,22,11);c.fillStyle='rgba(255,217,138,.9)';c.fill();c.fillStyle='#3a2410';c.fillText(t,w/2,top+77)}
  if(child?.mods)root.MongyuItems.drawChips(c,child,w/2,top+92);
  const coach=child?.coach&&num(child.time)<child.coach.until?child.coach.text:'';
- if(coach&&run.state==='play'&&!run.portal){c.font='700 16px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
+ if(coach&&run.state==='play'&&!run.portal){c.font='700 '+Math.round(16*tk)+'px system-ui,sans-serif';const tw=Math.min(w-48,c.measureText(coach).width+36),y=h*.74;rr(c,w/2-tw/2,y-19,tw,38,19);c.fillStyle='rgba(26,19,48,.66)';c.fill();c.strokeStyle='rgba(255,236,255,.16)';c.lineWidth=1;c.stroke();c.fillStyle='#fbf4ff';c.fillText(coach,w/2,y+6)}
  // Progress gauge with a notch for each act gate (lit once passed).
  const gy=h*.86,gw=Math.min(w*.7,320),x0=w/2-gw/2,frac=run.progress();
  rr(c,x0,gy,gw,6,3);c.fillStyle='rgba(255,255,255,.14)';c.fill();rr(c,x0,gy,Math.max(6,gw*frac),6,3);c.fillStyle=gaugeInk(run);c.fill();

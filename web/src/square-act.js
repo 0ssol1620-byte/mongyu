@@ -14,6 +14,8 @@ const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const num=v=>Number.isFinite(v)?v:0;
 const reducedMotion=()=>{try{return root.MongyuPolish?.host?.settings?.()?.reduced===true}catch(_){return false}};
+/* R105 ACC: effects strength 0..1 for one channel (1 without the profile). Used by drawing code only, never by the simulation. */
+const fxv=ch=>{try{const E=root.MongyuEffects;return E&&E.enabled?E.value(ch):1}catch(_){return 1}};
 const cvdOn=()=>{try{const d=root.document?.documentElement;return !!d&&d.dataset&&d.dataset.cvd==='on'}catch(_){return false}};
 const items=()=>root.MONGYU_UI_EDITION===true&&root.MongyuItems?.enabled?root.MongyuItems:null;
 const mixc=(a,b,k)=>root.MongyuTrip?.mix?.(a,b,k)||a;
@@ -62,8 +64,9 @@ function makeSquareRun(){
   tick(dt){
    if(this.state!=='play')return;
    if(this.finishing){const f=this.finishing;f.age+=dt;this.clock+=dt;this.time+=dt;this.distance+=this.speed*dt*Math.max(0,1-f.age/f.dur)*.9;if(f.age>=f.dur)this.complete();return}
+   const frozen=this.hitStop>0||!!this.outro;   // R105 ACC fix: hit-stop / fail-outro ticks do not recompute the score, so the carry below must not run on them (it re-added the carried points every tick and made the fail score depend on the hit-stop length)
    super.tick(dt);
-   if(this.state!=='play')return;
+   if(this.state!=='play'||frozen||this.outro)return;
    const own=this.score;this.points+=own-this._own;this._own=own;this.score=this.points;
    const MI=items();if(MI&&this.mods){MI.collect(this,this.distance,this.height,this.pkH,13);MI.settle(this)}
    if(this.distance>=this.length&&!this.crash)this.reachGate();
@@ -371,7 +374,7 @@ function drawFlip(c,run,opts){
  else{const k=clamp(run.fly/C.tf,0,1),e=k*k;ang=(run.jumpFrom===0?0:Math.PI)+(reduced?0:Math.PI*e)*(run.jumpFrom===0?1:-1);if(reduced)ang=run.jumpFrom===0?0:Math.PI;feetY=Y(yc)+Math.cos(ang)*half*sc;feetX=px-Math.sin(ang)*half*sc}
  if(run.crash&&run.outro){feetY+=(run.crash.surf===0?-1:1)*Math.min(1,run.outro.age*3)*6}
  // trail while falling
- if(flying&&!reduced){c.save();c.globalCompositeOperation=MODE;const k=clamp(run.fly/C.tf,0,1);for(let i=1;i<=3;i++){const kk=Math.max(0,k-i*.09),y2=Y(run.jumpFrom===0?half+(FLIP.CH-FLIP.BODY)*kk*kk:FLIP.CH-half-(FLIP.CH-FLIP.BODY)*kk*kk);c.globalAlpha=.16/i;c.fillStyle=P.rim;c.fillRect(px-7*sc,y2-half*sc,14*sc,FLIP.BODY*sc)}c.restore()}
+ if(flying&&!reduced&&fxv('echo')>0){c.save();c.globalCompositeOperation=MODE;const k=clamp(run.fly/C.tf,0,1),ek=fxv('echo'),en=Math.max(1,Math.round(3*ek));for(let i=1;i<=en;i++){const kk=Math.max(0,k-i*.09),y2=Y(run.jumpFrom===0?half+(FLIP.CH-FLIP.BODY)*kk*kk:FLIP.CH-half-(FLIP.CH-FLIP.BODY)*kk*kk);c.globalAlpha=.16/i*Math.min(1,ek);c.fillStyle=P.rim;c.fillRect(px-7*sc,y2-half*sc,14*sc,FLIP.BODY*sc)}c.restore()}
  const squash=!reduced&&!flying&&run.time-run.landedAt<.14?1-.12*(1-(run.time-run.landedAt)/.14):1;
  const q={x:feetX,y:feetY,bodyHeight:FLIP.BODY*sc*1.12,renderAngle:ang,strideDistance:run.x,nativeState:0,height:flying?1:0,jumpProgress:flying?run.fly/C.tf:0,pose:run.crash?'hurt':flying?'jump':'run'};
  if(root.MongyuMobile?.sprite)root.MongyuMobile.sprite(c,q,{poseTime:t,onDark:true},reduced);
